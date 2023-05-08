@@ -23,28 +23,21 @@ import java.util.Locale
 
 // importing just CHANNEL_ID
 import com.example.locationappandroidtest.MainActivity.Companion.CHANNEL_ID
-import com.example.locationappandroidtest.MainActivity.Companion.NOTIFICATION_ID_FOR_LOCATION
-import com.example.locationappandroidtest.MainActivity.Companion.NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE
 
 import android.os.Process // for: Process.THREAD_PRIORITY_BACKGROUND
+import androidx.core.app.NotificationManagerCompat
 import com.example.locationappandroidtest.NotificationHelper.updateNotification
 
 class LocationUpdatesService : Service() {
+    companion object {
+        public const val NOTIFICATION_ID_FOR_LOCATION = 123
+    }
+
     private val serverSender = ServerSender(this)
-
     private val updateIntervalMillis: Long = 5000 // The update interval in milliseconds
-
-    // HandlerThread is a class in Android to create a thread that has its own message queue,
-    // and that is designed to be used with a Handler.
-    // A HandlerThread can be used to perform long-running operations in the background without blocking the UI thread.
-    private lateinit var handlerThread: HandlerThread
-    // The handler object is a Handler that is associated with this thread,
-    // allowing to post Runnable objects or Message objects to the thread's message queue.
-    private lateinit var handler: Handler
+    private var testId:String? = ""
 
     lateinit var locationViewModel: LocationViewModel
-
-    //    var locationViewModel: LocationViewModel? = null
 
     private val binder = LocationUpdatesBinder()
     override fun onBind(intent: Intent?): IBinder? {
@@ -54,46 +47,17 @@ class LocationUpdatesService : Service() {
         fun getService(): LocationUpdatesService = this@LocationUpdatesService
     }
 
-    // any code that depends on the locationRequest property
-    // will not be able to use it until it has been initialized.
-    // However, once it has been initialized, subsequent accesses to the locationRequest property
-    // will return the same LocationRequest object that was created during initialization
-    private val locationRequest: LocationRequest by lazy { // by lazy is a property delegate that allows you to initialize a property lazily, meaning that the property is not initialized until it is accessed for the first time.
-        LocationRequest.create().apply {
-            interval = updateIntervalMillis
-            fastestInterval = updateIntervalMillis
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-    }
-
     private val fusedLocationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(this)
-    }
-
-    private val periodicTask = object : Runnable {
-        override fun run() {
-            Log.d("SPRAVA", "Periodic task run")
-            val lastUpdateTime = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
-                updateNotification(applicationContext, NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE, CHANNEL_ID, "Custom foreground service", "Last update sent: $lastUpdateTime")
-            // Call your custom function to get the location and send it
-            sendLocationAndBatteryLevel()
-
-            // Post the Runnable again with a delay
-            handler.postDelayed(this, updateIntervalMillis)
-        }
     }
 
     // onStartCommand is called when a client (such as an activity ) requests to start the service using startService method.
     // the method returns an integer value telling the system what to do with the service after it has been started
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("SPRAVA", "LocationUpdatesService started")
+        testId = intent?.getStringExtra("testId")
 
         startForegroundNotification()
-
-        handlerThread = HandlerThread("HandlerThread", Process.THREAD_PRIORITY_BACKGROUND)
-        handlerThread.start()
-        handler = Handler(handlerThread.looper)
-        handler.post(periodicTask)
 
         // get another foreground service for location
         initializeLocationUpdates()
@@ -140,91 +104,19 @@ class LocationUpdatesService : Service() {
             .setContentIntent(pendingIntent)
             .build()
 
-        startForeground(ONGOING_NOTIFICATION_ID, notification)
+        startForeground(NOTIFICATION_ID_FOR_LOCATION, notification)
     }
-
-    private fun sendLocationAndBatteryLevel() {
-        Log.d("SPRAVA", "sendLocationAndBatteryLevel run")
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            Log.d("SPRAVA", "Missing permission.")
-            // Missing permissions, can't get location
-            return
-        }
-
-//        val handleLocationUpdate: (Location) -> Unit = { location ->
-//            val batteryLevel = Helpers.getCurrentBatteryLevel(this)
-//            Log.d(
-//                "SPRAVA",
-//                "Latitude: ${location.latitude}, Longitude: ${location.longitude}, Battery: $batteryLevel"
-//            )
-//
-//            locationViewModel.updateLocation(location)
-//            serverSender.sendLocation(location, batteryLevel)
-//            updateNotification()
-//        }
-
-//        fusedLocationClient.lastLocation
-//            .addOnSuccessListener { location ->
-//                location?.let {
-//                    handleLocationUpdate(location)
-//                } ?: run {
-//                    // If lastLocation is null, use requestLocationUpdates to get an update
-//                    val locationRequest = LocationRequest.create().apply {
-//                        interval = 5000
-//                        fastestInterval = 5000
-//                        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//                    }
-//                    val locationCallback = object : LocationCallback() {
-//                        override fun onLocationResult(locationResult: LocationResult) {
-//                            fusedLocationClient.removeLocationUpdates(this)
-//                            locationResult.lastLocation?.let {
-//                                handleLocationUpdate(it)
-//                            }
-//                        }
-//                    }
-//                    fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e("SPRAVA", "Failed to get last location.", exception)
-//            }
-
-//        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-//            location?.let {
-//                val batteryLevel = Helpers.getCurrentBatteryLevel(this)
-//                Log.d(
-//                    "SPRAVA",
-//                    "Latitude: ${location.latitude}, Longitude: ${location.longitude}, Battery: $batteryLevel"
-//                )
-//
-//                locationViewModel.updateLocation(location)
-//                serverSender.sendLocation(location, batteryLevel)
-//                updateNotification()
-//            }
-//        }
-//            .addOnFailureListener { exception ->
-//                Log.e("SPRAVA", "Failed to get last location.", exception)
-//            }
-//            .addOnCompleteListener { l -> Log.d("SPRAVA", "Complete")}
-
-    }
-
     override fun onDestroy() {
         Log.d("SPRAVA", "LocationUpdatesService destroyed")
         super.onDestroy()
-        handler.removeCallbacks(periodicTask)
-        handlerThread.quitSafely()
     }
 
-    companion object {
-        private const val ONGOING_NOTIFICATION_ID = 1
+    fun stopService() {
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.cancel(NOTIFICATION_ID_FOR_LOCATION)
+
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+        stopSelf()
     }
 
 //    override fun onCreate() {
@@ -244,7 +136,7 @@ class LocationUpdatesService : Service() {
                 val lastUpdateTime = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
                 updateNotification(applicationContext, NOTIFICATION_ID_FOR_LOCATION, CHANNEL_ID, "Location Updates", "Last update sent: $lastUpdateTime")
 
-                serverSender.sendLocation(location, batteryLevel)
+                serverSender.sendLocation(location, batteryLevel, testId)
             }
         }
     }

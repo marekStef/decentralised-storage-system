@@ -39,15 +39,14 @@ import androidx.compose.ui.unit.dp
 class MainActivity : ComponentActivity() {
     private val REQUEST_LOCATION_PERMISSION = 1001
 
+    private val currentTestId = mutableStateOf(TextFieldValue())
+
     companion object {
         public const val CHANNEL_ID = "LocationUpdatesChannel"
-        public const val NOTIFICATION_ID_FOR_LOCATION = 123
-        public const val NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE = 124
     }
 
     private lateinit var locationUpdatesService: LocationUpdatesService
     private var isBound = false
-
     private val locationViewModel: LocationViewModel by viewModels()
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -56,7 +55,6 @@ class MainActivity : ComponentActivity() {
             locationUpdatesService.locationViewModel = locationViewModel
             isBound = true
         }
-
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
         }
@@ -83,10 +81,9 @@ class MainActivity : ComponentActivity() {
                         Text("Testing battery when sending foreground location to server")
 
                         // Add a text input
-                        val inputText = remember { mutableStateOf(TextFieldValue()) }
                         TextField(
-                            value = inputText.value,
-                            onValueChange = { inputText.value = it },
+                            value = currentTestId.value,
+                            onValueChange = { currentTestId.value = it },
                             label = { Text("Enter name of new test") },
                             singleLine = true,
                             enabled = !startTestClicked.value
@@ -95,6 +92,8 @@ class MainActivity : ComponentActivity() {
                         // Add a button
                         Button(onClick = {
                             startTestClicked.value = true
+                            startMyCustomForegroundService()
+                            startLocationForegroundService()
                         }, enabled = !startTestClicked.value) {
                             Text("Start sending location")
                         }
@@ -102,6 +101,8 @@ class MainActivity : ComponentActivity() {
                         // Add a button
                         Button(onClick = {
                             startTestClicked.value = false
+                            stopMyCustomForegroundService()
+                            stopLocationForegroundService()
                         }, enabled = startTestClicked.value) {
                             Text("End sending location")
                         }
@@ -116,40 +117,45 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
 
-        createNotificationChannel()
+    // region myCustomForegroundService
+    fun startMyCustomForegroundService() {
+        val customForegroundServiceIntent = Intent(this, CustomForegroundService::class.java)
+        startService(customForegroundServiceIntent)
+    }
+
+    fun stopMyCustomForegroundService() {
+        val customForegroundServiceIntent = Intent(this, CustomForegroundService::class.java)
+        stopService(customForegroundServiceIntent)
+    }
+    // endregion
+
+    // region Location Foreground Service
+    // starts foreground service for location updates and binds the activity to the service
+    fun startLocationForegroundService() {
+        // starting location foreground service
         requestLocationPermissions()
     }
 
-    // The createNotificationChannel() function creates a notification channel for the app.
-    // A NotificationChannel is a construct introduced in Android 8.0 (API level 26) that allows to group notifications into channels.
-    // Each channel represents a type of notification that the app can send, and each channel can have different settings,
-    // such as the importance level, sound, vibration, and light settings.
-    //
-    //The CHANNEL_ID is a unique identifier for the notification channel.
-    // ID needs to be provided when creating the notification channel and when creating the notification itself.
-    // This ID helps the system to determine which channel the notification belongs to,
-    // and it allows users to modify the settings of that channel individually in the system settings.
-    //
-    //The reason the app crashes without the createNotificationChannel() function is that,
-    // starting from Android 8.0, you must create a notification channel before posting any notifications.
-    // If I don't create a notification channel and try to post a notification, the system will throw an exception, causing your app to crash.
-    //The importance level (IMPORTANCE_LOW) determines how the system should display notifications for this channel.
-    // In this case, the notifications will be shown without making a sound, and they won't appear on the lock screen.
-    private fun createNotificationChannel() {
-        val name = "Location Updates"
-        val descriptionText = "Sending location updates to server"
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
-
-        // Context.NOTIFICATION_SERVICE is a constant string that represents the system-level
-        // service name for the NotificationManager.
-        // It is used to retrieve an instance of the NotificationManager from the system.
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
+    fun startLocationForegroundServiceInternal()
+    {
+        // Intent is a messaging object used to request an action from another app component, such as an Activity, Service, or BroadcastReceiver.
+        // Intents are used to start activities, start services, or deliver broadcasts to various components within your app or even to other apps.
+        val intent = Intent(this, LocationUpdatesService::class.java)
+        intent.putExtra("testId", currentTestId.value.toString())
+        startForegroundService(intent)
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) // Context.BIND_AUTO_CREATE is a flag that specifies that the service should be created if it is not already running
     }
+
+    fun stopLocationForegroundService() {
+        if (isBound) {
+            locationUpdatesService.stopService()
+            unbindService(serviceConnection)
+            isBound = false
+        }
+    }
+    // endregion
 
     private fun requestLocationPermissions() {
         val requiredPermissions = arrayOf(
@@ -169,17 +175,9 @@ class MainActivity : ComponentActivity() {
                 REQUEST_LOCATION_PERMISSION
             )
         } else {
-            startLocationUpdatesService()
+            // all permissions were granted!
+            startLocationForegroundServiceInternal()
         }
-    }
-
-    // starts foreground service for location updates and binds the activity to the service
-    private fun startLocationUpdatesService() {
-        // Intent is a messaging object used to request an action from another app component, such as an Activity, Service, or BroadcastReceiver.
-        // Intents are used to start activities, start services, or deliver broadcasts to various components within your app or even to other apps.
-        val intent = Intent(this, LocationUpdatesService::class.java)
-        ContextCompat.startForegroundService(this, intent)
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) // Context.BIND_AUTO_CREATE is a flag that specifies that the service should be created if it is not already running
     }
 
     override fun onRequestPermissionsResult(
@@ -195,7 +193,7 @@ class MainActivity : ComponentActivity() {
                     .setTitle("Location Permission Granted")
                     .setMessage("All permisions are granted and locationUpdatesService is about to be started")
                     .show()
-                startLocationUpdatesService()
+                startLocationForegroundServiceInternal()
             } else {
                 AlertDialog.Builder(this)
                     .setTitle("Location Permission Required")

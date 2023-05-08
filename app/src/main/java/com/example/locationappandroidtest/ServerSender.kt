@@ -24,42 +24,52 @@ import android.os.Build
 
 class ServerSender(private val context: Context) {
     val client = OkHttpClient()
+    companion object {
+        private const val url = "http://192.168.0.110:8080/testingAndroidLocationBattery/api"
+    }
 
-    fun sendLocation(location: Location, batteryLevel: Int) {
+
+    fun sendLocation(location: Location, batteryLevel: Int, testId : String?) {
         val locationJson = JSONObject().apply {
             put("latitude", location.latitude)
             put("longitude", location.longitude)
             put("speed", location.speed) // meters/second
             put("time", location.time)
             put("batteryLevel", batteryLevel)
+            put("wifi", 1)
+            put("testId", testId)
         }
 
         // Send the JSON data to the server
-        sendToServer(locationJson)
+        sendToServer(locationJson, "/updateLocation.php")
     }
 
-    private fun sendToServer(jsonData: JSONObject) {
+    private fun sendToServer(jsonData: JSONObject, endPoint: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (!isNetworkAvailable()) {
                     NotificationHelper.updateNotification(
                         context,
-                        MainActivity.NOTIFICATION_ID_FOR_LOCATION,
+                        LocationUpdatesService.NOTIFICATION_ID_FOR_LOCATION,
                         MainActivity.CHANNEL_ID,
                         "Location Updates - NO INTERNET",
                         "No connection to the internet!"
                     )
                 }
-                Log.d("SPRAVA_SERVER", "Sending data to server: $jsonData")
+                Log.d("SPRAVA_SERVER", "Sending data to server: $jsonData, url $url$endPoint")
                 val request = Request.Builder()
-                    .url("https://your-server-url/location")
+                    .url("${url}${endPoint}")
                     .post(jsonData.toString().toRequestBody("application/json".toMediaType()))
                     .build()
 
                 client.newCall(request).execute().use { response: Response ->
-                    if (!response.isSuccessful) {
-                        Log.d("SPRAVA_SERVER", "Data not sent")
+                    if (response.isSuccessful) {
+                        Log.d("SPRAVA_SERVER", "Data received from server: $response")
+                    }
+                    else {
+                        val responseBodyString = response.body?.string() ?: ""
+                        Log.d("SPRAVA_SERVER", "Data not sent, ${responseBodyString}")
                     }
                 }
             }  catch (e: Exception) {
