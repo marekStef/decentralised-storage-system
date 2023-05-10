@@ -28,7 +28,7 @@ import android.os.Process // for: Process.THREAD_PRIORITY_BACKGROUND
 import androidx.core.app.NotificationManagerCompat
 import com.example.locationappandroidtest.NotificationHelper.updateNotification
 
-class LocationUpdatesService : Service() {
+class LocationUpdatesService() : Service() {
     companion object {
         public const val NOTIFICATION_ID_FOR_LOCATION = 123
     }
@@ -36,6 +36,7 @@ class LocationUpdatesService : Service() {
     private val serverSender = ServerSender(this)
     private val updateIntervalMillis: Long = 5000 // The update interval in milliseconds
     private var testId:String? = ""
+    private var numberOfSecondsBetweenLocationUpdates:Long = 1 // default value
 
     lateinit var locationViewModel: LocationViewModel
 
@@ -56,6 +57,15 @@ class LocationUpdatesService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("SPRAVA", "LocationUpdatesService started")
         testId = intent?.getStringExtra("testId")
+
+        // non-null asserted call is an operation that enforces a nullable type to be treated
+        // as a non-null type. This is done using the not-null assertion operator,
+        // which is a double exclamation mark !!
+        // You're telling the compiler that you're sure the value won't be null at this point in the code.
+        // If the value turns out to be null, however, a NullPointerException will be thrown at runtime.
+        // Using the not-null assertion operator can be risky.
+        numberOfSecondsBetweenLocationUpdates =
+            intent?.getLongExtra("numberOfSecondsBetweenLocationUpdates", 1)!!
 
         startForegroundNotification()
 
@@ -154,8 +164,9 @@ class LocationUpdatesService : Service() {
         }
 
         val locationRequest = LocationRequest.create().apply {
-            interval = 10_000
-            fastestInterval = 10_000
+            interval = numberOfSecondsBetweenLocationUpdates * 1000
+            fastestInterval = numberOfSecondsBetweenLocationUpdates * 1000
+            maxWaitTime = numberOfSecondsBetweenLocationUpdates * 1000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 

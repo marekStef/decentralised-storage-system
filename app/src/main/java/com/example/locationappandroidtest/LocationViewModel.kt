@@ -6,6 +6,7 @@ import android.location.LocationRequest
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.LocationResult
+import kotlinx.coroutines.withContext
 import java.util.Date
 import java.util.Locale
 
