@@ -22,6 +22,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import org.json.JSONException
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class ServerSender(private val context: Context) {
     val client = OkHttpClient()
@@ -84,11 +87,15 @@ class ServerSender(private val context: Context) {
         }
     }
     fun sendLocation(location: Location, batteryLevel: Int, testId : String?) {
+        val currentInstant = Instant.now()
+        val currentZone = ZoneId.systemDefault()
+        val currentLocalDateTime = LocalDateTime.ofInstant(currentInstant, currentZone)
+
         val locationJson = JSONObject().apply {
             put("latitude", location.latitude)
             put("longitude", location.longitude)
             put("speed", location.speed) // meters/second
-            put("time", location.time)
+            put("time", currentLocalDateTime)
             put("batteryLevel", batteryLevel)
             put("wifi", 1)
             put("testId", testId)

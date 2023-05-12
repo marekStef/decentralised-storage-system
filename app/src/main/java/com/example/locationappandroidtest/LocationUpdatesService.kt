@@ -26,6 +26,7 @@ import com.example.locationappandroidtest.MainActivity.Companion.CHANNEL_ID
 
 import android.os.Process // for: Process.THREAD_PRIORITY_BACKGROUND
 import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.locationappandroidtest.NotificationHelper.updateNotification
 
 class LocationUpdatesService() : Service() {
@@ -38,18 +39,12 @@ class LocationUpdatesService() : Service() {
     private var testId:String? = ""
     private var numberOfSecondsBetweenLocationUpdates:Long = 1 // default value
 
-    lateinit var locationViewModel: LocationViewModel
-
-    private val binder = LocationUpdatesBinder()
-    override fun onBind(intent: Intent?): IBinder? {
-        return binder
-    }
-    inner class LocationUpdatesBinder : Binder() {
-        fun getService(): LocationUpdatesService = this@LocationUpdatesService
-    }
-
     private val fusedLocationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(this)
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        return null
     }
 
     // onStartCommand is called when a client (such as an activity ) requests to start the service using startService method.
@@ -118,6 +113,7 @@ class LocationUpdatesService() : Service() {
     }
     override fun onDestroy() {
         Log.d("SPRAVA", "LocationUpdatesService destroyed")
+        stopService()
         super.onDestroy()
     }
 
@@ -135,17 +131,25 @@ class LocationUpdatesService() : Service() {
 //        createLocationRequest()
 //    }
 
+    private fun sendLocationUpdateBroadcast(latitude: Double, longitude: Double) {
+        val intent = Intent("location_update")
+        intent.putExtra("latitude", latitude)
+        intent.putExtra("longitude", longitude)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        Log.d("SPRAVA", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+    }
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             Log.d("SPRAVA", "Latest location received")
             val service: LocationUpdatesService = this@LocationUpdatesService
             val batteryLevel = Helpers.getCurrentBatteryLevel(service)
             locationResult.lastLocation.let { location ->
-                locationViewModel.updateLocation(location)
+
+                sendLocationUpdateBroadcast(latitude = location.latitude, longitude = location.longitude)
 
                 val lastUpdateTime = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
                 updateNotification(applicationContext, NOTIFICATION_ID_FOR_LOCATION, CHANNEL_ID, "Location Updates", "Last update sent: $lastUpdateTime")
-
                 serverSender.sendLocation(location, batteryLevel, testId)
             }
         }

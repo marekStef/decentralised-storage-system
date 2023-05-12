@@ -4,12 +4,15 @@ import android.Manifest // This will allow you to reference the location permiss
 import android.app.AlertDialog
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -28,7 +31,6 @@ import androidx.core.content.ContextCompat
 import com.example.locationappandroidtest.ui.theme.LocationAppAndroidTestTheme
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,9 +42,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -51,23 +50,20 @@ import androidx.compose.ui.unit.dp
 // for number picker
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class MainActivity : ComponentActivity() {
-    private val serverSender = ServerSender(this)
+class AppData(private val context: Context) {
 
-    private val REQUEST_LOCATION_PERMISSION = 1001
-
-    companion object {
-        public val CHANNEL_ID = "LocationUpdatesChannel"
-    }
-
-    private val currentTestName = mutableStateOf(TextFieldValue())
+    val currentTestName = mutableStateOf(TextFieldValue())
     fun setCurrentTestName(testName: TextFieldValue) {
         currentTestName.value = testName
         saveSharedPreferences("currentTestName", testName.text)
     }
 
-    private var selectedNumberOfSecondsBetweenLocationUpdates = mutableStateOf(TextFieldValue())
+    var selectedNumberOfSecondsBetweenLocationUpdates = mutableStateOf(TextFieldValue())
     fun setSelectedNumberOfSecondsBetweenLocationUpdates(numOfSecs: TextFieldValue) {
         selectedNumberOfSecondsBetweenLocationUpdates.value = numOfSecs
         saveSharedPreferences("selectedNumberOfSecondsBetweenLocationUpdates", if (numOfSecs.text.length == 0) 0 else numOfSecs.text.toLong())
@@ -84,19 +80,15 @@ class MainActivity : ComponentActivity() {
         saveSharedPreferences("startTestClicked", clickedForStart)
     }
 
-    private lateinit var locationUpdatesService: LocationUpdatesService
-    private var isBound = false
-    private val locationViewModel: LocationViewModel by viewModels()
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as LocationUpdatesService.LocationUpdatesBinder
-            locationUpdatesService = binder.getService()
-            locationUpdatesService.locationViewModel = locationViewModel
-            isBound = true
-        }
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
+    val lastLocation = mutableStateOf<String?>(null)
+    val lastUpdatedTime = mutableStateOf<String?>("")
+
+    fun updateLocation(latitude: Double, longitude: Double) {
+        val dateFormat =
+            android.icu.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentTime = dateFormat.format(Date())
+        lastUpdatedTime.value = "Last updated: $currentTime"
+        lastLocation.value = "latitude: ${latitude}, Longitude: ${longitude}"
     }
 
     // region persistent storage for test data
@@ -105,7 +97,7 @@ class MainActivity : ComponentActivity() {
     // data here about the test are not lost
 
     fun saveSharedPreferences(key: String, value: Any) {
-        val sharedPreferences = getSharedPreferences("com.example.LocationAppAndroidTest.MY_APP_STATE_PREFS", Context.MODE_PRIVATE)
+        val sharedPreferences = context.getSharedPreferences("com.example.LocationAppAndroidTest.MY_APP_STATE_PREFS", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         when (value) {
@@ -119,16 +111,17 @@ class MainActivity : ComponentActivity() {
         editor.apply()
     }
 
-    private fun loadSharedPreferences() {
-        val sharedPreferences = getSharedPreferences("com.example.LocationAppAndroidTest.MY_APP_STATE_PREFS", Context.MODE_PRIVATE)
+    fun loadSharedPreferences() {
+        val sharedPreferences = context.getSharedPreferences("com.example.LocationAppAndroidTest.MY_APP_STATE_PREFS", Context.MODE_PRIVATE)
 
         startTestClicked.value = sharedPreferences.getBoolean("startTestClicked", false)
         currentTestName.value = TextFieldValue(sharedPreferences.getString("currentTestName", "") ?: "")
         selectedNumberOfSecondsBetweenLocationUpdates.value = TextFieldValue(sharedPreferences.getLong("selectedNumberOfSecondsBetweenLocationUpdates", 0).toString())
         currentTestId.value = sharedPreferences.getInt("currentTestId", -1)
     }
+    //endregion
 
-    // About shared preferences on android:
+    // region About shared preferences on android:
     //
     // SharedPreferences is an Android framework feature that allows us to store small amounts of
     // primitive data (like booleans, strings, integers, longs, and floats) as key-value pairs
@@ -162,13 +155,39 @@ class MainActivity : ComponentActivity() {
     // Rather consider using a database or other storage options that offer better concurrency control.
 
     // endregion
+}
+
+class MainActivity : ComponentActivity() {
+    private val serverSender = ServerSender(this)
+
+    private val REQUEST_LOCATION_PERMISSION = 1001
+
+    companion object {
+        public val CHANNEL_ID = "LocationUpdatesChannel"
+    }
+
+    private val appData = AppData(this)
+
+    private val locationUpdateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
+            val longitude = intent?.getDoubleExtra("longitude", 0.0) ?: 0.0
+            appData.updateLocation(latitude, longitude)
+        }
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // load sharedPreferences to load saved values
-        loadSharedPreferences()
+        appData.loadSharedPreferences()
+
+        // Listening to change of location from the foreground service
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            locationUpdateReceiver,
+            IntentFilter("location_update")
+        )
 
         setContent {
             LocationAppAndroidTestTheme {
@@ -188,42 +207,42 @@ class MainActivity : ComponentActivity() {
                             textAlign = TextAlign.Center
                         )
 
-                        Text("Current testId: ${if (currentTestId.value == -1) "No test running at the moment" else currentTestId.value}")
+                        Text("Current testId: ${if (appData.currentTestId.value == -1) "No test running at the moment" else appData.currentTestId.value}")
 
                         // Add a text input
                         TextField(
-                            value = currentTestName.value,
-                            onValueChange = { setCurrentTestName(it) },
+                            value = appData.currentTestName.value,
+                            onValueChange = { appData.setCurrentTestName(it) },
                             label = { Text("Enter name of new test") },
                             singleLine = true,
-                            enabled = !startTestClicked.value
+                            enabled = !appData.startTestClicked.value
                         )
 
                         // Add a button
                         Button(onClick = {
                             val deviceName: String = "${android.os.Build.MANUFACTURER} ${android.os.Build.MODEL}"
-                            Log.d("SPRAVA", currentTestName.value.text.toString())
-                            if (currentTestName.value.text.length == 0) {
+                            Log.d("SPRAVA", appData.currentTestName.value.text.toString())
+                            if (appData.currentTestName.value.text.length == 0) {
                                 Toast.makeText(applicationContext, "Test name cannot be empty.", Toast.LENGTH_LONG).show()
                                 return@Button
                             }
 
-                            if (selectedNumberOfSecondsBetweenLocationUpdates.value.text.length == 0) {
+                            if (appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text.length == 0) {
                                 Toast.makeText(applicationContext, "Number of seconds between location updates cannot be empty.", Toast.LENGTH_LONG).show()
                                 return@Button
-                            } else if (selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong() <= 0) {
+                            } else if (appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong() <= 0) {
                                 Toast.makeText(applicationContext, "Number of seconds must be more than 0.", Toast.LENGTH_LONG).show()
                                 return@Button
                             }
 
                             serverSender.createNewTest(
-                                currentTestName.value.text,
-                                selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong(),
+                                appData.currentTestName.value.text,
+                                appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong(),
                                 deviceName,
                                 successCallback = { testId ->
-                                    setCurrentTestId(testId)
+                                    appData.setCurrentTestId(testId)
 
-                                    toggleStartTestClicked(true)
+                                    appData.toggleStartTestClicked(true)
                                     startMyCustomForegroundService()
                                     startLocationForegroundService()
 
@@ -238,16 +257,16 @@ class MainActivity : ComponentActivity() {
                                         Toast.makeText(applicationContext, "Error: $errorMessage. No foreground service started.", Toast.LENGTH_LONG).show()
                                     }
                                 })
-                        }, enabled = !startTestClicked.value) {
+                        }, enabled = !appData.startTestClicked.value) {
                             Text("Start new test")
                         }
 
                         // Add a button
                         Button(onClick = {
-                            toggleStartTestClicked(false)
+                            appData.toggleStartTestClicked(false)
                             stopMyCustomForegroundService()
                             stopLocationForegroundService()
-                        }, enabled = startTestClicked.value) {
+                        }, enabled = appData.startTestClicked.value) {
                             Text("End current test")
                         }
 
@@ -263,12 +282,12 @@ class MainActivity : ComponentActivity() {
                             )
 
                             TextField(
-                                value = selectedNumberOfSecondsBetweenLocationUpdates.value,
-                                onValueChange = { setSelectedNumberOfSecondsBetweenLocationUpdates(it) },
+                                value = appData.selectedNumberOfSecondsBetweenLocationUpdates.value,
+                                onValueChange = { appData.setSelectedNumberOfSecondsBetweenLocationUpdates(it) },
                                 label = { Text("Enter a number") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 singleLine = true,
-                                enabled = !startTestClicked.value
+                                enabled = !appData.startTestClicked.value
                             )
                         }
                         // endregion
@@ -282,11 +301,11 @@ class MainActivity : ComponentActivity() {
                         )
 
                         // region location updates
-                        if (locationViewModel.lastLocation.value == null) {
+                        if (appData.lastLocation.value == null) {
                             Text("Location not available")
                         } else {
-                            Text(locationViewModel.lastLocation.value!!)
-                            Text(locationViewModel.lastUpdatedTime.value!!)
+                            Text(appData.lastLocation.value!!)
+                            Text(appData.lastUpdatedTime.value!!)
                         }
                         // endregion
                     }
@@ -319,19 +338,15 @@ class MainActivity : ComponentActivity() {
         // Intent is a messaging object used to request an action from another app component, such as an Activity, Service, or BroadcastReceiver.
         // Intents are used to start activities, start services, or deliver broadcasts to various components within your app or even to other apps.
         val intent = Intent(this, LocationUpdatesService::class.java)
-        Log.d("SPRAVA", "MainActivity - startLocationForegroundServiceInternal - testID: ${currentTestId.value}")
-        intent.putExtra("testId", currentTestId.value.toString())
-        intent.putExtra("numberOfSecondsBetweenLocationUpdates", selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong())
+        Log.d("SPRAVA", "MainActivity - startLocationForegroundServiceInternal - testID: ${appData.currentTestId.value}")
+        intent.putExtra("testId", appData.currentTestId.value.toString())
+        intent.putExtra("numberOfSecondsBetweenLocationUpdates", appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong())
         startForegroundService(intent)
-        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE) // Context.BIND_AUTO_CREATE is a flag that specifies that the service should be created if it is not already running
     }
 
     fun stopLocationForegroundService() {
-        if (isBound) {
-            locationUpdatesService.stopService()
-            unbindService(serviceConnection)
-            isBound = false
-        }
+        val intent = Intent(this, LocationUpdatesService::class.java)
+        stopService(intent)
     }
     // endregion
 
@@ -387,12 +402,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationUpdateReceiver)
+    }
+
     override fun onStop() {
         super.onStop()
-        if (isBound) {
-            unbindService(serviceConnection)
-            isBound = false
-        }
     }
 }
 
