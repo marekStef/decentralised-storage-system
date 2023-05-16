@@ -2,12 +2,15 @@ package com.example.locationappandroidtest
 
 import android.Manifest
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Binder
+import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -15,7 +18,6 @@ import android.os.Process
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
-import com.example.locationappandroidtest.MainActivity.Companion.CHANNEL_ID
 import com.example.locationappandroidtest.NotificationHelper.updateNotification
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,9 +26,9 @@ import java.util.Locale
 class CustomForegroundService : Service() {
     companion object {
         public const val NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE = 124
+        public val CUSTOM_FOREGROUND_SERVICE_CHANNEL_ID = "CustomForegroundServiceChannel"
     }
 
-    private val serverSender = ServerSender(this)
     private val updateIntervalMillis: Long = 5000 // The update interval in milliseconds
 
     // HandlerThread is a class in Android to create a thread that has its own message queue,
@@ -53,7 +55,7 @@ class CustomForegroundService : Service() {
             updateNotification(
                 applicationContext,
                 NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE,
-                CHANNEL_ID,
+                CUSTOM_FOREGROUND_SERVICE_CHANNEL_ID,
                 "Custom foreground service",
                 "Not doing much at the moment (Last update sent: $lastUpdateTime)"
             )
@@ -63,7 +65,13 @@ class CustomForegroundService : Service() {
         }
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        createNotificationChannel()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("SPRAVA", "CUSTOOOOOOOOOOOOOOOM")
         startForegroundNotification()
         handlerThread = HandlerThread("HandlerThread", Process.THREAD_PRIORITY_BACKGROUND)
         handlerThread.start()
@@ -83,14 +91,31 @@ class CustomForegroundService : Service() {
             this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE or 0
         )
 
-        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification: Notification = NotificationCompat.Builder(this, CUSTOM_FOREGROUND_SERVICE_CHANNEL_ID)
             .setContentTitle("My Custom Foreground Service")
             .setContentText("Not doing much at the moment")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentIntent(pendingIntent)
             .build()
 
         startForeground(NOTIFICATION_ID_FOR_MY_CUSTOM_FOREGROUND_SERVICE, notification)
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Custom foreground service"
+            val descriptionText = "Channel for custom foreground service"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CUSTOM_FOREGROUND_SERVICE_CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     override fun onDestroy() {

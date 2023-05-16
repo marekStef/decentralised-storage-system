@@ -2,19 +2,13 @@ package com.example.locationappandroidtest
 
 import android.Manifest // This will allow you to reference the location permissions using the Manifest.permission constants in your code, such as Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, and Manifest.permission.ACCESS_BACKGROUND_LOCATION.
 import android.app.AlertDialog
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.ServiceConnection
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Location
+import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -29,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.locationappandroidtest.ui.theme.LocationAppAndroidTestTheme
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
@@ -160,11 +152,8 @@ class AppData(private val context: Context) {
 class MainActivity : ComponentActivity() {
     private val serverSender = ServerSender(this)
 
-    private val REQUEST_LOCATION_PERMISSION = 1001
-
-    companion object {
-        public val CHANNEL_ID = "LocationUpdatesChannel"
-    }
+    private val REQUEST_LOCATION_PERMISSION_CODE = 101
+    private val REQUEST_BACKGROUND_LOCATION_PERMISSION_CODE = 102
 
     private val appData = AppData(this)
 
@@ -174,6 +163,130 @@ class MainActivity : ComponentActivity() {
             val longitude = intent?.getDoubleExtra("longitude", 0.0) ?: 0.0
             appData.updateLocation(latitude, longitude)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    private fun checkAndRequestLocationPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED &&
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+        ) {
+            // we have all needed permissions
+            startLocationForegroundServiceInternal()
+            return
+        }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            == PackageManager.PERMISSION_GRANTED &&
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ) {
+            // we have all needed permissions for new API
+            startLocationForegroundServiceInternal()
+            return
+        }
+
+        // some permissions were not granted
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission is not granted, request the permission
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION_CODE
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // On Android 11 and above, need to request background location permission separately
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                REQUEST_BACKGROUND_LOCATION_PERMISSION_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permission was granted
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        // Need to check for background location permission on Android 11 and above
+                        checkAndRequestLocationPermissions()
+                    } else {
+                        // we have got everything we need
+                        startLocationForegroundServiceInternal()
+                    }
+                } else {
+                    // Permission was denied
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        // Show an explanation to the user
+                        showDialog(
+                            "Location Permission Needed",
+                            "This app needs the Location permission to function. Please grant the permission.",
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            REQUEST_LOCATION_PERMISSION_CODE
+                        )
+                    }
+                }
+                return
+            }
+            REQUEST_BACKGROUND_LOCATION_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Background location permission granted
+                    startLocationForegroundServiceInternal()
+                } else {
+                    // Background location permission denied
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
+                        // Show an explanation to the user
+                        showDialog(
+                            "Background Location Permission Needed",
+                            "This app needs the Background Location permission to function. Please grant the permission.",
+                            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                            REQUEST_BACKGROUND_LOCATION_PERMISSION_CODE
+                        )
+                    }
+                }
+            }
+            else -> {
+                // Other 'case' lines to check for other permissions this app might request
+            }
+        }
+    }
+
+
+    private fun showDialog(
+        title: String,
+        message: String,
+        permission: String,
+        requestCode: Int
+    ) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { _, _ ->
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(permission),
+                    requestCode
+                )
+            }
+            .setNegativeButton("Cancel", null)
+            .create()
+            .show()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -316,8 +429,13 @@ class MainActivity : ComponentActivity() {
 
     // region myCustomForegroundService
     fun startMyCustomForegroundService() {
+        Log.d("SPRAVA", "CUSTTTTT")
         val customForegroundServiceIntent = Intent(this, CustomForegroundService::class.java)
-        startService(customForegroundServiceIntent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(customForegroundServiceIntent)
+        } else {
+            startService(customForegroundServiceIntent)
+        }
     }
 
     fun stopMyCustomForegroundService() {
@@ -330,7 +448,7 @@ class MainActivity : ComponentActivity() {
     // starts foreground service for location updates and binds the activity to the service
     fun startLocationForegroundService() {
         // starting location foreground service
-        requestLocationPermissions()
+        checkAndRequestLocationPermissions()
     }
 
     fun startLocationForegroundServiceInternal()
@@ -338,7 +456,7 @@ class MainActivity : ComponentActivity() {
         // Intent is a messaging object used to request an action from another app component, such as an Activity, Service, or BroadcastReceiver.
         // Intents are used to start activities, start services, or deliver broadcasts to various components within your app or even to other apps.
         val intent = Intent(this, LocationUpdatesService::class.java)
-        Log.d("SPRAVA", "MainActivity - startLocationForegroundServiceInternal - testID: ${appData.currentTestId.value}")
+        Log.d("SPRAVA", "MainActivity - startLocationForegroundServiceInternal - testID: ${appData.currentTestId.value} and ${appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text}")
         intent.putExtra("testId", appData.currentTestId.value.toString())
         intent.putExtra("numberOfSecondsBetweenLocationUpdates", appData.selectedNumberOfSecondsBetweenLocationUpdates.value.text.toLong())
         startForegroundService(intent)
@@ -349,58 +467,6 @@ class MainActivity : ComponentActivity() {
         stopService(intent)
     }
     // endregion
-
-    private fun requestLocationPermissions() {
-        val requiredPermissions = arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
-        )
-
-        val missingPermissions = requiredPermissions.filter {
-            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
-        }.toTypedArray()
-
-        if (missingPermissions.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                missingPermissions,
-                REQUEST_LOCATION_PERMISSION
-            )
-        } else {
-            // all permissions were granted!
-            startLocationForegroundServiceInternal()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.d("SPRAVA", "onRequestPermissionsResult called, requestCode: $requestCode")
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                AlertDialog.Builder(this)
-                    .setTitle("Location Permission Granted")
-                    .setMessage("All permisions are granted and locationUpdatesService is about to be started")
-                    .show()
-                startLocationForegroundServiceInternal()
-            } else {
-                AlertDialog.Builder(this)
-                    .setTitle("Location Permission Required")
-                    .setMessage("This app needs location permissions to send location updates.")
-                    .setPositiveButton("Grant Permissions") { _, _ ->
-                        requestLocationPermissions()
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        // Handle the case when the user doesn't want to grant permissions
-                    }
-                    .show()
-            }
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()

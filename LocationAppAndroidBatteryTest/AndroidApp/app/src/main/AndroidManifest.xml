@@ -42,9 +42,12 @@
         <service
             android:name=".LocationUpdatesService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="location"/>
         <service
             android:name=".CustomForegroundService"
+            android:enabled="true"
+            android:exported="false"
             android:foregroundServiceType="dataSync" />
     </application>
 

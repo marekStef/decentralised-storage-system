@@ -2,6 +2,8 @@ package com.example.locationappandroidtest
 
 import android.Manifest
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
@@ -10,6 +12,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.BatteryManager
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.os.Handler
 import android.os.HandlerThread
@@ -21,9 +24,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-// importing just CHANNEL_ID
-import com.example.locationappandroidtest.MainActivity.Companion.CHANNEL_ID
-
 import android.os.Process // for: Process.THREAD_PRIORITY_BACKGROUND
 import androidx.core.app.NotificationManagerCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -32,6 +32,7 @@ import com.example.locationappandroidtest.NotificationHelper.updateNotification
 class LocationUpdatesService() : Service() {
     companion object {
         public const val NOTIFICATION_ID_FOR_LOCATION = 123
+        public val CHANNEL_ID = "LocationUpdatesChannel"
     }
 
     private val serverSender = ServerSender(this)
@@ -62,10 +63,13 @@ class LocationUpdatesService() : Service() {
         numberOfSecondsBetweenLocationUpdates =
             intent?.getLongExtra("numberOfSecondsBetweenLocationUpdates", 1)!!
 
+
         startForegroundNotification()
 
         // get another foreground service for location
         initializeLocationUpdates()
+
+
 
         return START_NOT_STICKY
         // This tells the system that if the service is killed by the system,
@@ -93,6 +97,8 @@ class LocationUpdatesService() : Service() {
     }
 
     private fun startForegroundNotification() {
+        createNotificationChannel()
+
         val notificationIntent = Intent(this, MainActivity::class.java)
         // A PendingIntent is a token that you give to another application
         // (e.g., the Android system) which allows that application to execute an operation on
@@ -111,6 +117,24 @@ class LocationUpdatesService() : Service() {
 
         startForeground(NOTIFICATION_ID_FOR_LOCATION, notification)
     }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Location Updates Channel"
+            val descriptionText = "Channel for location update notifications"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
     override fun onDestroy() {
         Log.d("SPRAVA", "LocationUpdatesService destroyed")
         stopService()
@@ -156,14 +180,21 @@ class LocationUpdatesService() : Service() {
     }
 
     private fun initializeLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
+        val hasFineLocationPermission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasBackgroundLocationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+
+        if (!hasFineLocationPermission || !hasBackgroundLocationPermission) {
+            //TODO: Handle permission request here
             return
         }
 

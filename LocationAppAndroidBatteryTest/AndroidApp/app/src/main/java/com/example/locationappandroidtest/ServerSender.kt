@@ -113,7 +113,7 @@ class ServerSender(private val context: Context) {
                     NotificationHelper.updateNotification(
                         context,
                         LocationUpdatesService.NOTIFICATION_ID_FOR_LOCATION,
-                        MainActivity.CHANNEL_ID,
+                        LocationUpdatesService.CHANNEL_ID,
                         "Location Updates - NO INTERNET",
                         "No connection to the internet!"
                     )
