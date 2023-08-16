@@ -1,9 +1,9 @@
 ## Update 16.8.2023
 Zacal jsem s implementaci toho vedlejsiho serveru pro ukladani tych transformacnich funkcii, jak jsme se bavili na stretnuti v pondeli, 14.8.2023. `DataViewStore` je prave ten server na to ukladani nejen jednotlivych funkci ale celych modulov - jak jste chteli. Ten `DataViewStore` je ta cast, kterou ste nakreslil napravo dole od storage ve ctverci(obrazok niz) - je tam pravdepodobne napsano `Plugin store`.
 
-Funguje to tak, ze kdyz se zapne hlavni `DataStorage` server, tak tento server si automaticky zapne i `DataViewStore` server. Kdyz z nejakeho duvodu `DataViewStore` spadne, `DataStorage` server ho nastartuje znovu - je to v classe `DataViewStoreHandler`.
-
 [Meeting notes](./meeting_notes_14_8_2023.pdf)
+
+Funguje to tak, ze kdyz se zapne hlavni `DataStorage` server, tak tento server si automaticky zapne i `DataViewStore` server. Kdyz z nejakeho duvodu `DataViewStore` spadne, `DataStorage` server ho nastartuje znovu - je to v classe `DataViewStoreHandler`.
 
 `DataStorage` server pak obsahuje endpoint `create_new_data_view`. Tento prijima jak samotne javascript files, tak i nazev hlavniho javascript souboru (v tomto subore musi byt jeden hlavni export jedne funkce - pridal sem i example - je to v directory `transformerExampleModules` ). Dalsi to pak vyzaduje `appId` pro prirazeni toho noveho pohledu k dane appce.  
 
