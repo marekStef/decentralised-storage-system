@@ -1,7 +1,7 @@
 ## Update 16.8.2023
 Zacal jsem s implementaci toho vedlejsiho serveru pro ukladani tych transformacnich funkcii, jak jsme se bavili na stretnuti v pondeli, 14.8.2023. `DataViewStore` je prave ten server na to ukladani nejen jednotlivych funkci ale celych modulov - jak jste chteli. Ten `DataViewStore` je ta cast, kterou ste nakreslil napravo dole od storage ve ctverci(obrazok niz) - je tam pravdepodobne napsano `Plugin store`.
 
-[Meeting notes](./meeting_notes_14_8_2023.pdf)
+[Meeting notes](./README_RESOURCES//meeting_notes_14_8_2023.pdf)
 
 Funguje to tak, ze kdyz se zapne hlavni `DataStorage` server, tak tento server si automaticky zapne i `DataViewStore` server. Kdyz z nejakeho duvodu `DataViewStore` spadne, `DataStorage` server ho nastartuje znovu - je to v classe `DataViewStoreHandler`.
 
@@ -38,14 +38,11 @@ Ak by jste si to chteli otestovat, pridavam i export pro postmana - jsou tam dva
 
 Predstavovali jste si tuhle cast nejak takhle?
 
+###### UseCases & funkcni pozadavky
+
+Usecases a funkční požadavky jsou v overleafu - sekce `kap02_navrh.text` Bol by som velmi vdecny, ak by jste si nasli cas a pripadne mi dali feedback, ci je to dobre, nebo jestli jsem to napsal zcela spatne.
+
 ---
-
-Takisto prikladam link na sepsane usecases a (docasne) funkcni pozadavky. Dal jsem to zatim jenom na Google Docs aby jste hned videli co by melo pribudnout do overleafu a zbytecne nestraceli cas to hledanim v overleafu. Bol by som velmi vdecny, ak by jste si nasli cas a pripadne mi dali feedback, ci je to dobre, nebo jestli jsem to napsal zcela spatne.
-
-[Link na usecases a docasni funkcni pozadavky](https://docs.google.com/document/d/1yG8jJXp6EuGiLP31vrtCG6Qsgg1KQsDfnQbcih-fTiU/edit?usp=sharing)
-
-
-## Old
 
 ### Overleaf link: 
 `https://www.overleaf.com/read/crsdprbtyxxr`
