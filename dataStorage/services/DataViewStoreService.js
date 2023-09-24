@@ -2,6 +2,9 @@
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
+const pm2 = require('pm2');
+require('dotenv').config();
+
 const { spawn } = require('child_process');
 const {DataViewStoreServerNotRunningError} = require("../utils/customErrors/dataViewStoreErrors");
 const logger = require('../logger/winston');
@@ -11,57 +14,100 @@ const logger = require('../logger/winston');
 let dataViewStoreUrl = null;
 //endregion
 
+
 /**
  * Starts the DataViewStore server as a child process.
  * Automatically restarts the server if it crashes.
  * Updates `dataViewStoreUrl` when the server successfully starts.
  */
 const startDataViewStore = () => {
-    const dataViewStoreServer = spawn('node', [path.join('..', 'dataViewStore', 'index.js')], {
-        // Specifies the input/output configuration for the child process
-        // 'ipc': Enables inter-process communication between the child and parent
-        // 'pipe': Creates a pipe for stdout, allowing the parent to read the output of the child
-        // 'pipe': Creates a pipe for stderr, allowing the parent to read error messages from the child
-        stdio: ['ipc', 'pipe', 'pipe']  
-    });
-
-    dataViewStoreServer.on('error', (err) => {
-        logger.log({
-            level: 'error',
-            message: `Failed to start child process: ${err}`,
-        });
-    });
-
-    dataViewStoreServer.on('message', (message) => {
-        if (message.type === 'dataViewStoreServerStarted') {
-            logger.log({
-                level: 'info',
-                message: `dataViewStoreServerStarted: ${message.url}`,
-            });
-            dataViewStoreUrl = message.url;
+    // Start the DataViewStore server using PM2
+    pm2.start({
+        script: path.join('..', 'dataViewStore', 'index.js'),
+        name: 'DataViewStoreServer',
+        exec_mode : 'fork', // Fork mode must be used to take advantage of the PM2 API
+        env: {  // Environment variables
+            'DATA_VIEW_STORE_PORT': process.env.DATA_VIEW_STORE_SERVER_PORT,
         }
-    });
+    }, (err) => {
+        if (err) {
+            logger.log({
+                level: 'error',
+                message: `Failed to start child process: ${err}`,
+            });
+            return;
+        }
 
-    dataViewStoreServer.stdout.on('data', (data) => {
         logger.log({
             level: 'info',
-            message: `[DataViewStore Server (stdout)]: ${data}`,
+            message: 'DataViewStore Server started',
+        });
+
+        pm2.launchBus((err, bus) => {
+            bus.on('log:out', (packet) => {
+                if (packet.process.name === 'DataViewStoreServer') {
+                    logger.log({
+                        level: 'info',
+                        message: `[DataViewStore Server (log:out)]: ${packet.data}`,
+                    });
+                }
+            });
+
+            bus.on('log:err', (packet) => {
+                if (packet.process.name === 'DataViewStoreServer') {
+                    logger.log({
+                        level: 'error',
+                        message: `[DataViewStore Server (log:err)]: ${packet.data}`,
+                    });
+                }
+            });
+
+            // for receiving messages sent from your child process
+            bus.on('process:msg', function(data) {
+                if (data.raw.type === "dataViewStoreServerUrl") {
+                    dataViewStoreUrl = data.raw.url;
+
+                    logger.log({
+                        level: 'info',
+                        message: `Received url from DataViewStoreServer: ${dataViewStoreUrl}`,
+                    });
+                }
+
+            });
+
+            bus.on('process:event', function(data) {
+                if (data.process.name === 'DataViewStoreServer') {
+                    if (data.event === 'exit') {
+                        logger.log({
+                            level: 'error',
+                            message: `DataViewStoreServer process exited.`,
+                        });
+                    }
+                }
+            });
         });
     });
+}
 
-    dataViewStoreServer.stderr.on('data', (data) => {
-        logger.log({
-            level: 'error',
-            message: `[DataViewStore Server (stderr)]: ${data}`,
+//
+/**
+ * Stops and deletes the DataViewStore server from PM2's list
+ */
+const stopDataViewStore = () => {
+    pm2.stop('DataViewStoreServer', (err) => {
+        if (err) {
+            logger.log({
+                level: 'error',
+                message: `Failed to stop DataViewStoreServer: ${err}`,
+            });
+            return;
+        }
+        pm2.delete('DataViewStoreServer', () => {
+            logger.log({
+                level: 'info',
+                message: 'DataViewStore Server stopped and deleted',
+            });
         });
-    });
-
-    dataViewStoreServer.on('exit', (code) => {
-        logger.log({
-            level: 'error',
-            message: `[DataViewStore Server(exit)] exited with code ${code}. Restarting...`,
-        });
-        startDataViewStore();
     });
 }
 
@@ -101,5 +147,6 @@ const createNewDataViewTransformerInDataViewStore = async (appId, newDataViewId,
 
 module.exports = {
     startDataViewStore,
+    stopDataViewStore,
     createNewDataViewTransformerInDataViewStore
 };

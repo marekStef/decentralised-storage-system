@@ -87,11 +87,13 @@ app.get('/runFunction/:appId/:viewId', async (req, res) => {
     res.send({ result });
 });
 
-app.listen(process.env.DATA_VIEW_STORE_PORT, () => {
-    dataViewStoreServerAddress = `http://localhost:${process.env.DATA_VIEW_STORE_PORT}`;
+const port = process.env.DATA_VIEW_STORE_SERVER_PORT || 3001;
+
+app.listen(port, () => {
+    dataViewStoreServerAddress = `http://localhost:${process.env.DATA_VIEW_STORE_SERVER_PORT}`;
     console.log(`DataViewStore server running on ${dataViewStoreServerAddress}`);
     if (process && process.send) {
-        process.send({ type: 'dataViewStoreServerStarted', url: `http://localhost:${process.env.DATA_VIEW_STORE_PORT}` });
+        process.send({ type: 'dataViewStoreServerUrl', url: `http://localhost:${port}` });
     }
 });
 
