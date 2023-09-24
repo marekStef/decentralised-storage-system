@@ -1,7 +1,7 @@
 {
   "name": "datastorage",
   "version": "1.0.0",
-  "description": "Main app for datastorage",
+  "description": "Main application for datastorage",
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exitcrash index.js",
@@ -11,9 +11,11 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

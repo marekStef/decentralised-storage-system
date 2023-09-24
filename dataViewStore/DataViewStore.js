@@ -5,9 +5,9 @@ const path = require('path');
 
 //#endregion
 
-//#region Constants
+//#region constants
 
-const {PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS} = require('./Constants/DataViewTransformersRelated');
+const {PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS} = require('./constants/DataViewTransformersRelated');
 
 //#endregion
 
@@ -15,7 +15,7 @@ class DataViewStore {
     /**
      * Loads all saved data view modules
      */
-    Start() {
+    start() {
         requireAllModules(PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS);
     }
 }

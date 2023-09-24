@@ -1,28 +1,26 @@
-//#region Imports
+//region Imports
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const DataViewStore = require('./DataViewStore');
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
-//#endregion
+const {PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS} = require('./constants/DataViewTransformersRelated');
+//endregion
 
-//#region Constants
+//region Runtime constants
+let dataViewStoreServerAddress = null;
+//endregion
 
-const {PORT} = require('./Constants/Server');
-
-const {PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS} = require('./Constants/DataViewTransformersRelated');
-
-//#endregion
-
-//#region Run Upon Start
+//region Run Upon Start
 
 const app = express();
 app.use(express.json()); 
 
 const dataViewStore = new DataViewStore();
-dataViewStore.Start();
+dataViewStore.start();
 
-//#endregion
+//endregion
 
 app.post('/createNewDataView', async (req, res) => {
     const appId = req.body.appId;
@@ -44,6 +42,10 @@ app.post('/createNewDataView', async (req, res) => {
 
     try {
         await fs.promises.rename(mainEntryFileNameOld, mainEntryModuleName);
+        logger.log({
+            level: 'info',
+            message: `DataStorageServer running on port ${process.env.PORT}!`,
+        });
         console.log("File renamed successfully!");
     } catch (error) {
         console.error("Error renaming file:", error);
@@ -57,7 +59,7 @@ app.post('/createNewDataView', async (req, res) => {
     require(mainEntryModuleName); // This will also require the other files if main.js has dependencies
 
     // Return the URL for accessing the function in the module
-    res.send({ url: `http://localhost:${PORT}/runFunction/${appId}/${viewId}` });
+    res.send({ url: `${dataViewStoreServerAddress}/runFunction/${appId}/${viewId}` });
 });
 
 app.get('/runFunction/:appId/:viewId', async (req, res) => {
@@ -85,7 +87,13 @@ app.get('/runFunction/:appId/:viewId', async (req, res) => {
     res.send({ result });
 });
 
-app.listen(PORT, () => console.log(`DataViewStore server running on port ${PORT}!`));
+app.listen(process.env.DATA_VIEW_STORE_PORT, () => {
+    dataViewStoreServerAddress = `http://localhost:${process.env.DATA_VIEW_STORE_PORT}`;
+    console.log(`DataViewStore server running on ${dataViewStoreServerAddress}`);
+    if (process && process.send) {
+        process.send({ type: 'dataViewStoreServerStarted', url: `http://localhost:${process.env.DATA_VIEW_STORE_PORT}` });
+    }
+});
 
 //#region Helpers
 const getPathToDataViewTransformerFunctionsDirectoryOfGivenApp = async (appId, viewId, createIfNotPresent) => {
@@ -97,4 +105,4 @@ const getPathToDataViewTransformerFunctionsDirectoryOfGivenApp = async (appId, v
     } 
     return dir;
 }
-//#endregion
+//endregion
