@@ -1,26 +1,17 @@
-//#region Imports
-
 const fs = require('fs');
 const path = require('path');
+const {getDataViewDirectoryPath} = require("../configuration/configuration");
 
-//#endregion
-
-//#region constants
-
-const {PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS} = require('./constants/DataViewTransformersRelated');
-
-//#endregion
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 class DataViewStore {
     /**
      * Loads all saved data view modules
      */
     start() {
-        requireAllModules(PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS);
+        requireAllModules(getDataViewDirectoryPath());
     }
 }
-
-//#region Helpers
 
 const requireAllModules = (dir) => {
 
@@ -38,9 +29,6 @@ const requireAllModules = (dir) => {
     });
 };
 
-const getAllAppIdsRegistered = () => fs.readdirSync(PATH_TO_SAVED_DATA_VIEW_TRANSFORMER_FUNCTIONS);
-
-//#endregion
-
+const getAllAppIdsRegistered = () => fs.readdirSync(getDataViewDirectoryPath());
 
 module.exports = DataViewStore;

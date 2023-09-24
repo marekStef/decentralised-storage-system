@@ -1,10 +1,10 @@
 const express = require('express');
-const {startDataViewStore} = require('./services/DataViewStoreService');
+const {startDataViewStore} = require('./src/services/DataViewStoreService');
 require('dotenv').config();
-const logger = require('./logger/winston');
-const { gracefulShutdown } = require('./utils/shutdownManager/shutdownManager');
+const logger = require('./src/logger/winston');
+const { gracefulShutdown } = require('./src/utils/shutdownManager/shutdownManager');
 
-const dataViewStoreRoutes = require("./routes/dataViewStoreRoutes");
+const dataViewStoreRoutes = require("./src/routes/dataViewStoreRoutes");
 
 startDataViewStore();
 
