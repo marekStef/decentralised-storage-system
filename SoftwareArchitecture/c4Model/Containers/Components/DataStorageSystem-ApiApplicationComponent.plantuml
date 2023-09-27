@@ -1,0 +1,43 @@
+@startuml SystemContext
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define WEATHER https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/weather
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/msql_server.puml
+
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/database.puml
+!include FONTAWESOME/server.puml
+!include WEATHER/cloud.puml
+
+title [Component] Data Storage System - API application
+
+Component(dataStorageSystemContainer, "API application", "Container") {
+    Container(dataController, "Data Controller", "Node.js MVC controller", "Allows to perform CRUD operations based on permissions")
+
+    Container(permissionController, "Permission Controller", "Node.js", "Allows users to create new token for app; \nManages permissions for tokens (apps)")
+
+    Container(cloudController, "Cloud Controller", "Node.js", "Allows application to share certain data over the internet with generated access token url")
+}
+
+ContainerDb(database, "Database", "MongoDB", "Stores apps information, access tokens and information about them such as approved permissions, data events posted by apps, Data View Transformation Templates, Data View Transformation Template Instances", $sprite="database")
+
+Container(locationAggregatorApp, "Location Aggregation Application", "Android app", "Allows user to set location logging interval; \nsends all locally saved data to main Data Storage System when connected to local network")
+
+Container(openWindowsAppsAggregatorApplication, "Open Windows apps Aggregation Application", "C++", "Allows users to map unrecognised programs to categories;\nAllows users to set aggregation interval")
+
+Rel(dataController, cloudController, "Provides data for uploading")
+
+Rel(dataController, database, "Reads from and writes to", "mongo")
+Rel(permissionController, database, "Reads from and writes to", "mongo")
+Rel(cloudController, database, "Reads from and writes to", "mongo")
+
+Rel(locationAggregatorApp, dataController, "Posts new location data", "HTTP requests")
+Rel(openWindowsAppsAggregatorApplication, dataController, "Posts new open apps data", "HTTP requests")
+Rel(locationAggregatorApp, permissionController, "Asks for more permissions", "HTTP requests")
+
+@enduml

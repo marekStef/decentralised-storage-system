@@ -1,0 +1,48 @@
+@startuml SystemContext
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define WEATHER https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/weather
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/msql_server.puml
+
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/database.puml
+!include FONTAWESOME/server.puml
+!include WEATHER/cloud.puml
+
+title [Container] Data Storage System
+
+Person(dataStorageUser, "Data Storage User", $sprite="users") 
+
+Component(dataStorageSystemContainer, "Data Storage System", "Software System") {
+
+    Container(web_app, "Web Application", "Node.js", "Delivers static content and single page application.", $sprite="cloud")
+    Container(singlePageApp, "Single Page Application", "React", "Provides all Data Storage System functionality to user via a modern app")
+    ContainerDb(database, "Database", "MongoDB", "Stores apps information, access tokens and information about them such as approved permissions, data events posted by apps, Data View Transformation Templates, Data View Transformation Template Instances", $sprite="database")
+    Container(api, "Api Application", "Node.js MVC", "Provides data access functionality via https (json) api", $sprite="server")
+    Container(dataTemplateTransformationViewStore, "Data Template Transformation View Store", "Node.js MVC", "Saves templates (javascript modules) and runs those", $sprite="server")
+}
+
+Container(locationAggregatorApp, "Location Aggregation Application", "Android app", "Allows user to set location logging interval; \nsends all locally saved data to main Data Storage System when connected to local network")
+
+Container(openWindowsAppsAggregatorApplication, "Open Windows apps Aggregation Application", "C++", "Allows users to map unrecognised programs to categories;\nAllows users to set aggregation interval")
+
+
+Rel(dataStorageUser, web_app, "Visits localhost:3000", "using http")
+Rel(dataStorageUser, singlePageApp, "Views permissions, apps, created tokens..")
+Rel(web_app, singlePageApp, "Delivers to the user's browser")
+
+Rel(singlePageApp, api, "Makes API calls to")
+Rel(api, database, "Reads from and writes to", "mongo")
+Rel(api, dataTemplateTransformationViewStore, "Runs data events transformations on this standalon server via http requests")
+
+Rel(dataStorageUser, locationAggregatorApp, "Gives the app access token acquired in Data Storage System")
+Rel(dataStorageUser, openWindowsAppsAggregatorApplication, "Gives the app access token acquired in Data Storage System")
+Rel(locationAggregatorApp, api, "Posts new location data", "HTTP requests")
+Rel(openWindowsAppsAggregatorApplication, api, "Posts new open apps data", "HTTP requests")
+@enduml

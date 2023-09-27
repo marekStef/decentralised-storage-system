@@ -1,0 +1,46 @@
+@startuml SystemContext
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define WEATHER https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/weather
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/angular.puml
+!include DEVICONS/java.puml
+!include DEVICONS/msql_server.puml
+
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/database.puml
+!include FONTAWESOME/server.puml
+!include WEATHER/cloud.puml
+
+title [System Context] Data Storage System
+
+
+Person(dataStorageUser, "Data Storage User", "User interested in having control of their data and data's processing of various kind", $sprite="users") 
+
+together {
+    Component(dataStorageSystem, "Data Storage System", "Software System", "Allows users to create new access tokens for data access privilleges;\nAllows users to see all active tokens and gives them an option to invalidate them;\nShows users a list of all apps (including further info about them) processing Data Storage data in some way;\nAllows to add further access privilleges of a given token to another token (app gives permission to its data) to another app")
+
+    Component(dataStorageCloud, "Data Storage Cloud Hub", "Software System", "Allows to create new account for user\nAllows local Data Storage System to save a subset of its data and acquire access url to it;")
+}
+
+Component(locationAggregatorApp, "Location Aggregation Application", "Android app", "Allows user to set location logging interval; \nsends all locally saved data to main Data Storage System when connected to local network")
+
+Component(openWindowsAppsAggregatorApplication, "Open Windows apps Aggregation Application", "C++", "Allows users to map unrecognised programs to categories;\nAllows users to set aggregation interval")
+
+
+Rel(dataStorageUser, dataStorageCloud, "Creates new account", "via Data Storage System")
+Rel(dataStorageUser, locationAggregatorApp, "Gives the app access token acquired in Data Storage System")
+Rel(dataStorageUser, openWindowsAppsAggregatorApplication, "Gives the app access token acquired in Data Storage System")
+
+Rel(dataStorageUser, dataStorageSystem, "Creates new app's access token;\nViews all apps having access to tokens and further info about them;\nInvalidates tokens;\nApproves data permission requests (requested by apps for given token)")
+Rel(dataStorageSystem, dataStorageCloud, "Uploads a subset of data and sets expiration date for it;\nDownloads data based on a given access url")
+
+Rel(locationAggregatorApp, dataStorageSystem, "Sends location data; \n Asks for granting data permissions")
+Rel(openWindowsAppsAggregatorApplication, dataStorageSystem, "Sends open apps data; \n Asks for granting data permissions\nRegisters Data View Transformation Templates")
+
+
+
+@enduml
