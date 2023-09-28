@@ -1,7 +1,7 @@
 openapi: 3.0.0
 servers: []
 info:
-  version: "1.0.0"
+  version: "1.0.1"
   title: Data Storage System
   description: This is a documentation for Data Storage System api endpoints.
 
@@ -133,7 +133,25 @@ components:
         expirationTimestamp:
           type: integer
           description: "Timestamp when this permission expires"
+  
+    Error:
+      description: Error response for body
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
 
+    User:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+    
 # ------------ PARAMETERS -------------------------------------------------------------------------
 
   parameters:
@@ -182,7 +200,7 @@ paths:
         This is token is not associated with any app. It's the app that needs to get that token, associate itself with that token and request permissions for it
       tags: ["user initiated"]
       responses:
-        '200':
+        200:
           description: 'Successfully created new token'
           content:
             application/json:
@@ -203,24 +221,52 @@ paths:
         It is important to say, that all data associated with this token will be deleted.
       tags: ["user initiated"]
       responses:
-        '200':
+        200:
           description: "Operation was successful"
-        '400':
-          description: "tokenId does not exist"
-        '500':
-          description: "Something went wrong internally"
+        400:
+          description: tokenId does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Something went wrong internally
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /tokens:
+    get:
+      summary: Gets all registered tokens
+      description: >-
+        Gets all registered tokens and basic information about them in the dataStorageSystem.
+        For more detailed information, '/tokens/{tokenId}' endpoint is prepared.
+      tags: ["user initiated"]
+      responses:
+        200:
+          description: "Returns all tokens or empty array if no tokens are registered"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Token'
   
   
   /tokens/{tokenId}:
     parameters:
       - $ref: '#/components/parameters/tokenId'
     get:
-      summary: Gets token information
+      summary: Gets detailed token information
       description: >-
-        Returns information about a token including the name and description of the app using it and what permissions the token has
+        Returns detailed information about a token including the name and description of the app using it and what permissions the token has
       tags: ["user initiated"]
       responses:
-        '200':
+        200:
           description: ""
           content:
             application/json:
@@ -253,8 +299,8 @@ paths:
                     type: boolean
                     default: true
       responses:
-        '200':
-          description: "Operation was successful"
+        200:
+          description: Operation was successful
 
 
   /permissions/approved/{permissionRequestId}/:
@@ -266,13 +312,65 @@ paths:
         Used for revoking certain permissions to certain apps which user no longer wants
       tags: ["user initiated"]
       responses:
-        '200':
-          description: "Operation was successful"
-        '400':
-          description: "permissionRequestId does not exist | permission for permissionRequestId already revoked"
-        '500':
-          description: "Something went wrong internally"
-        
+        200:
+          description: Operation was successful
+        400:
+          description: permissionRequestId does not exist | permission for permissionRequestId already revoked
+        500:
+          description: Something went wrong internally
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /events/eventTypes:
+    get:
+      summary: Gets all event types registered in the dataStorageSystem
+      description: >-
+        Returns all event types including information about who created them (tokenId, appName, appDescription).
+        Apps can use this endpoint for requesting permissions which they don't own.
+      tags: ["user initiated"]
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventTypeInformation'
+
+  /events/statistics:
+    get:
+      summary: Gets all event types and statistics about them
+      description: >-
+        Parameters such as number of created events or amount of storage taken by those events is fetched among other things.
+      tags: ["user initiated"]
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypesStatistics:
+                    type: array
+                    items:
+                      properties:
+                        eventType:
+                          $ref: '#/components/schemas/EventTypeInformation'
+                        numberOfCreatedEvents:
+                          type: integer
+                        numberOfCreatedEventsInTheLast7Days:
+                          type: integer
+                        numberOfCreatedEventsInTheLast14Days:
+                          type: integer
+                        amountOfStorageTakenByCreatedEvents:
+                          type: integer
 
 # ------------ PATHS - APP INITIATED ------------------------------------------
 
@@ -292,8 +390,14 @@ paths:
                   app:
                     $ref: '#/components/schemas/App'
       responses:
-        '200':
+        200:
           description: "Successfully updated token"
+        401:
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
   /app/{tokenId}/eventTypes:
@@ -322,7 +426,7 @@ paths:
                     type: integer
                     description: "Timestamp when this permission expires"
       responses:
-        '201':
+        201:
           description: "New event type created"
           content:
             application/json:
@@ -336,14 +440,18 @@ paths:
                   waitingForUserApproval:
                     type: boolean
                     default: false
-        '400':
+        400:
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     get:
       summary: List all event types which are belonging to this tokenId
       description: ""
       tags: ["app initiated"]
       responses:
-        '200':
+        200:
           description: A list of event types
           content:
             application/json:
@@ -351,27 +459,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EventTypeInformation'
-
-
-  /events/eventTypes:
-    get:
-      summary: Gets all event types registered in the dataStorageSystem
+  
+  /app/{tokenId}/eventTypes/{eventTypeId}:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+      - $ref: '#/components/parameters/eventTypeId'
+    delete:
+      summary: Deletes this eventType from dataStorageSystem with all generated events
       description: >-
-        Returns all event types including information about who created them (tokenId, appName, appDescription).
-        Apps can use this endpoint for requesting permissions which they don't own.
+        All deleted events along with the event type is deleted. 
+        Subsequently all permissions to this event type previously given to other tokens are revoked
       tags: ["app initiated"]
       responses:
-        '200':
-          description: ""
+        200:
+          description: Deletion successful
+        401:
+          description: Unauthorised access to this event type
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  eventTypes:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/EventTypeInformation'
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Something went wrong internally
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   
 
   /app/tokens/{tokenId}/permissions:
@@ -401,7 +514,7 @@ paths:
                     type: integer
                     description: "Timestamp when this permission expires"
       responses:
-        '200':
+        200:
           description: "Permissions requested and waiting for user approval"
           content:
             application/json:
@@ -417,21 +530,20 @@ paths:
                     default: true
     get:
       summary: "Gets all permissions for this token (including pending / approved)"
-      description: "Apps can ask dataStorageSystem for permissions by requesting it here. Permission requests need to be accepted in the dataStorageSystem by manual accepting of a user"
+      description: "All current permissions are returned as stated in summary. Also created events after approval are just ordinary permissions and therefore appear here."
       tags: ["app initiated"]
       responses:
-        '200':
-          description: "Permissions requested and waiting for user approval"
+        200:
+          description: "Fetched permissions"
           content:
             application/json:
               schema:
                 properties:
-                  permissionGranted:
-                    type: boolean
-                    default: false
-                  waitingForUserApproval:
-                    type: boolean
-                    default: true
+                  permissions: 
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Permission'
+
 
 # ------------ PATHS - APP INITIATED, DATA SUBMISSION RELATED -----------------
 
@@ -440,20 +552,86 @@ paths:
       - $ref: '#/components/parameters/tokenId'
       - $ref: '#/components/parameters/eventTypeId'
     post:
-      summary: "Asks dataStorageSystem for permissions which were not created by token"
-      description: "Apps can ask dataStorageSystem for permissions by requesting it here. Permission requests need to be accepted in the dataStorageSystem by manual accepting of a user"
-      tags: ["app initiated", "event submission and fetching related"]
+      summary: "Used for uploading event or a bulk of events"
+      description: ""
+      tags: ["event submission and fetching related"]
       requestBody:
         content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Event_Pushing_Version'
-                 
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event_Pushing_Version'
       responses:
-        '201':
+        201:
           description: Event created
-        '400':
+        400:
           description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorised
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Retrieve Events
+      description: ->
+        Retrieve events based on specified criteria such as time frame (only time frame at the moment).
+      tags: ["event submission and fetching related"]
+      parameters:
+        - name: eventTypeId
+          in: query
+          description: Type of the event
+          required: false
+          schema:
+            type: string
+        - name: startTimestamp
+          in: query
+          description: Start timestamp (in milliseconds) from which to get all events
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: endTimestamp
+          in: query
+          description: End timestamp (in milliseconds) till which to get all events
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: numberOfEventsToFetch
+          in: query
+          schema:
+            type: integer
+            default: 20
+          description: Used for pagination and sets how many events to return in one request
+        - name: lastEventId
+          in: query
+          schema:
+            type: string
+            default: null
+          description: Null if first n events is to be fetched
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /tokens/{tokenId}/events/{eventTypeId}:
     parameters:
@@ -462,7 +640,7 @@ paths:
     get:
       summary: "Fetches events of given eventTypeId"
       description: "All events will be returned with pagination"
-      tags: ["app initiated", "event submission and fetching related"]
+      tags: ["event submission and fetching related"]
       requestBody:
         content:
             application/json:
@@ -476,7 +654,7 @@ paths:
                     default: null
                     description: "Null if first n events is to be fetched"
       responses:
-        '200':
+        200:
           description: Fetched events
           content:
             application/json:
@@ -492,17 +670,41 @@ paths:
                     type: boolean
                     default: true
                     description: "Whether more events are available to be fetched"
-        '401':
+        401:
           description: Unauthorised access to this event type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
   /tokens/{tokenId}/events/{eventId}:
     parameters:
+      - $ref: '#/components/parameters/tokenId'
       - $ref: '#/components/parameters/eventId'
-    put:
-      summary: "Updates specific event"
+    get:
+      summary: Fetches specific event
       description: ""
-      tags: ["app initiated", "event submission and fetching related"]
+      tags: ["event submission and fetching related"]
+      responses:
+        200:
+          description: Event fetched
+          content:
+            application/json:
+              schema:
+                properties:
+                  event:
+                      $ref: '#/components/schemas/Event'
+        401:
+          description: Unauthorised access to this event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Updates specific event
+      description: ""
+      tags: ["event submission and fetching related"]
       requestBody:
         content:
             application/json:
@@ -510,23 +712,127 @@ paths:
                 $ref: '#/components/schemas/Event_Updating_Version'
                  
       responses:
-        '200':
+        200:
           description: Event updated
-        '400':
+        400:
           description: Invalid request. Something is wrong there.
-        '401':
+        401:
           description: Unauthorised access to this event type
     delete:
       summary: "Deletes specific event"
       description: ""
-      tags: ["app initiated", "event submission and fetching related"]
+      tags: ["event submission and fetching related"]
       responses:
-        '200':
+        200:
           description: Event deleted
-        '401':
+        401:
           description: Unauthorised access to this event type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        404:
+          description: Event Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /events/bulk-delete:
+    delete:
+      summary: Bulk Delete Events
+      description: |
+        Delete multiple events based on specified criteria such as event type or time frame.
+      tags: ["event submission and fetching related"]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                eventIds:
+                  type: array
+                  items:
+                    type: string
+                eventTypeId:
+                  type: string
+                startTimestamp:
+                  type: integer
+                  format: int64
+                endTimestamp:
+                  type: integer
+                  format: int64
+      responses:
+        200:
+          description: Successful operation
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+# ------------ PATHS - Registration -------------
+  /users/register:
+    post:
+      summary: Register a new user
+      description: ->
+        Allows a new user to register in the dataStorageSystem
+      tags: ["authentication"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   
 
+  /users/login:
+    post:
+      summary: Login
+      description: |
+        Allows a user to login to the system.
+      tags: ["authentication"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 # ------------ PATHS - Data View Transformation Templates Related -------------
 #TODO
