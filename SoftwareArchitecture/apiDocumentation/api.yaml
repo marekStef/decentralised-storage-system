@@ -1,0 +1,535 @@
+openapi: 3.0.0
+servers: []
+info:
+  version: "1.0.0"
+  title: Data Storage System
+  description: This is a documentation for Data Storage System api endpoints.
+
+components:
+# ------------ SCHEMAS ----------------------------------------------------------------------------
+  schemas:
+    App:
+      description: ""
+      properties:
+        associatedAppId:
+          type: string
+          description: "App id which has been associated with this token during initialisation of the token. App id is 0 in case of dataStorageSystem"
+        associatedAppName:
+          type: string
+          description: "App name which has been associated with this token during initialisation of the token"
+        associatedAppDescription:
+          type: string
+          description: "App description which has been associated with this token during initialisation of the token"
+
+
+    Token:
+      description: "Token is associated with exactly one app (dataStorageSystem has one self granted token as well - 0). Whenever is app specified here, it can be dataStorageSystem as well."
+      properties:
+        tokenId:
+          type: string
+          description: "Id of the token (either generated for new app or fixed '0' for dataStorageSystem)"
+        app:
+          $ref: '#/components/schemas/App'
+        createdTimestamp:
+          type: integer
+          description: "Timestamp for when this token has been created"
+
+
+    EventTypeInformation:
+      description: "Information about a specific event. (Event is one unit of data)"
+      properties:
+        eventTypeId:
+          type: string
+        eventTypeName:
+          type: string
+        eventOwnerTokenId:
+          type: string
+          description: "Id of the app which created this event name"
+        eventOwnerTokenName:
+          type: string
+          description: "Name of the app which created this event name"
+        metadataSchema:
+          type: object
+    
+
+    Event:
+      type: object
+      properties:
+        eventId:
+          type: string
+        eventTypeId:
+          type: string
+        sourceTokenId:
+          type: string
+          description: >-
+            TokenId of the source (who generated this event). 
+            This can be different from eventOwnerTokenId which is the id associated with the app which created this event.
+        modifiedTokenId:
+          type: string
+          description: >-
+            TokenId of the app which last modified this event.
+          default: null
+        createdTimestamp:
+          type: string
+        modifiedTimestamp:
+          type: string
+          default: null
+        metadata:
+          type: object
+        data:
+          type: object
+          description: Any type of text data.
+    
+    Event_Pushing_Version:
+      description: This is Event type but modified to be used in post requests (remaining fields in Event are filled in by dataStorageSystem)
+      type: object
+      properties:
+        eventTypeId:
+          type: string
+        metadata:
+          type: object
+        data:
+          type: object
+          description: Any type of text data.
+
+    Event_Updating_Version:
+      description: This is Event type but modified to be used in put requests (remaining fields in Event are filled in by dataStorageSystem)
+      type: object
+      properties:
+        metadata:
+          type: object
+        data:
+          type: object
+          description: Any type of text data.
+
+
+    PermissionOperation:
+      type: string
+      enum: ['READ', 'WRITE', 'UPDATE', 'DELETE']
+      description: "Permission operation flag"
+
+
+    Permission:
+      properties:
+        eventTypeInformation:
+          $ref: '#/components/schemas/EventTypeInformation'
+        permissionGranted:
+          type: boolean
+          default: true
+        waitingForUserApproval:
+          type: boolean
+          default: false
+        allowedOperations:
+          type: array
+          items: 
+            $ref: '#/components/schemas/PermissionOperation' 
+          description: "Functions as flags"
+        issuer:
+          $ref: '#/components/schemas/Token'
+          description: "Issuer is app/dataStorageSystem which issued this permission (for instance dataStorage - it has its own fixed token)"
+        isTemporaryAccess:
+          type: boolean
+          description: "Whether this permission is temporary only ( if so, expirationTimestamp is set )"
+        expirationTimestamp:
+          type: integer
+          description: "Timestamp when this permission expires"
+
+# ------------ PARAMETERS -------------------------------------------------------------------------
+
+  parameters:
+    tokenId:
+      name: tokenId
+      in: path
+      required: true
+      description: The id of the token
+      schema:
+          type: string
+    
+    permissionRequestId:
+      name: "permissionRequestId"
+      in: path
+      required: true
+      description: The id of the permission request waiting for user approval
+      schema:
+        type: string
+      
+    eventTypeId:
+      name: "eventTypeId"
+      in: "path"
+      required: true
+      description: The id of the event type
+      schema:
+        type: string
+    
+    eventId:
+      name: "eventId"
+      in: "path"
+      required: true
+      description: The id of the specific saved event
+      schema:
+        type: string
+
+
+# ------------ PATHS ------------------------------------------------------------------------------
+
+# ------------ PATHS - USER INITIATED -----------------------------------------
+
+paths:
+  /tokens/create:
+    post:
+      summary: Creates new token for new app prepared for Data Storage System
+      description: >-
+        This is token is not associated with any app. It's the app that needs to get that token, associate itself with that token and request permissions for it
+      tags: ["user initiated"]
+      responses:
+        '200':
+          description: 'Successfully created new token'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokenId:
+                    type: string
+
+
+  /tokens/{tokenId}/:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+    delete:
+      summary: Allows to delete token along with all generated data by it
+      description: >-
+        Used when the user wants to remove the app from the system.
+        It is important to say, that all data associated with this token will be deleted.
+      tags: ["user initiated"]
+      responses:
+        '200':
+          description: "Operation was successful"
+        '400':
+          description: "tokenId does not exist"
+        '500':
+          description: "Something went wrong internally"
+  
+  
+  /tokens/{tokenId}:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+    get:
+      summary: Gets token information
+      description: >-
+        Returns information about a token including the name and description of the app using it and what permissions the token has
+      tags: ["user initiated"]
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    $ref: '#/components/schemas/Token'
+                  permissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Permission'
+  
+
+  /permissions/waitingApprovals/{permissionRequestId}/:
+    parameters:
+      - $ref: '#/components/parameters/permissionRequestId'
+    post:
+      summary: Accepts / refuses permission request
+      description: >-
+        Used for accepting permission requests for certain event types by applications
+      tags: ["user initiated"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acceptPermissionRequest:
+                    type: boolean
+                    default: true
+      responses:
+        '200':
+          description: "Operation was successful"
+
+
+  /permissions/approved/{permissionRequestId}/:
+    parameters:
+      - $ref: '#/components/parameters/permissionRequestId'
+    delete:
+      summary: Allows to revoke already accepted permissions.
+      description: >-
+        Used for revoking certain permissions to certain apps which user no longer wants
+      tags: ["user initiated"]
+      responses:
+        '200':
+          description: "Operation was successful"
+        '400':
+          description: "permissionRequestId does not exist | permission for permissionRequestId already revoked"
+        '500':
+          description: "Something went wrong internally"
+        
+
+# ------------ PATHS - APP INITIATED ------------------------------------------
+
+  /app/tokens/{tokenId}/information:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+    post:
+      summary: "Allows app to associate itself with given token"
+      description: "App can submit basic information about itself such as its id, name and description"
+      tags: ["app initiated"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  app:
+                    $ref: '#/components/schemas/App'
+      responses:
+        '200':
+          description: "Successfully updated token"
+
+
+  /app/{tokenId}/eventTypes:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+    post:
+      summary: "Asks dataStorageSystem to create new event type"
+      description: "After creating new event, the app associated with the given 'tokenId' has specified permissions for the new event type"
+      tags: ["app initiated"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypeName:
+                    type: string
+                  permissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PermissionOperation'
+                  isTemporaryAccess:
+                    type: boolean
+                    description: "Whether this permission is temporary only ( if so, expirationTimestamp is set )"
+                  expirationTimestamp:
+                    type: integer
+                    description: "Timestamp when this permission expires"
+      responses:
+        '201':
+          description: "New event type created"
+          content:
+            application/json:
+              schema:
+                properties:
+                  permissionRequestId:
+                    type: string
+                  permissionGranted:
+                    type: boolean
+                    default: true
+                  waitingForUserApproval:
+                    type: boolean
+                    default: false
+        '400':
+          description: Invalid input
+    get:
+      summary: List all event types which are belonging to this tokenId
+      description: ""
+      tags: ["app initiated"]
+      responses:
+        '200':
+          description: A list of event types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventTypeInformation'
+
+
+  /events/eventTypes:
+    get:
+      summary: Gets all event types registered in the dataStorageSystem
+      description: >-
+        Returns all event types including information about who created them (tokenId, appName, appDescription).
+        Apps can use this endpoint for requesting permissions which they don't own.
+      tags: ["app initiated"]
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EventTypeInformation'
+  
+
+  /app/tokens/{tokenId}/permissions:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+    post:
+      summary: "Asks dataStorageSystem for permissions which were not created by token"
+      description: "Apps can ask dataStorageSystem for permissions by requesting it here. Permission requests need to be accepted in the dataStorageSystem by manual accepting of a user"
+      tags: ["app initiated"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eventTypeId:
+                    type: string
+                  permissions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PermissionOperation'
+                  isTemporaryAccess:
+                    type: boolean
+                    default: false
+                    description: "Whether this permission is temporary only ( if so, expirationTimestamp is set )"
+                  expirationTimestamp:
+                    type: integer
+                    description: "Timestamp when this permission expires"
+      responses:
+        '200':
+          description: "Permissions requested and waiting for user approval"
+          content:
+            application/json:
+              schema:
+                properties:
+                  permissionRequestId:
+                      type: string
+                  permissionGranted:
+                    type: boolean
+                    default: false
+                  waitingForUserApproval:
+                    type: boolean
+                    default: true
+    get:
+      summary: "Gets all permissions for this token (including pending / approved)"
+      description: "Apps can ask dataStorageSystem for permissions by requesting it here. Permission requests need to be accepted in the dataStorageSystem by manual accepting of a user"
+      tags: ["app initiated"]
+      responses:
+        '200':
+          description: "Permissions requested and waiting for user approval"
+          content:
+            application/json:
+              schema:
+                properties:
+                  permissionGranted:
+                    type: boolean
+                    default: false
+                  waitingForUserApproval:
+                    type: boolean
+                    default: true
+
+# ------------ PATHS - APP INITIATED, DATA SUBMISSION RELATED -----------------
+
+  /tokens/{tokenId}/events:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+      - $ref: '#/components/parameters/eventTypeId'
+    post:
+      summary: "Asks dataStorageSystem for permissions which were not created by token"
+      description: "Apps can ask dataStorageSystem for permissions by requesting it here. Permission requests need to be accepted in the dataStorageSystem by manual accepting of a user"
+      tags: ["app initiated", "event submission and fetching related"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event_Pushing_Version'
+                 
+      responses:
+        '201':
+          description: Event created
+        '400':
+          description: Invalid input
+
+  /tokens/{tokenId}/events/{eventTypeId}:
+    parameters:
+      - $ref: '#/components/parameters/tokenId'
+      - $ref: '#/components/parameters/eventTypeId'
+    get:
+      summary: "Fetches events of given eventTypeId"
+      description: "All events will be returned with pagination"
+      tags: ["app initiated", "event submission and fetching related"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                properties:
+                  numberOfEventsToFetch:
+                    type: integer
+                    default: 20
+                  lastEventId:
+                    type: string
+                    default: null
+                    description: "Null if first n events is to be fetched"
+      responses:
+        '200':
+          description: Fetched events
+          content:
+            application/json:
+              schema:
+                properties:
+                  events:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  lastEventId:
+                    type: string
+                  moreEvents:
+                    type: boolean
+                    default: true
+                    description: "Whether more events are available to be fetched"
+        '401':
+          description: Unauthorised access to this event type
+
+
+  /tokens/{tokenId}/events/{eventId}:
+    parameters:
+      - $ref: '#/components/parameters/eventId'
+    put:
+      summary: "Updates specific event"
+      description: ""
+      tags: ["app initiated", "event submission and fetching related"]
+      requestBody:
+        content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event_Updating_Version'
+                 
+      responses:
+        '200':
+          description: Event updated
+        '400':
+          description: Invalid request. Something is wrong there.
+        '401':
+          description: Unauthorised access to this event type
+    delete:
+      summary: "Deletes specific event"
+      description: ""
+      tags: ["app initiated", "event submission and fetching related"]
+      responses:
+        '200':
+          description: Event deleted
+        '401':
+          description: Unauthorised access to this event type
+  
+
+
+# ------------ PATHS - Data View Transformation Templates Related -------------
+#TODO
+
+# ------------ PATHS - Cloud Sharing Related ----------------------------------
+# TODO
