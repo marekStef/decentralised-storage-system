@@ -2,15 +2,17 @@
 #include <gdiplus.h>
 #include <vector>
 #include <string>
-
 #include "screenshots_manager.hpp"
 
 #pragma comment(lib, "gdiplus.lib")
 
 using namespace Gdiplus;
 
-ScreenshotsManager::ScreenshotsManager(const std::string& output_directory) : output_dir_(output_directory) {};
-
+ScreenshotsManager::ScreenshotsManager(const std::string& output_directory) : output_dir_(output_directory) {
+    if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE)) {
+        SetProcessDPIAware(); // fallback
+    }
+};
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData) {
     std::vector<MonitorInfo>* monitors = reinterpret_cast<std::vector<MonitorInfo>*>(dwData);
@@ -48,7 +50,7 @@ int get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
     return -1;
 }
 
-void ScreenshotsManager::capture_monitor(MonitorInfo monitorInfo, int monitorIndex) const {
+void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, int monitorIndex) const {
     HDC hScreenDC = GetDC(NULL);
     HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
     int width = monitorInfo.rect.right - monitorInfo.rect.left;

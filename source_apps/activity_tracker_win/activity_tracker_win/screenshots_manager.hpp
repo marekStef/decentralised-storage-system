@@ -15,7 +15,7 @@ public:
 private:
 	std::string output_dir_;
 
-	void capture_monitor(MonitorInfo monitorInfo, int monitorIndex) const;
+	void capture_monitor(const MonitorInfo& monitorInfo, int monitorIndex) const;
 	std::vector<MonitorInfo> get_all_monitors();
 };
 
