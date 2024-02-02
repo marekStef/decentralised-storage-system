@@ -134,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="screenshots_manager.hpp" />
+    <ClInclude Include="screenshots_manager_constants.hpp" />
     <ClInclude Include="windows_apps_info_manager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

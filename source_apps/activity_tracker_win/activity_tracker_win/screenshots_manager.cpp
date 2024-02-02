@@ -2,7 +2,9 @@
 #include <gdiplus.h>
 #include <vector>
 #include <string>
+#include <stdexcept>
 #include "screenshots_manager.hpp"
+#include "screenshots_manager_constants.hpp"
 
 #pragma comment(lib, "gdiplus.lib")
 
@@ -34,9 +36,16 @@
 /// </summary>
 /// <param name="output_directory"></param>
 ScreenshotsManager::ScreenshotsManager(const wchar_t* output_directory) {
+    if (output_directory == nullptr) 
+        throw std::runtime_error(INVALID_OUTPUT_DIR_MESSAGE);
     output_dir_ = new wchar_t[wcslen(output_directory) + 1];
-    wcscpy_s(output_dir_, sizeof(output_dir_) / sizeof(wchar_t), output_directory);
-
+    if (output_dir_ == nullptr)
+        throw std::bad_alloc();
+    errno_t copy_result = wcscpy_s(output_dir_, sizeof(output_dir_) / sizeof(wchar_t), output_directory);
+    if (copy_result != 0) {
+        delete[] output_dir_;
+        throw std::runtime_error(FAILED_TO_COPY_OUTPUT_DIR_STR_MESSAGE);
+    }
     // Attempting to set the process as per-monitor DPI aware ( crucial for getting accurate screenshots across multiple monitors )
     if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE)) {
         SetProcessDPIAware(); // fallback
@@ -84,7 +93,9 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 /// <returns>vector of information about each monitor</returns>
 std::vector<MonitorInfo> ScreenshotsManager::get_all_monitors() {
     std::vector<MonitorInfo> monitors;
-    EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&monitors);
+    BOOL result = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&monitors);
+    if (!result)
+        throw std::runtime_error("Failed to enumerate monitors. Error code: " + std::to_string(GetLastError()));
     return monitors;
 }
 
@@ -106,29 +117,43 @@ bool compare_wide_character_strings(const wchar_t* str1, const wchar_t* str2) {
 /// <param name="format">Encoder with MIME type set to format is returned</param>
 /// <param name="pClsid"></param>
 /// <returns>-1 if encoder with mime type equal to format not found. Other number otherwise.</returns>
-int get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
+void get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
+    if (format == nullptr || pClsid == nullptr)
+        throw std::invalid_argument(PARAMETER_NULL_MESSAGE);
     UINT num = 0;
     UINT size = 0;
 
     Gdiplus::ImageCodecInfo* pImageCodecInfo = nullptr;
     // retrieves the number of image encoders available on the system and the size, in bytes, of the array that will contain them 
-    Gdiplus::GetImageEncodersSize(&num, &size);
-    if (size == 0) return -1;
+    Gdiplus::Status status = Gdiplus::GetImageEncodersSize(&num, &size);
+    if (status != Gdiplus::Ok || size == 0)
+        throw std::runtime_error(FAILED_TO_GET_IMAGE_ENCODERS_MESSAGE);
 
     pImageCodecInfo = (Gdiplus::ImageCodecInfo*)(malloc(size)); // allocated size for encoders
-    if (pImageCodecInfo == nullptr) return -1;
+    if (pImageCodecInfo == nullptr)
+        throw std::bad_alloc();
 
-    GetImageEncoders(num, size, pImageCodecInfo); // populate the allocated memory with information about each available encoder
+    status = GetImageEncoders(num, size, pImageCodecInfo); // populate the allocated memory with information about each available encoder
+    if (status != Gdiplus::Ok) {
+        free(pImageCodecInfo); // Ensure memory is freed before throwing
+        throw std::runtime_error(FAILED_TO_GET_IMAGE_ENCODERS_MESSAGE);
+    }
+
+    bool encoder_found = false;
+
     for (UINT j = 0; j < num; ++j) {
         Gdiplus::ImageCodecInfo& current_image_codec_info = pImageCodecInfo[j];
         if (compare_wide_character_strings(current_image_codec_info.MimeType, format)) {
             *pClsid = current_image_codec_info.Clsid;
-            free(pImageCodecInfo);
-            return j;
+            encoder_found = true;
+            break;
         }
     }
+
     free(pImageCodecInfo);
-    return -1;
+    if (!encoder_found) {
+        throw std::runtime_error(FAILED_TO_GET_IMAGE_ENCODER_MESSAGE);
+    }
 }
 
 /// <summary>
@@ -137,13 +162,22 @@ int get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
 /// <param name="monitorInfo"></param>
 /// <param name="monitorIndex"></param>
 void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, wchar_t* output_filename) const {
+    if (output_filename == nullptr)
+        throw std::invalid_argument(PARAMETER_NULL_MESSAGE);
+
     // A Device Context (DC) is a Windows construct that represents a set of graphic objects and their 
     // associated attributes, along with the graphic modes that affect output. 
     //  The DC is an abstraction that allows applications to draw on devices like monitors, printers, 
     // or files in a device-independent manner.
     HDC hScreenDC = GetDC(NULL); // retrieves the device context (DC) for the entire screen.
+    if (!hScreenDC)
+        throw std::runtime_error(FAILED_TO_GET_DEVICE_CONTEXT_MESSAGE);
     // It's a handle to the display device context of the entire screen.
     HDC hMemoryDC = CreateCompatibleDC(hScreenDC);
+    if (!hMemoryDC) {
+        ReleaseDC(NULL, hScreenDC);
+        throw std::runtime_error(FAILED_TO_GET_DEVICE_CONTEXT_MESSAGE);
+    }
     // Creates a memory device context (DC) that is compatible with the screen DC. 
     //  This memory DC is used as a canvas to draw or capture the screenshot, which can then be manipulated 
     // or saved into a file. It's an off-screen bitmap that operations can be performed on without affecting the 
@@ -154,32 +188,56 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, wchar_t
     // calculate dimensions
     int width = monitorInfo.rect.right - monitorInfo.rect.left;
     int height = monitorInfo.rect.bottom - monitorInfo.rect.top;
+
+
     HBITMAP hBitmap = CreateCompatibleBitmap(hScreenDC, width, height); // this bitmap temporarily stores the screenshot
+    if (!hBitmap) {
+        DeleteDC(hMemoryDC);
+        ReleaseDC(NULL, hScreenDC);
+        throw std::runtime_error(COMPATIBLE_BITMAP_CREATE_FAILED_MESSAGE);
+    }
     // Before drawinh on the memory DC, i need to select a bitmap into it where the drawing will be stored. 
     // This step selects the newly created bitmap as the drawing surface for the memory DC. 
     // The function also returns a handle to the previously selected bitmap in the DC, typically a default 1x1 pixel bitmap.
 
     // The memory DC initially has a 1x1 monochrome bitmap selected by default (a placeholder), which is not suitable for capturing a screenshot.
     HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemoryDC, hBitmap);
+    if (!hOldBitmap) {
+        DeleteObject(hBitmap);
+        DeleteDC(hMemoryDC);
+        ReleaseDC(NULL, hScreenDC);
+        throw std::runtime_error(SELECTION_OF_BITAMAP_TO_DC_FAILED_MESSSAGE);
+    }
+    try {
+        // BitBlt stands for Bit Block Transfer, and it efficiently transfers color data from the source (screen) 
+        // to the destination (memory bitmap)
+        if (!BitBlt(hMemoryDC, 0, 0, width, height, hScreenDC, monitorInfo.rect.left, monitorInfo.rect.top, SRCCOPY)) 
+            throw std::runtime_error(BIT_BLT_FAILED_MESSAGE);
+        // copies the content from the specified region of the screen DC (representing the monitor area) into 
+        // the memory DC. The dimensions and position are based on the MonitorInfo structure, 
+        // which defines the area of the screen to capture. 
 
-    // BitBlt stands for Bit Block Transfer, and it efficiently transfers color data from the source (screen) 
-    // to the destination (memory bitmap)
-    BitBlt(hMemoryDC, 0, 0, width, height, hScreenDC, monitorInfo.rect.left, monitorInfo.rect.top, SRCCOPY);
-    // copies the content from the specified region of the screen DC (representing the monitor area) into 
-    // the memory DC. The dimensions and position are based on the MonitorInfo structure, 
-    // which defines the area of the screen to capture. 
+        // After the BitBlt operation, the original (default) bitmap is selected back into the memory DC
+        // to properly manage memory and resources. 
+        // Meant for cleanup of the DC and bitmap objects.
+        hBitmap = (HBITMAP)SelectObject(hMemoryDC, hOldBitmap);
 
-    // After the BitBlt operation, the original (default) bitmap is selected back into the memory DC
-    // to properly manage memory and resources. 
-    // Meant for cleanup of the DC and bitmap objects.
-    hBitmap = (HBITMAP)SelectObject(hMemoryDC, hOldBitmap);
+        Gdiplus::Bitmap bitmap(hBitmap, nullptr);
+        CLSID bmpClsid;
+        get_encoder_clsid(DESIRED_OUTPUT_IMAGE_MIME_TYPE, &bmpClsid);
 
-    Gdiplus::Bitmap bitmap(hBitmap, nullptr);
-    CLSID bmpClsid;
-    get_encoder_clsid(DESIRED_OUTPUT_IMAGE_MIME_TYPE, &bmpClsid);
-
-    bitmap.Save(output_filename, &bmpClsid, &encoder_params);
-
+        Gdiplus::Status result = bitmap.Save(output_filename, &bmpClsid, &encoder_params);
+        if (result != Gdiplus::Ok)
+            throw std::runtime_error(FAILED_TO_SAVE_BITMAP_MESSAGE);
+    }
+    catch (...) {
+        // delete created memory dc and rease the screen dc
+        DeleteDC(hMemoryDC);
+        ReleaseDC(NULL, hScreenDC);
+        // delete the bitmap used for capturing the screenshot
+        DeleteObject(hBitmap);
+        throw;
+    }
     // delete created memory dc and rease the screen dc
     DeleteDC(hMemoryDC);
     ReleaseDC(NULL, hScreenDC);
@@ -197,7 +255,7 @@ std::vector<std::wstring> ScreenshotsManager::take_screenshots_of_all_screens() 
     // when those operations are complete. 
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
     ULONG_PTR gdiplusToken;
-    GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+    Gdiplus::Status result = GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     // After calling GdiplusStartup, GDI+ functionalities are available globally within the application process.
 
     auto monitors = get_all_monitors();
