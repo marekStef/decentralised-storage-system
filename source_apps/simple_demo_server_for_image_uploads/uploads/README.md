@@ -1,0 +1,1 @@
+To start, run `node server.js`
