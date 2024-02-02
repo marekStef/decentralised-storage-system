@@ -12,9 +12,9 @@ void get_windows_apps_info() {
 
 int main() {
     //get_windows_apps_info();
-
-    ScreenshotsManager screenshots_manager("./");
-    screenshots_manager.take_screenshots_of_all_screens();
+    
+    ScreenshotsManager screenshots_manager(L"./");
+    auto screenshots_filepaths = screenshots_manager.take_screenshots_of_all_screens();
     
     return 0;
 }
