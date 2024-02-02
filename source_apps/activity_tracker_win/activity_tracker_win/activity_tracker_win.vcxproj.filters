@@ -19,6 +19,9 @@
     <Filter Include="Header Files\network_manager">
       <UniqueIdentifier>{cbc6d3a3-1ece-4b7c-a5fc-9a31c521cfd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\keypresses_manager">
+      <UniqueIdentifier>{04b11d6a-4c3b-4a7a-a694-1d352fc27435}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -31,6 +34,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="network_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="key_presses_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,6 +54,12 @@
       <Filter>Header Files\network_manager</Filter>
     </ClInclude>
     <ClInclude Include="network_manager_constants.hpp">
+      <Filter>Header Files\network_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="key_presses_manager.hpp">
+      <Filter>Header Files\keypresses_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="key_presses_manager_constants.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

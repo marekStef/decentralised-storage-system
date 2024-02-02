@@ -1,0 +1,5 @@
+#ifndef _KEY_PRESSES_MANAGER_CONSTANTS_
+#define _KEY_PRESSES_MANAGER_CONSTANTS_
+
+constexpr char ONLY_ONE_INSTANCE_ERROR_MESSAGE[] = "Only one instance allowed";
+#endif // !_KEY_PRESSES_MANAGER_CONSTANTS_

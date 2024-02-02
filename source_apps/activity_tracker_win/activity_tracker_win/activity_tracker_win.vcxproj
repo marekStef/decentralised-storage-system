@@ -128,12 +128,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="key_presses_manager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="network_manager.cpp" />
     <ClCompile Include="screenshots_manager.cpp" />
     <ClCompile Include="windows_apps_info_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="key_presses_manager.hpp" />
+    <ClInclude Include="key_presses_manager_constants.hpp" />
     <ClInclude Include="network_manager.hpp" />
     <ClInclude Include="network_manager_constants.hpp" />
     <ClInclude Include="screenshots_manager.hpp" />
