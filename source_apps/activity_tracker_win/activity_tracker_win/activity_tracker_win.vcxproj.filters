@@ -16,6 +16,9 @@
     <Filter Include="Header Files\screenshots_manager">
       <UniqueIdentifier>{b2bc4a21-8619-423d-86b6-ec49a22c19be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\network_manager">
+      <UniqueIdentifier>{cbc6d3a3-1ece-4b7c-a5fc-9a31c521cfd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,15 +30,24 @@
     <ClCompile Include="screenshots_manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="network_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windows_apps_info_manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="screenshots_manager.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\screenshots_manager</Filter>
     </ClInclude>
     <ClInclude Include="screenshots_manager_constants.hpp">
+      <Filter>Header Files\screenshots_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager.hpp">
+      <Filter>Header Files\network_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="network_manager_constants.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

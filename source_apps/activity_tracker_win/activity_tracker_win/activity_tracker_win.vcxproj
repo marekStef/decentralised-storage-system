@@ -129,10 +129,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="network_manager.cpp" />
     <ClCompile Include="screenshots_manager.cpp" />
     <ClCompile Include="windows_apps_info_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="network_manager.hpp" />
+    <ClInclude Include="network_manager_constants.hpp" />
     <ClInclude Include="screenshots_manager.hpp" />
     <ClInclude Include="screenshots_manager_constants.hpp" />
     <ClInclude Include="windows_apps_info_manager.hpp" />
