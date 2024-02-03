@@ -41,9 +41,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="windows_apps_info_manager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="screenshots_manager.hpp">
       <Filter>Header Files\screenshots_manager</Filter>
     </ClInclude>
@@ -62,7 +59,7 @@
     <ClInclude Include="key_presses_manager_constants.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="httplib.h">
+    <ClInclude Include="windows_apps_info_manager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

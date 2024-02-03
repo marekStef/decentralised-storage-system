@@ -1,3 +1,5 @@
+#define CURL_STATICLIB
+
 #include <iostream>
 
 #include <windows.h>
@@ -8,8 +10,9 @@
 #include <filesystem>
 #include <locale> // todo : not needed
 #include <codecvt>
+#include <sstream>
 //#include "httplib.h"
-#include <curl/curl.h>
+#include "curl/curl.h"
 
 #include <filesystem> // for merging paths
 #include <chrono>
@@ -18,6 +21,18 @@
 #include "screenshots_manager_constants.hpp"
 
 #pragma comment(lib, "gdiplus.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "curl/libcurl_a_debug.lib")
+#else
+#pragma comment(lib, "curl/libcurl_a.lib")
+#endif
+
+#pragma comment (lib, "Normaliz.lib")
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Wldap32.lib")
+#pragma comment (lib, "Crypt32.lib")
+#pragma comment (lib, "advapi32.lib")
 
 /*
     Helper functions [START]
@@ -295,5 +310,42 @@ std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_s
 }
 
 bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::filesystem::path>& image_paths) const {
+    CURL* curl;
+    CURLcode res;
+    curl_mime* form = NULL;
+    curl_mimepart* field = NULL;
+
+    // This function initializes libcurl globally and must be called before any other 
+    // libcurl functions are used (and corresponding curl_global_cleanup at the end for cleanup). 
+    curl_global_init(CURL_GLOBAL_ALL);
+    curl = curl_easy_init();
+
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, SERVER_UPLOADS_ENDPOINT); 
+
+        // Initialize the form
+        form = curl_mime_init(curl);
+
+        // Fill in the file upload field
+        for (const std::filesystem::path& image_path : image_paths) {
+            field = curl_mime_addpart(form);
+            curl_mime_name(field, "images");
+            curl_mime_filedata(field, image_path.string().c_str());
+        }
+
+        curl_easy_setopt(curl, CURLOPT_MIMEPOST, form); // prepare a MIME-encoded POST request
+
+        res = curl_easy_perform(curl); // Perform the request, res will get the return code
+
+        if (res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+            return false;
+        }
+
+        // Cleanup
+        curl_mime_free(form);
+        curl_easy_cleanup(curl);
+    }
+    curl_global_cleanup();
     return true;
 }
