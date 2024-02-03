@@ -12,12 +12,12 @@
 #include <codecvt>
 #include <sstream>
 //#include "httplib.h"
-#include "curl/curl.h"
+#include "../curl/curl.h"
 
 #include <filesystem> // for merging paths, creating folders
 #include <chrono>
 
-#include "json_lib/json.hpp"
+#include "../json_lib/json.hpp"
 
 #include "screenshots_manager.hpp"
 #include "screenshots_manager_constants.hpp"

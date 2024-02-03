@@ -1,9 +1,9 @@
 #include <ostream>
 
-#include "windows_apps_info_manager.hpp"
-#include "screenshots_manager.hpp"
-#include "network_manager.hpp"
-#include "key_presses_manager.hpp"
+#include "windows_apps_info_manager/windows_apps_info_manager.hpp"
+#include "screenshots_manager/screenshots_manager.hpp"
+#include "network_manager/network_manager.hpp"
+#include "keypresses_manager/key_presses_manager.hpp"
 
 void get_windows_apps_info_TEST() {
     auto windows_manager = WindowsAppsInfoManager();
