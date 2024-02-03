@@ -62,5 +62,8 @@
     <ClInclude Include="key_presses_manager_constants.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="httplib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

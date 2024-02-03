@@ -105,10 +105,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\Users\stefanec\Desktop\bakalarka_\curl\builds\libcurl-vc-x86-release-static-ipv6-sspi-schannel\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\stefanec\Desktop\bakalarka_\curl\builds\libcurl-vc-x86-release-static-ipv6-sspi-schannel\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,6 +137,7 @@
     <ClCompile Include="windows_apps_info_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="httplib.h" />
     <ClInclude Include="key_presses_manager.hpp" />
     <ClInclude Include="key_presses_manager_constants.hpp" />
     <ClInclude Include="network_manager.hpp" />
