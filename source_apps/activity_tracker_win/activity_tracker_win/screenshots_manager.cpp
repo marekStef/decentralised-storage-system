@@ -327,6 +327,38 @@ std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_s
     return output_filepaths;
 }
 
+/// <summary>
+/// Write callback function to save data received from the server (CURLOPT_WRITEFUNCTION and CURLOPT_WRITEDATA need to be set via curl_easy_setopt)
+/// This function is called by libcurl as soon as there is data received 
+/// that needs to be handled.
+/// </summary>
+/// <param name="contents">
+///     Pointer to the data that libcurl has received.
+///     Libcurl does not know the type of the data (it could be anything from text to binary data), it provides the data as a void pointer.
+/// </param>
+/// <param name="size">
+///     The size of one "element" or "item" in the received data. 
+///     When receiving data from a server, libcurl treats the data as an array of items, and size is the size (in bytes) of each item. 
+///     This is almost always 1, as data is typically treated as an array of bytes.
+/// </param>
+/// <param name="nmemb">
+///     Stands for "number of members" and represents the total number of items in the received data. 
+/// </param>
+/// <param name="user_buffer">
+///     user-provided pointer where you can store the data that libcurl passes to this callback.
+/// </param>
+/// <returns></returns>
+size_t curl_response_data_write_callback(void* contents, size_t size, size_t nmemb, std::string* user_buffer) {
+    size_t real_size = size * nmemb; // Multiplying nmemb by size gives you the total size of the data block in bytes.
+    user_buffer->append((char*)contents, real_size);
+    return real_size;
+}
+
+/// <summary>
+/// Uploads all provided screenshots to server
+/// </summary>
+/// <param name="image_paths"></param>
+/// <returns></returns>
 bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::filesystem::path>& image_paths) const {
     CURL* curl;
     CURLcode res;
@@ -352,6 +384,12 @@ bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::fil
         }
 
         curl_easy_setopt(curl, CURLOPT_MIMEPOST, form); // prepare a MIME-encoded POST request
+
+        // Set the write callback function
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_response_data_write_callback);
+        // Set the data structure (just a simple string in this case) to store the response
+        std::string response_read_buffer_data; 
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_read_buffer_data); // instruct the curl to call my callback for reading incoming data as soon as some data is received
 
         res = curl_easy_perform(curl); // Perform the request, res will get the return code
 
