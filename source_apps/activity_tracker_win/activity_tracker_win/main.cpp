@@ -40,7 +40,7 @@ void start_key_presses_logging_TEST() {
 
     key_presses_manager->start();
 
-    std::cout << "---------- IMPORTANT ----------" << std::endl;
+    std::cout << "---------- IMPORTANT ---------- (start_key_presses_logging)" << std::endl;
     std::cout << "To turn the logging off, press log_off" << std::endl;
     std::cout << "(Logging is running on second thread so typing log_off and pressing enter this will stop that thread)" << std::endl;
     std::cout << "(to turn it on again, press log_on)" << std::endl;

@@ -17,6 +17,8 @@
 #include <filesystem> // for merging paths, creating folders
 #include <chrono>
 
+#include "json_lib/json.hpp"
+
 #include "screenshots_manager.hpp"
 #include "screenshots_manager_constants.hpp"
 
@@ -354,6 +356,27 @@ size_t curl_response_data_write_callback(void* contents, size_t size, size_t nme
     return real_size;
 }
 
+std::vector<std::string> parse_response_json_from_server_after_uploading_images(const std::string& response_read_buffer_data) {
+    std::cout << "Response from the server: " << std::endl << response_read_buffer_data << std::endl << std::endl;
+    std::vector<std::string> ids;
+    try {
+        auto jsonResponse = nlohmann::json::parse(response_read_buffer_data);
+        if (jsonResponse.contains("ids") && jsonResponse["ids"].is_array()) {
+            for (const auto& id : jsonResponse["ids"]) {
+                ids.push_back(id.get<std::string>()); // Extract each ID and add to the vector
+            }
+            return ids;
+        }
+        else {
+            std::cout << "Json response does not contain field 'ids'" << std::endl;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
+        return {};
+    }
+}
+
 /// <summary>
 /// Uploads all provided screenshots to server
 /// </summary>
@@ -393,15 +416,22 @@ bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::fil
 
         res = curl_easy_perform(curl); // Perform the request, res will get the return code
 
+        // Cleanup
+        curl_mime_free(form);
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+
         if (res != CURLE_OK) {
             std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
             return false;
         }
 
-        // Cleanup
-        curl_mime_free(form);
-        curl_easy_cleanup(curl);
+        // now parse the response which is going to be a json
+        std::vector<std::string> IDs_representing_uploaded_images_received_from_server = parse_response_json_from_server_after_uploading_images(response_read_buffer_data);
+
+        std::cout << "Parsed ids representing uploaded screenshots received from server: " << std::endl;
+        for (auto&& response_id_for_uploaded_image_from_server : IDs_representing_uploaded_images_received_from_server)
+            std::cout << "\t - " << response_id_for_uploaded_image_from_server << std::endl;
     }
-    curl_global_cleanup();
     return true;
 }
