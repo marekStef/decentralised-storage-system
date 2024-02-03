@@ -14,7 +14,7 @@
 //#include "httplib.h"
 #include "curl/curl.h"
 
-#include <filesystem> // for merging paths
+#include <filesystem> // for merging paths, creating folders
 #include <chrono>
 
 #include "screenshots_manager.hpp"
@@ -51,6 +51,21 @@ std::string generate_unique_image_name(int index) {
     int random_number = std::rand();
     ss << "_" << random_number << "." << DESIRED_IMAGE_TYPE_STR;
     return ss.str();
+}
+
+void create_folder_if_not_exists(const std::filesystem::path& path) {
+    if (!std::filesystem::exists(path)) {
+        // Create the folder
+        if (std::filesystem::create_directory(path)) {
+            std::cout << "Folder '" << path.string() << "' created successfully" << std::endl;
+        }
+        else {
+            std::cout << "Failed to create folder: " << path << std::endl;
+        }
+    }
+    else {
+        //std::cout << "Folder already exists (not creating one): " << path << std::endl;
+    }
 }
 
 /*
@@ -287,6 +302,9 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const s
 /// <param name="output_dir">Directory where images will be saved</param>
 /// <returns>vector of output filepaths</returns>
 std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_screens() const {
+    // check if the output directory where images are about to be stored exists, otherwise create one
+    create_folder_if_not_exists(output_dir_);
+
     // GDI+ requires initialization before any GDI+ functions or classes are used and a corresponding shutdown 
     // when those operations are complete. 
     Gdiplus::GdiplusStartupInput gdiplusStartupInput;

