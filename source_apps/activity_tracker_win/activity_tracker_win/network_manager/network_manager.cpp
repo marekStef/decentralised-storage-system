@@ -75,6 +75,8 @@ std::string retrieve_SSID_for_given_interface(HANDLE wlan_client_handle, const W
     else {
         throw std::runtime_error(FAILED_TO_GET_AVAILABLE_NETWORK_LIST);
     }
+
+    return "";
 #ifdef DEBUG
     std::cout << "------" << std::endl;
 #endif
@@ -109,5 +111,6 @@ std::vector<std::string> NetworkManager::get_current_SSIDs() {
     catch (const std::exception& ex) {
         std::cerr << "Something went terribly wrong" << std::endl;
         std::cerr << ex.what();
+        return {};
     }
 }

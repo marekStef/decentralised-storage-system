@@ -40,7 +40,7 @@
     Helper functions [START]
 */
 
-std::string generate_unique_image_name(int index) {
+std::string generate_unique_image_name(size_t index) {
     auto now = std::chrono::system_clock::now();
     auto now_sec = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
     auto now_sec_str = std::to_string(now_sec.count());
@@ -49,7 +49,7 @@ std::string generate_unique_image_name(int index) {
     ss << "monitor-" << index << "-";
     ss << now_sec_str;
     //ss << std::put_time(now_tm, "%Y%m%d_%H%M%S");
-    std::srand(std::time(nullptr)); // Seed the random number generator and add a random component to the filename
+    std::srand((unsigned int)now_sec.count()); // Seed the random number generator and add a random component to the filename
     int random_number = std::rand();
     ss << "_" << random_number << "." << DESIRED_IMAGE_TYPE_STR;
     return ss.str();
@@ -373,8 +373,8 @@ std::vector<std::string> parse_response_json_from_server_after_uploading_images(
     }
     catch (const std::exception& e) {
         std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
-        return {};
     }
+    return {};
 }
 
 /// <summary>
