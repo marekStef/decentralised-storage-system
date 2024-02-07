@@ -62,7 +62,7 @@ const startDataViewStore = () => {
                 }
             });
 
-            // for receiving messages sent from your child process
+            // for receiving messages sent from child process
             bus.on('process:msg', function(data) {
                 if (data.raw.type === "dataViewStoreServerUrl") {
                     dataViewStoreUrl = data.raw.url;
