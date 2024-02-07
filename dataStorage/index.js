@@ -6,11 +6,16 @@ const { gracefulShutdown } = require('./src/utils/shutdownManager/shutdownManage
 
 const dataViewStoreRoutes = require("./src/routes/dataViewStoreRoutes");
 
+// Admin Only
+const appsRoutesAdmin = require("./src/routes/AdminOnly/appsRoutes");
+
 startDataViewStore();
 
 const app = express();
 
 app.use('/api/dataviewstore', dataViewStoreRoutes);
+
+app.use('/admin/api', appsRoutesAdmin)
 
 app.listen(process.env.DATA_STORAGE_SERVER_PORT, () => {
     logger.log({
