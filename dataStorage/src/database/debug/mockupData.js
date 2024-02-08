@@ -1,8 +1,8 @@
-const ApplicationSchema = require('../ApplicationSchema');
-const ProfileSchema = require('../EventProfileSchema');
-const EventSchema = require('../EventSchema');
+const ApplicationSchema = require('../models/applicationRelatedModels/ApplicationSchema');
+const ProfileSchema = require('../models/eventRelatedModels/EventProfileSchema');
+const EventSchema = require('../models/eventRelatedModels/EventSchema');
 
-const db = require('../../Database')
+const db = require('../Database')
 db.connect();
 
 console.log("HEEERE");

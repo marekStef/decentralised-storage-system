@@ -13,7 +13,7 @@ app.use(express.json());
 
 registerRoutes(app);
 
-require('./src/database/models/debug/mockupData')
+require('./src/database/debug/mockupData')
 
 app.listen(process.env.DATA_STORAGE_SERVER_PORT, () => {
     logger.log({
