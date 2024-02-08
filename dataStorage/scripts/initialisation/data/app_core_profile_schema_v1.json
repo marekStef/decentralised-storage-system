@@ -1,0 +1,23 @@
+{
+    "type": "object",
+    "properties": {
+        "name": { "type": "string" },
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "createdDate": { "type": "string", "format": "date-time" },
+                "profile": { "type": "string" },
+                "sourceAppName": { "type": "string" },
+                "acceptedDate": { "type": "string", "format": "date-time" }
+            },
+            "required": [
+                "createdDate",
+                "profile",
+                "sourceAppName",
+                "acceptedDate"
+            ]
+        },
+        "schema": { "type": "string" }
+    },
+    "required": ["name", "metadata", "schema"]
+}

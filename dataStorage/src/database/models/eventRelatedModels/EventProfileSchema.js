@@ -13,7 +13,6 @@ const ProfileSchema = new mongoose.Schema({
         },
         profile: {
             type: String,
-            required: true
         },
         sourceAppName: { // this is nameDefinedByApp field in ApplicationSchema
             type: String,
