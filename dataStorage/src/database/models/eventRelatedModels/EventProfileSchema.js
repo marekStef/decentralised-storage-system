@@ -7,11 +7,6 @@ const ProfileSchema = new mongoose.Schema({
         unique: true
     },
     metadata: {
-        identifier: {
-            type: String,
-            required: true,
-            unique: true
-        },
         createdDate: {
             type: Date,
             required: true
@@ -20,7 +15,7 @@ const ProfileSchema = new mongoose.Schema({
             type: String,
             required: true
         },
-        source: {
+        sourceAppName: { // this is nameDefinedByApp field in ApplicationSchema
             type: String,
             required: true
         },

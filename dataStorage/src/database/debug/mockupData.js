@@ -20,11 +20,9 @@ newApplication.save()
 const newProfile = new ProfileSchema({
     name: 'LocationTrackerApp.com/profile/profile1',
     metadata: {
-        identifier: "0000-0001",
         createdDate: new Date(),
         profile: "app:core",
-        source: "LocationTrackerApp.com"
-
+        sourceAppName: "LocationTrackerApp.com"
     },
     schema: JSON.stringify({
         "$schema": "https://json-schema.org/draft/2019-09/schema",

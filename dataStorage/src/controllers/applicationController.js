@@ -2,7 +2,8 @@ const httpStatusCodes = require('../../src/constants/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const applicationResponseMessages = require('../constants/forApiResponses/application/responseMessages');
 
-const {generateBadResponse} = require('./helpers/helpers');
+const { generateBadResponse } = require('./helpers/generalHelpers');
+const { generateJwtToken } = require('./helpers/jwtGenerator');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema');
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
@@ -40,9 +41,13 @@ const associate_app_with_storage_app_holder = async (req, res) => {
             return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
         }
 
+        // jwtTokenForPermissionRequestsAndProfiles
+        const generatedJwtToken = generateJwtToken(appHolder._id, appHolder.nameDefinedByUser, nameDefinedByApp);
+
         // Update the app with the provided name and the association date
         appHolder.nameDefinedByApp = nameDefinedByApp;
         appHolder.dateOfAssociationByApp = new Date();
+        appHolder.jwtTokenForPermissionRequestsAndProfiles = generatedJwtToken;
         await appHolder.save(); // possible conflic excpetion here - (DUPLICATE_ERROR) due to nameDefinedByApp
 
         // Delete the used association token
@@ -50,7 +55,8 @@ const associate_app_with_storage_app_holder = async (req, res) => {
 
         res.status(httpStatusCodes.OK).json({
             message: applicationResponseMessages.success.APP_ASSOCIATED_WITH_STORAGE_APP_HOLDER,
-            app: appHolder // remove when deployed
+            app: appHolder, // remove when deployed,
+            jwtTokenForPermissionRequestsAndProfiles: generatedJwtToken
         });
 
     } catch (error) {
@@ -64,7 +70,7 @@ const associate_app_with_storage_app_holder = async (req, res) => {
 };
 
 const register_new_profile = async (req, res) => {
-    // TODO
+    
 }
 
 const upload_new_event = async (req, res) => {

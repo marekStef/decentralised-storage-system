@@ -2,7 +2,7 @@ const httpStatusCodes = require('../../src/constants/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const mongoDbCodes = require('../constants/mongoDbCodes');
-const {generateBadResponse} = require('./helpers/helpers');
+const {generateBadResponse} = require('./helpers/generalHelpers');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema')
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');

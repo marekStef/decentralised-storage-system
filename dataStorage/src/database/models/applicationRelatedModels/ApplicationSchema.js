@@ -18,6 +18,10 @@ const ApplicationSchema = new mongoose.Schema({
   dateOfAssociationByApp: { // date when the user actually connected the actual app with this
     type: Date,
     default: null
+  },
+  jwtTokenForPermissionRequestsAndProfiles: {
+    type: String,
+    default: null
   }
 });
 
