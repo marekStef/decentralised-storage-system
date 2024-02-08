@@ -2,13 +2,10 @@ const httpStatusCodes = require('../../src/constants/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const mongoDbCodes = require('../constants/mongoDbCodes');
+const {generateBadResponse} = require('./helpers/helpers');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema')
-const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication')
-
-const generateBadResponse = (res, code, message) => {
-    return res.status(code).json({ message });
-}
+const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
 
 const createNewAppConnection = async (req, res) => {
     const { nameDefinedByUser } = req.body;
@@ -43,7 +40,9 @@ const isAppAlreadyAssociated = app => {
     return app.dateOfAssociationByApp !== null
 }
 
-// function for generating one-time association token
+// function for generating one-time association token 
+// which the real software app will use to associate itself with its app holder in storage system
+
 const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, res) => {
     const { appHolderId } = req.body; // assuming the app's ID is passed as 'appHolderId'
 
