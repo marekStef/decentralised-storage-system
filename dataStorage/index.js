@@ -8,12 +8,15 @@ const { gracefulShutdown } = require('./src/utils/shutdownManager/shutdownManage
 
 // startDataViewStore(); <<<< this is not used at the moment
 
+const db = require('./src/database/Database')
+db.connect();
+
 const app = express();
 app.use(express.json());
 
 registerRoutes(app);
 
-require('./src/database/debug/mockupData')
+// require('./src/database/debug/mockupData')
 
 app.listen(process.env.DATA_STORAGE_SERVER_PORT, () => {
     logger.log({

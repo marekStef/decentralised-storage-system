@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const ApplicationSchema = new mongoose.Schema({
-  nameDefinedByUser: {
+  nameDefinedByUser: { // this is just for displaying purposes
     type: String,
     required: true,
     unique: true
   },
-  nameDefinedByApp: {
+  nameDefinedByApp: { // this is the main name which will be referenced in profiles and events
     type: String,
     unique: true,
     default: null

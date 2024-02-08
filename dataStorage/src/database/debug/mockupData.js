@@ -2,12 +2,6 @@ const ApplicationSchema = require('../models/applicationRelatedModels/Applicatio
 const ProfileSchema = require('../models/eventRelatedModels/EventProfileSchema');
 const EventSchema = require('../models/eventRelatedModels/EventSchema');
 
-const db = require('../Database')
-db.connect();
-
-console.log("HEEERE");
-
-
 const newApplication = new ApplicationSchema({
     nameDefinedByUser: 'My phone location tracker',
     nameDefinedByApp: 'LocationTrackerApp.com',

@@ -2,17 +2,20 @@ const httpStatusCodes = require('../../src/constants/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const applicationResponseMessages = require('../constants/forApiResponses/application/responseMessages');
 
-const { generateBadResponse } = require('./helpers/generalHelpers');
-const { generateJwtToken } = require('./helpers/jwtGenerator');
+const {generateBadResponse} = require('./helpers/generalHelpers');
+const {generateJwtToken, decodeJwtToken} = require('./helpers/jwtGenerator');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema');
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
+const EventProfileSchema = require('../database/models/eventRelatedModels/EventProfileSchema');
+
 const mongoDbCodes = require('../constants/mongoDbCodes');
+const {validateJsonSchema, isValidJSON} = require('./helpers/jsonSchemaValidation');
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
 const associate_app_with_storage_app_holder = async (req, res) => {
-    const { associationTokenId, nameDefinedByApp } = req.body;
+    const {associationTokenId, nameDefinedByApp} = req.body;
 
     if (!associationTokenId || !nameDefinedByApp)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.ASSOCIATION_TOKEN_OR_NAME_MISSING);
@@ -36,7 +39,7 @@ const associate_app_with_storage_app_holder = async (req, res) => {
         }
 
         // Before updating appHolder, check if nameDefinedByApp is already in use
-        const existingAppWithSameName = await ApplicationSchema.findOne({ nameDefinedByApp });
+        const existingAppWithSameName = await ApplicationSchema.findOne({nameDefinedByApp});
         if (existingAppWithSameName && existingAppWithSameName._id.toString() !== appHolder._id.toString()) {
             return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
         }
@@ -69,9 +72,75 @@ const associate_app_with_storage_app_holder = async (req, res) => {
     }
 };
 
+// return res.status(401).json({message: 'Invalid or expired JWT token'});
+
 const register_new_profile = async (req, res) => {
-    
-}
+    let {jwtTokenForPermissionRequestsAndProfiles, name, metadata, schema} = req.body;
+    if (!jwtTokenForPermissionRequestsAndProfiles || !name || !metadata || !schema)
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.MISSING_REQUIRED_FIELDS);
+
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
+        console.log(decodedToken);
+    } catch (error) {
+        return res.status(401).json({message: 'Invalid or expired JWT token'});
+    }
+
+    const {nameDefinedByApp} = decodedToken;
+
+    try {
+        const existingProfile = await EventProfileSchema.findOne({name: name});
+        if (existingProfile) {
+            return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PROFILE_NAME_MUST_BE_UNIQUE);
+        }
+
+
+        // preprocessing [start]
+        metadata = {
+            ...metadata,
+            acceptedDate: new Date().toISOString(),
+            sourceAppName: nameDefinedByApp
+        };
+        // preprocessing [end]
+
+        // validate this new profile event agains the profile described in the metada // TODO - IS THIS HOW WE WANTED IT TO BE?
+        if (metadata.profile == process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME) {
+            const referencedProfile = await EventProfileSchema.findOne({name: metadata.profile});
+            if (!referencedProfile) {
+                return generateBadResponse(res, httpStatusCodes.NOT_FOUND, applicationResponseMessages.error.PROFILE_DOES_NOT_EXIST);
+            }
+            let isNewProfileEventValid = validateJsonSchema(JSON.parse(referencedProfile.schema), {name, metadata, schema});
+
+            console.log("is it valid?" + isNewProfileEventValid)
+            if (!isNewProfileEventValid) {
+                return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JSON_VALIDATION_ERROR);
+            }
+        } else {
+            return generateBadResponse(res, httpStatusCodes.NOT_FOUND, applicationResponseMessages.error.PROFILE_DOES_NOT_EXIST);
+        }
+
+        // check whether schema is a correct json at least
+        if (!isValidJSON(schema)) {
+            return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.SCHEMA_IS_INVALID_JSON);
+        }
+
+        const newProfile = new EventProfileSchema({
+            name,
+            metadata,
+            schema
+        });
+        await newProfile.save();
+
+        res.status(httpStatusCodes.CREATED).json({
+            message: applicationResponseMessages.success.NEW_PROFILE_REGISTERED,
+            profile: newProfile
+        });
+    } catch (error) {
+        console.error('Error registering new profile:', error);
+        generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
+    }
+};
 
 const upload_new_event = async (req, res) => {
     // TODO - Generated token needs to be checked here whether the app has access

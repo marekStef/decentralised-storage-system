@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGO_DB_URI, {})
 const create_app_core_profile_for_definining_other_profiles = () => {
     // Create the profile
     const profileData = {
-        name: "app:core_v1",
+        name: process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME,
         metadata: {
             createdDate: new Date(),
             sourceAppName: process.env.DATA_STORAGE_DOMAIN,
