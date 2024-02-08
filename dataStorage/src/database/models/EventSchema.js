@@ -1,32 +1,23 @@
 const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
-  appId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Application',
-    required: true
-  },
-  profileId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'EventProfile',
-    required: true
-  },
   metadata: {
     identifier: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     createdDate: {
       type: Date,
       default: Date.now
     },
     profile: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     source: {
-      type: String,
-      required: true
+        type: String,
+        required: true
     },
     acceptedDate: {
       type: Date,
@@ -34,7 +25,7 @@ const EventSchema = new mongoose.Schema({
     }
   },
   payload: {
-    type: mongoose.Schema.Types.Mixed,
+    type: String,
     required: true
   }
 });

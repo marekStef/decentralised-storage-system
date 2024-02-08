@@ -9,19 +9,23 @@ console.log("HEEERE");
 
 
 const newApplication = new ApplicationSchema({
-    name: 'Location Tracker App',
-    internalIdentifier: 'LTApp001',
+    name: 'LocationTrackerApp.com',
 });
 
 newApplication.save()
     .then(app => console.log('Application saved:', app))
     .catch(err => console.error('Error saving application:', err));
 
-
 const newProfile = new ProfileSchema({
-    appId: newApplication._id, // Use the actual application ID from your database
-    name: 'Location Data',
-    schema: {
+    name: 'LocationTrackerApp.com/profile/profile1',
+    metadata: {
+        identifier: "0000-0001",
+        createdDate: new Date(),
+        profile: "app:core",
+        source: "LocationTrackerApp.com"
+
+    },
+    schema: JSON.stringify({
         "$schema": "https://json-schema.org/draft/2019-09/schema",
         "type": "object",
         "properties": {
@@ -45,7 +49,7 @@ const newProfile = new ProfileSchema({
         },
         "required": ["payload"],
         "additionalProperties": false
-    }
+    })
 });
 
 
@@ -54,19 +58,17 @@ newProfile.save()
     .catch(err => console.error('Error saving profile:', err));
 
     const newEvent = new EventSchema({
-        appId: newApplication._id, // Use the application ID
-        profileId: newProfile._id, // Use the profile ID you just created
         metadata: {
           identifier: "0000-0002",
           createdDate: new Date("2023-10-21T21:44:10"),
-          profile: "Location Data",
-          source: "position-application-collector",
+          profile: "LocationTrackerApp.com/profile/profile1",
+          source: "LocationTrackerApp.com",
           acceptedDate: new Date("2023-10-21T21:44:20"),
         },
-        payload: {
+        payload: JSON.stringify({
           latitude: 50.08804,
           longitude: 14.42076
-        }
+        })
       });
       
       newEvent.save()

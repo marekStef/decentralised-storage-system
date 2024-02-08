@@ -9,6 +9,10 @@ const EventPermissionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  grantedDate: {
+    type: Date,
+    default: null
+  },
   read: {
     type: Boolean,
     default: false
