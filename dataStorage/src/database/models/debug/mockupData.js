@@ -9,7 +9,8 @@ console.log("HEEERE");
 
 
 const newApplication = new ApplicationSchema({
-    name: 'LocationTrackerApp.com',
+    nameDefinedByUser: 'My phone location tracker',
+    nameDefinedByApp: 'LocationTrackerApp.com',
 });
 
 newApplication.save()

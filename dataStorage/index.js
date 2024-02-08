@@ -6,9 +6,11 @@ const {startDataViewStore} = require('./src/services/DataViewStoreService');
 const logger = require('./src/logger/winston');
 const { gracefulShutdown } = require('./src/utils/shutdownManager/shutdownManager');
 
-startDataViewStore();
+// startDataViewStore(); <<<< this is not used at the moment
 
 const app = express();
+app.use(express.json());
+
 registerRoutes(app);
 
 require('./src/database/models/debug/mockupData')

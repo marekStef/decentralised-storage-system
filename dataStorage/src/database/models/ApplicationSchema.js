@@ -1,14 +1,23 @@
 const mongoose = require('mongoose');
 
 const ApplicationSchema = new mongoose.Schema({
-  name: {
+  nameDefinedByUser: {
     type: String,
     required: true,
     unique: true
   },
-  dateOfRegistration: {
+  nameDefinedByApp: {
+    type: String,
+    unique: true,
+    default: null
+  },
+  dateOfRegistration: { // date when the user created this new app. This is not date when the actual app associated itself with this
     type: Date,
     default: Date.now
+  },
+  dateOfAssociationByApp: { // date when the user actually connected the actual app with this
+    type: Date,
+    default: null
   }
 });
 
