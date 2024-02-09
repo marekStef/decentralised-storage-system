@@ -21,7 +21,8 @@ const EventSchema = new mongoose.Schema({
     },
     acceptedDate: {
       type: Date,
-      required: true
+      required: true,
+      default: Date.now
     }
   },
   payload: {

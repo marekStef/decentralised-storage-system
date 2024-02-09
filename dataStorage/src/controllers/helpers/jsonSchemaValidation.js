@@ -1,13 +1,18 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
-const ajv = new Ajv();
+const draft7MetaSchema = require("ajv/dist/refs/json-schema-draft-07.json");
+const ajv = new Ajv({
+    allErrors: true,
+    schemaId: "auto"
+});
 addFormats(ajv);
+ajv.addMetaSchema(draft7MetaSchema);
 
 const validateJsonSchema = (schema, json) => {
-    // console.log("----------------------------");
-    // console.log(schema);
-    // console.log("----------------------------");
-    // console.log(json);
+    console.log("----------------------------");
+    console.log(schema);
+    console.log("----------------------------");
+    console.log(json);
     try {
         const validate = ajv.compile(schema);
         const valid = validate(json);

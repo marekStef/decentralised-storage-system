@@ -1,3 +1,5 @@
+const { v4: uuidv4 } = require('uuid');
+
 const httpStatusCodes = require('../../src/constants/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const applicationResponseMessages = require('../constants/forApiResponses/application/responseMessages');
@@ -8,7 +10,8 @@ const {generateJwtToken, decodeJwtToken} = require('./helpers/jwtGenerator');
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema');
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
 const EventProfileSchema = require('../database/models/eventRelatedModels/EventProfileSchema');
-const DataAccessTokenSchema = require('../database/models/dataAccessRelatedModels/DataAccessTokenSchema');
+const EventSchema = require('../database/models/eventRelatedModels/EventSchema');
+const DataAccessPermissionSchema = require('../database/models/dataAccessRelatedModels/DataAccessPermissionSchema');
 
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const {validateJsonSchema, isValidJSON} = require('./helpers/jsonSchemaValidation');
@@ -149,41 +152,38 @@ const register_new_profile = async (req, res) => {
 };
 
 const request_new_permissions = async (req, res) => {
-    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequests } = req.body;
+    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest } = req.body;
 
     if (!jwtTokenForPermissionRequestsAndProfiles)
-        return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JWT_TOKEN_REQUIRED);
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JWT_TOKEN_REQUIRED);
 
     let decodedToken;
     try {
         decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
     } catch (error) {
-        return generalResponseMessages(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
+        return generateBadResponse(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
     }
 
     const { appId } = decodedToken;
 
-    if (!permissionsRequests || !Array.isArray(permissionsRequests) || permissionsRequests.length === 0)
-        return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.INVALID_PERMISSIONS_REQUESTS_FORMAT);
+    if (!permissionsRequest)
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.INVALID_PERMISSIONS_REQUESTS_FORMAT);
 
-    for (let request of permissionsRequests) {
-        if (!request.appName || !request.eventName) {
-            return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PERMISSION_REQUEST_MISSING_REQUIRED_FIELDS);
-        }
+    if (!permissionsRequest.profile) {
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PERMISSION_REQUEST_MISSING_REQUIRED_FIELDS);
     }
 
-    // Create and save a new DataAccessToken with the requested permissions
+    // Create and save a new DataAccessToken with the requested permission
     try {
-        const newDataAccesToken = new DataAccessTokenSchema({
-            appId: appId,
-            permissions: permissionsRequests.map(req => ({
-                appName: req.appName,
-                eventName: req.eventName,
-                read: req.readRight || false,
-                create: req.createRight || false,
-                modify: req.modifyRight || false,
-                delete: req.deleteRight || false
-            })),
+        const newDataAccesToken = new DataAccessPermissionSchema({
+            app: appId,
+            permission: {
+                profile: permissionsRequest.profile,
+                read: permissionsRequest.readRight || false,
+                create: permissionsRequest.createRight || false,
+                modify: permissionsRequest.modifyRight || false,
+                delete: permissionsRequest.deleteRight || false
+            },
             createdDate: new Date(),
         });
 
@@ -191,9 +191,9 @@ const request_new_permissions = async (req, res) => {
 
         // Generate a new JWT token for this permission
         const tokenPayload = {
-            tokenId: newDataAccesToken._id,
+            dataAccessPermissionId: newDataAccesToken._id,
             appId: appId,
-            permissions: permissionsRequests,
+            permission: permissionsRequest,
             createdDate: newDataAccesToken.createdDate,
             approvedDate: newDataAccesToken.approvedDate,
             expirationDate: newDataAccesToken.expirationDate
@@ -211,13 +211,95 @@ const request_new_permissions = async (req, res) => {
     }
 };
 
-const upload_new_event = async (req, res) => {
-    // TODO - Generated token needs to be checked here whether the app has access
+// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
+// validates the event agains profile schema
+// saves the event into db
+const addNewEvent = async (res, profileNeededToBePresentInAllEvents, event, sourceAppName) => {
+    // Validate event against Profile schema
+    if (!event.metadata || !event.metadata.profile)
+        throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Event does not contain correct metadata' }));
+
+    if (event.metadata.profile != profileNeededToBePresentInAllEvents)
+        throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: 'One of the events has different profile set in metadata' }));
+
+    const foundProfileData = await EventProfileSchema.findOne({ name: event.metadata.profile });
+
+    if (!foundProfileData) {
+        throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: applicationResponseMessages.error.PROFILE_NOT_FOUND }));
+    }
+
+    if (!validateJsonSchema(JSON.parse(foundProfileData.schema), event.payload)) {
+        console.log("<<<<<<");
+        console.log("why it is here first");
+        throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA }));
+    }
+
+    const newEvent = new EventSchema({
+        ...event,
+        payload: JSON.stringify(event.payload),
+        metadata: {
+            ...event.metadata,
+            source: sourceAppName,
+            identifier: uuidv4()
+        }
+    });
+
+    try {
+        await newEvent.save();
+    }
+    catch (error) {
+        // TODO - IDENTIFER IN METADATA CAN CASUE DUPLICATE KEY ERROR ( IT IS MARKED AS UNIQUE )
+        console.error('Error uploading new event:', error);
+        throw Error(res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: generalResponseMessages.INTERNAL_SERVER_ERROR }));
+    }
 }
+
+const uploadNewEvents = async (req, res) => {
+    const { accessToken, profileCommonForAllEventsBeingUploaded, events } = req.body;
+
+    // if (!accessToken || !payload || !metadata || !metadata.profile) {
+    if (!accessToken || !profileCommonForAllEventsBeingUploaded || !events) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.MISSING_REQUIRED_FIELDS });
+    }
+
+    // Decode JWT accessToken
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(accessToken);
+    } catch (error) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
+    }
+
+    const { dataAccessPermissionId } = decodedToken;
+
+    // Validate DataAccessToken
+    const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
+    // console.log("-------", dataAccessPermissionId)
+    if (!dataAccessPermission || !dataAccessPermission.isActive) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+    }
+
+    // Check for create permission
+    const hasCreatePermission = dataAccessPermission.permission.profile == profileCommonForAllEventsBeingUploaded && dataAccessPermission.permission.create == true;
+
+    if (!hasCreatePermission) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.NO_CREATE_PERMISSION_FOR_EVENT_CREATION });
+    }
+
+    // add the events
+    try {
+        await Promise.all(events.map(event => addNewEvent(res, profileCommonForAllEventsBeingUploaded, event, sourceAppName=dataAccessToken.app.nameDefinedByApp)));
+        res.status(httpStatusCodes.CREATED).json({ message: applicationResponseMessages.success.EVENTS_UPLOADED_SUCCESSFULLY });
+    } catch (errResponse) {
+        console.log(errResponse);
+        console.log("<<<<<<1");
+        return errResponse;
+    }
+};
 
 module.exports = {
     associate_app_with_storage_app_holder,
     register_new_profile,
     request_new_permissions,
-    upload_new_event
+    uploadNewEvents
 }

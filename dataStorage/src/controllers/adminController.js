@@ -79,7 +79,17 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
     }
 };
 
+const getUnapprovedPermissionsRequests = async (req, res) => {
+    
+}
+
+const approvePermissionRequest = async (req, res) => {
+    
+}
+
 module.exports = { 
     createNewAppConnection,
-    generateOneTimeTokenForAssociatingRealAppWithAppConnection
+    generateOneTimeTokenForAssociatingRealAppWithAppConnection,
+    getUnapprovedPermissionsRequests,
+    approvePermissionRequest
 };

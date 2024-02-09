@@ -18,13 +18,22 @@ module.exports = {
         INVALID_OR_EXPIRED_JWT_TOKEN: "Invalid or expired JWT token",
 
         INVALID_PERMISSIONS_REQUESTS_FORMAT: "Invalid permissions requests format",
-        PERMISSION_REQUEST_MISSING_REQUIRED_FIELDS: "Each permission request must include appName and eventName"
+        PERMISSION_REQUEST_MISSING_REQUIRED_FIELDS: "Each permission request must include profileName",
+
+        EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA: "Event payload does not match the profile schema",
+        PROFILE_NOT_FOUND: "Profile not found",
+
+        NO_CREATE_PERMISSION_FOR_EVENT_CREATION: "No create permission for this event",
+
+        INVALID_OR_EXPIRED_ACCESS_TOKEN: "Invalid or expired access token"
     },
     success: {
         APP_ASSOCIATED_WITH_STORAGE_APP_HOLDER: "App successfully associated with the storage app holder",
 
         NEW_PROFILE_REGISTERED: "Profile registered successfully",
 
-        PERMISSIONS_REQUESTED_SUCCESS: "Permissions requested successfully"
+        PERMISSIONS_REQUESTED_SUCCESS: "Permissions requested successfully",
+
+        EVENTS_UPLOADED_SUCCESSFULLY: "Events uploaded successfully"
     }
 }

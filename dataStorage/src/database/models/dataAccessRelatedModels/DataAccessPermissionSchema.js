@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 const EventPermissionSchema = require('./EventPermissionSchema')
 
-const DataAccessTokenSchema = new mongoose.Schema({
-  appId: {
+const DataAccessPermissionSchema = new mongoose.Schema({
+  app: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Application',
     required: true
   },
-  permissions: [EventPermissionSchema],
+  permission: EventPermissionSchema,
   createdDate: {
     type: Date,
     required: true,
@@ -17,7 +17,7 @@ const DataAccessTokenSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
-  isRevoked: { // whether the token is still good to use ( can be revoked from the admin user interface )
+  isActive: { // whether the token is still good to use ( can be revoked from the admin user interface )
     type: Boolean,
     default: false
   },
@@ -31,6 +31,6 @@ const DataAccessTokenSchema = new mongoose.Schema({
   }
 });
 
-const TokenSchema = mongoose.model('Token', DataAccessTokenSchema);
+const TokenSchema = mongoose.model('Token', DataAccessPermissionSchema);
 
 module.exports = TokenSchema;

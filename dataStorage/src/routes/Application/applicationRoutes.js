@@ -9,6 +9,7 @@ router.post('/register_new_profile', applicationController.register_new_profile)
 
 router.post('/request_new_permissions', applicationController.request_new_permissions);
 
-router.post('/event', applicationController.upload_new_event);
+router.post('/upload_new_events', applicationController.uploadNewEvents);
+
 
 module.exports = router;

@@ -1,11 +1,7 @@
 const mongoose = require('mongoose');
 
 const EventPermissionSchema = new mongoose.Schema({
-  appName: { // name of the app which produces these events
-    type: String,
-    required: true
-  },
-  eventName: {
+  profile: {
     type: String,
     required: true
   },
