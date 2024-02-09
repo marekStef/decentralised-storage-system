@@ -8,6 +8,7 @@ const {generateJwtToken, decodeJwtToken} = require('./helpers/jwtGenerator');
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema');
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
 const EventProfileSchema = require('../database/models/eventRelatedModels/EventProfileSchema');
+const DataAccessTokenSchema = require('../database/models/dataAccessRelatedModels/DataAccessTokenSchema');
 
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const {validateJsonSchema, isValidJSON} = require('./helpers/jsonSchemaValidation');
@@ -45,7 +46,12 @@ const associate_app_with_storage_app_holder = async (req, res) => {
         }
 
         // jwtTokenForPermissionRequestsAndProfiles
-        const generatedJwtToken = generateJwtToken(appHolder._id, appHolder.nameDefinedByUser, nameDefinedByApp);
+        const jwtPayload = {
+            appId: appHolder._id,
+            nameDefinedByUser: appHolder.nameDefinedByUser,
+            nameDefinedByApp
+        };
+        const generatedJwtToken = generateJwtToken(jwtPayload);
 
         // Update the app with the provided name and the association date
         appHolder.nameDefinedByApp = nameDefinedByApp;
@@ -68,7 +74,7 @@ const associate_app_with_storage_app_holder = async (req, res) => {
         }
 
         console.error('Error associating app with storage app holder:', error);
-        generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
+        generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
 
@@ -142,12 +148,76 @@ const register_new_profile = async (req, res) => {
     }
 };
 
+const request_new_permissions = async (req, res) => {
+    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequests } = req.body;
+
+    if (!jwtTokenForPermissionRequestsAndProfiles)
+        return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JWT_TOKEN_REQUIRED);
+
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
+    } catch (error) {
+        return generalResponseMessages(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
+    }
+
+    const { appId } = decodedToken;
+
+    if (!permissionsRequests || !Array.isArray(permissionsRequests) || permissionsRequests.length === 0)
+        return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.INVALID_PERMISSIONS_REQUESTS_FORMAT);
+
+    for (let request of permissionsRequests) {
+        if (!request.appName || !request.eventName) {
+            return generalResponseMessages(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PERMISSION_REQUEST_MISSING_REQUIRED_FIELDS);
+        }
+    }
+
+    // Create and save a new DataAccessToken with the requested permissions
+    try {
+        const newDataAccesToken = new DataAccessTokenSchema({
+            appId: appId,
+            permissions: permissionsRequests.map(req => ({
+                appName: req.appName,
+                eventName: req.eventName,
+                read: req.readRight || false,
+                create: req.createRight || false,
+                modify: req.modifyRight || false,
+                delete: req.deleteRight || false
+            })),
+            createdDate: new Date(),
+        });
+
+        await newDataAccesToken.save();
+
+        // Generate a new JWT token for this permission
+        const tokenPayload = {
+            tokenId: newDataAccesToken._id,
+            appId: appId,
+            permissions: permissionsRequests,
+            createdDate: newDataAccesToken.createdDate,
+            approvedDate: newDataAccesToken.approvedDate,
+            expirationDate: newDataAccesToken.expirationDate
+        };
+        const newGeneratedAccessJwtToken = generateJwtToken(tokenPayload)
+
+
+        res.status(httpStatusCodes.CREATED).json({
+            message: applicationResponseMessages.success.PERMISSIONS_REQUESTED_SUCCESS,
+            generatedAccessToken: newGeneratedAccessJwtToken
+        });
+    } catch (error) {
+        console.error('Error requesting new permissions:', error);
+        generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
+    }
+};
+
 const upload_new_event = async (req, res) => {
     // TODO - Generated token needs to be checked here whether the app has access
 }
 
 module.exports = {
+    associate_app_with_storage_app_holder,
     register_new_profile,
-    upload_new_event,
-    associate_app_with_storage_app_holder
+    request_new_permissions,
+    upload_new_event
 }

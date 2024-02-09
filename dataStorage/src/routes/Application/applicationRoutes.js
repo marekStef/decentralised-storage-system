@@ -7,6 +7,8 @@ router.post('/associate_with_storage_app_holder', applicationController.associat
 
 router.post('/register_new_profile', applicationController.register_new_profile);
 
+router.post('/request_new_permissions', applicationController.request_new_permissions);
+
 router.post('/event', applicationController.upload_new_event);
 
 module.exports = router;
