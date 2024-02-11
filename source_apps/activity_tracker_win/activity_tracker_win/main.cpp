@@ -15,12 +15,12 @@ void get_windows_apps_info_TEST() {
 }
 
 void take_screenshots_TEST() {
-    ScreenshotsManager screenshots_manager("./images");
+    /*ScreenshotsManager screenshots_manager("./images");
     auto screenshots_filepaths = screenshots_manager.take_screenshots_of_all_screens();
     std::cout << "Screenshots successfully made" << std::endl;
 
     screenshots_manager.upload_screenshots_to_server(screenshots_filepaths);
-    std::cout << std::endl << std::endl << "***********************************" << std::endl << std::endl << std::endl;
+    std::cout << std::endl << std::endl << "***********************************" << std::endl << std::endl << std::endl;*/
 }
 
 void get_ssids_TEST() {

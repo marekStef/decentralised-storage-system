@@ -11,6 +11,34 @@ const OneTimeAssociationToken = require('../database/models/applicationRelatedMo
 const DataAccessPermissionSchema = require('../database/models/dataAccessRelatedModels/DataAccessPermissionSchema');
 const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED} = require('../constants/pagination');
 
+const getAllApps = async (req, res) => {
+    const BASE = 10;
+
+    const pageIndex = parseInt(req.query.page, BASE) || DEFAULT_PAGE_NUMBER_ZERO_INDEXED;
+    const limit = parseInt(req.query.limit, BASE) || DEFAULT_NUMBER_OF_ITEMS_PER_PAGE;
+    const skip = pageIndex * limit;
+
+    try {
+        const apps = await ApplicationSchema.find()
+            .skip(skip)
+            .limit(limit);
+
+        const totalItems = await ApplicationSchema.countDocuments({ approvedDate: null });
+        const totalPages = Math.ceil(totalItems / limit);
+
+        res.status(httpStatusCodes.OK).json({
+            status: 'success',
+            data: apps,
+            totalItems,
+            totalPages,
+            currentPage: pageIndex
+        });
+    } catch (error) {
+        console.error('Error fetching apps:', error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+}
+
 const createNewAppConnection = async (req, res) => {
     const { nameDefinedByUser } = req.body;
 
@@ -19,6 +47,7 @@ const createNewAppConnection = async (req, res) => {
     }
 
     try {
+        console.log(nameDefinedByUser);
         const newApplication = new ApplicationSchema({ nameDefinedByUser });
         
         const savedApplication = await newApplication.save();
@@ -28,7 +57,9 @@ const createNewAppConnection = async (req, res) => {
             appHolderId: savedApplication._id
         });
     } catch (error) {
+        console.log(error);
         if (error.code === mongoDbCodes.DUPLICATE_ERROR) {
+            console.log('here@0');
             return generateBadResponse(res, httpStatusCodes.CONFLICT, adminResponseMessages.error.APPLICATION_NAME_DEFINED_BY_USER_ALREADY_EXISTING);
         }
 
@@ -193,6 +224,7 @@ const revokeApprovedPermission = async (req, res) => {
 };
 
 module.exports = { 
+    getAllApps,
     createNewAppConnection,
     generateOneTimeTokenForAssociatingRealAppWithAppConnection,
     getUnapprovedPermissionsRequests,

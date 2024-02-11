@@ -9,7 +9,9 @@ const ApplicationSchema = new mongoose.Schema({
   nameDefinedByApp: { // this is the main name which will be referenced in profiles and events
     type: String,
     unique: true,
-    default: null
+    trim: true,
+    index: true,
+    sparse: true // so that there can be multiple itemss with nameDefinedByApp set to null
   },
   dateOfRegistration: { // date when the user created this new app. This is not date when the actual app associated itself with this
     type: Date,
