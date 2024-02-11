@@ -288,7 +288,7 @@ const uploadNewEvents = async (req, res) => {
 
     // add the events
     try {
-        await Promise.all(events.map(event => addNewEvent(res, profileCommonForAllEventsBeingUploaded, event, sourceAppName=dataAccessToken.app.nameDefinedByApp)));
+        await Promise.all(events.map(event => addNewEvent(res, profileCommonForAllEventsBeingUploaded, event, sourceAppName=dataAccessPermission.app.nameDefinedByApp)));
         res.status(httpStatusCodes.CREATED).json({ message: applicationResponseMessages.success.EVENTS_UPLOADED_SUCCESSFULLY });
     } catch (errResponse) {
         console.log(errResponse);
