@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 
-const httpStatusCodes = require('../../src/constants/httpStatusCodes');
+const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const applicationResponseMessages = require('../constants/forApiResponses/application/responseMessages');
 

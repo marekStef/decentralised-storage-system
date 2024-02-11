@@ -1,4 +1,6 @@
-const httpStatusCodes = require('../../src/constants/httpStatusCodes');
+const mongoose = require('mongoose');
+
+const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const mongoDbCodes = require('../constants/mongoDbCodes');
@@ -6,6 +8,8 @@ const {generateBadResponse} = require('./helpers/generalHelpers');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema')
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
+const DataAccessPermissionSchema = require('../database/models/dataAccessRelatedModels/DataAccessPermissionSchema');
+const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED} = require('../constants/pagination');
 
 const createNewAppConnection = async (req, res) => {
     const { nameDefinedByUser } = req.body;
@@ -80,16 +84,118 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
 };
 
 const getUnapprovedPermissionsRequests = async (req, res) => {
-    
-}
+    const BASE = 10;
+
+    const pageIndex = parseInt(req.query.pageIndex, BASE) || DEFAULT_PAGE_NUMBER_ZERO_INDEXED;
+    const limit = parseInt(req.query.limit, BASE) || DEFAULT_NUMBER_OF_ITEMS_PER_PAGE;
+    const skip = pageIndex * limit;
+
+    try {
+        const permissions = await DataAccessPermissionSchema.find({ approvedDate: null })
+            .skip(skip)
+            .limit(limit)
+            .populate('app');
+
+        const totalItems = await DataAccessPermissionSchema.countDocuments({ approvedDate: null });
+        const totalPages = Math.ceil(totalItems / limit);
+
+        res.status(httpStatusCodes.OK).json({
+            status: 'success',
+            data: {
+                permissions,
+                totalItems,
+                totalPages,
+                currentPage: pageIndex
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching unapproved permissions requests:', error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+};
 
 const approvePermissionRequest = async (req, res) => {
-    
-}
+    const { permissionId } = req.body; // Extracting the permission ID from the request body
+
+    if (!permissionId) {
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.PERMISSION_ID_REQUIRED);
+    }
+
+    // Check if the permissionId is a valid mongo db ObjectId
+    if (!mongoose.Types.ObjectId.isValid(permissionId))
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.INVALID_PERMISSION_ID_FORMAT);
+
+    const existingPermission = await DataAccessPermissionSchema.findById(permissionId);
+    if (!existingPermission)
+        return generateBadResponse(res, httpStatusCodes.NOT_FOUND, adminResponseMessages.error.PERMISSION_REQUEST_NOT_FOUND);
+    if (existingPermission.isActive && existingPermission.approvedDate) // Permission is already active and has an approved date
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.PERMISSION_ALREADY_APPROVED);
+
+    try {
+        // Find the permission by ID and update
+        const updatedPermission = await DataAccessPermissionSchema.findByIdAndUpdate(
+            permissionId,
+            {
+                $set: {
+                    isActive: true,
+                    approvedDate: new Date()
+                }
+            },
+            { new: true } // Return the modified document rather than the original
+        );
+
+        res.status(httpStatusCodes.OK).json({
+            message: adminResponseMessages.success.PERMISSION_REQUEST_APPROVED,
+            data: updatedPermission
+        });
+    } catch (error) {
+        console.error('Error approving permission request:', error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+};
+
+const revokeApprovedPermission = async (req, res) => {
+    const { permissionId } = req.body;
+
+    if (!permissionId)
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.PERMISSION_ID_REQUIRED);
+
+    // Check if the permissionId is a valid mongo db ObjectId
+    if (!mongoose.Types.ObjectId.isValid(permissionId))
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.INVALID_PERMISSION_ID_FORMAT);
+
+    const existingPermission = await DataAccessPermissionSchema.findById(permissionId);
+    if (!existingPermission)
+        return generateBadResponse(res, httpStatusCodes.NOT_FOUND, adminResponseMessages.error.PERMISSION_REQUEST_NOT_FOUND);
+    if (existingPermission.revokedDate) // Permission was already revoked
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.PERMISSION_ALREADY_REVOKED);
+
+    try {
+        const updatedPermission = await DataAccessPermissionSchema.findByIdAndUpdate(
+            permissionId,
+            {
+                $set: {
+                    isActive: false,
+                    revokedDate: new Date() // Setting the current date as the revoked date
+                }
+            },
+            { new: true } // Return the modified document rather than the original
+        );
+
+        res.status(httpStatusCodes.OK).json({
+            message: adminResponseMessages.success.PERMISSION_REVOKED_SUCCESS,
+            data: updatedPermission
+        });
+    } catch (error) {
+        console.error('Error revoking permission request:', error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+};
 
 module.exports = { 
     createNewAppConnection,
     generateOneTimeTokenForAssociatingRealAppWithAppConnection,
     getUnapprovedPermissionsRequests,
-    approvePermissionRequest
+    approvePermissionRequest,
+    revokeApprovedPermission
 };
