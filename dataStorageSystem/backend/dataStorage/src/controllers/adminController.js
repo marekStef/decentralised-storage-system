@@ -39,6 +39,30 @@ const getAllApps = async (req, res) => {
     }
 }
 
+const getAppHolderById = async (req, res) => {
+    const { appHolderId } = req.params;
+    console.log(appHolderId);
+
+    try {
+        const app = await ApplicationSchema.findById(appHolderId);
+
+        if (!app) {
+            return res.status(httpStatusCodes.NOT_FOUND).json({
+                status: 'error',
+                message: 'App not found'
+            });
+        }
+
+        res.status(httpStatusCodes.OK).json({
+            status: 'success',
+            data: app
+        });
+    } catch (error) {
+        console.error(`Error fetching app with ID ${appHolderId}:`, error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+}
+
 const createNewAppConnection = async (req, res) => {
     const { nameDefinedByUser } = req.body;
 
@@ -79,11 +103,15 @@ const isAppAlreadyAssociated = app => {
 // which the real software app will use to associate itself with its app holder in storage system
 
 const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, res) => {
+    console.log(req.body);
     const { appHolderId } = req.body; // assuming the app's ID is passed as 'appHolderId'
 
     if (!appHolderId) {
-        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.error.APP_ID_NOT_PROVIDED);
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.APP_ID_NOT_PROVIDED);
     }
+
+    if (!mongoose.Types.ObjectId.isValid(appHolderId))
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.INVALID_APP_HOLDER_FORMAT);
 
     try {
         const app = await ApplicationSchema.findById(appHolderId);
@@ -96,8 +124,14 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
 
         const existingToken = await OneTimeAssociationToken.findOne({ app: appHolderId });
         // there should not be existing token - only one token for association can be generated
-        if (existingToken)
-            return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.ASSOCIATION_TOKEN_ALREADY_CREATED);
+        if (existingToken) {
+            // return it
+            res.status(httpStatusCodes.CREATED).json({
+                message: adminResponseMessages.success.ONE_TIME_ASSOCIATION_TOKEN_CREATED,
+                tokenId: existingToken._id
+            });
+            // return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, adminResponseMessages.error.ASSOCIATION_TOKEN_ALREADY_CREATED);
+        }
 
         // All checks passed, generate new token
         const newToken = new OneTimeAssociationToken({ app: appHolderId });
@@ -225,6 +259,7 @@ const revokeApprovedPermission = async (req, res) => {
 
 module.exports = { 
     getAllApps,
+    getAppHolderById,
     createNewAppConnection,
     generateOneTimeTokenForAssociatingRealAppWithAppConnection,
     getUnapprovedPermissionsRequests,

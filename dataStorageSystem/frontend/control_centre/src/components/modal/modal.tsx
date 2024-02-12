@@ -6,6 +6,7 @@ import newAppIcon from "../../../public/images/new_app.png";
 import permissionRequestsIcon from "../../../public/images/data.png";
 import settingsIcon from "../../../public/images/setting.png";
 import QRCodeComponent from "./components/QrCode";
+import NewAppCreation from "./components/NewAppCreation";
 
 type SettingsModalProps = {
     isOpen: boolean;
@@ -87,20 +88,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             </button>
                         </div>
                     </div>
-                    <div className="basis-3/4 mr-4">
+                    <div className="w-full h-full mr-4 mt-2">
                         {(() => {
                             switch (selected) {
                                 case "new_app":
-                                    return (
-                                        <div className="w-8/12">
-                                            <QRCodeComponent value="http://192.168.0.111:3001/" />
-                                            HERE:{" "}
-                                            {
-                                                process.env
-                                                    .NEXT_PUBLIC_BACKEND_SERVER_URI
-                                            }
-                                        </div>
-                                    );
+                                    return <NewAppCreation />;
                                 case "permissions":
                                     return <p>Permissions (todo)</p>;
                                 case "settings":

@@ -3,10 +3,11 @@ const router = express.Router();
 const adminController = require("../../controllers/adminController");
 
 router.get('/apps', adminController.getAllApps);
+router.get('/apps/:appHolderId', adminController.getAppHolderById);
 
 router.post('/register_new_app', adminController.createNewAppConnection);
 
-router.get('/generate_one_time_association_token', adminController.generateOneTimeTokenForAssociatingRealAppWithAppConnection);
+router.post('/generate_one_time_association_token', adminController.generateOneTimeTokenForAssociatingRealAppWithAppConnection);
 
 // ----- PERMISSIONS
 

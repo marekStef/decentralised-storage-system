@@ -1,7 +1,8 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import SettingsModal from "@/components/modal/modal";
 import Link from 'next/link';
+
+import {loadAppHolders} from '../network/networkHelpers';
 
 const AppsPage = () => {
     const [apps, setApps] = useState([]);
@@ -18,8 +19,7 @@ const AppsPage = () => {
         if (!hasMore) return;
 
         setLoading(true);
-        axios
-            .get(`http://localhost:3000/admin/api/apps?page=${currentPage}`)
+        loadAppHolders(currentPage)
             .then((res) => {
                 const newApps = res.data.data;
                 setApps((prevApps) => [...prevApps, ...newApps]);
@@ -61,10 +61,13 @@ const AppsPage = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {apps.map((app) => (
-                        <Link key={app._id} href={`/apps/${app._id}`} className="shadow p-4 hover:bg-slate-50">
+                        <Link key={app._id} href={`/apps/${app._id}`} className="shadow p-4 hover:bg-slate-50 overflow-auto">
                             <h2 className="text-xl font-bold">
                                 {app.nameDefinedByUser}
                             </h2>
+                            <p className="text-xs font-semibold text-gray-600 ">
+                                {app.nameDefinedByApp}
+                            </p>
                             <p>
                                 Registered on:{" "}
                                 {new Date(

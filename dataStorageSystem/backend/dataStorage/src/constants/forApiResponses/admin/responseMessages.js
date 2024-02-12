@@ -5,6 +5,7 @@ module.exports = {
         APPLICATION_REGISTRATION_FAILED: "Failed to register the new application.",
 
         APP_ID_NOT_PROVIDED: "App ID must be provided",
+        INVALID_APP_HOLDER_FORMAT: "Invalid appHolderId format",
         APPLICATION_NOT_FOUND: "Application not found",
         APPLICATION_HOLDER_ALREADY_ASSOCIATED_WITH_PHYSICAL_APP: "Application has already been associated",
 
