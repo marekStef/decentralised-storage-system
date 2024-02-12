@@ -15,7 +15,7 @@ db.connect();
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3001' // for development
+    // origin: 'http://localhost:3001' // for development
 }));
 
 registerRoutes(app);
