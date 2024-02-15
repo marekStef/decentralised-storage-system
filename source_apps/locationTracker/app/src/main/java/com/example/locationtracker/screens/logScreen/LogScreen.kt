@@ -41,9 +41,19 @@ fun LogScreen(navController: NavController, logsManager: LogsManager) {
     var locations by remember { mutableStateOf(listOf<Location>()) } // mutable state list that holds the current locations to be displayed; defined with remember to survive recompositions and initialized with an empty list
     val coroutineScope = rememberCoroutineScope()
 
+    var offset by remember { mutableStateOf(0) } // state to track the offset
+    val limit = 4
+    var loading by remember { mutableStateOf(false) }
+    var moreAvailable by remember { mutableStateOf(true) }
+
     fun refreshLocations() {
         coroutineScope.launch {
-            locations = logsManager.fetchLast100Locations()
+            loading = true
+            val newLocations = logsManager.fetchLocations(limit, offset)
+            locations += newLocations
+            moreAvailable = newLocations.size == limit
+            loading = false
+            offset += limit
         }
     }
 
@@ -71,6 +81,8 @@ fun LogScreen(navController: NavController, logsManager: LogsManager) {
             backgroundColor = colorResource(id = R.color.header_background),
             actions = {
                 IconButton(onClick = {
+                    locations = listOf<Location>()
+                    offset = 0
                     refreshLocations()
                 }) {
                     Icon(
@@ -81,7 +93,7 @@ fun LogScreen(navController: NavController, logsManager: LogsManager) {
             }
         )
 
-        Text("Last ${locations.size} Locations", style = MaterialTheme.typography.subtitle2)
+        Text("Last ${locations.size} Unsynced Locations", style = MaterialTheme.typography.subtitle2)
 
         Row {
             Button(onClick = { logsManager.saveNewLocation(1.0, 2.0) }) {
@@ -97,6 +109,28 @@ fun LogScreen(navController: NavController, logsManager: LogsManager) {
         ) {
             items(locations) { location ->
                 LocationItem(location)
+            }
+
+            if (moreAvailable) {
+                item {
+                    Button(
+                        onClick = {
+                            if (!loading) {
+                                refreshLocations()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        enabled = !loading
+                    ) {
+                        if (loading) {
+                            Text("Loading...")
+                        } else {
+                            Text("Load More")
+                        }
+                    }
+                }
             }
         }
     }

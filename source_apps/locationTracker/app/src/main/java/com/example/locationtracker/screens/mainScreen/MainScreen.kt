@@ -1,5 +1,7 @@
 package com.example.locationtracker
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,19 +21,24 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.locationtracker.foregroundServices.LocationTrackerService
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.viewModel.MainViewModel
 
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainViewModel) {
+fun MainScreen(navController: NavController, viewModel: MainViewModel, applicationContext: Context) {
     // Observe SyncInfo from the ViewModel
     val syncInfo by viewModel.syncInfo.observeAsState()
+
+    val context = LocalContext.current
+//    val isServiceRunning by mutableStateOf(isLocationTrackerServiceRunning(context))
 
     // Use the value of SyncInfo to update the UI
     syncInfo?.let { info: SyncInfo ->
@@ -84,15 +91,36 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
                     Button(onClick = { navController.navigate("logScreen") }) {
                         Text("Show Data")
                     }
-                    Button(onClick = { /* Handle click */ }) {
-                        Text("Button 2")
-                    }
+                    ServiceControlButton(applicationContext, viewModel)
                 }
             }
         }
     }
 }
 
+@Composable
+fun ServiceControlButton(
+    applicationContext: Context,
+    viewModel: MainViewModel
+) {
+    val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
+
+    Button(onClick = {
+        val action = if (isServiceRunning) {
+            LocationTrackerService.Actions.STOP.toString()
+        } else {
+            LocationTrackerService.Actions.START.toString()
+        }
+
+        Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
+            intent.action = action
+            applicationContext.startForegroundService(intent)
+        }
+
+    }) {
+        Text(if (isServiceRunning) "Stop Service" else "Start Service")
+    }
+}
 
 //@Preview
 //@Composable

@@ -13,6 +13,6 @@ interface LocationDao {
     @Query("SELECT * FROM location")
     fun getAllLocations(): List<Location>
 
-    @Query("SELECT * FROM location ORDER BY id DESC LIMIT 100")
-    suspend fun getLast100Locations(): List<Location>
+    @Query("SELECT * FROM location ORDER BY id DESC LIMIT :limit OFFSET :offset")
+    suspend fun getLocationsWithLimitOffset(limit: Int, offset: Int): List<Location>
 }

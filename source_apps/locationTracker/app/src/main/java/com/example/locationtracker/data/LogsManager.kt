@@ -62,13 +62,13 @@ class LogsManager private constructor(private var db: Database, private val cont
         }
     }
 
-    suspend fun fetchLast100Locations(): List<Location> {
-        return db.locationDao().getLast100Locations()
+    suspend fun fetchLocations(limit: Int, offset: Int): List<Location> {
+        return db.locationDao().getLocationsWithLimitOffset(limit, offset)
     }
 
     fun logLast10Locations() {
         GlobalScope.launch(Dispatchers.IO) {
-            val last100Locations = db.locationDao().getLast100Locations()
+            val last100Locations = db.locationDao().getLocationsWithLimitOffset(10, 0)
             last100Locations.takeLast(10).forEach { location ->
                 Log.d("LocationLog", "Location: - Lat: ${location.latitude}, Long: ${location.longitude}, Time: ${location.time}")
             }
