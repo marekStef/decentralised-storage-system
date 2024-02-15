@@ -62,8 +62,8 @@ class LogsManager private constructor(private var db: Database, private val cont
         }
     }
 
-    fun fetchLast100Locations(): LiveData<List<Location>> = liveData(Dispatchers.IO) {
-        emit(db.locationDao().getLast100Locations())
+    suspend fun fetchLast100Locations(): List<Location> {
+        return db.locationDao().getLast100Locations()
     }
 
     fun logLast10Locations() {

@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -48,9 +49,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager) {
     val systemUiController = rememberSystemUiController()
+    val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
         systemUiController.setStatusBarColor(
-            color = Color.Blue, // Set your desired color here
+            color = statusBarColor,
             darkIcons = true
         )
 
