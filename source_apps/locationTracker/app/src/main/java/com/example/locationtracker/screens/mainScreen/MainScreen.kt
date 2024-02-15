@@ -1,7 +1,9 @@
 package com.example.locationtracker
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -32,53 +34,65 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
     val syncInfo by viewModel.syncInfo.observeAsState()
 
     // Use the value of SyncInfo to update the UI
-    syncInfo?.let { info : SyncInfo ->
+    syncInfo?.let { info: SyncInfo ->
         SyncStatusCard(syncInfo = info)
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(onClick = { navController.navigate("logScreen") }) {
-            Text("Go to Second Screen")
-        }
-        Button(onClick = { syncInfo?.lastSync = "now" }) {
-            Text("Go to Second Screen")
-        }
-        Button(onClick = {
-            val updatedSyncInfo = SyncInfo(
-                lastSync = "New Sync Time",
-                eventsNotSynced = 1234,
-                oldestEventTimeNotSynced = "New Oldest Event Time",
-                totalEvents = 987654321
-            )
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Box {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Location Logger",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+                syncInfo?.let { SyncStatusCard(it) }
 
-            viewModel.updateSyncInfo(updatedSyncInfo) // Call the function in the ViewModel to handle the sync event
-        }) {
-            Text("Sync Now")
-        }
-    }
+                Button(onClick = {
+                    val updatedSyncInfo = SyncInfo(
+                        lastSync = "New Sync Time",
+                        eventsNotSynced = 1234,
+                        oldestEventTimeNotSynced = "New Oldest Event Time",
+                        totalEvents = 987654321
+                    )
 
-    Surface(color = MaterialTheme.colorScheme.surface) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Location Logger",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(24.dp))
-            syncInfo?.let { SyncStatusCard(it) }
+                    viewModel.updateSyncInfo(updatedSyncInfo) // Call the function in the ViewModel to handle the sync event
+                }) {
+                    Text("Sync Now")
+                }
+            }
+
+            // This Column aligns the buttons to the bottom
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = { navController.navigate("logScreen") }) {
+                        Text("Show Data")
+                    }
+                    Button(onClick = { /* Handle click */ }) {
+                        Text("Button 2")
+                    }
+                }
+            }
         }
     }
 }
+
 
 //@Preview
 //@Composable

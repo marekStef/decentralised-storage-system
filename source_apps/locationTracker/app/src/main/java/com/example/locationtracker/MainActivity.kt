@@ -16,6 +16,9 @@ import androidx.navigation.compose.composable
 
 import androidx.navigation.compose.rememberNavController
 import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.eventSynchronisation.AppRegisteredToStorageState
+import com.example.locationtracker.eventSynchronisation.EventSynchronisationManager
+import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
 import com.example.locationtracker.viewModel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -62,9 +65,13 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager) {
         )
     }
 
+    var eventSyncManager = EventSynchronisationManager()
+    val startDestination = if (eventSyncManager.isAppRegisteredInStorage() == AppRegisteredToStorageState.NON_REGISTERED) "registrationScreen" else "mainScreen"
+
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "mainScreen") {
+    NavHost(navController = navController, startDestination) {
         composable("mainScreen") { MainScreen(navController, mainViewModel) }
         composable("logScreen") { LogScreen(navController, logsManager) }
+        composable("registrationScreen") { RegistrationScreen(navController) }
     }
 }
