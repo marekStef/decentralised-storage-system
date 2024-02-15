@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -53,6 +54,16 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.16.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.1")
+
+    // for database [start]
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    testImplementation("androidx.room:room-testing:2.6.1")
+    // for database [end]
+
+    // for lazy column
+    implementation("androidx.compose.foundation:foundation:1.6.1")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

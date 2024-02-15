@@ -26,7 +26,7 @@ fun SyncStatusCard(syncInfo: SyncInfo) {
         ) {
             SyncStatusItem("Last Synchronisation", syncInfo.lastSync)
             SyncStatusItem("Number of events not synchronised", syncInfo.eventsNotSynced.toString())
-            SyncStatusItem("Oldest event not synchronised", syncInfo.oldestEventNotSynced)
+            SyncStatusItem("Oldest event not synchronised", syncInfo.oldestEventTimeNotSynced)
             SyncStatusItem("Total events gathered", syncInfo.totalEvents.toString())
         }
     }
@@ -40,7 +40,7 @@ fun SyncStatusItem(label: String, value: String) {
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = label, color = Color.White)
-        Text(text = value, fontWeight = FontWeight.Bold, color = Color.White)
+        Text(text = label, color = Color.Black)
+        Text(text = value, fontWeight = FontWeight.Bold, color = Color.Black)
     }
 }

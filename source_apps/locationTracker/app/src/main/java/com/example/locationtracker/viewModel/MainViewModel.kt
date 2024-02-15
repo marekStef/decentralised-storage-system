@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
-import com.example.locationtracker.data.DatabaseLogsManager
+import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.model.SyncInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val dbManager: DatabaseLogsManager) : ViewModel() {
+class MainViewModel(private val dbManager: LogsManager) : ViewModel() {
 
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo

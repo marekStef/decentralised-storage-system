@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "LocationTracker"
+rootProject.name = "LocTrack"
 include(":app")
  

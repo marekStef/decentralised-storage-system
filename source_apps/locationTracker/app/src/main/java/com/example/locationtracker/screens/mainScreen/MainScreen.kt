@@ -35,6 +35,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
     syncInfo?.let { info : SyncInfo ->
         SyncStatusCard(syncInfo = info)
     }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -50,7 +51,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
             val updatedSyncInfo = SyncInfo(
                 lastSync = "New Sync Time",
                 eventsNotSynced = 1234,
-                oldestEventNotSynced = "New Oldest Event Time",
+                oldestEventTimeNotSynced = "New Oldest Event Time",
                 totalEvents = 987654321
             )
 
@@ -60,7 +61,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel) {
         }
     }
 
-    Surface(color = MaterialTheme.colorScheme.background) {
+    Surface(color = MaterialTheme.colorScheme.surface) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
