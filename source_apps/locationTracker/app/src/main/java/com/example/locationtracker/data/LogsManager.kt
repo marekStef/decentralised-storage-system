@@ -42,17 +42,18 @@ class LogsManager private constructor(private var db: Database, private val cont
             putString(LAST_SYNC, syncInfo.lastSync)
             // putInt(EVENTS_NOT_SYNCED, syncInfo.eventsNotSynced)
             // putString(OLDEST_EVENT_TIME_NOT_SYNCED, syncInfo.oldestEventTimeNotSynced)
-            putLong(TOTAL_EVENTS, syncInfo.totalEvents)
+            putInt(TOTAL_EVENTS, syncInfo.totalEvents)
             apply()
         }
     }
 
-    fun getSyncInfo(): SyncInfo {
+    suspend fun getSyncInfo(): SyncInfo {
+        val numberOfNotSyncedEvents = db.locationDao().countAllLocations()
         return SyncInfo(
             lastSync = SyncInfoSharedPreferences.getString(LAST_SYNC, "") ?: "",
-            eventsNotSynced = 0,
+            eventsNotSynced = numberOfNotSyncedEvents,
             oldestEventTimeNotSynced = "fetch from db",
-            totalEvents = SyncInfoSharedPreferences.getLong(TOTAL_EVENTS, 0L)
+            totalEvents = SyncInfoSharedPreferences.getInt(TOTAL_EVENTS, 0) + numberOfNotSyncedEvents
         )
     }
 

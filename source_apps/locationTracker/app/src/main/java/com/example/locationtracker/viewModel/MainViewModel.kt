@@ -1,5 +1,6 @@
 package com.example.locationtracker.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,9 +11,12 @@ import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.model.SyncInfo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val dbManager: LogsManager, preferencesManager: PreferencesManager) : ViewModel() {
+    private val TIME_PERIOD_MILLISECONDS = 10000L
 
     // queue for permissions
     // [camera permission]
@@ -37,13 +41,20 @@ class MainViewModel(private val dbManager: LogsManager, preferencesManager: Pref
     val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 
     init {
-        loadSyncInfo()
+        startPeriodicSync()
     }
 
-    private fun loadSyncInfo() {
-        // Load data from SharedPreferences asynchronously
-        viewModelScope.launch(Dispatchers.IO) {
-            _syncInfo.postValue(dbManager.getSyncInfo())
+    private fun startPeriodicSync() {
+        viewModelScope.launch {
+            while (isActive) { // isActive is a CoroutineScope extension property
+                try {
+                    _syncInfo.postValue(dbManager.getSyncInfo())
+                    Log.d("FETCHING", "FEEEEEEEEEEEEEEEEEEEEEEEEETCHING")
+                } catch (e: Exception) {
+
+                }
+                delay(TIME_PERIOD_MILLISECONDS)
+            }
         }
     }
 
