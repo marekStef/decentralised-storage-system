@@ -6,14 +6,21 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.locationtracker.constants.Constants.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION
+import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_IMPORTANT_THINGS
+import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_LOCATION_TRACKER_SERVICE
 
 fun requestPostNotificationsPermission(activity: Activity) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-            REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION
+            REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_LOCATION_TRACKER_SERVICE
+        )
+
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_IMPORTANT_THINGS
         )
     }
 }

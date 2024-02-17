@@ -9,11 +9,13 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,19 +25,34 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.paddingFrom
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.foregroundServices.LocationTrackerService
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
@@ -46,7 +63,12 @@ import com.example.locationtracker.viewModel.MainViewModel
 
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainViewModel, applicationContext: Context, activity: Activity) {
+fun MainScreen(
+    navController: NavController,
+    viewModel: MainViewModel,
+    applicationContext: Context,
+    activity: Activity
+) {
     // Observe SyncInfo from the ViewModel
     val syncInfo by viewModel.syncInfo.observeAsState()
 
@@ -68,10 +90,9 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel, applicati
 //    )
 
 
-
     val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
-        onResult = {permissions ->
+        onResult = { permissions ->
             permissionsToRequest.forEach { permission ->
                 viewModel.onPermissionResult(
                     permission = permission,
@@ -82,9 +103,13 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel, applicati
     )
 
     LaunchedEffect(key1 = Unit) { // Unit for key1 so this only launches once when the Composable enters the composition
-        val allPermissionsGranted = permissionsToRequest.all { permission -> // Determine if permissions are already granted
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-        }
+        val allPermissionsGranted =
+            permissionsToRequest.all { permission -> // Determine if permissions are already granted
+                ContextCompat.checkSelfPermission(
+                    context,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            }
 
         // If not all permissions are granted, launch the permission request
         if (!allPermissionsGranted) {
@@ -92,28 +117,113 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel, applicati
         }
     }
 
-    // Use the value of SyncInfo to update the UI
-    syncInfo?.let { info: SyncInfo ->
-        SyncStatusCard(syncInfo = info)
-    }
+//    syncInfo?.let { info: SyncInfo ->
+//        SyncStatusCard(syncInfo = info)
+//    }
+    Box() {
+        LazyColumn() {
+            item {
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Box {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Location Logger",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-                syncInfo?.let { SyncStatusCard(it) }
 
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+
+                    // Apply the vertical gradient from top to bottom
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+
+                        syncInfo?.let { SyncStatusCard(it) }
+
+                        Box() {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = "Settings",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Divider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(1.dp)
+                                )
+                                Spacer(modifier = Modifier.height(32.dp))
+                                Text(
+                                    text = "Settings",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = "Settings",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Text(
+                                    text = "Settings",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+
+                    dialoPermissionsQueue
+                        .reversed()
+                        .forEach { permission ->
+                            PermissionDialog(
+                                permissionTextProvider = when (permission) {
+                                    Manifest.permission.ACCESS_FINE_LOCATION -> FineLocationPermissionTextProvider()
+                                    Manifest.permission.ACCESS_BACKGROUND_LOCATION -> BackgroundLocationPermissionTextProvider()
+                                    else -> return@forEach
+                                },
+                                isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
+                                    activity,
+                                    permission
+                                ),
+                                onDismiss = { viewModel.dismissDialog() },
+                                onOkClick = {
+                                    viewModel.dismissDialog()
+                                    multiplePermissionResultLauncher.launch(
+                                        permissionsToRequest
+                                    )
+                                },
+                                onGoToAppSettingsClick = {
+                                    openAppSettings(activity)
+                                })
+                        }
+                }
+            }
+        }
+        // This Column aligns the buttons to the bottom
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 16.dp)
+                ,
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+//            Box(modifier = Modifier.fillMaxWidth()
+//                .wrapContentSize()
+//                .padding(12.dp)
+//
+//            ) {
+            Row() {
                 Button(onClick = {
                     val updatedSyncInfo = SyncInfo(
                         lastSync = "New Sync Time",
@@ -127,67 +237,46 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel, applicati
                     Text("Sync Now")
                 }
             }
-
-            // This Column aligns the buttons to the bottom
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 16.dp),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .wrapContentSize()
+                    ,
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Button(onClick = { navController.navigate("logScreen") }) {
+
+                    Button(
+                        modifier = Modifier
+                                    .shadow(elevation = 15.dp, spotColor =Color.DarkGray, shape = RoundedCornerShape(40.dp))
+                                    .padding(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.header_background),
+                                    contentColor = Color.White
+                                ),
+                        onClick = { navController.navigate("logScreen") }) {
                         Text("Show Data")
                     }
+                    Spacer(modifier = Modifier.width(42.dp))
                     ServiceControlButton(applicationContext, viewModel)
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
+
+//            }
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    horizontalArrangement = Arrangement.SpaceEvenly
+//                ) {
+////                    Button(onClick = {
+////                        FineLocationPermissionTextProvider.launch(
+////                            Manifest.permission.ACCESS_FINE_LOCATION
+////                        )
+////                    }) {
+////                        Text("Request 1 permission")
+////                    }
 //                    Button(onClick = {
-//                        FineLocationPermissionTextProvider.launch(
-//                            Manifest.permission.ACCESS_FINE_LOCATION
-//                        )
+//
 //                    }) {
-//                        Text("Request 1 permission")
+//                        Text("Request multiple permissions")
 //                    }
-                    Button(onClick = {
-
-                    }) {
-                        Text("Request multiple permissions")
-                    }
-                }
-            }
-
-            dialoPermissionsQueue
-                .reversed()
-                .forEach { permission ->
-                    PermissionDialog(
-                        permissionTextProvider = when (permission) {
-                            Manifest.permission.ACCESS_FINE_LOCATION -> FineLocationPermissionTextProvider()
-                            Manifest.permission.ACCESS_BACKGROUND_LOCATION -> BackgroundLocationPermissionTextProvider()
-                            else -> return@forEach
-                        },
-                        isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                            activity,
-                            permission
-                        ),
-                        onDismiss = { viewModel.dismissDialog() },
-                        onOkClick = {
-                            viewModel.dismissDialog()
-                            multiplePermissionResultLauncher.launch(
-                                permissionsToRequest
-                            )
-                        },
-                        onGoToAppSettingsClick = {
-                            openAppSettings(activity)
-                        })
-                }
+//                }
         }
     }
 }
@@ -199,21 +288,27 @@ fun ServiceControlButton(
 ) {
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
-    Button(onClick = {
-        val action = if (isServiceRunning) {
-            LocationTrackerService.Actions.STOP.toString()
-        } else {
-            LocationTrackerService.Actions.START.toString()
-        }
+    Button(
+        modifier = Modifier.shadow(elevation = 15.dp, spotColor =Color.DarkGray, shape = RoundedCornerShape(40.dp)).padding(4.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.header_background),
+            contentColor = Color.White
+        ),
+        onClick = {
+            val action = if (isServiceRunning) {
+                LocationTrackerService.Actions.STOP.toString()
+            } else {
+                LocationTrackerService.Actions.START.toString()
+            }
 
-        Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
-            intent.action = action
-            applicationContext.startForegroundService(intent)
-        }
+            Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
+                intent.action = action
+                applicationContext.startForegroundService(intent)
+            }
 
-    }) {
-        Text(if (isServiceRunning) "Stop Service" else "Start Service")
-    }
+        }) {
+            Text(if (isServiceRunning) "Stop Service" else "Start Service")
+        }
 }
 
 fun openAppSettings(activity: Activity) {
@@ -226,8 +321,9 @@ fun openAppSettings(activity: Activity) {
 
 //@Preview
 //@Composable
-//fun PreviewLocationLoggerScreen() {
+//fun PreviewLocationLoggerScreen(context: Context, applicationContext: Context, activity: Activity) {
 //    val navController = rememberNavController()
+//    val viewModel = MainViewModel(LogsManager.getInstance(context), PreferencesManager(context))
 //
-//    MainScreen(navController)
+//    MainScreen(navController, viewModel, applicationContext, activity)
 //}

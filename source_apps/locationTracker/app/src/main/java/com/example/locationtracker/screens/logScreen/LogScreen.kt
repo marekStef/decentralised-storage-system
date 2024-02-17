@@ -54,7 +54,7 @@ fun LogScreen(navController: NavController, logsManager: LogsManager) {
     val coroutineScope = rememberCoroutineScope()
 
     var offset by remember { mutableStateOf(0) } // state to track the offset
-    val limit = 4
+    val limit = 100
     var loading by remember { mutableStateOf(false) }
     var moreAvailable by remember { mutableStateOf(true) }
 

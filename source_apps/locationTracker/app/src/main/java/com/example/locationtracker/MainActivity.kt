@@ -13,8 +13,12 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.ViewModel
@@ -82,7 +86,7 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
     SideEffect {
         systemUiController.setStatusBarColor(
             color = statusBarColor,
-            darkIcons = true
+            darkIcons = false
         )
 
         systemUiController.setNavigationBarColor(
@@ -95,7 +99,7 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
     val startDestination = if (eventSyncManager.isAppRegisteredInStorage() == AppRegisteredToStorageState.NON_REGISTERED) "registrationScreen" else "mainScreen"
 
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination) {
+    NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
         composable("logScreen") { LogScreen(navController, logsManager) }
         composable("registrationScreen") { RegistrationScreen(navController) }

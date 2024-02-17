@@ -1,6 +1,7 @@
 package com.example.locationtracker.foregroundServices
 
 import android.Manifest
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -14,9 +15,10 @@ import android.os.Process
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import com.example.locationtracker.MainActivity
 import com.example.locationtracker.R
-import com.example.locationtracker.constants.Constants.NOTIFICATION_CHANNEL_ID
-import com.example.locationtracker.constants.Constants.NOTIFICATION_ID
+import com.example.locationtracker.constants.Notifications.NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE
+import com.example.locationtracker.constants.Notifications.NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE
 import com.example.locationtracker.constants.Services.LOCATION_TRACKER_SERVICE_BROADCAST
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.NewLocation
@@ -65,6 +67,15 @@ class LocationTrackerService: Service() {
     }
     override fun onDestroy() {
         super.onDestroy()
+        wakeLock?.let {
+            if (it.isHeld) {
+                it.release()
+            }
+        }
+
+        handler.removeCallbacks(periodicTask)
+        handlerThread.quitSafely()
+
         PreferencesManager(this).setIsLocationTrackerServiceRunning(false)
         sendServiceStatusBroadcast(false)
     }
@@ -81,12 +92,19 @@ class LocationTrackerService: Service() {
     }
 
     private fun start() {
-        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+        val notificationIntent = Intent(this, MainActivity::class.java)
+
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE or 0
+        )
+
+        val notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE)
             .setSmallIcon(R.mipmap.ic_launcher_round)
             .setContentTitle("Location Gathering Active")
             .setContentText("Gathering has been started")
+            .setContentIntent(pendingIntent)
             .build()
-        startForeground(NOTIFICATION_ID, notification)
+        startForeground(NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE, notification)
 
         val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag")
@@ -116,8 +134,8 @@ class LocationTrackerService: Service() {
             ) {
                 updateNotification(
                     applicationContext,
-                    NOTIFICATION_ID,
-                    NOTIFICATION_CHANNEL_ID,
+                    NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE,
+                    NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE,
                     "Are u kidding me?",
                     "(Last update: $lastUpdateTime)"
                 )
@@ -154,14 +172,16 @@ class LocationTrackerService: Service() {
 
                         updateNotification(
                             applicationContext,
-                            NOTIFICATION_ID,
-                            NOTIFICATION_CHANNEL_ID,
+                            NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE,
+                            NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE,
                             "Location Gathering Active",
                             "(Last update sent: $lastUpdateTime)\n Current location: ${location.latitude}, ${location.longitude}\""
                         )
                     }
                 }
-
+                .addOnFailureListener { exception ->
+                    Log.e("\tLOCATION2", "Error getting the location", exception)
+                }
 
 
             // Post the Runnable again with a delay
