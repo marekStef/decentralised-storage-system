@@ -7,6 +7,7 @@ import androidx.core.app.NotificationCompat
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.locationtracker.constants.Constants.NOTIFICATION_ID
+import com.example.locationtracker.constants.Services.LOCATION_TRACKER_SERVICE_BROADCAST
 import com.example.locationtracker.data.PreferencesManager
 
 class LocationTrackerService: Service() {
@@ -18,7 +19,7 @@ class LocationTrackerService: Service() {
     }
 
     private fun sendServiceStatusBroadcast(isRunning: Boolean) {
-        val intent = Intent("SERVICE_STATUS_ACTION")
+        val intent = Intent(LOCATION_TRACKER_SERVICE_BROADCAST)
         intent.putExtra("isRunning", isRunning)
         sendBroadcast(intent)
     }

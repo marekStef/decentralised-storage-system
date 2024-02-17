@@ -14,3 +14,7 @@ object SharedPreferences {
     const val LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES = "location_tracker_service_shared_preferences"
     const val LOCATION_TRACKER_SERVICE_RUNNING_FLAG = "is_service_running_flag"
 }
+
+object Services {
+    const val LOCATION_TRACKER_SERVICE_BROADCAST = "SERVICE_STATUS_ACTION"
+}

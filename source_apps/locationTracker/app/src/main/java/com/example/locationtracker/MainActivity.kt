@@ -1,12 +1,16 @@
 package com.example.locationtracker
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log;
 
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
@@ -19,12 +23,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 import androidx.navigation.compose.rememberNavController
+import com.example.locationtracker.constants.Services
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.AppRegisteredToStorageState
 import com.example.locationtracker.eventSynchronisation.EventSynchronisationManager
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
-import com.example.locationtracker.utils.requestPostNotificationsPermission
+import com.example.locationtracker.utils.*
 import com.example.locationtracker.viewModel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -51,21 +56,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
-
 
         Log.d("TAG", "Debug message");
         dbManager = LogsManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
-        registerReceiver(serviceStatusReceiver, IntentFilter("SERVICE_STATUS_ACTION")) // Register the broadcast receiver
+        registerReceiver(serviceStatusReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
 
         setContent {
-            MyApp(mainViewModel, dbManager, applicationContext)
+            MyApp(mainViewModel, dbManager, applicationContext, this)
         }
     }
 
@@ -76,7 +78,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationContext: Context) {
+fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationContext: Context, activity: Activity) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -96,8 +98,9 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination) {
-        composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext) }
+        composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
         composable("logScreen") { LogScreen(navController, logsManager) }
         composable("registrationScreen") { RegistrationScreen(navController) }
     }
 }
+
