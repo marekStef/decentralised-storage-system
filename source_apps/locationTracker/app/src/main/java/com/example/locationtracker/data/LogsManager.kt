@@ -56,9 +56,20 @@ class LogsManager private constructor(private var db: Database, private val cont
         )
     }
 
-    fun saveNewLocation(latitude: Double, longitude: Double) {
+    fun saveNewLocation(newLocation: NewLocation) {
         GlobalScope.launch(Dispatchers.IO) {
-            db.locationDao().insertLocation(Location(latitude = latitude, longitude = longitude, time = System.currentTimeMillis()))
+            db.locationDao().insertLocation(Location(
+                latitude = newLocation.latitude,
+                longitude = newLocation.longitude,
+                accuracy = newLocation.accuracy,
+                bearing = newLocation.bearing,
+                bearingAccuracy = newLocation.bearingAccuracy,
+                altitude = newLocation.altitude,
+                speed = newLocation.speed,
+                speedAccuracyMetersPerSecond = newLocation.speedAccuracyMetersPerSecond,
+                provider = newLocation.provider,
+                time = System.currentTimeMillis())
+            )
         }
     }
 
@@ -75,4 +86,22 @@ class LogsManager private constructor(private var db: Database, private val cont
         }
     }
 
+    fun deleteAllLocations() {
+        GlobalScope.launch(Dispatchers.IO) {
+            db.locationDao().deleteAllLocations()
+        }
+    }
+
 }
+
+class NewLocation(
+    val latitude: Double,
+    val longitude: Double,
+    val accuracy: Float?,
+    val bearing: Float?,
+    val bearingAccuracy: Float?,
+    val altitude: Double?,
+    val speed: Float?,
+    val speedAccuracyMetersPerSecond: Float?,
+    val provider: String?
+)

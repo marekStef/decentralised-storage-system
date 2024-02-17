@@ -65,6 +65,20 @@ dependencies {
     // for lazy column
     implementation("androidx.compose.foundation:foundation:1.6.1")
 
+    // for work manager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    // optional - RxJava2 support
+    implementation("androidx.work:work-rxjava2:2.9.0")
+    // optional - GCMNetworkManager support
+    implementation("androidx.work:work-gcm:2.9.0")
+
+    // for fetching location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+
+    // for icons
+    implementation("androidx.compose.material:material-icons-core:1.6.1")
+    implementation("androidx.compose.material:material-icons-extended:1.6.1")
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")

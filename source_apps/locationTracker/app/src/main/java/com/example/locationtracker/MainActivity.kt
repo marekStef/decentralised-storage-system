@@ -33,8 +33,6 @@ import com.example.locationtracker.utils.*
 import com.example.locationtracker.viewModel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
-
-
 class MainActivity : ComponentActivity() {
     private lateinit var dbManager : LogsManager;
     private lateinit var mainViewModel: MainViewModel

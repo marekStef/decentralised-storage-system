@@ -15,4 +15,7 @@ interface LocationDao {
 
     @Query("SELECT * FROM location ORDER BY id DESC LIMIT :limit OFFSET :offset")
     suspend fun getLocationsWithLimitOffset(limit: Int, offset: Int): List<Location>
+
+    @Query("DELETE FROM location")
+    suspend fun deleteAllLocations()
 }
