@@ -5,17 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.util.Log;
 
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
@@ -58,12 +53,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val requestBatteryOptimisationPermission = {
+        Log.d("TAG", "aaaaaaare optimisations turned offff?  ${isAppExemptFromBatteryOptimizations(this)}");
+        requestDisableBatteryOptimization(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
 
         dbManager = LogsManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+
+        requestBatteryOptimisationPermission()
 
         registerReceiver(serviceStatusReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
 

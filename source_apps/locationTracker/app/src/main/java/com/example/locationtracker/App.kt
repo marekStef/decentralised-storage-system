@@ -23,8 +23,5 @@ class App: Application() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channelForLocationTrackerService)
-
-        Log.d("TAG", "aaaaaaare optimisations turned offff?  ${isAppExemptFromBatteryOptimizations(this)}");
-        requestDisableBatteryOptimization(this)
     }
 }

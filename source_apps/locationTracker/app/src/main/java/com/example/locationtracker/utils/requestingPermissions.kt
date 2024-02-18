@@ -9,7 +9,7 @@ import android.os.Build
 import android.os.PowerManager
 import androidx.core.app.ActivityCompat
 import android.net.Uri
-import com.example.locationtracker.App
+import com.example.locationtracker.MainActivity
 
 import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_IMPORTANT_THINGS
 import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_LOCATION_TRACKER_SERVICE
@@ -36,7 +36,7 @@ fun isAppExemptFromBatteryOptimizations(context: Context): Boolean {
 }
 
 @SuppressLint("BatteryLife")
-fun requestDisableBatteryOptimization(activity: App) {
+fun requestDisableBatteryOptimization(activity: MainActivity) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         val intent = Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
             data = Uri.parse("package:${activity.packageName}")

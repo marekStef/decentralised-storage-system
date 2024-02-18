@@ -192,6 +192,7 @@ fun MainScreen(
                                         // Update the text displayed on the button based on whether a time has been selected
                                         Text(text = selectedTime?.toString() ?: "Set Time")
                                     }
+
                                     Button(onClick = {
                                         val calendar = Calendar.getInstance()
                                         TimePickerDialog(
