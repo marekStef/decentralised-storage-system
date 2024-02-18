@@ -8,6 +8,6 @@ enum class AppRegisteredToStorageState {
 }
 class EventSynchronisationManager (){
     fun isAppRegisteredInStorage(): AppRegisteredToStorageState {
-        return AppRegisteredToStorageState.REGISTERED
+        return AppRegisteredToStorageState.NON_REGISTERED
     }
 }

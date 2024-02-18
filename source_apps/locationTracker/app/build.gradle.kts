@@ -84,6 +84,15 @@ dependencies {
     // for animated navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
+    // Gson dependency for JSON serialization/deserialization
+    implementation("com.google.code.gson:gson:2.10")
+
+    // for network requests
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")

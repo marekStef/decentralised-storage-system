@@ -9,13 +9,18 @@ import androidx.lifecycle.viewModelScope
 
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
+import com.example.locationtracker.model.DataStorageDetails
+import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalTime
 
-class MainViewModel(private val dbManager: LogsManager, preferencesManager: PreferencesManager) : ViewModel() {
+class MainViewModel(private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : ViewModel() {
     private val TIME_PERIOD_MILLISECONDS = 10000L
 
     // queue for permissions
@@ -58,9 +63,54 @@ class MainViewModel(private val dbManager: LogsManager, preferencesManager: Pref
 
     val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 
+    // data storage server specific [START]
+    private val _dataStorageDetails = MutableLiveData<DataStorageDetails>()
+    val dataStorageDetails: LiveData<DataStorageDetails> = _dataStorageDetails
+
+    private val _isServerReachable = MutableLiveData<Boolean>()
+    val isServerReachable: LiveData<Boolean> = _isServerReachable
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    fun checkDataStorageServerReachability() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            val ipAddress = _dataStorageDetails.value?.ipAddress ?: ""
+            val port = _dataStorageDetails.value?.port ?: ""
+            val isReachable = withContext(Dispatchers.IO) {
+                isDataStorageServerReachable(ipAddress, port)
+            }
+            _isServerReachable.value = isReachable
+            _isLoading.value = false
+        }
+    }
+
+    fun updateDataStorageIpAddress(value: String) {
+        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+        _dataStorageDetails.value = currentDetails.copy(ipAddress = value)
+    }
+
+    fun updateDataStoragePort(value: String) {
+        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+        _dataStorageDetails.value = currentDetails.copy(port = value)
+    }
+    // data storage server specific [END]
+
     init {
+        loadDataStorageDetails()
         startPeriodicSync()
     }
+
+    private fun loadDataStorageDetails() {
+        _dataStorageDetails.value = preferencesManager.loadDataStorageDetails()
+    }
+
+    fun saveDataStorageDetails() {
+        if (_dataStorageDetails.value == null) return
+        preferencesManager.saveDataStorageDetails(_dataStorageDetails.value!!)
+    }
+
 
     private fun startPeriodicSync() {
         viewModelScope.launch {

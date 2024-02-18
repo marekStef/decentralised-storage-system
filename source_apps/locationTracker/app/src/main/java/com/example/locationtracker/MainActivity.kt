@@ -78,6 +78,11 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         unregisterReceiver(serviceStatusReceiver) // Unregister the broadcast receiver to prevent memory leaks
     }
+
+    override fun onPause() {
+        super.onPause()
+        mainViewModel.saveDataStorageDetails()
+    }
 }
 
 @Composable
@@ -103,7 +108,7 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
         composable("logScreen") { LogScreen(navController, logsManager) }
-        composable("registrationScreen") { RegistrationScreen(navController) }
+        composable("registrationScreen") { RegistrationScreen(navController, mainViewModel) }
     }
 }
 
