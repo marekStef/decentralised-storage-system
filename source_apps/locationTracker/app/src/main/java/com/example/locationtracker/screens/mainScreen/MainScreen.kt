@@ -2,6 +2,7 @@ package com.example.locationtracker
 
 import android.Manifest
 import android.app.Activity
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,13 +10,12 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,41 +25,38 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.locationtracker.data.LogsManager
-import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.foregroundServices.LocationTrackerService
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
 import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
+import com.example.locationtracker.utils.isAppExemptFromBatteryOptimizations
+import com.example.locationtracker.utils.requestDisableBatteryOptimization
 import com.example.locationtracker.viewModel.MainViewModel
+import java.util.Calendar
 
 
 @Composable
@@ -78,6 +75,9 @@ fun MainScreen(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_BACKGROUND_LOCATION
     )
+
+    val selectedTime by viewModel.selectedStartTime.observeAsState()
+    val isAutoSyncToggled by viewModel.isAutoSyncToggled.observeAsState(false)
 
 //    val FineLocationPermissionResultLauncher = rememberLauncherForActivityResult(
 //        contract = ActivityResultContracts.RequestPermission(),
@@ -160,6 +160,85 @@ fun MainScreen(
                                         .height(1.dp)
                                 )
                                 Spacer(modifier = Modifier.height(32.dp))
+
+                                Row {
+                                    Text(text = "Active Hours")
+                                    Button(onClick = {
+                                        val calendar = Calendar.getInstance()
+                                        TimePickerDialog(
+                                            context,
+                                            { _, hourOfDay, minute ->
+                                                // Update time in ViewModel
+                                                viewModel.updateTime(hourOfDay, minute)
+                                            },
+                                            calendar.get(Calendar.HOUR_OF_DAY),
+                                            calendar.get(Calendar.MINUTE),
+                                            true // 24-hour time
+                                        ).show()
+                                    },
+                                        modifier = Modifier.padding(1.dp),
+                                        // Customize the Button's background color
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.LightGray,
+                                            contentColor = Color.DarkGray
+                                        ),
+                                        contentPadding = PaddingValues(
+                                            start = 13.dp, // Adjust these values as needed for your design
+                                            top = 0.dp,
+                                            end = 13.dp,
+                                            bottom = 0.dp
+                                        ),
+                                    ) {
+                                        // Update the text displayed on the button based on whether a time has been selected
+                                        Text(text = selectedTime?.toString() ?: "Set Time")
+                                    }
+                                    Button(onClick = {
+                                        val calendar = Calendar.getInstance()
+                                        TimePickerDialog(
+                                            context,
+                                            { _, hourOfDay, minute ->
+                                                // Update time in ViewModel
+                                                viewModel.updateTime(hourOfDay, minute)
+                                            },
+                                            calendar.get(Calendar.HOUR_OF_DAY),
+                                            calendar.get(Calendar.MINUTE),
+                                            true // 24-hour time
+                                        ).show()
+                                    },
+                                        modifier = Modifier.padding(1.dp),
+                                        // Customize the Button's background color
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.LightGray,
+                                            contentColor = Color.DarkGray
+                                        ),
+                                        contentPadding = PaddingValues(
+                                            start = 13.dp, // Adjust these values as needed for your design
+                                            top = 0.dp,
+                                            end = 13.dp,
+                                            bottom = 0.dp
+                                        ),
+                                    ) {
+                                        // Update the text displayed on the button based on whether a time has been selected
+                                        Text(text = selectedTime?.toString() ?: "Set Time")
+                                    }
+                                }
+
+                                Row {
+                                    Text("Auto Sync")
+
+                                    Switch(
+                                        checked = isAutoSyncToggled,
+                                        onCheckedChange = { isChecked: Boolean -> viewModel.toggleAutoSync(isChecked) },
+                                        colors = SwitchDefaults.colors(
+                                            checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                            uncheckedThumbColor = MaterialTheme.colorScheme.secondary
+                                        )
+                                    )
+                                }
+
+
+
+
                                 Text(
                                     text = "Settings",
                                     fontSize = 24.sp,
@@ -238,7 +317,8 @@ fun MainScreen(
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .wrapContentSize()
                     ,
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -246,8 +326,12 @@ fun MainScreen(
 
                     Button(
                         modifier = Modifier
-                                    .shadow(elevation = 15.dp, spotColor =Color.DarkGray, shape = RoundedCornerShape(40.dp))
-                                    .padding(4.dp),
+                            .shadow(
+                                elevation = 15.dp,
+                                spotColor = Color.DarkGray,
+                                shape = RoundedCornerShape(40.dp)
+                            )
+                            .padding(4.dp),
                         colors = ButtonDefaults.buttonColors(
                                     containerColor = colorResource(id = R.color.header_background),
                                     contentColor = Color.White
@@ -281,6 +365,8 @@ fun MainScreen(
     }
 }
 
+
+
 @Composable
 fun ServiceControlButton(
     applicationContext: Context,
@@ -289,7 +375,13 @@ fun ServiceControlButton(
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
     Button(
-        modifier = Modifier.shadow(elevation = 15.dp, spotColor =Color.DarkGray, shape = RoundedCornerShape(40.dp)).padding(4.dp),
+        modifier = Modifier
+            .shadow(
+                elevation = 15.dp,
+                spotColor = Color.DarkGray,
+                shape = RoundedCornerShape(40.dp)
+            )
+            .padding(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.header_background),
             contentColor = Color.White

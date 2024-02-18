@@ -1,11 +1,16 @@
 package com.example.locationtracker.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.pm.PackageManager
+import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import android.net.Uri
+import com.example.locationtracker.App
+
 import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_IMPORTANT_THINGS
 import com.example.locationtracker.constants.Notifications.REQUEST_CODE_FOR_POST_NOTIFICATIONS_PERMISSION_FOR_LOCATION_TRACKER_SERVICE
 
@@ -24,6 +29,22 @@ fun requestPostNotificationsPermission(activity: Activity) {
         )
     }
 }
+
+fun isAppExemptFromBatteryOptimizations(context: Context): Boolean {
+    val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+    return powerManager.isIgnoringBatteryOptimizations(context.packageName)
+}
+
+@SuppressLint("BatteryLife")
+fun requestDisableBatteryOptimization(activity: App) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        val intent = Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+            data = Uri.parse("package:${activity.packageName}")
+        }
+        activity.startActivity(intent)
+    }
+}
+
 //
 //private fun hasAllNecessaryLocationPermissions(activity: Activity): Boolean {
 //    // Check for foreground location permission

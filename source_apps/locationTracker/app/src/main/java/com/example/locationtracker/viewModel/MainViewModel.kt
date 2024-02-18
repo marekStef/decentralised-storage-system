@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 class MainViewModel(private val dbManager: LogsManager, preferencesManager: PreferencesManager) : ViewModel() {
     private val TIME_PERIOD_MILLISECONDS = 10000L
@@ -37,6 +38,20 @@ class MainViewModel(private val dbManager: LogsManager, preferencesManager: Pref
 
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
+
+    private val _selectedStartTime = MutableLiveData<LocalTime>()
+    val selectedStartTime: LiveData<LocalTime> = _selectedStartTime
+
+    // Function to update the selected time
+    fun updateTime(hour: Int, minute: Int) {
+        _selectedStartTime.value = LocalTime.of(hour, minute)
+    }
+
+    private val _isAutoSyncToggled = MutableLiveData<Boolean>(false)
+    val isAutoSyncToggled: LiveData<Boolean> = _isAutoSyncToggled
+    fun toggleAutoSync(value: Boolean) {
+        _isAutoSyncToggled.value = value
+    }
 
     val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 

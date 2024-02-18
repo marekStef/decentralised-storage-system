@@ -4,8 +4,10 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
+import android.util.Log
 import com.example.locationtracker.constants.Notifications
+import com.example.locationtracker.utils.isAppExemptFromBatteryOptimizations
+import com.example.locationtracker.utils.requestDisableBatteryOptimization
 
 class App: Application() {
     override fun onCreate() {
@@ -21,5 +23,8 @@ class App: Application() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channelForLocationTrackerService)
+
+        Log.d("TAG", "aaaaaaare optimisations turned offff?  ${isAppExemptFromBatteryOptimizations(this)}");
+        requestDisableBatteryOptimization(this)
     }
 }

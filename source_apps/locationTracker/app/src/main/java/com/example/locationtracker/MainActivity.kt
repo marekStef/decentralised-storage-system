@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
 
-        Log.d("TAG", "Debug message");
         dbManager = LogsManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
