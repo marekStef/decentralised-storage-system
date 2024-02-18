@@ -20,8 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-
 import androidx.navigation.compose.rememberNavController
+
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager

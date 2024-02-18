@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.model.SyncInfo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -39,12 +38,16 @@ class MainViewModel(private val dbManager: LogsManager, preferencesManager: Pref
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
 
-    private val _selectedStartTime = MutableLiveData<LocalTime>()
-    val selectedStartTime: LiveData<LocalTime> = _selectedStartTime
+    private val _selectedStartTimeForLocationLogging = MutableLiveData<LocalTime>()
+    val selectedStartTimeForLocationLogging: LiveData<LocalTime> = _selectedStartTimeForLocationLogging // read only so that the ui can observe it
+    fun updateStartTimeForLocationLogging(hour: Int, minute: Int) {
+        _selectedStartTimeForLocationLogging.value = LocalTime.of(hour, minute)
+    }
 
-    // Function to update the selected time
-    fun updateTime(hour: Int, minute: Int) {
-        _selectedStartTime.value = LocalTime.of(hour, minute)
+    private val _selectedEndTimeForLocationLogging = MutableLiveData<LocalTime>()
+    val selectedEndTimeForLocationLogging: LiveData<LocalTime> = _selectedEndTimeForLocationLogging // read only so that the ui can observe it
+    fun updateEndTimeForLocationLogging(hour: Int, minute: Int) {
+        _selectedEndTimeForLocationLogging.value = LocalTime.of(hour, minute)
     }
 
     private val _isAutoSyncToggled = MutableLiveData<Boolean>(false)

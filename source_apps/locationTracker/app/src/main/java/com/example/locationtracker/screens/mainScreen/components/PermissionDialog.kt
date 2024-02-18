@@ -68,9 +68,19 @@ interface PermissionTextProvider {
 class FineLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         if (isPermanentlyDeclined) {
-            return "It seems you permanently declined camera permission. " + "You can go to the app settings to grant it"
+            return "It seems you permanently declined fine location permission. " + "You can go to the app settings to grant it"
         } else {
             return "This app needs access to your fine location"
+        }
+    }
+}
+
+class CoarseLocationPermissionTextProvider: PermissionTextProvider {
+    override fun getDescription(isPermanentlyDeclined: Boolean): String {
+        if (isPermanentlyDeclined) {
+            return "It seems you permanently coarse location permission. " + "You can go to the app settings to grant it"
+        } else {
+            return "This app needs access to your coarse location"
         }
     }
 }

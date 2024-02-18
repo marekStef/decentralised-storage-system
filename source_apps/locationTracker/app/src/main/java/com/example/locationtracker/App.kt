@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import com.example.locationtracker.constants.Notifications
+import com.example.locationtracker.eventSynchronisation.getCurrentSsid
 import com.example.locationtracker.utils.isAppExemptFromBatteryOptimizations
 import com.example.locationtracker.utils.requestDisableBatteryOptimization
 
@@ -23,5 +24,7 @@ class App: Application() {
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channelForLocationTrackerService)
+
+        Log.d("*************", "******************************** ${getCurrentSsid(this)}")
     }
 }
