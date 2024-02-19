@@ -6,9 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.locationtracker.constants.App
 
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.eventSynchronisation.associateAppWithDataStorageAppHolder
 import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
@@ -19,6 +21,17 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalTime
+enum class ServerReachabilityEnum {
+    NOT_TRIED,
+    NOT_REACHABLE,
+    REACHABLE
+}
+
+enum class AssociationWithDataStorageStatusEnum {
+    NOT_TRIED,
+    ASSOCIATED,
+    ASSOCIATION_FAILED
+}
 
 class MainViewModel(private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : ViewModel() {
     private val TIME_PERIOD_MILLISECONDS = 10000L
@@ -67,34 +80,74 @@ class MainViewModel(private val dbManager: LogsManager, private val preferencesM
     private val _dataStorageDetails = MutableLiveData<DataStorageDetails>()
     val dataStorageDetails: LiveData<DataStorageDetails> = _dataStorageDetails
 
-    private val _isServerReachable = MutableLiveData<Boolean>()
-    val isServerReachable: LiveData<Boolean> = _isServerReachable
+    private val _serverReachabilityStatus = MutableLiveData<ServerReachabilityEnum>(ServerReachabilityEnum.NOT_TRIED)
+    val serverReachabilityStatus: LiveData<ServerReachabilityEnum> = _serverReachabilityStatus
 
-    private val _isLoading = MutableLiveData<Boolean>()
-    val isLoading: LiveData<Boolean> = _isLoading
+    private val _isLoadingDataStorageServerReachability = MutableLiveData<Boolean>()
+    val isLoadingDataStorageServerReachability: LiveData<Boolean> = _isLoadingDataStorageServerReachability
+
+    private val _isAssociatingAppWithStorage = MutableLiveData<Boolean>()
+    val isAssociatingAppWithStorage: LiveData<Boolean> = _isAssociatingAppWithStorage
+
+    private val _appAssociatedWithDataStorageStatus = MutableLiveData<AssociationWithDataStorageStatusEnum>(AssociationWithDataStorageStatusEnum.NOT_TRIED)
+    val appAssociatedWithDataStorageStatus: LiveData<AssociationWithDataStorageStatusEnum> = _appAssociatedWithDataStorageStatus
+
+    fun associateAppWithStorageAppHolder(callback: (Boolean, String) -> Unit) {
+        if (_isAssociatingAppWithStorage.value == true) return
+
+        viewModelScope.launch {
+            _isAssociatingAppWithStorage.value = true
+            val url: String = "http://${_dataStorageDetails.value?.ipAddress}:${_dataStorageDetails.value?.port}/app/api/associate_with_storage_app_holder"
+            val associationToken: String =
+                _dataStorageDetails.value?.associationTokenUsedDuringRegistration ?: ""
+
+            val result = associateAppWithDataStorageAppHolder(associationTokenId = associationToken, App.APP_NAME, url)
+            _isAssociatingAppWithStorage.value = false
+            result.onSuccess { data ->
+                val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+                _dataStorageDetails.value = currentDetails.copy(tokenForPermissionsAndProfiles = data)
+                _appAssociatedWithDataStorageStatus.value = AssociationWithDataStorageStatusEnum.ASSOCIATED
+                saveDataStorageDetails()
+                callback(true, data)
+            }.onFailure { error ->
+                _appAssociatedWithDataStorageStatus.value = AssociationWithDataStorageStatusEnum.ASSOCIATION_FAILED
+                callback(false, error.message ?: "Unknown error occurred")
+            }
+        }
+    }
 
     fun checkDataStorageServerReachability() {
+        if (_isLoadingDataStorageServerReachability.value == true) return
+
         viewModelScope.launch {
-            _isLoading.value = true
+            _isLoadingDataStorageServerReachability.value = true
             val ipAddress = _dataStorageDetails.value?.ipAddress ?: ""
             val port = _dataStorageDetails.value?.port ?: ""
             val isReachable = withContext(Dispatchers.IO) {
                 isDataStorageServerReachable(ipAddress, port)
             }
-            _isServerReachable.value = isReachable
-            _isLoading.value = false
+            _serverReachabilityStatus.value = if (isReachable) ServerReachabilityEnum.REACHABLE else ServerReachabilityEnum.NOT_REACHABLE
+            _isLoadingDataStorageServerReachability.value = false
         }
     }
 
     fun updateDataStorageIpAddress(value: String) {
         val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
         _dataStorageDetails.value = currentDetails.copy(ipAddress = value)
+        _serverReachabilityStatus.value = ServerReachabilityEnum.NOT_TRIED
     }
 
     fun updateDataStoragePort(value: String) {
         val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
         _dataStorageDetails.value = currentDetails.copy(port = value)
+        _serverReachabilityStatus.value = ServerReachabilityEnum.NOT_TRIED
     }
+
+    fun updateDataStorageAssociationToken(value: String) {
+        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+        _dataStorageDetails.value = currentDetails.copy(associationTokenUsedDuringRegistration = value)
+    }
+
     // data storage server specific [END]
 
     init {

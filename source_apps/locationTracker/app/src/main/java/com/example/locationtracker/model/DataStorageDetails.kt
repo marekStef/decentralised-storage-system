@@ -5,7 +5,10 @@ data class DataStorageDetails(
     var ipAddress: String,
     val networkSSID: String?,
     val latitude: Double?,
-    val longitude: Double?
+    val longitude: Double?,
+
+    val associationTokenUsedDuringRegistration: String,
+    val tokenForPermissionsAndProfiles: String?
 )
 
-val EmptyDataStorageDetails = DataStorageDetails("", "", null, null, null)
+val EmptyDataStorageDetails = DataStorageDetails("", "", null, null, null, "", null)

@@ -18,15 +18,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.AppRegisteredToStorageState
 import com.example.locationtracker.eventSynchronisation.EventSynchronisationManager
+import com.example.locationtracker.screens.ProfilesAndPermissionsScreen.ProfilesAndPermissionsScreen
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
 import com.example.locationtracker.utils.*
 import com.example.locationtracker.viewModel.MainViewModel
@@ -107,8 +110,12 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
+
         composable("logScreen") { LogScreen(navController, logsManager) }
-        composable("registrationScreen") { RegistrationScreen(navController, mainViewModel) }
+
+        composable("profilesAndPermissions") { ProfilesAndPermissionsScreen(navController, mainViewModel, activity) }
+
+        composable("registrationScreen") { RegistrationScreen(navController, mainViewModel, activity) }
     }
 }
 

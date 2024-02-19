@@ -75,6 +75,7 @@ fun MainScreen(
 ) {
     // Observe SyncInfo from the ViewModel
     val syncInfo by viewModel.syncInfo.observeAsState()
+    val dataStorageDetails by viewModel.dataStorageDetails.observeAsState()
 
     val context = LocalContext.current
     val dialoPermissionsQueue = viewModel.visiblePermissionDialogQueue
@@ -289,7 +290,7 @@ fun MainScreen(
                                     IconButton(onClick = { navController.navigate("registrationScreen") }) {
                                         Icon(
                                             imageVector = Icons.Outlined.Settings,
-                                            contentDescription = "Delete All Locations",
+                                            contentDescription = "Settings",
                                             tint = colorResource(id = R.color.gray_light4)
                                         )
                                     }
@@ -333,7 +334,7 @@ fun MainScreen(
                                             )
 
                                             Text(
-                                                text = "192.168.102",
+                                                text = dataStorageDetails?.ipAddress ?: "No Ip",
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Light,
                                                 modifier = Modifier
@@ -353,7 +354,7 @@ fun MainScreen(
                                             )
 
                                             Text(
-                                                text = "3000",
+                                                text = dataStorageDetails?.port ?: "No Port",
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Light,
                                                 modifier = Modifier
@@ -363,7 +364,25 @@ fun MainScreen(
                                             )
                                         }
 
+                                        Spacer(modifier = Modifier.height(3.dp))
 
+                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                            Text(
+                                                text = "Association Token Used",
+                                                fontSize = 12.sp,
+                                                modifier = Modifier.weight(1f)
+                                            )
+
+                                            Text(
+                                                text = dataStorageDetails?.associationTokenUsedDuringRegistration ?: "No Token",
+                                                fontSize = 12.sp,
+                                                fontWeight = FontWeight.Light,
+                                                modifier = Modifier
+                                                    .clip(RoundedCornerShape(10.dp))
+                                                    .background(colorResource(id = R.color.gray_light1))
+                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
+                                            )
+                                        }
 
 
                                     }

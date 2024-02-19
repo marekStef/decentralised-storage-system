@@ -47,7 +47,7 @@ class PreferencesManager constructor(private val context: Context) {
     fun loadDataStorageDetails(): DataStorageDetails {
         val sharedPreferences = context.getSharedPreferences(DATA_STORAGE_DETAILS_PREFERENCES, Context.MODE_PRIVATE)
 
-        val json = sharedPreferences.getString(DATA_STORAGE_DETAILS, null) ?: return DataStorageDetails("3001", "192.168.137.1", null, null, null)
+        val json = sharedPreferences.getString(DATA_STORAGE_DETAILS, null) ?: return DataStorageDetails("3001", "192.168.137.1", null, null, null, "", null)
         val gson = Gson()
         return gson.fromJson(json, DataStorageDetails::class.java)
     }

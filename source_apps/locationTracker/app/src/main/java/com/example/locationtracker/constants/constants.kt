@@ -4,11 +4,15 @@ object Constants {
 
 }
 
+object App {
+    const val APP_NAME = "location_track"
+}
+
 object SharedPreferences {
     const val LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES = "location_tracker_service_shared_preferences"
     const val LOCATION_TRACKER_SERVICE_RUNNING_FLAG = "is_service_running_flag"
 
-    const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferences"
+    const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferencess"
     const val DATA_STORAGE_DETAILS = "data_storage_details"
 }
 

@@ -16,8 +16,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONException
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.TimeUnit
@@ -91,7 +95,57 @@ suspend fun isDataStorageServerReachable(ipAddress: String, port: String): Boole
             response.isSuccessful
         }
     } catch (e: Exception) {
-        Log.e("AAAAAA", "Error checking data storage server reachability", e)
+        Log.e("NETWORK", "Error checking data storage server reachability", e)
         false
+    }
+}
+
+suspend fun associateAppWithDataStorageAppHolder(associationTokenId: String, nameDefinedByApp: String, url: String): Result<String> = withContext(
+Dispatchers.IO) {
+    Log.d("NETWORK", url)
+
+    val client = OkHttpClient()
+    val mediaType = "application/json; charset=utf-8".toMediaType()
+    val jsonObject = JSONObject().apply {
+        put("associationTokenId", associationTokenId)
+        put("nameDefinedByApp", nameDefinedByApp)
+    }
+    val requestBody = jsonObject.toString().toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    return@withContext try {
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string() ?: return@use Result.failure(RuntimeException("Empty response body"))
+                val jsonResponse = JSONObject(responseBody)
+                val jwtToken = jsonResponse.optString("jwtTokenForPermissionRequestsAndProfiles", "")
+                if (jwtToken.isNotEmpty()) {
+                    Result.success(jwtToken)
+                } else {
+                    Result.failure(RuntimeException("Token not found in response"))
+                }
+            }else {
+                // Extracting error message from response
+                val errorBody = response.body?.string()
+                val errorMessage = if (errorBody != null) {
+                    try {
+                        val jsonObj = JSONObject(errorBody)
+                        jsonObj.optString("message", "Unknown error occurred")
+                    } catch (e: JSONException) {
+                        "Error parsing error message"
+                    }
+                } else {
+                    "Failed to associate app with storage app holder and no error message provided"
+                }
+                Result.failure(RuntimeException(errorMessage))
+            }
+        }
+    } catch (e: Exception) {
+        Log.d("NETWORK", "associateAppWithStorageAppHolder: ", e)
+        Result.failure(e)
     }
 }
