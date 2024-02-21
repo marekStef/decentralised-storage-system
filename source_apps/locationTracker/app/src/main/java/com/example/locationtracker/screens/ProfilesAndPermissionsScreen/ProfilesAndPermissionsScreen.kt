@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,6 +40,9 @@ import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
+import com.example.locationtracker.viewModel.PermissionsStatusEnum
+import com.example.locationtracker.viewModel.ProfileRegistrationStatusEnum
+import com.example.locationtracker.viewModel.ServerReachabilityEnum
 
 @Composable
 fun ProfilesAndPermissionsScreen(
@@ -51,9 +58,13 @@ fun ProfilesAndPermissionsScreen(
     val dataStorageDetails by mainViewModel.dataStorageDetails.observeAsState()
 
     val isRegisteringLocationProfile = mainViewModel.isRegisteringLocationProfile.observeAsState()
+    val appProfileRegistrationStatus = mainViewModel.appProfileRegistrationStatus.observeAsState()
 
-    val isLoadingDataStorageServerReachability =
-        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
+    val isAskingForPermissions = mainViewModel.isAskingForPermissions.observeAsState()
+    val askingForPermissionsStatus = mainViewModel.askingForPermissionsStatus.observeAsState()
+//
+//    val isLoadingDataStorageServerReachability =
+//        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
 
     Column(
         modifier = Modifier
@@ -154,6 +165,32 @@ fun ProfilesAndPermissionsScreen(
                             CircularProgressIndicator()
                     }
 
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        when {
+                            isRegisteringLocationProfile.value == true -> CircularProgressIndicator()
+                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED -> Text("Profile creation failed")
+                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATED -> Text(
+                                "Profile has been created"
+                            )
+                            else -> Text("You need to register profiles")
+                        }
+                        if (appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATED) {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = "Profiles created",
+                                tint = colorResource(id = R.color.green3),
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.Cancel,
+                                contentDescription = "Profiles not created",
+                                tint = Color.Red,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
@@ -178,40 +215,98 @@ fun ProfilesAndPermissionsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(4.dp),
                         onClick = {
+                            if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
+                                showAlertDialogWithOkButton(activity, "Error", "You need to register profiles first")
+                                return@Button
+                            }
 
+                            mainViewModel.sendPermissionRequest() { isSuccess, message ->
+                                if (isSuccess) {
+                                    Log.d("Creating permission request", "Success: $message")
+                                    showAlertDialogWithOkButton(
+                                        activity,
+                                        "Success",
+                                        "Permission request has been sent. You need to approve it now before the app sends some data"
+                                    )
+                                } else {
+                                    Log.e("Creating permission request", "Failure: $message")
+                                    showAlertDialogWithOkButton(activity, "Error", message)
+                                }
+                            }
                         }) {
                         Text("Ask for permissions")
                     }
 
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        when {
+                            isAskingForPermissions.value == true -> CircularProgressIndicator()
+                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED -> Text("Permissions sending failed")
+                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT -> Text(
+                                "Permission request has been sent. \nNeeds to be approved in the admin centre."
+                            )
+                            else -> Text("You need to ask for data storage permissions")
+                        }
+                        if (askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT) {
+                            Icon(
+                                imageVector = Icons.Filled.CheckCircle,
+                                contentDescription = "Profiles created",
+                                tint = colorResource(id = R.color.green3),
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Filled.Cancel,
+                                contentDescription = "Profiles not created",
+                                tint = Color.Red,
+                                modifier = Modifier.padding(start = 4.dp)
+                            )
+                        }
+                    }
+
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Text(
-                        text = "Welcome to you new app",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(1.dp)
-                            .background(colorResource(id = R.color.gray_light1))
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
+                    if (askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT) {
+                        Text(
+                            text = "Welcome to you new app",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(colorResource(id = R.color.gray_light1))
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
 
 
-                    Text(
-                        text = "Your app is prepared for its cooperation with DataStorage Server",
-                        fontSize = 15.sp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 5.dp)
-                    )
+                        Text(
+                            text = "Your app is prepared for its cooperation with DataStorage Server",
+                            fontSize = 15.sp,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 5.dp)
+                        )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
+
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.green3),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(4.dp),
+                            onClick = {
+                                navController.navigate("mainScreen")
+                            }) {
+                            Text("Proceed to the app")
+                        }
+                    }
 
                     Button(
                         colors = ButtonDefaults.buttonColors(
@@ -223,7 +318,7 @@ fun ProfilesAndPermissionsScreen(
                         onClick = {
                             navController.navigate("mainScreen")
                         }) {
-                        Text("Proceed to the app")
+                        Text("Proceed to the app[DEBUG]")
                     }
 
                 }

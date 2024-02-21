@@ -3,6 +3,7 @@ package com.example.locationtracker.eventSynchronisation
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
+import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -166,13 +167,15 @@ suspend fun registerNewProfileToDataStorage(
         put("profile", "core:profile-registration_v1")
     }
 
+    val schemaJson = JSONObject(schema) // convert the schema string to a JSONObject (this has been added as api had been changed)
+
     val client = OkHttpClient()
     val mediaType = "application/json; charset=utf-8".toMediaType()
     val jsonObject = JSONObject().apply {
         put("jwtTokenForPermissionRequestsAndProfiles", jwtTokenForPermissionRequestsAndProfiles)
         put("name", profileName)
         put("metadata", metadata)
-        put("schema", schema)
+        put("schema", schemaJson)
     }
     val requestBody = jsonObject.toString().toRequestBody(mediaType)
 
@@ -206,6 +209,63 @@ suspend fun registerNewProfileToDataStorage(
         }
     } catch (e: Exception) {
         Log.d("NETWORK", "postToServer: ", e)
+        Result.failure(e)
+    }
+}
+
+// returns generated access token in case of success, error message otherwise
+suspend fun sendPermissionRequestToServer(
+    ip: String,
+    port: String,
+    jwtTokenForPermissionRequestsAndProfiles: String
+): Result<String> = withContext(Dispatchers.IO) {
+    val url: String = "http://${ip}:${port}/app/api/request_new_permissions"
+    val client = OkHttpClient()
+    val mediaType = "application/json; charset=utf-8".toMediaType()
+    val permissionRequest = JSONObject().apply {
+        put("profile", UNIQUE_LOCATION_PROFILE_NAME)
+        put("read", true)
+        put("create", true)
+        put("modify", true)
+        put("delete", true)
+    }
+    val jsonObject = JSONObject().apply {
+        put("jwtTokenForPermissionRequestsAndProfiles", jwtTokenForPermissionRequestsAndProfiles)
+        put("permissionsRequest", permissionRequest)
+    }
+    val requestBody = jsonObject.toString().toRequestBody(mediaType)
+
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    return@withContext try {
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful && response.code == 201) {
+                val responseBody = response.body?.string() ?: return@use Result.failure(
+                    RuntimeException("Empty response body")
+                )
+                val jsonResponse = JSONObject(responseBody)
+//                val message = jsonResponse.optString("message", "No message in response")
+                val generatedAccessToken = jsonResponse.optString("generatedAccessToken", "")
+                Result.success(generatedAccessToken)
+            } else {
+                val errorBody = response.body?.string()
+                val errorMessage = if (errorBody != null) {
+                    try {
+                        val jsonObj = JSONObject(errorBody)
+                        jsonObj.optString("message", "Unknown error occurred")
+                    } catch (e: Exception) {
+                        "Error parsing error message"
+                    }
+                } else {
+                    "Failed to post to server and no error message provided"
+                }
+                Result.failure(RuntimeException(errorMessage))
+            }
+        }
+    } catch (e: Exception) {
         Result.failure(e)
     }
 }

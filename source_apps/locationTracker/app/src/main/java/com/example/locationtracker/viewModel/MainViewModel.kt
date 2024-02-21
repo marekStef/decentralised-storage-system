@@ -14,6 +14,7 @@ import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.associateAppWithDataStorageAppHolder
 import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
 import com.example.locationtracker.eventSynchronisation.registerNewProfileToDataStorage
+import com.example.locationtracker.eventSynchronisation.sendPermissionRequestToServer
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
@@ -34,6 +35,18 @@ enum class AssociationWithDataStorageStatusEnum {
     NOT_TRIED,
     ASSOCIATED,
     ASSOCIATION_FAILED
+}
+
+enum class ProfileRegistrationStatusEnum {
+    NOT_TRIED,
+    PROFILE_CREATED,
+    PROFILE_CREATION_FAILED
+}
+
+enum class PermissionsStatusEnum {
+    NOT_TRIED,
+    PERMISSION_REQUEST_SENT,
+    PERMISSIONS_REQUEST_FAILED
 }
 
 class MainViewModel(private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : ViewModel() {
@@ -158,6 +171,9 @@ class MainViewModel(private val dbManager: LogsManager, private val preferencesM
     private val _isRegisteringLocationProfile = MutableLiveData<Boolean>(false)
     val isRegisteringLocationProfile: LiveData<Boolean> = _isRegisteringLocationProfile
 
+    private val _appProfileRegistrationStatus = MutableLiveData<ProfileRegistrationStatusEnum>(ProfileRegistrationStatusEnum.NOT_TRIED)
+    val appProfileRegistrationStatus: LiveData<ProfileRegistrationStatusEnum> = _appProfileRegistrationStatus
+
     fun registerLocationProfileInDataStorageServer(schema: String, callback: (Boolean, String) -> Unit) {
         Log.d("Registering (viewmode)", "Trying to register profile")
 
@@ -174,12 +190,46 @@ class MainViewModel(private val dbManager: LogsManager, private val preferencesM
 
             result.onSuccess { data ->
                 saveDataStorageDetails()
+                _appProfileRegistrationStatus.value = ProfileRegistrationStatusEnum.PROFILE_CREATED
                 callback(true, data)
             }.onFailure { error ->
+                _appProfileRegistrationStatus.value = ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED
                 callback(false, error.message ?: "Unknown error occurred")
             }
         }
     }
+
+    private val _isAskingForPermissions = MutableLiveData<Boolean>(false)
+    val isAskingForPermissions: LiveData<Boolean> = _isAskingForPermissions
+
+    private val _askingForPermissionsStatus = MutableLiveData<PermissionsStatusEnum>(PermissionsStatusEnum.NOT_TRIED)
+    val askingForPermissionsStatus: LiveData<PermissionsStatusEnum> = _askingForPermissionsStatus
+
+    fun sendPermissionRequest(callback: (Boolean, String) -> Unit) {
+        Log.d("Sending permission request", "Trying to send permission request")
+
+        if (_isAskingForPermissions.value == true) return
+
+        viewModelScope.launch {
+            _isAskingForPermissions.value = true
+            val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
+            val ip: String = _dataStorageDetails.value?.ipAddress!!
+            val port: String = _dataStorageDetails.value?.port!!
+
+            val result = sendPermissionRequestToServer(ip, port, tokenForPermissionsAndProfiles)
+            _isAskingForPermissions.value = false
+
+            result.onSuccess { data ->
+                saveDataStorageDetails()
+                _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSION_REQUEST_SENT
+                callback(true, data)
+            }.onFailure { error ->
+                _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED
+                callback(false, error.message ?: "Unknown error occurred")
+            }
+        }
+    }
+
     // data storage server - profile creation [END]
 
     init {
