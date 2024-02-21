@@ -35,3 +35,8 @@ object Notifications {
     const val NOTIFICATION_CHANNEL_NAME_FOR_IMPORTANT_THINGS = "Location Tracking"
     const val NOTIFICATION_CHANNEL_DESCRIPTION_FOR_IMPORTANT_THINGS = "This channel is used for notifications of important things"
 }
+
+object DataStorageRelated {
+    const val UNIQUE_APP_NAME = "locationTracker.com"
+    const val UNIQUE_LOCATION_PROFILE_NAME = "${UNIQUE_APP_NAME}/profiles/location_profilea"
+}

@@ -7,14 +7,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.locationtracker.constants.App
+import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.associateAppWithDataStorageAppHolder
 import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
+import com.example.locationtracker.eventSynchronisation.registerNewProfileToDataStorage
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
+import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -149,6 +152,35 @@ class MainViewModel(private val dbManager: LogsManager, private val preferencesM
     }
 
     // data storage server specific [END]
+
+    // data storage server - profile creation [START]
+
+    private val _isRegisteringLocationProfile = MutableLiveData<Boolean>(false)
+    val isRegisteringLocationProfile: LiveData<Boolean> = _isRegisteringLocationProfile
+
+    fun registerLocationProfileInDataStorageServer(schema: String, callback: (Boolean, String) -> Unit) {
+        Log.d("Registering (viewmode)", "Trying to register profile")
+
+        if (_isRegisteringLocationProfile.value == true) return
+
+        viewModelScope.launch {
+            _isRegisteringLocationProfile.value = true
+            val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
+            val ip: String = _dataStorageDetails.value?.ipAddress!!
+            val port: String = _dataStorageDetails.value?.port!!
+
+            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, schema)
+            _isRegisteringLocationProfile.value = false
+
+            result.onSuccess { data ->
+                saveDataStorageDetails()
+                callback(true, data)
+            }.onFailure { error ->
+                callback(false, error.message ?: "Unknown error occurred")
+            }
+        }
+    }
+    // data storage server - profile creation [END]
 
     init {
         loadDataStorageDetails()

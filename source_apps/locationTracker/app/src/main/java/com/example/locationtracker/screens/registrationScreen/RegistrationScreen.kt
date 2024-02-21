@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
-import com.example.locationtracker.utils.showErrorAlertDialog
+import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.AssociationWithDataStorageStatusEnum
 import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
@@ -252,7 +252,7 @@ fun RegistrationScreen(
                             } else {
                                 // Handle failure
                                 Log.e("AssociateApp", "Failure: $message")
-                                showErrorAlertDialog(activity, "Error", message)
+                                showAlertDialogWithOkButton(activity, "Error", message)
                             }
                         }
                     }) {
@@ -314,6 +314,19 @@ fun RegistrationScreen(
                     } else {
                         Text(text = "You need to pass previous conditions first.")
                         Text(text = "Only then you will be able to proceed.")
+                    }
+
+                    Button(
+                        onClick = {
+                            navController.navigate("profilesAndPermissions")
+                        }) {
+                        Text("Proceed to requesting permissions and profiles [debug]")
+                    }
+
+                    Button(onClick = {
+                        navController.navigate("mainScreen")
+                    }) {
+                        Text("Proceed to the app")
                     }
 
 
