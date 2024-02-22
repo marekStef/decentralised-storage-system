@@ -62,6 +62,8 @@ fun ProfilesAndPermissionsScreen(
 
     val isAskingForPermissions = mainViewModel.isAskingForPermissions.observeAsState()
     val askingForPermissionsStatus = mainViewModel.askingForPermissionsStatus.observeAsState()
+
+    val isRegistrationSetupProperly = mainViewModel.isRegistrationSetupProperly.observeAsState()
 //
 //    val isLoadingDataStorageServerReachability =
 //        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
@@ -302,6 +304,7 @@ fun ProfilesAndPermissionsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(4.dp),
                             onClick = {
+                                mainViewModel.updateIsRegistrationSetupProperly(true)
                                 navController.navigate("mainScreen")
                             }) {
                             Text("Proceed to the app")

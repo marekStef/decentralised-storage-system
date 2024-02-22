@@ -27,18 +27,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +45,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,6 +58,7 @@ import com.example.locationtracker.screens.mainScreen.components.FineLocationPer
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
 import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
+import com.example.locationtracker.screens.mainScreen.components.ExportButton
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.viewModel.MainViewModel
 import java.util.Calendar
@@ -427,7 +425,7 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 10.dp, start = 30.dp, end = 30.dp),
+                .padding(bottom = 10.dp, start = 5.dp, end = 5.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -437,7 +435,9 @@ fun MainScreen(
 //
 //            ) {
             Row() {
-                Button(modifier = Modifier.fillMaxWidth().padding(0.dp),
+                Button(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.green0),
@@ -475,8 +475,16 @@ fun MainScreen(
                         contentColor = Color.DarkGray
                     ),
                     onClick = { navController.navigate("logScreen") }) {
-                    Text("Show Data")
+                    Text(
+                        "Show Data",
+                        style = TextStyle(
+                            fontSize = 13.sp
+                        )
+                    )
                 }
+
+                ExportButton(activity, viewModel)
+
 //                Spacer(modifier = Modifier.width(42.dp))
                 ServiceControlButton(applicationContext, viewModel)
             }
@@ -536,7 +544,12 @@ fun ServiceControlButton(
             }
 
         }) {
-        Text(if (isServiceRunning) "Stop Service" else "Start Service")
+        Text(
+            if (isServiceRunning) "Stop Service" else "Start Service",
+            style = TextStyle(
+                fontSize = 13.sp
+            )
+        )
     }
 }
 

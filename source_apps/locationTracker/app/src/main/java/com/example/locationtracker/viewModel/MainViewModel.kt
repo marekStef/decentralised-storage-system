@@ -1,11 +1,20 @@
 package com.example.locationtracker.viewModel
 
+import android.app.Activity
+import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.example.locationtracker.constants.App
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 
@@ -19,6 +28,7 @@ import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
+import com.example.locationtracker.workManagers.ExportLocationsWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -49,7 +59,9 @@ enum class PermissionsStatusEnum {
     PERMISSIONS_REQUEST_FAILED
 }
 
-class MainViewModel(private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : ViewModel() {
+class MainViewModel(private val application: Application, private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
+    private val workManager = WorkManager.getInstance(application)
+
     private val TIME_PERIOD_MILLISECONDS = 10000L
 
     // queue for permissions
@@ -230,7 +242,38 @@ class MainViewModel(private val dbManager: LogsManager, private val preferencesM
         }
     }
 
+    private val _isRegistrationSetupProperly = MutableLiveData<Boolean>(false)
+    val isRegistrationSetupProperly: LiveData<Boolean> = _isRegistrationSetupProperly
+    fun updateIsRegistrationSetupProperly(isProperlySetup: Boolean) {
+        _isRegistrationSetupProperly.value = isProperlySetup
+    }
     // data storage server - profile creation [END]
+
+    // csv exporting
+    private val _workInfo = MutableLiveData<WorkInfo>()
+    val workInfo: LiveData<WorkInfo> = _workInfo
+
+    fun exportData() {
+        val request = OneTimeWorkRequestBuilder<ExportLocationsWorker>().build()
+        workManager.getWorkInfoByIdLiveData(request.id).observeForever { workInfo ->
+            _workInfo.postValue(workInfo)
+        }
+        workManager.enqueue(request)
+    }
+
+    private val _tempFilePath = MutableLiveData<String?>() // file path if it's requested to open dialog, otherwise null
+    val tempFilePath: LiveData<String?> = _tempFilePath
+
+    fun setTempFilePath(filePath: String) {
+        _tempFilePath.value = filePath
+    }
+
+    // Reset the trigger to allow for future requests
+    fun resetTempFilePath() {
+        _tempFilePath.value = null
+    }
+
+    // csv exporting [end]
 
     init {
         loadDataStorageDetails()

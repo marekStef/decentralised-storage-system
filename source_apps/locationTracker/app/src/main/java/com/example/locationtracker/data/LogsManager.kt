@@ -13,6 +13,8 @@ import com.example.locationtracker.model.SyncInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileWriter
 
 class LogsManager private constructor(private var db: Database, private val context: Context) {
     // for signleton pattern
@@ -90,6 +92,18 @@ class LogsManager private constructor(private var db: Database, private val cont
     fun deleteAllLocations() {
         GlobalScope.launch(Dispatchers.IO) {
             db.locationDao().deleteAllLocations()
+        }
+    }
+
+    suspend fun exportLocationsToCsv(file: File) {
+        val locations = db.locationDao().getAllLocations()
+        FileWriter(file).use { writer ->
+            writer.append("ID, Latitude, Longitude, Accuracy, Bearing, BearingAccuracy, Altitude, Speed, SpeedAccuracyMetersPerSecond, Provider, Time\n")
+            locations.forEach { location ->
+                with(location) {
+                    writer.append("$id, $latitude, $longitude, $accuracy, $bearing, $bearingAccuracy, $altitude, $speed, $speedAccuracyMetersPerSecond, $provider, $time\n")
+                }
+            }
         }
     }
 
