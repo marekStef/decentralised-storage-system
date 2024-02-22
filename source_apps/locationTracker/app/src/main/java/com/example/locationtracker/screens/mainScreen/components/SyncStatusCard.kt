@@ -7,14 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Divider
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -74,7 +70,7 @@ fun SyncStatusCard(syncInfo: SyncInfo) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(text = "Oldest event not synchronised", color = Color.White)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Total events gathered", color = Color.White)
+                    Text(text = "Number of events synchronised", color = Color.White)
                 }
 
                 // Vertical Divider
@@ -100,12 +96,12 @@ fun SyncStatusCard(syncInfo: SyncInfo) {
                 ) {
                     Box {
                         Text(text = "Last Synchronization", color = Color.Transparent)
-                        Text(text = syncInfo.lastSync, fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(text = syncInfo.lastSyncTime, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Box {
                         Text(text = "Number of events not synchronised", color = Color.Transparent)
-                        Text(text = syncInfo.eventsNotSynced.toString(), fontWeight = FontWeight.Bold, color = Color.White)
+                        Text(text = syncInfo.numberOfNotSyncedEvents.toString(), fontWeight = FontWeight.Bold, color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Box {
@@ -113,7 +109,7 @@ fun SyncStatusCard(syncInfo: SyncInfo) {
                         Text(text = syncInfo.oldestEventTimeNotSynced, fontWeight = FontWeight.Bold, color = Color.White)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = syncInfo.totalEvents.toString(), fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = syncInfo.numberOfSyncedEvents.toString(), fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
         }
@@ -125,7 +121,7 @@ fun SyncStatusCard(syncInfo: SyncInfo) {
 //                SyncStatusItem("Last Synchronization", syncInfo.lastSync)
 //                SyncStatusItem("Number of events not synchronised", syncInfo.eventsNotSynced.toString())
 //                SyncStatusItem("Oldest event not synchronised", syncInfo.oldestEventTimeNotSynced)
-//                SyncStatusItem("Total events gathered", syncInfo.totalEvents.toString())
+//                SyncStatusItem("Number of events synchronised", syncInfo.totalEvents.toString())
 //            }
         }
 

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
-import com.example.locationtracker.foregroundServices.toggleLocationGatheringService
+import com.example.locationtracker.foregroundServices.LocationTrackerService.toggleLocationGatheringService
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.viewModel.MainViewModel
 

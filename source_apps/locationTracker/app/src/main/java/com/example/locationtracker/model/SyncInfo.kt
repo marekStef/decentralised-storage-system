@@ -1,7 +1,9 @@
 package com.example.locationtracker.model
 data class SyncInfo(
-    var lastSync: String,
-    val eventsNotSynced: Int,
+    var lastSyncTime: String,
+    val numberOfNotSyncedEvents: Int,
     val oldestEventTimeNotSynced: String,
-    val totalEvents: Int
+    val numberOfSyncedEvents: Int
 )
+
+val defaultSyncInfo = SyncInfo("-", 0, "-", 0)

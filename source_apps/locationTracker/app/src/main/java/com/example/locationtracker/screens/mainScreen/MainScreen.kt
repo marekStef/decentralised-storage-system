@@ -44,9 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.example.locationtracker.foregroundServices.LocationTrackerService
-import com.example.locationtracker.foregroundServices.stopLocationGatheringServiceIfRunning
-import com.example.locationtracker.model.AppSettings
+import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
 import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
@@ -54,7 +52,6 @@ import com.example.locationtracker.screens.mainScreen.components.BottomActionBar
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.screens.mainScreen.components.TimeSetter
-import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
 
 
@@ -330,28 +327,6 @@ fun MainScreen(
                                                     .padding(horizontal = 10.dp, vertical = 5.dp),
                                             )
                                         }
-
-
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "Association Token Used",
-                                                fontSize = 12.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-
-                                            Text(
-                                                text = dataStorageDetails?.associationTokenUsedDuringRegistration
-                                                    ?: "No Token",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Light,
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(colorResource(id = R.color.gray_light1))
-                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                                            )
-                                        }
-
-
                                     }
 
                                 }

@@ -1,4 +1,4 @@
-package com.example.locationtracker.foregroundServices
+package com.example.locationtracker.foregroundServices.LocationTrackerService
 
 import android.app.Activity
 import android.content.Context

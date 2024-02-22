@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import com.example.locationtracker.data.database.DatabaseClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import androidx.work.workDataOf
-import kotlinx.coroutines.delay
+import com.example.locationtracker.eventSynchronisation.sendLocationsToServer
 
 class SynchronisationWorker(
     private val context: Context,
@@ -15,7 +15,9 @@ class SynchronisationWorker(
 
     companion object {
         const val Progress = "Progress"
-        val syncProgress = MutableStateFlow(0) // For UI updates
+        val syncProgress = MutableStateFlow(0)
+        const val SyncedEvents = "SyncedEvents"
+        val numberOfSyncedEvents = MutableStateFlow(0)
     }
 
     override suspend fun doWork(): Result {
@@ -23,25 +25,24 @@ class SynchronisationWorker(
         val dao = database.locationDao()
 
         val totalCount = dao.countAllLocations()
-        val batchSize = 1000 // Define a suitable batch size
+        val batchSize = 1000 // Number of events to be sent in one api request
         var offset = 0
 
         while (offset < totalCount) {
-            val locations = dao.getLocationsWithLimitOffset(batchSize, offset)
-            // TODO: Implement the API call to sync locations
-            // sendLocationsToServer(locations)
-            delay(1000)
+            val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, offset)
+            sendLocationsToServer(locations)
             offset += locations.size
-
             updateProgress(offset, totalCount)
         }
-
+        updateProgress(offset, totalCount)
         return Result.success()
     }
 
     private suspend fun updateProgress(offset: Int, totalCount: Int) {
         val progress = (offset.toFloat() / totalCount * 100).toInt()
-        setProgress(workDataOf(Progress to progress))
+        setProgress(workDataOf(Progress to progress, SyncedEvents to offset))
+
         syncProgress.value = progress
+        numberOfSyncedEvents.value = offset
     }
 }

@@ -46,7 +46,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".foregroundServices.LocationTrackerService"
+            android:name=".foregroundServices.LocationTrackerService.LocationTrackerService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />

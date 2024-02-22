@@ -24,6 +24,7 @@ import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
+import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.workManagers.ExportLocationsWorker
 import com.example.locationtracker.workManagers.SynchronisationWorker
 import kotlinx.coroutines.Dispatchers
@@ -88,6 +89,18 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
+    fun updateLastSynchronisation(date: Date) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = currentSyncInfo.copy(lastSyncTime = date.toString())
+    }
+    fun updateNumberOfSynchronisedEvents(numberOfSyncedEvents: Int) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = currentSyncInfo.copy(numberOfSyncedEvents = numberOfSyncedEvents)
+    }
+    fun updateNumberOfNotSynchronisedEvents(count: Int) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = currentSyncInfo.copy(numberOfNotSyncedEvents = count)
+    }
 
     val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 
@@ -265,7 +278,7 @@ class MainViewModel(private val application: Application, private val dbManager:
     init {
         loadDataStorageDetails()
         loadAppSettings()
-        startPeriodicSync()
+        startPeriodicFetchingOfTheCountOfNotSyncedEvents()
     }
 
     private fun loadDataStorageDetails() {
@@ -286,24 +299,18 @@ class MainViewModel(private val application: Application, private val dbManager:
     }
 
 
-    private fun startPeriodicSync() {
+    private fun startPeriodicFetchingOfTheCountOfNotSyncedEvents() {
         viewModelScope.launch {
             while (isActive) { // isActive is a CoroutineScope extension property
                 try {
-                    _syncInfo.postValue(dbManager.getSyncInfo())
+                    updateNumberOfNotSynchronisedEvents(dbManager.getCountOfNotSynchronisedLocationsForSyncInfo())
+//                    _syncInfo.value = dbManager.getSyncInfo()
                     Log.d("FETCHING", "FEEEEEEEEEEEEEEEEEEEEEEEEETCHING")
                 } catch (e: Exception) {
 
                 }
                 delay(10000L)
             }
-        }
-    }
-
-    fun updateSyncInfo(newSyncInfo: SyncInfo) {
-        viewModelScope.launch {
-            dbManager.saveSyncInfo(newSyncInfo)
-            _syncInfo.value = newSyncInfo
         }
     }
 
@@ -327,15 +334,19 @@ class MainViewModel(private val application: Application, private val dbManager:
             when (workInfo?.state) {
                 WorkInfo.State.RUNNING -> {
                     val progress = workInfo.progress.getInt(SynchronisationWorker.Progress, 0)
+                    val numberOfSyncedEvents: Int = workInfo.progress.getInt(SynchronisationWorker.SyncedEvents, 0)
                     _progress.value = progress
+                    updateNumberOfSynchronisedEvents(numberOfSyncedEvents)
                 }
                 WorkInfo.State.SUCCEEDED -> {
                     _lastSyncStatus.value = EventsSyncingStatus.SYNCED_SUCCESSFULLY
                     _syncCompletionTime.value = Date()
+                    updateLastSynchronisation(Date())
                 }
                 WorkInfo.State.FAILED, WorkInfo.State.CANCELLED -> {
                     _lastSyncStatus.value = EventsSyncingStatus.SYNCHRONISATION_FAILED
                     _syncCompletionTime.value = Date()
+                    updateLastSynchronisation(Date())
                 }
                 else -> {}
             }

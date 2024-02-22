@@ -1,9 +1,7 @@
 package com.example.locationtracker
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -15,7 +13,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -27,7 +24,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.work.WorkInfo
 
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.data.LogsManager
@@ -198,7 +194,7 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
 
-        composable("logScreen") { LogScreen(navController, logsManager) }
+        composable("logScreen") { LogScreen(navController, logsManager, applicationContext) }
 
         composable("profilesAndPermissions") { ProfilesAndPermissionsScreen(navController, mainViewModel, activity) }
 

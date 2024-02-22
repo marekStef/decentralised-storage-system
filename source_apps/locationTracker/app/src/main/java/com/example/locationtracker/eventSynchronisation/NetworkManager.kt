@@ -4,7 +4,9 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
+import com.example.locationtracker.data.database.entities.Location
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -268,4 +270,10 @@ suspend fun sendPermissionRequestToServer(
     } catch (e: Exception) {
         Result.failure(e)
     }
+}
+
+suspend fun sendLocationsToServer(locations: List<Location>) {
+    Log.d("SENDING_LOCATIONS", "first event id: ${locations.get(0).id.toString()}, last event id: ${locations.get(locations.size - 1).id.toString()}")
+    // TODO: Implement the API call to sync locations
+    delay(1000)
 }

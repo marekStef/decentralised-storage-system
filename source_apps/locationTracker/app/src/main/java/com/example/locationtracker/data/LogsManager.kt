@@ -4,8 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import com.example.locationtracker.constants.SharedPreferences as constants
 import com.example.locationtracker.data.database.Database
 import com.example.locationtracker.data.database.DatabaseClient
@@ -42,29 +40,33 @@ class LogsManager private constructor(private var db: Database, private val cont
 
     fun saveSyncInfo(syncInfo: SyncInfo) {
         SyncInfoSharedPreferences.edit {
-            putString(constants.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSync)
+            putString(constants.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSyncTime)
             // putInt(EVENTS_NOT_SYNCED, syncInfo.eventsNotSynced)
             // putString(OLDEST_EVENT_TIME_NOT_SYNCED, syncInfo.oldestEventTimeNotSynced)
-            putInt(constants.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED, syncInfo.totalEvents)
+            putInt(constants.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED, syncInfo.numberOfSyncedEvents)
             apply()
         }
     }
 
+    suspend fun getCountOfNotSynchronisedLocationsForSyncInfo(): Int {
+        return db.locationDao().countAllLocations()
+    }
+
     suspend fun getSyncInfo(): SyncInfo {
-        val numberOfNotSyncedEvents = db.locationDao().countAllLocations()
+        val numberOfNotSyncedEvents = getCountOfNotSynchronisedLocationsForSyncInfo()
         return SyncInfo(
-            lastSync = SyncInfoSharedPreferences.getString(
+            lastSyncTime = SyncInfoSharedPreferences.getString(
                 constants.SYNCHRONISATION_INFO_LAST_SYNC,
                 "Not Synced Yet"
             ) ?: "",
-            eventsNotSynced = numberOfNotSyncedEvents,
+            numberOfNotSyncedEvents = numberOfNotSyncedEvents,
             oldestEventTimeNotSynced = convertLongToTime(
                 db.locationDao().getOldestNotSyncedEventTime(), "No event yet"
             ),
-            totalEvents = SyncInfoSharedPreferences.getInt(
+            numberOfSyncedEvents = SyncInfoSharedPreferences.getInt(
                 constants.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED,
                 0
-            ) + numberOfNotSyncedEvents
+            )
         )
     }
 
@@ -88,12 +90,12 @@ class LogsManager private constructor(private var db: Database, private val cont
     }
 
     suspend fun fetchLocations(limit: Int, offset: Int): List<Location> {
-        return db.locationDao().getLocationsWithLimitOffset(limit, offset)
+        return db.locationDao().getLocationsDescendingWithLimitOffset(limit, offset)
     }
 
     fun logLast10Locations() {
         GlobalScope.launch(Dispatchers.IO) {
-            val last100Locations = db.locationDao().getLocationsWithLimitOffset(10, 0)
+            val last100Locations = db.locationDao().getLocationsDescendingWithLimitOffset(10, 0)
             last100Locations.takeLast(10).forEach { location ->
                 Log.d(
                     "LocationLog",
