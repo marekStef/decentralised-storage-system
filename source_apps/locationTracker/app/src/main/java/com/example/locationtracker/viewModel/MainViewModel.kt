@@ -80,25 +80,6 @@ class MainViewModel(private val application: Application, private val dbManager:
         _appSettings.value = currentSettings.copy(isAutoSyncToggled = value)
     }
 
-    private val TIME_PERIOD_MILLISECONDS = 10000L
-
-    // queue for permissions
-    // [camera permission]
-    val visiblePermissionDialogQueue = mutableStateListOf<String>()
-
-    fun dismissDialog() {
-        visiblePermissionDialogQueue.removeFirst()
-    }
-
-    fun onPermissionResult(
-        permission: String,
-        isGranted: Boolean
-    ) {
-        if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
-            visiblePermissionDialogQueue.add(permission)
-        }
-    }
-
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
 
@@ -308,7 +289,7 @@ class MainViewModel(private val application: Application, private val dbManager:
                 } catch (e: Exception) {
 
                 }
-                delay(TIME_PERIOD_MILLISECONDS)
+                delay(10000L)
             }
         }
     }
@@ -317,6 +298,22 @@ class MainViewModel(private val application: Application, private val dbManager:
         viewModelScope.launch {
             dbManager.saveSyncInfo(newSyncInfo)
             _syncInfo.value = newSyncInfo
+        }
+    }
+
+    // queue for permissions
+    // [camera permission]
+    val visiblePermissionDialogQueue = mutableStateListOf<String>()
+    fun dismissDialog() {
+        visiblePermissionDialogQueue.removeFirst()
+    }
+
+    fun onPermissionResult(
+        permission: String,
+        isGranted: Boolean
+    ) {
+        if (!isGranted && !visiblePermissionDialogQueue.contains(permission)) {
+            visiblePermissionDialogQueue.add(permission)
         }
     }
 }

@@ -24,8 +24,8 @@ fun TimeSetter(context: Context, time: LocalTime?, onUpdate: (LocalTime) -> Unit
             TimePickerDialog(
                 context,
                 { _, hourOfDay, minute -> onUpdate(LocalTime.of(hourOfDay, minute)) },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
+                time?.hour ?: Calendar.HOUR,
+                time?.minute ?: Calendar.MINUTE,
                 true
             ).show()
         },

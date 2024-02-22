@@ -2,7 +2,6 @@ package com.example.locationtracker
 
 import android.Manifest
 import android.app.Activity
-import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,7 +13,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.Button
@@ -22,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,7 +39,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -54,6 +50,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.locationtracker.foregroundServices.LocationTrackerService
+import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
@@ -62,8 +59,8 @@ import com.example.locationtracker.screens.mainScreen.components.CoarseLocationP
 import com.example.locationtracker.screens.mainScreen.components.ExportButton
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.screens.mainScreen.components.TimeSetter
+import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
-import java.util.Calendar
 
 
 @Composable
@@ -184,6 +181,7 @@ fun MainScreen(
                                         appSettings?.selectedStartTimeForLocationLogging
                                     ) {
                                         viewModel.updateAppSettingsStartTime(it)
+                                        stopLocationGatheringServiceIfRunning(applicationContext, viewModel, appSettings, activity)
                                     }
 
                                     Spacer(modifier = Modifier.width(5.dp))
@@ -193,6 +191,7 @@ fun MainScreen(
                                         appSettings?.selectedEndTimeForLocationLogging
                                     ) {
                                         viewModel.updateAppSettingsEndTime(it)
+                                        stopLocationGatheringServiceIfRunning(applicationContext, viewModel, appSettings, activity)
                                     }
                                 }
 
@@ -430,7 +429,7 @@ fun MainScreen(
 
                 ExportButton(activity, viewModel)
 
-                ServiceControlButton(applicationContext, viewModel)
+                ServiceControlButton(applicationContext, viewModel, appSettings)
             }
 
 //            }
@@ -455,11 +454,11 @@ fun MainScreen(
     }
 }
 
-
 @Composable
 fun ServiceControlButton(
     applicationContext: Context,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    appSettings: AppSettings?
 ) {
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
@@ -475,19 +474,7 @@ fun ServiceControlButton(
             containerColor = colorResource(id = R.color.gray_light2),
             contentColor = Color.DarkGray
         ),
-        onClick = {
-            val action = if (isServiceRunning) {
-                LocationTrackerService.Actions.STOP.toString()
-            } else {
-                LocationTrackerService.Actions.START.toString()
-            }
-
-            Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
-                intent.action = action
-                applicationContext.startForegroundService(intent)
-            }
-
-        }) {
+        onClick = { toggleLocationGatheringService(isServiceRunning, applicationContext, appSettings) }) {
         Text(
             if (isServiceRunning) "Stop Service" else "Start Service",
             style = TextStyle(
@@ -505,11 +492,41 @@ fun openAppSettings(activity: Activity) {
     activity.startActivity(intent)
 }
 
-//@Preview
-//@Composable
-//fun PreviewLocationLoggerScreen(context: Context, applicationContext: Context, activity: Activity) {
-//    val navController = rememberNavController()
-//    val viewModel = MainViewModel(LogsManager.getInstance(context), PreferencesManager(context))
-//
-//    MainScreen(navController, viewModel, applicationContext, activity)
-//}
+private fun stopLocationGatheringServiceIfRunning(
+    applicationContext: Context,
+    viewModel: MainViewModel,
+    appSettings: AppSettings?,
+    activity: Activity
+) {
+    val isServiceRunning = viewModel.serviceRunningLiveData.value ?: false
+
+    if (!isServiceRunning) return
+
+    toggleLocationGatheringService(isServiceRunning, applicationContext, appSettings)
+
+    showAlertDialogWithOkButton(activity, "Location Tracker Service", "Service has been stopped after a change. Please start it again.")
+}
+
+private fun toggleLocationGatheringService(
+    isServiceRunning: Boolean,
+    applicationContext: Context,
+    appSettings: AppSettings?
+) {
+    val action = if (isServiceRunning) {
+        LocationTrackerService.Actions.STOP.toString()
+    } else {
+        LocationTrackerService.Actions.START.toString()
+    }
+
+    Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
+        intent.action = action
+        if (action == LocationTrackerService.Actions.START.toString()) {
+            if (appSettings != null) {
+                intent.putExtra("startTime", appSettings.selectedStartTimeForLocationLogging.toString())
+                intent.putExtra("endTime", appSettings.selectedEndTimeForLocationLogging.toString())
+            }
+        }
+
+        applicationContext.startForegroundService(intent)
+    }
+}

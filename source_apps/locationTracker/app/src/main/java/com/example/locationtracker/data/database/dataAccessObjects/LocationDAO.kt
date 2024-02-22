@@ -21,4 +21,7 @@ interface LocationDao {
 
     @Query("DELETE FROM location")
     suspend fun deleteAllLocations()
+
+    @Query("SELECT MIN(time) FROM location")
+    suspend fun getOldestNotSyncedEventTime(): Long?
 }

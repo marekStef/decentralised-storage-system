@@ -24,6 +24,8 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class PreferencesManager constructor(private val context: Context) {
+
+
     fun setIsLocationTrackerServiceRunning(isActive: Boolean) {
         val prefs = context.getSharedPreferences(LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES, MODE_PRIVATE)
         prefs.edit().putBoolean(LOCATION_TRACKER_SERVICE_RUNNING_FLAG, isActive).apply()
