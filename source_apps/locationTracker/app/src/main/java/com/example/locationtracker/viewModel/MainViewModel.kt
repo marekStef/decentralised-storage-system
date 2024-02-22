@@ -1,16 +1,11 @@
 package com.example.locationtracker.viewModel
 
-import android.app.Activity
 import android.app.Application
-import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
@@ -29,14 +24,18 @@ import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
-import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.workManagers.ExportLocationsWorker
+import com.example.locationtracker.workManagers.SynchronisationWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalTime
+import java.util.Date
+
 enum class ServerReachabilityEnum {
     NOT_TRIED,
     NOT_REACHABLE,
@@ -59,6 +58,13 @@ enum class PermissionsStatusEnum {
     NOT_TRIED,
     PERMISSION_REQUEST_SENT,
     PERMISSIONS_REQUEST_FAILED
+}
+
+enum class EventsSyncingStatus {
+    NOT_SYNCED_YET,
+    SYNCING,
+    SYNCED_SUCCESSFULLY,
+    SYNCHRONISATION_FAILED
 }
 
 class MainViewModel(private val application: Application, private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
@@ -300,6 +306,49 @@ class MainViewModel(private val application: Application, private val dbManager:
             _syncInfo.value = newSyncInfo
         }
     }
+
+    // ---------------------------- EVENTS SYNCING [START]
+
+    private val _progress = MutableStateFlow(0)
+    val progress = _progress.asStateFlow()
+
+    private val _lastSyncStatus = MutableStateFlow(EventsSyncingStatus.NOT_SYNCED_YET)
+    val lastSyncStatus = _lastSyncStatus.asStateFlow()
+
+    private val _syncCompletionTime = MutableStateFlow<Date?>(null)
+    val syncCompletionTime = _syncCompletionTime.asStateFlow()
+
+    fun startSyncing() {
+        val request = OneTimeWorkRequestBuilder<SynchronisationWorker>().build()
+        WorkManager.getInstance(application).enqueue(request)
+        _lastSyncStatus.value = EventsSyncingStatus.SYNCING
+
+        WorkManager.getInstance(application).getWorkInfoByIdLiveData(request.id).observeForever { workInfo ->
+            when (workInfo?.state) {
+                WorkInfo.State.RUNNING -> {
+                    val progress = workInfo.progress.getInt(SynchronisationWorker.Progress, 0)
+                    _progress.value = progress
+                }
+                WorkInfo.State.SUCCEEDED -> {
+                    _lastSyncStatus.value = EventsSyncingStatus.SYNCED_SUCCESSFULLY
+                    _syncCompletionTime.value = Date()
+                }
+                WorkInfo.State.FAILED, WorkInfo.State.CANCELLED -> {
+                    _lastSyncStatus.value = EventsSyncingStatus.SYNCHRONISATION_FAILED
+                    _syncCompletionTime.value = Date()
+                }
+                else -> {}
+            }
+        }
+
+        viewModelScope.launch {
+            SynchronisationWorker.syncProgress.collect {
+                _progress.value = it
+            }
+        }
+    }
+
+    // ---------------------------- EVENTS SYNCING [END]
 
     // queue for permissions
     // [camera permission]
