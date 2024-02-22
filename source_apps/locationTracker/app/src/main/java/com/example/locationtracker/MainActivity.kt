@@ -171,6 +171,7 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         mainViewModel.saveDataStorageDetails()
+        mainViewModel.saveAppSettings()
     }
 }
 

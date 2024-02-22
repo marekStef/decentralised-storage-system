@@ -14,6 +14,9 @@ object SharedPreferences {
 
     const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferencess"
     const val DATA_STORAGE_DETAILS = "data_storage_details"
+
+    const val APPLICATION_SETTINGS_PREFERENCES = "application_settings_preferences_v3"
+    const val APPLICATION_SETTINGS = "application_settings"
 }
 
 object Services {

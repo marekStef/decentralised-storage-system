@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -60,6 +61,7 @@ import com.example.locationtracker.screens.mainScreen.components.BackgroundLocat
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.ExportButton
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
+import com.example.locationtracker.screens.mainScreen.components.TimeSetter
 import com.example.locationtracker.viewModel.MainViewModel
 import java.util.Calendar
 
@@ -83,10 +85,7 @@ fun MainScreen(
         Manifest.permission.ACCESS_BACKGROUND_LOCATION
     )
 
-    val selectedStartTimeForLocationLogging by viewModel.selectedStartTimeForLocationLogging.observeAsState()
-    val selectedEndTimeForLocationLogging by viewModel.selectedEndTimeForLocationLogging.observeAsState()
-
-    val isAutoSyncToggled by viewModel.isAutoSyncToggled.observeAsState(false)
+    val appSettings by viewModel.appSettings.observeAsState()
 
 //    val FineLocationPermissionResultLauncher = rememberLauncherForActivityResult(
 //        contract = ActivityResultContracts.RequestPermission(),
@@ -129,7 +128,7 @@ fun MainScreen(
 //    syncInfo?.let { info: SyncInfo ->
 //        SyncStatusCard(syncInfo = info)
 //    }
-    Box( Modifier.background(Color.White)) {
+    Column(Modifier.background(Color.White)) {
         LazyColumn() {
             item {
 
@@ -179,76 +178,21 @@ fun MainScreen(
                                         fontSize = 16.sp,
                                         modifier = Modifier.weight(1f)
                                     )
-                                    Button(
-                                        onClick = {
-                                            val calendar = Calendar.getInstance()
-                                            TimePickerDialog(
-                                                context,
-                                                { _, hourOfDay, minute ->
-                                                    viewModel.updateStartTimeForLocationLogging(
-                                                        hourOfDay,
-                                                        minute
-                                                    )
-                                                },
-                                                calendar.get(Calendar.HOUR_OF_DAY),
-                                                calendar.get(Calendar.MINUTE),
-                                                true // 24-hour time
-                                            ).show()
-                                        },
-                                        modifier = Modifier.padding(1.dp),
-                                        shape = RoundedCornerShape(4.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = colorResource(id = R.color.gray_light1),
-                                            contentColor = colorResource(id = R.color.gray_light7)
-                                        ),
-                                        contentPadding = PaddingValues(
-                                            start = 13.dp,
-                                            top = 0.dp,
-                                            end = 13.dp,
-                                            bottom = 0.dp
-                                        ),
+
+                                    TimeSetter(
+                                        context,
+                                        appSettings?.selectedStartTimeForLocationLogging
                                     ) {
-                                        Text(
-                                            text = selectedStartTimeForLocationLogging?.toString()
-                                                ?: "Set Time"
-                                        )
+                                        viewModel.updateAppSettingsStartTime(it)
                                     }
-                                    
+
                                     Spacer(modifier = Modifier.width(5.dp))
 
-                                    Button(
-                                        onClick = {
-                                            val calendar = Calendar.getInstance()
-                                            TimePickerDialog(
-                                                context,
-                                                { _, hourOfDay, minute ->
-                                                    viewModel.updateEndTimeForLocationLogging(
-                                                        hourOfDay,
-                                                        minute
-                                                    )
-                                                },
-                                                calendar.get(Calendar.HOUR_OF_DAY),
-                                                calendar.get(Calendar.MINUTE),
-                                                true // 24-hour time
-                                            ).show()
-                                        },
-                                        modifier = Modifier.padding(1.dp),
-                                        shape = RoundedCornerShape(4.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = colorResource(id = R.color.gray_light1),
-                                            contentColor = colorResource(id = R.color.gray_light7),
-                                        ),
-                                        contentPadding = PaddingValues(
-                                            start = 13.dp,
-                                            top = 0.dp,
-                                            end = 13.dp,
-                                            bottom = 0.dp
-                                        ),
+                                    TimeSetter(
+                                        context,
+                                        appSettings?.selectedEndTimeForLocationLogging
                                     ) {
-                                        Text(
-                                            text = selectedEndTimeForLocationLogging?.toString()
-                                                ?: "Set Time"
-                                        )
+                                        viewModel.updateAppSettingsEndTime(it)
                                     }
                                 }
 
@@ -263,22 +207,24 @@ fun MainScreen(
                                     )
 
                                     Switch(
-                                        checked = isAutoSyncToggled,
+                                        checked = appSettings?.isAutoSyncToggled ?: false,
                                         onCheckedChange = { isChecked: Boolean ->
-                                            viewModel.toggleAutoSync(
-                                                isChecked
-                                            )
+                                            viewModel.updateAppSettingsAutoSync(isChecked)
                                         },
                                         colors = SwitchDefaults.colors(
                                             checkedThumbColor = colorResource(id = R.color.gray_light5),
                                             uncheckedThumbColor = colorResource(id = R.color.gray_light7),
-                                            checkedTrackColor = colorResource(id = R.color.gray_green1).copy(alpha = 0.7f), // Optional: Track color when switch is ON
-                                            uncheckedTrackColor = colorResource(id = R.color.gray_light1).copy(alpha = 0.3f), // Optional: Track color when switch is OFF
+                                            checkedTrackColor = colorResource(id = R.color.gray_green1).copy(
+                                                alpha = 0.7f
+                                            ), // Optional: Track color when switch is ON
+                                            uncheckedTrackColor = colorResource(id = R.color.gray_light1).copy(
+                                                alpha = 0.3f
+                                            ), // Optional: Track color when switch is OFF
                                         )
                                     )
                                 }
 
-                                Row (verticalAlignment = Alignment.CenterVertically) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         text = "Network for synchronisation",
                                         fontSize = 16.sp,
@@ -303,8 +249,7 @@ fun MainScreen(
                                     Column {
 
 
-
-                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 text = "Network name (SSID): ",
                                                 fontSize = 12.sp,
@@ -321,10 +266,10 @@ fun MainScreen(
                                                     .padding(horizontal = 10.dp, vertical = 5.dp),
                                             )
                                         }
-                                        
+
                                         Spacer(modifier = Modifier.height(3.dp))
 
-                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 text = "Server address",
                                                 fontSize = 12.sp,
@@ -344,7 +289,7 @@ fun MainScreen(
 
                                         Spacer(modifier = Modifier.height(3.dp))
 
-                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 text = "Server port",
                                                 fontSize = 12.sp,
@@ -364,7 +309,7 @@ fun MainScreen(
 
                                         Spacer(modifier = Modifier.height(3.dp))
 
-                                        Row (verticalAlignment = Alignment.CenterVertically){
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
                                             Text(
                                                 text = "Association Token Used",
                                                 fontSize = 12.sp,
@@ -372,7 +317,8 @@ fun MainScreen(
                                             )
 
                                             Text(
-                                                text = dataStorageDetails?.associationTokenUsedDuringRegistration ?: "No Token",
+                                                text = dataStorageDetails?.associationTokenUsedDuringRegistration
+                                                    ?: "No Token",
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Light,
                                                 modifier = Modifier
@@ -384,7 +330,6 @@ fun MainScreen(
 
 
                                     }
-
 
 
                                 }
@@ -424,8 +369,8 @@ fun MainScreen(
         // This Column aligns the buttons to the bottom
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 10.dp, start = 5.dp, end = 5.dp),
+                .wrapContentSize()
+                .padding(start = 5.dp, end = 5.dp),
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -444,15 +389,15 @@ fun MainScreen(
                         contentColor = colorResource(id = R.color.green3)
                     ),
                     onClick = {
-                    val updatedSyncInfo = SyncInfo(
-                        lastSync = "New Sync Time",
-                        eventsNotSynced = 1234,
-                        oldestEventTimeNotSynced = "New Oldest Event Time",
-                        totalEvents = 987654321
-                    )
+                        val updatedSyncInfo = SyncInfo(
+                            lastSync = "New Sync Time",
+                            eventsNotSynced = 1234,
+                            oldestEventTimeNotSynced = "New Oldest Event Time",
+                            totalEvents = 987654321
+                        )
 
-                    viewModel.updateSyncInfo(updatedSyncInfo) // Call the function in the ViewModel to handle the sync event
-                }) {
+                        viewModel.updateSyncInfo(updatedSyncInfo) // Call the function in the ViewModel to handle the sync event
+                    }) {
                     Text("Sync Now")
                 }
             }
@@ -464,11 +409,11 @@ fun MainScreen(
 
                 Button(
                     modifier = Modifier
-                        .shadow(
-                            elevation = 15.dp,
-                            spotColor = Color.LightGray,
-                            shape = RoundedCornerShape(40.dp)
-                        )
+//                        .shadow(
+//                            elevation = 15.dp,
+//                            spotColor = Color.LightGray,
+//                            shape = RoundedCornerShape(40.dp)
+//                        )
                         .padding(0.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.gray_light2),
@@ -485,7 +430,6 @@ fun MainScreen(
 
                 ExportButton(activity, viewModel)
 
-//                Spacer(modifier = Modifier.width(42.dp))
                 ServiceControlButton(applicationContext, viewModel)
             }
 
@@ -521,11 +465,11 @@ fun ServiceControlButton(
 
     Button(
         modifier = Modifier
-            .shadow(
-                elevation = 15.dp,
-                spotColor = Color.LightGray,
-                shape = RoundedCornerShape(40.dp)
-            )
+//            .shadow(
+//                elevation = 15.dp,
+//                spotColor = Color.LightGray,
+//                shape = RoundedCornerShape(40.dp)
+//            )
             .padding(0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.gray_light2),

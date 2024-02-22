@@ -24,9 +24,11 @@ import com.example.locationtracker.eventSynchronisation.associateAppWithDataStor
 import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
 import com.example.locationtracker.eventSynchronisation.registerNewProfileToDataStorage
 import com.example.locationtracker.eventSynchronisation.sendPermissionRequestToServer
+import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
+import com.example.locationtracker.model.defaultAppSettings
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.workManagers.ExportLocationsWorker
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +64,22 @@ enum class PermissionsStatusEnum {
 class MainViewModel(private val application: Application, private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
     private val workManager = WorkManager.getInstance(application)
 
+    private val _appSettings = MutableLiveData<AppSettings>()
+    val appSettings: LiveData<AppSettings> = _appSettings
+
+    fun updateAppSettingsEndTime(value: LocalTime) {
+        val currentSettings = _appSettings.value ?: defaultAppSettings
+        _appSettings.value = currentSettings.copy(selectedEndTimeForLocationLogging = value)
+    }
+    fun updateAppSettingsStartTime(value: LocalTime) {
+        val currentSettings = _appSettings.value ?: defaultAppSettings
+        _appSettings.value = currentSettings.copy(selectedStartTimeForLocationLogging = value)
+    }
+    fun updateAppSettingsAutoSync(value: Boolean) {
+        val currentSettings = _appSettings.value ?: defaultAppSettings
+        _appSettings.value = currentSettings.copy(isAutoSyncToggled = value)
+    }
+
     private val TIME_PERIOD_MILLISECONDS = 10000L
 
     // queue for permissions
@@ -83,24 +101,6 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
-
-    private val _selectedStartTimeForLocationLogging = MutableLiveData<LocalTime>()
-    val selectedStartTimeForLocationLogging: LiveData<LocalTime> = _selectedStartTimeForLocationLogging // read only so that the ui can observe it
-    fun updateStartTimeForLocationLogging(hour: Int, minute: Int) {
-        _selectedStartTimeForLocationLogging.value = LocalTime.of(hour, minute)
-    }
-
-    private val _selectedEndTimeForLocationLogging = MutableLiveData<LocalTime>()
-    val selectedEndTimeForLocationLogging: LiveData<LocalTime> = _selectedEndTimeForLocationLogging // read only so that the ui can observe it
-    fun updateEndTimeForLocationLogging(hour: Int, minute: Int) {
-        _selectedEndTimeForLocationLogging.value = LocalTime.of(hour, minute)
-    }
-
-    private val _isAutoSyncToggled = MutableLiveData<Boolean>(false)
-    val isAutoSyncToggled: LiveData<Boolean> = _isAutoSyncToggled
-    fun toggleAutoSync(value: Boolean) {
-        _isAutoSyncToggled.value = value
-    }
 
     val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 
@@ -277,6 +277,7 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     init {
         loadDataStorageDetails()
+        loadAppSettings()
         startPeriodicSync()
     }
 
@@ -287,6 +288,14 @@ class MainViewModel(private val application: Application, private val dbManager:
     fun saveDataStorageDetails() {
         if (_dataStorageDetails.value == null) return
         preferencesManager.saveDataStorageDetails(_dataStorageDetails.value!!)
+    }
+
+    private fun loadAppSettings() {
+        _appSettings.value = preferencesManager.loadAppSettings()
+    }
+
+    fun saveAppSettings() {
+        appSettings.value?.let { preferencesManager.saveAppSettings(it) }
     }
 
 

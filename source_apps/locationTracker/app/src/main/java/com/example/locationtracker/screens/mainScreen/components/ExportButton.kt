@@ -44,11 +44,11 @@ fun ExportButton(activity: Activity, mainViewModel: MainViewModel) {
 
     Button(
         modifier = Modifier
-            .shadow(
-                elevation = 15.dp,
-                spotColor = Color.LightGray,
-                shape = RoundedCornerShape(40.dp)
-            )
+//            .shadow(
+//                elevation = 15.dp,
+//                spotColor = Color.LightGray,
+//                shape = RoundedCornerShape(40.dp)
+//            )
             .padding(0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.gray_light2),
