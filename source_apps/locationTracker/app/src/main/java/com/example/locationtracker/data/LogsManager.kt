@@ -32,14 +32,12 @@ class LogsManager private constructor(private var db: Database, private val cont
             }
     }
 
-    val SyncInfoSharedPreferences = context.getSharedPreferences(
-        constants.SYNCHRONISATION_INFO_SHARED_PREFERENCES,
-        Context.MODE_PRIVATE
-    )
+
 
 
     fun saveSyncInfo(syncInfo: SyncInfo) {
-        SyncInfoSharedPreferences.edit {
+        val syncInfoSharedPreferences = context.getSharedPreferences(constants.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        syncInfoSharedPreferences.edit {
             putString(constants.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSyncTime)
             // putInt(EVENTS_NOT_SYNCED, syncInfo.eventsNotSynced)
             // putString(OLDEST_EVENT_TIME_NOT_SYNCED, syncInfo.oldestEventTimeNotSynced)
@@ -52,18 +50,23 @@ class LogsManager private constructor(private var db: Database, private val cont
         return db.locationDao().countAllLocations()
     }
 
+    suspend fun getTimeOfOldestNotSyncedEvent(): String {
+        return convertLongToTime(
+            db.locationDao().getOldestNotSyncedEventTime(), "No event yet"
+        )
+    }
+
     suspend fun getSyncInfo(): SyncInfo {
+        val syncInfoSharedPreferences = context.getSharedPreferences(constants.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val numberOfNotSyncedEvents = getCountOfNotSynchronisedLocationsForSyncInfo()
         return SyncInfo(
-            lastSyncTime = SyncInfoSharedPreferences.getString(
+            lastSyncTime = syncInfoSharedPreferences.getString(
                 constants.SYNCHRONISATION_INFO_LAST_SYNC,
                 "Not Synced Yet"
             ) ?: "",
             numberOfNotSyncedEvents = numberOfNotSyncedEvents,
-            oldestEventTimeNotSynced = convertLongToTime(
-                db.locationDao().getOldestNotSyncedEventTime(), "No event yet"
-            ),
-            numberOfSyncedEvents = SyncInfoSharedPreferences.getInt(
+            oldestEventTimeNotSynced = getTimeOfOldestNotSyncedEvent(),
+            numberOfSyncedEvents = syncInfoSharedPreferences.getInt(
                 constants.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED,
                 0
             )

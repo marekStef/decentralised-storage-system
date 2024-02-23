@@ -1,4 +1,5 @@
 package com.example.locationtracker.viewModel
 
-class LogViewModel {
+class DataStorageRegistrationViewModel {
+
 }

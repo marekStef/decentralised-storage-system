@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
 import com.example.locationtracker.constants.Notifications
-import com.example.locationtracker.eventSynchronisation.getCurrentSsid
+import com.example.locationtracker.utils.getCurrentSsid
 import com.example.locationtracker.utils.isAppExemptFromBatteryOptimizations
 import com.example.locationtracker.utils.requestDisableBatteryOptimization
 

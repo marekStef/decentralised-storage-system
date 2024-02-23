@@ -164,10 +164,9 @@ class MainActivity : ComponentActivity() {
         unregisterReceiver(serviceStatusReceiver) // Unregister the broadcast receiver to prevent memory leaks
     }
 
-    override fun onPause() {
-        super.onPause()
-        mainViewModel.saveDataStorageDetails()
-        mainViewModel.saveAppSettings()
+    override fun onStop() {
+        super.onStop()
+        mainViewModel.saveViewModel()
     }
 }
 
