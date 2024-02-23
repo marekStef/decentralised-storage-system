@@ -41,13 +41,16 @@ import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.screens.commonComponents.CustomTextField
 import com.example.locationtracker.screens.commonComponents.ResetAppButton
 import com.example.locationtracker.utils.getCurrentSsid
+import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
+import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
 
 @Composable
 fun SettingsScreenForRegisteredApp(
     applicationContext: Context,
     navController: NavController,
+    viewModel: MainViewModel,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     activity: Activity,
 ) {
@@ -200,6 +203,10 @@ fun SettingsScreenForRegisteredApp(
                     CustomDefaultButton("Set This Network") {
                         var ssid = getCurrentSsid(applicationContext)
                         dataStorageRegistrationViewModel.setDataStorageNetworkSSID(ssid)
+                        if (ssid == null) {
+                            viewModel.updateAppSettingsAutoSync(false)
+                            showAlertDialogWithOkButton(activity, "AutoSync Turned Off", "No network ssid has been found - Auto Sync is off")
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -228,8 +235,7 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ResetAppButton(applicationContext, navController, activity)
-
+                    ResetAppButton(applicationContext, viewModel, navController, activity)
                 }
             }
         }

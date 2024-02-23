@@ -175,7 +175,7 @@ fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataSt
 
         composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel, activity) }
 
-        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, dataStorageRegistrationViewModel, activity) }
+        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel, activity) }
     }
 }
 

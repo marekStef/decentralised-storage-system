@@ -3,6 +3,8 @@ package com.example.locationtracker.foregroundServices.LocationTrackerService
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
@@ -10,9 +12,10 @@ import com.example.locationtracker.viewModel.MainViewModel
 fun stopLocationGatheringServiceIfRunning(
     applicationContext: Context,
     viewModel: MainViewModel,
-    appSettings: AppSettings?,
     activity: Activity
 ) {
+    val appSettings = viewModel.appSettings.value
+
     val isServiceRunning = viewModel.serviceRunningLiveData.value ?: false
 
     if (!isServiceRunning) return
@@ -22,7 +25,7 @@ fun stopLocationGatheringServiceIfRunning(
     showAlertDialogWithOkButton(
         activity,
         "Location Tracker Service",
-        "Service has been stopped after a change. Please start it again."
+        "Location Tracking Service has been stopped."
     )
 }
 

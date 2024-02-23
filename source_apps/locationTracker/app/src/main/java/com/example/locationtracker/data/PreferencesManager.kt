@@ -26,7 +26,20 @@ import java.time.format.DateTimeFormatter
 
 class PreferencesManager constructor(private val context: Context) {
     fun resetAllPreferences() {
+        // Unregister the app
         setIsAppProperlyRegistered(false)
+
+        // Reset application settings preferences
+        val appSettingsPrefs = context.getSharedPreferences(APPLICATION_SETTINGS_PREFERENCES, MODE_PRIVATE)
+        appSettingsPrefs.edit().clear().apply()
+
+        // Reset location tracker service preferences
+        val locationTrackerPrefs = context.getSharedPreferences(LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES, MODE_PRIVATE)
+        locationTrackerPrefs.edit().clear().apply()
+
+        // Reset data storage details preferences
+        val dataStoragePrefs = context.getSharedPreferences(DATA_STORAGE_DETAILS_PREFERENCES, MODE_PRIVATE)
+        dataStoragePrefs.edit().clear().apply()
     }
 
     fun setIsLocationTrackerServiceRunning(isActive: Boolean) {
@@ -50,15 +63,6 @@ class PreferencesManager constructor(private val context: Context) {
         editor.putString(DATA_STORAGE_DETAILS, json)
         editor.apply()
     }
-
-//    fun loadDataStorageDetails() : DataStorageDetails {
-//        val ret = DataStorageDetails("3000", "192.168.137.1", null, null, null)
-//        return ret
-////        context.getSharedPreferences(DATA_STORAGE_DETAILS, Context.MODE_PRIVATE)?.let {
-////            val details = Gson().fromJson(it, DataStorageDetails::class.java)
-////            _dataStorageDetails.value = details
-////        }
-//    }
 
     fun loadDataStorageDetails(): DataStorageDetails {
         val sharedPreferences = context.getSharedPreferences(DATA_STORAGE_DETAILS_PREFERENCES, Context.MODE_PRIVATE)

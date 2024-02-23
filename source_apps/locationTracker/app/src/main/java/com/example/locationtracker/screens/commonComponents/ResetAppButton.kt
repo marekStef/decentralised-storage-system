@@ -19,16 +19,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.locationtracker.constants.ScreensNames
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
+import com.example.locationtracker.viewModel.MainViewModel
 
-fun resetApplication(applicationContext: Context, navController: NavController) {
+fun resetApplication(applicationContext: Context, viewModel: MainViewModel, activity: Activity, navController: NavController) {
     var preferencesManager = PreferencesManager(applicationContext)
     preferencesManager.resetAllPreferences()
+    stopLocationGatheringServiceIfRunning(applicationContext, viewModel, activity)
     navController.navigate(ScreensNames.REGISTRATION_SCREEN)
 }
 
 @Composable
-fun ResetAppButton(applicationContext: Context, navController: NavController, activity: Activity) {
+fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController, activity: Activity) {
     var showDialog by remember { mutableStateOf(false) }
 
     // Confirmation Dialog
@@ -44,7 +47,7 @@ fun ResetAppButton(applicationContext: Context, navController: NavController, ac
                     textColor = Color.White
                 ) {
                     showDialog = false
-                    resetApplication(applicationContext, navController)
+                    resetApplication(applicationContext, viewModel, activity, navController)
                     showAlertDialogWithOkButton(activity, "App Reset", "Your app has been successfully reset")
                 }
             },
