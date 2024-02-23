@@ -52,6 +52,7 @@ import com.example.locationtracker.screens.mainScreen.components.BottomActionBar
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.screens.mainScreen.components.TimeSetter
+import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 
 
@@ -59,12 +60,13 @@ import com.example.locationtracker.viewModel.MainViewModel
 fun MainScreen(
     navController: NavController,
     viewModel: MainViewModel,
+    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     applicationContext: Context,
     activity: Activity
 ) {
     // Observe SyncInfo from the ViewModel
     val syncInfo by viewModel.syncInfo.observeAsState()
-    val dataStorageDetails by viewModel.dataStorageDetails.observeAsState()
+    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
     val context = LocalContext.current
     val dialoPermissionsQueue = viewModel.visiblePermissionDialogQueue

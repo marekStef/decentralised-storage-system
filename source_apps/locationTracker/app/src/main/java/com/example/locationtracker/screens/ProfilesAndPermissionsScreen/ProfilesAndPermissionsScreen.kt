@@ -39,6 +39,7 @@ import com.example.locationtracker.R
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
+import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.PermissionsStatusEnum
 import com.example.locationtracker.viewModel.ProfileRegistrationStatusEnum
@@ -47,7 +48,7 @@ import com.example.locationtracker.viewModel.ServerReachabilityEnum
 @Composable
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     activity: Activity
 ) {
     val gradientColors = listOf(
@@ -55,15 +56,15 @@ fun ProfilesAndPermissionsScreen(
         colorResource(id = R.color.header_background_2)
     )
 
-    val dataStorageDetails by mainViewModel.dataStorageDetails.observeAsState()
+    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
-    val isRegisteringLocationProfile = mainViewModel.isRegisteringLocationProfile.observeAsState()
-    val appProfileRegistrationStatus = mainViewModel.appProfileRegistrationStatus.observeAsState()
+    val isRegisteringLocationProfile = dataStorageRegistrationViewModel.isRegisteringLocationProfile.observeAsState()
+    val appProfileRegistrationStatus = dataStorageRegistrationViewModel.appProfileRegistrationStatus.observeAsState()
 
-    val isAskingForPermissions = mainViewModel.isAskingForPermissions.observeAsState()
-    val askingForPermissionsStatus = mainViewModel.askingForPermissionsStatus.observeAsState()
+    val isAskingForPermissions = dataStorageRegistrationViewModel.isAskingForPermissions.observeAsState()
+    val askingForPermissionsStatus = dataStorageRegistrationViewModel.askingForPermissionsStatus.observeAsState()
 
-    val isRegistrationSetupProperly = mainViewModel.isRegistrationSetupProperly.observeAsState()
+    val isRegistrationSetupProperly = dataStorageRegistrationViewModel.isRegistrationSetupProperly.observeAsState()
 //
 //    val isLoadingDataStorageServerReachability =
 //        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
@@ -150,7 +151,7 @@ fun ProfilesAndPermissionsScreen(
                                 context = activity,
                                 resourceId = R.raw.location_profile_for_data_storage
                             )
-                            mainViewModel.registerLocationProfileInDataStorageServer(jsonSchema) { isSuccess, message ->
+                            dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer(jsonSchema) { isSuccess, message ->
                                 if (isSuccess) {
                                     Log.d("Registering profile", "Success: $message")
                                     showAlertDialogWithOkButton(activity, "Success", message)
@@ -222,7 +223,7 @@ fun ProfilesAndPermissionsScreen(
                                 return@Button
                             }
 
-                            mainViewModel.sendPermissionRequest() { isSuccess, message ->
+                            dataStorageRegistrationViewModel.sendPermissionRequest() { isSuccess, message ->
                                 if (isSuccess) {
                                     Log.d("Creating permission request", "Success: $message")
                                     showAlertDialogWithOkButton(
@@ -304,7 +305,7 @@ fun ProfilesAndPermissionsScreen(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(4.dp),
                             onClick = {
-                                mainViewModel.updateIsRegistrationSetupProperly(true)
+                                dataStorageRegistrationViewModel.updateIsRegistrationSetupProperly(true)
                                 navController.navigate("mainScreen")
                             }) {
                             Text("Proceed to the app")

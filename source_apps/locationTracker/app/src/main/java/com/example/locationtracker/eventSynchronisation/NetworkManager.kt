@@ -222,8 +222,12 @@ suspend fun sendPermissionRequestToServer(
     }
 }
 
-suspend fun sendLocationsToServer(locations: List<Location>) {
-    Log.d("SENDING_LOCATIONS", "first event id: ${locations.get(0).id.toString()}, last event id: ${locations.get(locations.size - 1).id.toString()}")
+// returns bool whether syncing was successfull
+suspend fun sendLocationsToServer(locations: List<Location>): Boolean {
+    Log.d("SENDING_LOCATIONS", "locationsc count: ${locations.size}")
+    Log.d("SENDING_LOCATIONS", "first event id: ${locations[0].id.toString()}, last event id: ${locations[locations.size - 1].id.toString()}")
     // TODO: Implement the API call to sync locations
-    delay(1000)
+    delay(4000)
+
+    return true
 }

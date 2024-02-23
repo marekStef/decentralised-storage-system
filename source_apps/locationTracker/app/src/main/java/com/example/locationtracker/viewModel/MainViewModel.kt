@@ -38,30 +38,6 @@ import kotlinx.coroutines.withContext
 import java.time.LocalTime
 import java.util.Date
 
-enum class ServerReachabilityEnum {
-    NOT_TRIED,
-    NOT_REACHABLE,
-    REACHABLE
-}
-
-enum class AssociationWithDataStorageStatusEnum {
-    NOT_TRIED,
-    ASSOCIATED,
-    ASSOCIATION_FAILED
-}
-
-enum class ProfileRegistrationStatusEnum {
-    NOT_TRIED,
-    PROFILE_CREATED,
-    PROFILE_CREATION_FAILED
-}
-
-enum class PermissionsStatusEnum {
-    NOT_TRIED,
-    PERMISSION_REQUEST_SENT,
-    PERMISSIONS_REQUEST_FAILED
-}
-
 enum class EventsSyncingStatus {
     NOT_SYNCED_YET,
     SYNCING,
@@ -70,10 +46,28 @@ enum class EventsSyncingStatus {
 }
 
 class MainViewModel(private val application: Application, private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
+
+
     private val workManager = WorkManager.getInstance(application)
 
     private val _appSettings = MutableLiveData<AppSettings>()
     val appSettings: LiveData<AppSettings> = _appSettings
+
+
+    private val _syncInfo = MutableLiveData<SyncInfo>()
+    val syncInfo: LiveData<SyncInfo> = _syncInfo
+
+    val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
+
+    init {
+        loadAppSettings()
+        loadSynchronisationInfo()
+    }
+
+    fun saveViewModel() {
+        saveSynchronisationInfo()
+        saveAppSettings()
+    }
 
     fun updateAppSettingsEndTime(value: LocalTime) {
         val currentSettings = _appSettings.value ?: defaultAppSettings
@@ -88,15 +82,13 @@ class MainViewModel(private val application: Application, private val dbManager:
         _appSettings.value = currentSettings.copy(isAutoSyncToggled = value)
     }
 
-    private val _syncInfo = MutableLiveData<SyncInfo>()
-    val syncInfo: LiveData<SyncInfo> = _syncInfo
     fun updateLastSynchronisation(date: Date) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
         _syncInfo.value = currentSyncInfo.copy(lastSyncTime = convertDateToFormattedString(date))
     }
     fun updateNumberOfSynchronisedEvents(numberOfSyncedEvents: Int) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
-        _syncInfo.value = currentSyncInfo.copy(numberOfSyncedEvents = numberOfSyncedEvents)
+        _syncInfo.value = currentSyncInfo.copy(numberOfSyncedEvents = currentSyncInfo.numberOfSyncedEvents + numberOfSyncedEvents)
     }
     fun updateNumberOfNotSynchronisedEvents(count: Int) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
@@ -106,153 +98,6 @@ class MainViewModel(private val application: Application, private val dbManager:
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
         _syncInfo.value = currentSyncInfo.copy(oldestEventTimeNotSynced = value)
     }
-
-    val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
-
-    // data storage server specific [START]
-    private val _dataStorageDetails = MutableLiveData<DataStorageDetails>()
-    val dataStorageDetails: LiveData<DataStorageDetails> = _dataStorageDetails
-
-    private val _serverReachabilityStatus = MutableLiveData<ServerReachabilityEnum>(ServerReachabilityEnum.NOT_TRIED)
-    val serverReachabilityStatus: LiveData<ServerReachabilityEnum> = _serverReachabilityStatus
-
-    private val _isLoadingDataStorageServerReachability = MutableLiveData<Boolean>()
-    val isLoadingDataStorageServerReachability: LiveData<Boolean> = _isLoadingDataStorageServerReachability
-
-    private val _isAssociatingAppWithStorage = MutableLiveData<Boolean>()
-    val isAssociatingAppWithStorage: LiveData<Boolean> = _isAssociatingAppWithStorage
-
-    private val _appAssociatedWithDataStorageStatus = MutableLiveData<AssociationWithDataStorageStatusEnum>(AssociationWithDataStorageStatusEnum.NOT_TRIED)
-    val appAssociatedWithDataStorageStatus: LiveData<AssociationWithDataStorageStatusEnum> = _appAssociatedWithDataStorageStatus
-
-    fun associateAppWithStorageAppHolder(callback: (Boolean, String) -> Unit) {
-        if (_isAssociatingAppWithStorage.value == true) return
-
-        viewModelScope.launch {
-            _isAssociatingAppWithStorage.value = true
-            val url: String = "http://${_dataStorageDetails.value?.ipAddress}:${_dataStorageDetails.value?.port}/app/api/associate_with_storage_app_holder"
-            val associationToken: String =
-                _dataStorageDetails.value?.associationTokenUsedDuringRegistration ?: ""
-
-            val result = associateAppWithDataStorageAppHolder(associationTokenId = associationToken, App.APP_NAME, url)
-            _isAssociatingAppWithStorage.value = false
-            result.onSuccess { data ->
-                val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
-                _dataStorageDetails.value = currentDetails.copy(tokenForPermissionsAndProfiles = data)
-                _appAssociatedWithDataStorageStatus.value = AssociationWithDataStorageStatusEnum.ASSOCIATED
-                saveDataStorageDetails()
-                callback(true, data)
-            }.onFailure { error ->
-                _appAssociatedWithDataStorageStatus.value = AssociationWithDataStorageStatusEnum.ASSOCIATION_FAILED
-                callback(false, error.message ?: "Unknown error occurred")
-            }
-        }
-    }
-
-    fun checkDataStorageServerReachability() {
-        if (_isLoadingDataStorageServerReachability.value == true) return
-
-        viewModelScope.launch {
-            _isLoadingDataStorageServerReachability.value = true
-            val ipAddress = _dataStorageDetails.value?.ipAddress ?: ""
-            val port = _dataStorageDetails.value?.port ?: ""
-            val isReachable = withContext(Dispatchers.IO) {
-                isDataStorageServerReachable(ipAddress, port)
-            }
-            _serverReachabilityStatus.value = if (isReachable) ServerReachabilityEnum.REACHABLE else ServerReachabilityEnum.NOT_REACHABLE
-            _isLoadingDataStorageServerReachability.value = false
-        }
-    }
-
-    fun updateDataStorageIpAddress(value: String) {
-        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
-        _dataStorageDetails.value = currentDetails.copy(ipAddress = value)
-        _serverReachabilityStatus.value = ServerReachabilityEnum.NOT_TRIED
-    }
-
-    fun updateDataStoragePort(value: String) {
-        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
-        _dataStorageDetails.value = currentDetails.copy(port = value)
-        _serverReachabilityStatus.value = ServerReachabilityEnum.NOT_TRIED
-    }
-
-    fun updateDataStorageAssociationToken(value: String) {
-        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
-        _dataStorageDetails.value = currentDetails.copy(associationTokenUsedDuringRegistration = value)
-    }
-
-    // data storage server specific [END]
-
-    // data storage server - profile creation [START]
-
-    private val _isRegisteringLocationProfile = MutableLiveData<Boolean>(false)
-    val isRegisteringLocationProfile: LiveData<Boolean> = _isRegisteringLocationProfile
-
-    private val _appProfileRegistrationStatus = MutableLiveData<ProfileRegistrationStatusEnum>(ProfileRegistrationStatusEnum.NOT_TRIED)
-    val appProfileRegistrationStatus: LiveData<ProfileRegistrationStatusEnum> = _appProfileRegistrationStatus
-
-    fun registerLocationProfileInDataStorageServer(schema: String, callback: (Boolean, String) -> Unit) {
-        Log.d("Registering (viewmode)", "Trying to register profile")
-
-        if (_isRegisteringLocationProfile.value == true) return
-
-        viewModelScope.launch {
-            _isRegisteringLocationProfile.value = true
-            val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
-            val ip: String = _dataStorageDetails.value?.ipAddress!!
-            val port: String = _dataStorageDetails.value?.port!!
-
-            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, schema)
-            _isRegisteringLocationProfile.value = false
-
-            result.onSuccess { data ->
-                saveDataStorageDetails()
-                _appProfileRegistrationStatus.value = ProfileRegistrationStatusEnum.PROFILE_CREATED
-                callback(true, data)
-            }.onFailure { error ->
-                _appProfileRegistrationStatus.value = ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED
-                callback(false, error.message ?: "Unknown error occurred")
-            }
-        }
-    }
-
-    private val _isAskingForPermissions = MutableLiveData<Boolean>(false)
-    val isAskingForPermissions: LiveData<Boolean> = _isAskingForPermissions
-
-    private val _askingForPermissionsStatus = MutableLiveData<PermissionsStatusEnum>(PermissionsStatusEnum.NOT_TRIED)
-    val askingForPermissionsStatus: LiveData<PermissionsStatusEnum> = _askingForPermissionsStatus
-
-    fun sendPermissionRequest(callback: (Boolean, String) -> Unit) {
-        Log.d("Sending permission request", "Trying to send permission request")
-
-        if (_isAskingForPermissions.value == true) return
-
-        viewModelScope.launch {
-            _isAskingForPermissions.value = true
-            val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
-            val ip: String = _dataStorageDetails.value?.ipAddress!!
-            val port: String = _dataStorageDetails.value?.port!!
-
-            val result = sendPermissionRequestToServer(ip, port, tokenForPermissionsAndProfiles)
-            _isAskingForPermissions.value = false
-
-            result.onSuccess { data ->
-                saveDataStorageDetails()
-                _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSION_REQUEST_SENT
-                callback(true, data)
-            }.onFailure { error ->
-                _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED
-                callback(false, error.message ?: "Unknown error occurred")
-            }
-        }
-    }
-
-    private val _isRegistrationSetupProperly = MutableLiveData<Boolean>(false)
-    val isRegistrationSetupProperly: LiveData<Boolean> = _isRegistrationSetupProperly
-    fun updateIsRegistrationSetupProperly(isProperlySetup: Boolean) {
-        _isRegistrationSetupProperly.value = isProperlySetup
-    }
-    // data storage server - profile creation [END]
 
     // csv exporting
     private val _workInfo = MutableLiveData<WorkInfo>()
@@ -279,27 +124,6 @@ class MainViewModel(private val application: Application, private val dbManager:
     }
 
     // csv exporting [end]
-
-    init {
-        loadDataStorageDetails()
-        loadAppSettings()
-        loadSynchronisationInfo()
-    }
-
-    fun saveViewModel() {
-        saveSynchronisationInfo()
-        saveDataStorageDetails()
-        saveAppSettings()
-    }
-
-    private fun loadDataStorageDetails() {
-        _dataStorageDetails.value = preferencesManager.loadDataStorageDetails()
-    }
-
-    private fun saveDataStorageDetails() {
-        if (_dataStorageDetails.value == null) return
-        preferencesManager.saveDataStorageDetails(_dataStorageDetails.value!!)
-    }
 
     private fun loadAppSettings() {
         _appSettings.value = preferencesManager.loadAppSettings()
@@ -331,7 +155,7 @@ class MainViewModel(private val application: Application, private val dbManager:
                 } catch (e: Exception) {
 
                 }
-                delay(10000L)
+                delay(1000L)
             }
         }
     }

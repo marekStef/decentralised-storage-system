@@ -25,12 +25,15 @@ class SynchronisationWorker(
         val dao = database.locationDao()
 
         val totalCount = dao.countAllLocations()
-        val batchSize = 1000 // Number of events to be sent in one api request
+        val batchSize = 100 // Number of events to be sent in one api request
         var offset = 0
 
         while (offset < totalCount) {
-            val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, offset)
-            sendLocationsToServer(locations)
+            val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, 0)
+            if (sendLocationsToServer(locations)) {
+                val locationIds = locations.map { it.id }
+                dao.deleteLocationsByIds(locationIds)
+            }
             offset += locations.size
             updateProgress(offset, totalCount)
         }

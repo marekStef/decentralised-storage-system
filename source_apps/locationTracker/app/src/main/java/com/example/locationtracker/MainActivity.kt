@@ -33,6 +33,7 @@ import com.example.locationtracker.eventSynchronisation.EventSynchronisationMana
 import com.example.locationtracker.screens.ProfilesAndPermissionsScreen.ProfilesAndPermissionsScreen
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
 import com.example.locationtracker.utils.*
+import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -45,6 +46,7 @@ import java.io.IOException
 class MainActivity : ComponentActivity() {
     private lateinit var dbManager : LogsManager;
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var dataStorageRegistrationViewModel: DataStorageRegistrationViewModel
 
     private lateinit var createDocumentLauncher: ActivityResultLauncher<String>
 
@@ -53,6 +55,9 @@ class MainActivity : ComponentActivity() {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(application, dbManager, PreferencesManager(applicationContext)) as T
+            } else if (modelClass.isAssignableFrom(DataStorageRegistrationViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return DataStorageRegistrationViewModel(application, PreferencesManager(applicationContext)) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -76,6 +81,8 @@ class MainActivity : ComponentActivity() {
 
         dbManager = LogsManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        Log.d("still here", "heeere---")
+        dataStorageRegistrationViewModel = ViewModelProvider(this, viewModelFactory)[DataStorageRegistrationViewModel::class.java]
 
         requestBatteryOptimisationPermission()
 
@@ -91,7 +98,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            MyApp(mainViewModel, dbManager, applicationContext, this)
+            MyApp(mainViewModel, dataStorageRegistrationViewModel, dbManager, applicationContext, this)
         }
     }
 
@@ -102,7 +109,7 @@ class MainActivity : ComponentActivity() {
                 val tempFilePath = mainViewModel.tempFilePath.value
                 if (tempFilePath != null) {
                     CoroutineScope(IO).launch {
-                        copyFileToSelectedLocation(tempFilePath, uri)
+                        copyFileToSelectedLocation(applicationContext, this@MainActivity, tempFilePath, uri)
                     }
                     mainViewModel.resetTempFilePath()
                 }
@@ -129,36 +136,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun copyFileToSelectedLocation(tempFilePath: String, destinationUri: Uri) {
-        val contentResolver = applicationContext.contentResolver
-        var success = false
-
-        try {
-            FileInputStream(File(tempFilePath)).use { inputStream ->
-                contentResolver.openOutputStream(destinationUri).use { outputStream ->
-                    if (outputStream != null) {
-                        inputStream.copyTo(outputStream)
-                        success = true // Set the success flag if copy completes without exception
-                    } else {
-                        Log.e("FileCopy", "Failed to open output stream.")
-                    }
-                }
-            }
-        } catch (e: IOException) {
-            Log.e("FileCopy", "Error copying file.", e)
-        } finally {
-            runOnUiThread { // displaying the dialog on the main thread
-                if (success) {
-                    showAlertDialogWithOkButton(this, "Success", "The file was successfully saved.")
-                } else {
-                    showAlertDialogWithOkButton(this, "Failure", "Failed to save the file. The temporary file will be deleted.")
-                    deleteGivenFile(tempFilePath)
-                    deleteUri(contentResolver, destinationUri)
-                }
-            }
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(serviceStatusReceiver) // Unregister the broadcast receiver to prevent memory leaks
@@ -167,11 +144,12 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         mainViewModel.saveViewModel()
+        dataStorageRegistrationViewModel.saveViewModel()
     }
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationContext: Context, activity: Activity) {
+fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, logsManager: LogsManager, applicationContext: Context, activity: Activity) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -191,13 +169,13 @@ fun MyApp(mainViewModel: MainViewModel, logsManager: LogsManager, applicationCon
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable("mainScreen") { MainScreen(navController, mainViewModel, applicationContext, activity) }
+        composable("mainScreen") { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
 
         composable("logScreen") { LogScreen(navController, logsManager, applicationContext) }
 
-        composable("profilesAndPermissions") { ProfilesAndPermissionsScreen(navController, mainViewModel, activity) }
+        composable("profilesAndPermissions") { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, activity) }
 
-        composable("registrationScreen") { RegistrationScreen(navController, mainViewModel, activity) }
+        composable("registrationScreen") { RegistrationScreen(navController, dataStorageRegistrationViewModel, activity) }
     }
 }
 

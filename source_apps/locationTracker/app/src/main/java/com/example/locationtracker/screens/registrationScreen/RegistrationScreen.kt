@@ -46,13 +46,14 @@ import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.AssociationWithDataStorageStatusEnum
+import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
 
 @Composable
 fun RegistrationScreen(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     activity: Activity,
 ) {
     val gradientColors = listOf(
@@ -60,14 +61,14 @@ fun RegistrationScreen(
         colorResource(id = R.color.header_background_2)
     )
 
-    val dataStorageDetails by mainViewModel.dataStorageDetails.observeAsState()
+    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
-    val isServerReachable = mainViewModel.serverReachabilityStatus.observeAsState()
+    val isServerReachable = dataStorageRegistrationViewModel.serverReachabilityStatus.observeAsState()
     val isLoadingDataStorageServerReachability =
-        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
+        dataStorageRegistrationViewModel.isLoadingDataStorageServerReachability.observeAsState()
 
-    val isAssociatingAppWithStorage = mainViewModel.isAssociatingAppWithStorage.observeAsState()
-    val appAssociatedWithDataStorageStatus = mainViewModel.appAssociatedWithDataStorageStatus.observeAsState()
+    val isAssociatingAppWithStorage = dataStorageRegistrationViewModel.isAssociatingAppWithStorage.observeAsState()
+    val appAssociatedWithDataStorageStatus = dataStorageRegistrationViewModel.appAssociatedWithDataStorageStatus.observeAsState()
 
     Column(
         modifier = Modifier
@@ -127,7 +128,7 @@ fun RegistrationScreen(
                         TextField(
                             value = dataStorageDetails!!.ipAddress,
                             onValueChange = {
-                                mainViewModel.updateDataStorageIpAddress(it)
+                                dataStorageRegistrationViewModel.updateDataStorageIpAddress(it)
                             },
                             label = { Text("IP Address") },
                             modifier = Modifier
@@ -141,7 +142,7 @@ fun RegistrationScreen(
                     TextField(
                         value = dataStorageDetails!!.port,
                         onValueChange = {
-                            mainViewModel.updateDataStoragePort(it)
+                            dataStorageRegistrationViewModel.updateDataStoragePort(it)
                         },
                         label = { Text("Port") },
                         modifier = Modifier
@@ -151,7 +152,7 @@ fun RegistrationScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
 
-                    Button(onClick = { mainViewModel.checkDataStorageServerReachability() }) {
+                    Button(onClick = { dataStorageRegistrationViewModel.checkDataStorageServerReachability() }) {
                         Text("Check whether ip and port are correct")
                     }
 
@@ -213,7 +214,7 @@ fun RegistrationScreen(
 
                     TextField(
                         value = dataStorageDetails!!.associationTokenUsedDuringRegistration,
-                        onValueChange = { mainViewModel.updateDataStorageAssociationToken(it) },
+                        onValueChange = { dataStorageRegistrationViewModel.updateDataStorageAssociationToken(it) },
                         label = { Text("Enter Data Storage Association Token") },
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
@@ -245,7 +246,7 @@ fun RegistrationScreen(
 
 
                     Button(onClick = {
-                        mainViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
+                        dataStorageRegistrationViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
                             if (isSuccess) {
                                 // Handle success
                                 Log.d("AssociateApp", "Success: $message")
