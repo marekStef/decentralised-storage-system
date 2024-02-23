@@ -2,8 +2,9 @@ package com.example.locationtracker.data
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS
+import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREF_MAIN_KEY
 import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREFERENCES
+import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREF_IS_APP_REGISTERED
 import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETAILS
 import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETAILS_PREFERENCES
 import com.example.locationtracker.constants.SharedPreferences.LOCATION_TRACKER_SERVICE_RUNNING_FLAG
@@ -24,7 +25,9 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class PreferencesManager constructor(private val context: Context) {
-
+    fun resetAllPreferences() {
+        setIsAppProperlyRegistered(false)
+    }
 
     fun setIsLocationTrackerServiceRunning(isActive: Boolean) {
         val prefs = context.getSharedPreferences(LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES, MODE_PRIVATE)
@@ -76,7 +79,7 @@ class PreferencesManager constructor(private val context: Context) {
     fun loadAppSettings(): AppSettings {
         val sharedPreferences = context.getSharedPreferences(APPLICATION_SETTINGS_PREFERENCES, Context.MODE_PRIVATE)
 
-        val json = sharedPreferences.getString(APPLICATION_SETTINGS, null) ?: return defaultAppSettings
+        val json = sharedPreferences.getString(APPLICATION_SETTINGS_PREF_MAIN_KEY, null) ?: return defaultAppSettings
         val gson = getGsonWithCustomSerialisers()
         return gson?.fromJson(json, AppSettings::class.java) ?: defaultAppSettings
     }
@@ -89,8 +92,18 @@ class PreferencesManager constructor(private val context: Context) {
 
         val json = gson?.toJson(settings) // Convert AppSettings to JSON string
 
-        editor.putString(APPLICATION_SETTINGS, json)
+        editor.putString(APPLICATION_SETTINGS_PREF_MAIN_KEY, json)
         editor.apply()
+    }
+
+    fun setIsAppProperlyRegistered(isProperlyRegistered: Boolean) {
+        val prefs = context.getSharedPreferences(APPLICATION_SETTINGS_PREFERENCES, MODE_PRIVATE)
+        prefs.edit().putBoolean(APPLICATION_SETTINGS_PREF_IS_APP_REGISTERED, isProperlyRegistered).apply()
+    }
+
+    fun isAppProperlyRegistered(): Boolean {
+        val prefs = context.getSharedPreferences(APPLICATION_SETTINGS_PREFERENCES, Context.MODE_PRIVATE)
+        return prefs.getBoolean(APPLICATION_SETTINGS_PREF_IS_APP_REGISTERED, false)
     }
 }
 

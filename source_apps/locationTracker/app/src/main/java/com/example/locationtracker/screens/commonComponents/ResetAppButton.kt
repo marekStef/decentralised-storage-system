@@ -1,0 +1,64 @@
+package com.example.locationtracker.screens.commonComponents
+
+import android.app.Activity
+import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.utils.showAlertDialogWithOkButton
+
+fun resetApplication(applicationContext: Context, navController: NavController) {
+    var preferencesManager = PreferencesManager(applicationContext)
+    preferencesManager.resetAllPreferences()
+    navController.navigate(ScreensNames.REGISTRATION_SCREEN)
+}
+
+@Composable
+fun ResetAppButton(applicationContext: Context, navController: NavController, activity: Activity) {
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Confirmation Dialog
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Reset App") },
+            text = { Text("Are you sure you want to reset the app?") },
+            confirmButton = {
+                CustomDefaultButton(
+                    text = "Yes",
+                    backgroundColor = Color.Red,
+                    textColor = Color.White
+                ) {
+                    showDialog = false
+                    resetApplication(applicationContext, navController)
+                    showAlertDialogWithOkButton(activity, "App Reset", "Your app has been successfully reset")
+                }
+            },
+            dismissButton = { CustomDefaultButton(text = "No", onClick = { showDialog = false }) }
+        )
+    }
+
+    Button(
+        onClick = { showDialog = true },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+        modifier = Modifier
+            .background(Color.Red)
+            .padding(5.dp)
+    ) {
+        Text("Reset the app", color = Color.White)
+    }
+}

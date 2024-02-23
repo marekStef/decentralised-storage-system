@@ -66,6 +66,20 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
     private val _appAssociatedWithDataStorageStatus = MutableLiveData<AssociationWithDataStorageStatusEnum>(AssociationWithDataStorageStatusEnum.NOT_TRIED)
     val appAssociatedWithDataStorageStatus: LiveData<AssociationWithDataStorageStatusEnum> = _appAssociatedWithDataStorageStatus
 
+    private val _isRegisteringLocationProfile = MutableLiveData<Boolean>(false)
+    val isRegisteringLocationProfile: LiveData<Boolean> = _isRegisteringLocationProfile
+
+    private val _appProfileRegistrationStatus = MutableLiveData<ProfileRegistrationStatusEnum>(ProfileRegistrationStatusEnum.NOT_TRIED)
+    val appProfileRegistrationStatus: LiveData<ProfileRegistrationStatusEnum> = _appProfileRegistrationStatus
+
+    private val _isAskingForPermissions = MutableLiveData<Boolean>(false)
+    val isAskingForPermissions: LiveData<Boolean> = _isAskingForPermissions
+
+    private val _askingForPermissionsStatus = MutableLiveData<PermissionsStatusEnum>(PermissionsStatusEnum.NOT_TRIED)
+    val askingForPermissionsStatus: LiveData<PermissionsStatusEnum> = _askingForPermissionsStatus
+
+    private val _isRegistrationSetupProperly = MutableLiveData<Boolean>(false)
+
     init {
         loadDataStorageDetails()
     }
@@ -139,12 +153,6 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
 
     // data storage server - profile creation [START]
 
-    private val _isRegisteringLocationProfile = MutableLiveData<Boolean>(false)
-    val isRegisteringLocationProfile: LiveData<Boolean> = _isRegisteringLocationProfile
-
-    private val _appProfileRegistrationStatus = MutableLiveData<ProfileRegistrationStatusEnum>(ProfileRegistrationStatusEnum.NOT_TRIED)
-    val appProfileRegistrationStatus: LiveData<ProfileRegistrationStatusEnum> = _appProfileRegistrationStatus
-
     fun registerLocationProfileInDataStorageServer(schema: String, callback: (Boolean, String) -> Unit) {
         Log.d("Registering (viewmode)", "Trying to register profile")
 
@@ -169,12 +177,6 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
             }
         }
     }
-
-    private val _isAskingForPermissions = MutableLiveData<Boolean>(false)
-    val isAskingForPermissions: LiveData<Boolean> = _isAskingForPermissions
-
-    private val _askingForPermissionsStatus = MutableLiveData<PermissionsStatusEnum>(PermissionsStatusEnum.NOT_TRIED)
-    val askingForPermissionsStatus: LiveData<PermissionsStatusEnum> = _askingForPermissionsStatus
 
     fun sendPermissionRequest(callback: (Boolean, String) -> Unit) {
         Log.d("Sending permission request", "Trying to send permission request")
@@ -201,10 +203,12 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
         }
     }
 
-    private val _isRegistrationSetupProperly = MutableLiveData<Boolean>(false)
-    val isRegistrationSetupProperly: LiveData<Boolean> = _isRegistrationSetupProperly
-    fun updateIsRegistrationSetupProperly(isProperlySetup: Boolean) {
-        _isRegistrationSetupProperly.value = isProperlySetup
-    }
+
     // data storage server - profile creation [END]
+
+    fun setDataStorageNetworkSSID(ssid: String?) {
+        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+        _dataStorageDetails.value = currentDetails.copy(networkSSID = ssid)
+    }
+
 }

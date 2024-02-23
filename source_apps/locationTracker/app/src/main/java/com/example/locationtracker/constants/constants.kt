@@ -24,7 +24,9 @@ object SharedPreferences {
     const val DATA_STORAGE_DETAILS = "data_storage_details"
 
     const val APPLICATION_SETTINGS_PREFERENCES = "application_settings_preferences_v3"
-    const val APPLICATION_SETTINGS = "application_settings"
+    const val APPLICATION_SETTINGS_PREF_MAIN_KEY = "application_settings"
+    const val APPLICATION_SETTINGS_PREF_IS_APP_REGISTERED = "application_settings_pref_is_app_registered"
+
 }
 
 object Services {
@@ -54,3 +56,10 @@ object DataStorageRelated {
     const val UNIQUE_LOCATION_PROFILE_NAME = "${UNIQUE_APP_NAME}/profiles/location_profilea"
 }
 
+object ScreensNames {
+    const val MAIN_SCREEN = "mainScreen"
+    const val LOG_SCREEN = "logScreen"
+    const val PROFILES_AND_PERMISSIONS_SCREEN = "profilesAndPermissions"
+    const val REGISTRATION_SCREEN = "registrationScreen"
+    const val SETTINGS_SCREEN_FOR_REGISTERED_APP = "settingsScreenForRegisteredApp"
+}

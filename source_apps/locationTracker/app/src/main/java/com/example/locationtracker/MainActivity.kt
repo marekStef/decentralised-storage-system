@@ -24,13 +24,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.locationtracker.constants.ScreensNames
 
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.data.LogsManager
 import com.example.locationtracker.data.PreferencesManager
-import com.example.locationtracker.eventSynchronisation.AppRegisteredToStorageState
-import com.example.locationtracker.eventSynchronisation.EventSynchronisationManager
 import com.example.locationtracker.screens.ProfilesAndPermissionsScreen.ProfilesAndPermissionsScreen
+import com.example.locationtracker.screens.SettingsScreenForRegisteredApp.SettingsScreenForRegisteredApp
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
 import com.example.locationtracker.utils.*
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
@@ -39,9 +39,6 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
 
 class MainActivity : ComponentActivity() {
     private lateinit var dbManager : LogsManager;
@@ -164,18 +161,21 @@ fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataSt
         )
     }
 
-    var eventSyncManager = EventSynchronisationManager()
-    val startDestination = if (eventSyncManager.isAppRegisteredInStorage() == AppRegisteredToStorageState.NON_REGISTERED) "registrationScreen" else "mainScreen"
+    var preferencesManager = PreferencesManager(applicationContext)
+
+    val startDestination = if (preferencesManager.isAppProperlyRegistered()) ScreensNames.MAIN_SCREEN else ScreensNames.REGISTRATION_SCREEN
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable("mainScreen") { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
+        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
 
-        composable("logScreen") { LogScreen(navController, logsManager, applicationContext) }
+        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsManager, applicationContext) }
 
-        composable("profilesAndPermissions") { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, activity) }
+        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, preferencesManager, activity) }
 
-        composable("registrationScreen") { RegistrationScreen(navController, dataStorageRegistrationViewModel, activity) }
+        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel, activity) }
+
+        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, dataStorageRegistrationViewModel, activity) }
     }
 }
 

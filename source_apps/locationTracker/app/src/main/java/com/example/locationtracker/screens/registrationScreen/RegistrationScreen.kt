@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
+import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
+import com.example.locationtracker.screens.commonComponents.CustomTextField
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.AssociationWithDataStorageStatusEnum
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
@@ -72,7 +74,8 @@ fun RegistrationScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(Color.White),
 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,7 +86,7 @@ fun RegistrationScreen(
                 .background(Brush.verticalGradient(colors = gradientColors)),
         ) {
             Text(
-                text = "Settings",
+                text = "Registration",
                 modifier = Modifier
                     .padding(13.dp)
                     .fillMaxWidth(),
@@ -124,36 +127,21 @@ fun RegistrationScreen(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Row {
-                        TextField(
-                            value = dataStorageDetails!!.ipAddress,
-                            onValueChange = {
-                                dataStorageRegistrationViewModel.updateDataStorageIpAddress(it)
-                            },
-                            label = { Text("IP Address") },
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min)
-                        )
-                    }
-
-
-                    TextField(
-                        value = dataStorageDetails!!.port,
-                        onValueChange = {
-                            dataStorageRegistrationViewModel.updateDataStoragePort(it)
-                        },
-                        label = { Text("Port") },
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth()
-                            .height(IntrinsicSize.Min),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    CustomTextField(
+                        value = dataStorageDetails!!.ipAddress,
+                        onValueChange = { newIp -> dataStorageRegistrationViewModel.updateDataStorageIpAddress(newIp) },
+                        label = "IP Address",
                     )
 
-                    Button(onClick = { dataStorageRegistrationViewModel.checkDataStorageServerReachability() }) {
-                        Text("Check whether ip and port are correct")
+                    CustomTextField(
+                        value = dataStorageDetails!!.port,
+                        onValueChange = { newPort -> dataStorageRegistrationViewModel.updateDataStoragePort(newPort) },
+                        label = "Port",
+                        keyboardType = KeyboardType.Number
+                    )
+
+                    CustomDefaultButton("Check whether ip and port are correct") {
+                        dataStorageRegistrationViewModel.checkDataStorageServerReachability()
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -186,16 +174,6 @@ fun RegistrationScreen(
                     }
 
                     Spacer(modifier = Modifier.height(30.dp))
-
-//                TextField(
-//                    value = dataStorageDetails!!.port,
-//                    onValueChange = {
-//                        mainViewModel.updateDataStoragePort(it)
-//                    },
-//                    label = { Text("Data Storage Association Token") },
-//                    modifier = Modifier.padding(8.dp),
-//                    readOnly = isServerReachable.value != ServerReachabilityEnum.REACHABLE
-//                )
 
                     Text(
                         text = "Association With Data Storage",
@@ -243,9 +221,7 @@ fun RegistrationScreen(
                         }
                     )
 
-
-
-                    Button(onClick = {
+                    CustomDefaultButton("Associate this app with the Data Storage") {
                         dataStorageRegistrationViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
                             if (isSuccess) {
                                 // Handle success
@@ -256,8 +232,6 @@ fun RegistrationScreen(
                                 showAlertDialogWithOkButton(activity, "Error", message)
                             }
                         }
-                    }) {
-                        Text("Associate this app with the Data Storage")
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 20.dp)) {
@@ -302,35 +276,25 @@ fun RegistrationScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     if (canUserProceedToProfilesAndPermissions(isServerReachable, appAssociatedWithDataStorageStatus)) {
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.green3),
-                                contentColor = Color.White
-                            ),
-                            onClick = {
-                                navController.navigate("profilesAndPermissions")
-                            }) {
-                            Text("Proceed to requesting permissions and profiles")
+                        CustomDefaultButton(
+                            "Proceed to requesting permissions and profiles",
+                            backgroundColor = colorResource(id = R.color.green3),
+                            textColor = Color.White
+                        ) {
+                            navController.navigate("profilesAndPermissions")
                         }
                     } else {
                         Text(text = "You need to pass previous conditions first.")
                         Text(text = "Only then you will be able to proceed.")
                     }
 
-                    Button(
-                        onClick = {
-                            navController.navigate("profilesAndPermissions")
-                        }) {
-                        Text("Proceed to requesting permissions and profiles [debug]")
+                    CustomDefaultButton(
+                        "Proceed to requesting permissions and profiles [debug]",
+                        backgroundColor = colorResource(id = R.color.green3),
+                        textColor = Color.White
+                    ) {
+                        navController.navigate("profilesAndPermissions")
                     }
-
-                    Button(onClick = {
-                        navController.navigate("mainScreen")
-                    }) {
-                        Text("Proceed to the app")
-                    }
-
-
                 }
             }
         }

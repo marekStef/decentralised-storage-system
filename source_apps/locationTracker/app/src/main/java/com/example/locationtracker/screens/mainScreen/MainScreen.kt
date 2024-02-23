@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.example.locationtracker.constants.ScreensNames
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
@@ -143,7 +144,7 @@ fun MainScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(16.dp),
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
@@ -233,7 +234,7 @@ fun MainScreen(
 //                                        modifier = Modifier.weight(1f)
                                     )
 
-                                    IconButton(onClick = { navController.navigate("registrationScreen") }) {
+                                    IconButton(onClick = { navController.navigate(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) }) {
                                         Icon(
                                             imageVector = Icons.Outlined.Settings,
                                             contentDescription = "Settings",
@@ -259,7 +260,7 @@ fun MainScreen(
                                             )
 
                                             Text(
-                                                text = "alsdkfj223",
+                                                text = dataStorageDetails?.networkSSID ?: "Not Set",
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Light,
                                                 modifier = Modifier

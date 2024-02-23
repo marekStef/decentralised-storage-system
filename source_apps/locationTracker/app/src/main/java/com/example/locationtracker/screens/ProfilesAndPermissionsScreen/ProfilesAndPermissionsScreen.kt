@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
+import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
@@ -49,6 +52,7 @@ import com.example.locationtracker.viewModel.ServerReachabilityEnum
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+    preferencesManager: PreferencesManager,
     activity: Activity
 ) {
     val gradientColors = listOf(
@@ -63,11 +67,6 @@ fun ProfilesAndPermissionsScreen(
 
     val isAskingForPermissions = dataStorageRegistrationViewModel.isAskingForPermissions.observeAsState()
     val askingForPermissionsStatus = dataStorageRegistrationViewModel.askingForPermissionsStatus.observeAsState()
-
-    val isRegistrationSetupProperly = dataStorageRegistrationViewModel.isRegistrationSetupProperly.observeAsState()
-//
-//    val isLoadingDataStorageServerReachability =
-//        mainViewModel.isLoadingDataStorageServerReachability.observeAsState()
 
     Column(
         modifier = Modifier
@@ -93,14 +92,7 @@ fun ProfilesAndPermissionsScreen(
             )
         }
 
-//        Row (modifier = Modifier.fillMaxSize()){
-//            Text("Registration Screen")
-//            Button(onClick = { }) {
-//                Text("Register")
-//            }
-//        }
         LazyColumn(contentPadding = PaddingValues(10.dp)) {
-
             item {
                 Column(
                     modifier = Modifier
@@ -143,29 +135,23 @@ fun ProfilesAndPermissionsScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Button(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {
-                            val jsonSchema = loadJsonSchemaFromRes(
-                                context = activity,
-                                resourceId = R.raw.location_profile_for_data_storage
-                            )
-                            dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer(jsonSchema) { isSuccess, message ->
-                                if (isSuccess) {
-                                    Log.d("Registering profile", "Success: $message")
-                                    showAlertDialogWithOkButton(activity, "Success", message)
-                                } else {
-                                    Log.e("Registering profile", "Failure: $message")
-                                    showAlertDialogWithOkButton(activity, "Error", message)
-                                }
+                    CustomDefaultButton(
+                        text = "Register needed profiles"
+                    ) {
+                        val jsonSchema = loadJsonSchemaFromRes(
+                            context = activity,
+                            resourceId = R.raw.location_profile_for_data_storage
+                        )
+                        dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer(jsonSchema) { isSuccess, message ->
+                            if (isSuccess) {
+                                Log.d("Registering profile", "Success: $message")
+                                showAlertDialogWithOkButton(activity, "Success", message)
+                            } else {
+                                Log.e("Registering profile", "Failure: $message")
+                                showAlertDialogWithOkButton(activity, "Error", message)
                             }
-                            Log.d("JSON", jsonSchema)
-                        }) {
-                        Text("Register needed profiles")
-
-                        if (isRegisteringLocationProfile.value == true)
-                            CircularProgressIndicator()
+                        }
+                        Log.d("JSON", jsonSchema)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -213,31 +199,27 @@ fun ProfilesAndPermissionsScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Button(
+                    CustomDefaultButton(
+                        text = "Ask for permissions"
+                    ) {
+                        if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
+                            showAlertDialogWithOkButton(activity, "Error", "You need to register profiles first")
+                            return@CustomDefaultButton
+                        }
 
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {
-                            if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
-                                showAlertDialogWithOkButton(activity, "Error", "You need to register profiles first")
-                                return@Button
+                        dataStorageRegistrationViewModel.sendPermissionRequest() { isSuccess, message ->
+                            if (isSuccess) {
+                                Log.d("Creating permission request", "Success: $message")
+                                showAlertDialogWithOkButton(
+                                    activity,
+                                    "Success",
+                                    "Permission request has been sent. You need to approve it now before the app sends some data"
+                                )
+                            } else {
+                                Log.e("Creating permission request", "Failure: $message")
+                                showAlertDialogWithOkButton(activity, "Error", message)
                             }
-
-                            dataStorageRegistrationViewModel.sendPermissionRequest() { isSuccess, message ->
-                                if (isSuccess) {
-                                    Log.d("Creating permission request", "Success: $message")
-                                    showAlertDialogWithOkButton(
-                                        activity,
-                                        "Success",
-                                        "Permission request has been sent. You need to approve it now before the app sends some data"
-                                    )
-                                } else {
-                                    Log.e("Creating permission request", "Failure: $message")
-                                    showAlertDialogWithOkButton(activity, "Error", message)
-                                }
-                            }
-                        }) {
-                        Text("Ask for permissions")
+                        }
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -297,34 +279,36 @@ fun ProfilesAndPermissionsScreen(
                         Spacer(modifier = Modifier.height(20.dp))
 
 
-                        Button(
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.green3),
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(4.dp),
-                            onClick = {
-                                dataStorageRegistrationViewModel.updateIsRegistrationSetupProperly(true)
-                                navController.navigate("mainScreen")
-                            }) {
-                            Text("Proceed to the app")
+                        CustomDefaultButton(
+                            "Proceed to the app[DEBUG]",
+                            backgroundColor = colorResource(id = R.color.green3),
+                            textColor = Color.White
+                        ) {
+                            preferencesManager.setIsAppProperlyRegistered(true)
+                            navController.navigate(ScreensNames.MAIN_SCREEN) {
+                                // so that the user cannot get back
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                            }
+                            showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
                         }
                     }
 
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = colorResource(id = R.color.green3),
-                            contentColor = Color.White
-                        ),
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(4.dp),
-                        onClick = {
-                            navController.navigate("mainScreen")
-                        }) {
-                        Text("Proceed to the app[DEBUG]")
+                    CustomDefaultButton(
+                        "Proceed to the app[DEBUG]",
+                        backgroundColor = colorResource(id = R.color.green3),
+                        textColor = Color.White
+                    ) {
+                        preferencesManager.setIsAppProperlyRegistered(true)
+                        navController.navigate(ScreensNames.MAIN_SCREEN) {
+                            // so that the user cannot get back
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                        }
+                        showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
                     }
-
                 }
             }
         }
