@@ -18,6 +18,7 @@ import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
+import com.example.locationtracker.utils.convertLongToTime
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -83,8 +84,30 @@ class PreferencesManager constructor(private val context: Context) {
         }
     }
 
-    fun savePartialSyncInfo(progress: Int? = null, additionalNumberOfSyncedEvents: Int? = null, syncMessage: String? = null, lastSynchronisationTime: Long? = null, syncStatus: EventsSyncingStatus? = null) {
-
+    fun savePartialSyncInfo(progress: Int? = null, additionalNumberOfSyncedEvents: Int? = null, syncMessage: String? = null, lastSynchronisationTimeInMillis: Long? = null, syncStatus: EventsSyncingStatus? = null) {
+        val syncInfoSharedPreferences = context.getSharedPreferences(SharedPreferences.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        syncInfoSharedPreferences.edit {
+            progress?.let {
+                putInt(SharedPreferences.SYNCHRONISATION_INFO_SYNC_PROGRESS, it)
+            }
+            additionalNumberOfSyncedEvents?.let {
+                val numberOfSyncedEvents = syncInfoSharedPreferences.getInt(
+                    SharedPreferences.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED,
+                    0
+                )
+                putInt(SharedPreferences.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED, it + numberOfSyncedEvents)
+            }
+            syncMessage?.let {
+                putString(SharedPreferences.SYNCHRONISATION_INFO_SYNC_MESSAGE, it)
+            }
+            lastSynchronisationTimeInMillis?.let {
+                putString(SharedPreferences.SYNCHRONISATION_INFO_LAST_SYNC, convertLongToTime(it, "-"))
+            }
+            syncStatus?.let {
+                putString(SharedPreferences.SYNCHRONISATION_INFO_SYNC_STATUS, it.toString())
+            }
+            apply()
+        }
     }
 
     fun loadDataStorageDetails(): DataStorageDetails {

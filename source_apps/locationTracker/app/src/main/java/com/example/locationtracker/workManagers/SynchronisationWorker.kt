@@ -23,7 +23,7 @@ class SynchronisationWorker(
         val dao = database.locationDao()
 
         val totalCount = dao.countAllLocations()
-        val batchSize = 50 // Number of events to be sent in one api request
+        val batchSize = 2 // Number of events to be sent in one api request
         var offset = 0
 
         updateProgress(offset, 0,  totalCount, EventsSyncingStatus.SYNCING, "Started Syncing")
@@ -79,7 +79,7 @@ class SynchronisationWorker(
 
         if (endSyncTimeInMillis != 0L) {
             preferencesManager.savePartialSyncInfo(
-                lastSynchronisationTime = endSyncTimeInMillis
+                lastSynchronisationTimeInMillis = endSyncTimeInMillis
             )
         }
     }

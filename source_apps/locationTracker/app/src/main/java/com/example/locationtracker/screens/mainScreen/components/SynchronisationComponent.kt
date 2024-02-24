@@ -38,7 +38,6 @@ import com.example.locationtracker.viewModel.MainViewModel
 @Composable
 fun SynchronisationComponent(activity: Activity, mainViewModel: MainViewModel) {
     val syncManager = CentralizedSyncManager.getInstance(activity.application)
-    val syncingProgress = mainViewModel.syncingProgress.observeAsState()
     val syncInfo = mainViewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     Button(modifier = Modifier
@@ -55,14 +54,14 @@ fun SynchronisationComponent(activity: Activity, mainViewModel: MainViewModel) {
             if (syncInfo.value.syncStatus == EventsSyncingStatus.SYNCING) {
                 Text("Syncing")
                 LinearProgressIndicator(
-                    progress = (syncingProgress.value ?: 1) / 100f,
+                    progress = (syncInfo.value.currentSynchronisationProgress ?: 1) / 100f,
                     color = colorResource(id = R.color.green3),
                     trackColor = Color.White,
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
                         .width(100.dp)
                 )
-                Text(text = "${syncingProgress.value}%")
+                Text(text = "${syncInfo.value.currentSynchronisationProgress}%")
             } else {
                 Text("Sync Now")
             }

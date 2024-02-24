@@ -93,7 +93,7 @@ class MainActivity : ComponentActivity() {
             )
             val status = if (statusString != null) EventsSyncingStatus.valueOf(statusString) else EventsSyncingStatus.NOT_SYNCED_YET
 
-            mainViewModel.syncingProgress.postValue(progress)
+            mainViewModel.updateCurrentSyncProgress(progress)
             mainViewModel.updateSyncStatus(status)
             mainViewModel.updateAdditionalNumberOfSynchronisedEvents(additionalNumberOfSyncedEvents)
             mainViewModel.updateSyncMessage(syncMessage)

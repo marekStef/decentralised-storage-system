@@ -19,12 +19,12 @@ enum class EventsSyncingStatus {
     SYNCHRONISATION_FAILED
 }
 
-
 class CentralizedSyncManager private constructor(private val application: Application) {
 
     companion object {
         private var instance: CentralizedSyncManager? = null
         const val SYNCHRONISATION_WORKER_UNIQUE_NAME = "SynchronisationWorkerUniqueName"
+        private var isSyncing: Boolean = false
 
         fun getInstance(application: Application): CentralizedSyncManager {
             if (instance == null) {
@@ -37,28 +37,11 @@ class CentralizedSyncManager private constructor(private val application: Applic
             return instance!!
         }
     }
-
-//    private val _progress = MutableStateFlow(0)
-//    val progress = _progress.asStateFlow()
-
-//    private val _lastSyncStatus = MutableStateFlow(EventsSyncingStatus.SYNCING)
-//    val lastSyncStatus: StateFlow<EventsSyncingStatus> = _lastSyncStatus.asStateFlow()
-
-//    private val _syncCompletionTime = MutableStateFlow<Date?>(null)
-//    val syncCompletionTime = _syncCompletionTime.asStateFlow()
-
-    fun startSyncing(initiatedFromBackground: Boolean = false) {
-//        if (_lastSyncStatus.value == EventsSyncingStatus.SYNCING) return
-
+    fun startSyncing() {
         val request = OneTimeWorkRequestBuilder<SynchronisationWorker>().build()
 
         WorkManager.getInstance(application)
             .enqueueUniqueWork(SYNCHRONISATION_WORKER_UNIQUE_NAME, ExistingWorkPolicy.KEEP, request)
-
-//        if (!initiatedFromBackground) {
-//            _lastSyncStatus.value = EventsSyncingStatus.SYNCING
-//            observeWorkInfoById(request.id)
-//        }
     }
 
 //    private fun observeWorkInfoById(workId: UUID) {
@@ -72,30 +55,30 @@ class CentralizedSyncManager private constructor(private val application: Applic
 //        }
 //    }
 
-    private fun updateProgress(workInfo: WorkInfo) {
+//    private fun updateProgress(workInfo: WorkInfo) {
 //        val progress = workInfo.progress.getInt(SynchronisationWorker.Progress, 0)
 //        val numberOfSyncedEvents: Int = workInfo.progress.getInt(SynchronisationWorker.SyncedEvents, 0)
 ////        _progress.value = progress
 //        updateNumberOfSynchronisedEvents(numberOfSyncedEvents)
-    }
+//    }
 
-    private fun updateSyncStatusSuccess() {
+//    private fun updateSyncStatusSuccess() {
 //        _lastSyncStatus.value = EventsSyncingStatus.SYNCED_SUCCESSFULLY
 //        _syncCompletionTime.value = Date()
-        updateLastSynchronisation(Date())
-    }
+//        updateLastSynchronisation(Date())
+//    }
 
-    private fun updateSyncStatusFailure() {
+//    private fun updateSyncStatusFailure() {
 //        _lastSyncStatus.value = EventsSyncingStatus.SYNCHRONISATION_FAILED
 //        _syncCompletionTime.value = Date()
-        updateLastSynchronisation(Date())
-    }
+//        updateLastSynchronisation(Date())
+//    }
 
-    private fun updateNumberOfSynchronisedEvents(additionalCountOfSyncedEvents: Int) {
+//    private fun updateNumberOfSynchronisedEvents(additionalCountOfSyncedEvents: Int) {
+//
+//    }
 
-    }
-
-    private fun updateLastSynchronisation(date: Date) {
-
-    }
+//    private fun updateLastSynchronisation(date: Date) {
+//
+//    }
 }

@@ -62,6 +62,10 @@ class DatabaseManager private constructor(private var db: Database, private val 
                 ""
             ) ?: "",
             syncStatus = EventsSyncingStatus.valueOf(syncStatusString),
+            currentSynchronisationProgress = syncInfoSharedPreferences.getInt(
+                constants.SYNCHRONISATION_INFO_SYNC_PROGRESS,
+                0
+            ),
             numberOfNotSyncedEvents = numberOfNotSyncedEvents,
             oldestEventTimeNotSynced = getTimeOfOldestNotSyncedEvent(),
             numberOfSyncedEvents = syncInfoSharedPreferences.getInt(

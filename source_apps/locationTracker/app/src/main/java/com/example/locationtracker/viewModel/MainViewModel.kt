@@ -96,6 +96,11 @@ class MainViewModel(private val application: Application, private val dbManager:
         _syncInfo.value = currentSyncInfo.copy(syncStatus = status)
     }
 
+    fun updateCurrentSyncProgress(progress: Int) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = currentSyncInfo.copy(currentSynchronisationProgress = progress)
+    }
+
     // csv exporting
     private val _workInfo = MutableLiveData<WorkInfo>()
     val workInfo: LiveData<WorkInfo> = _workInfo
@@ -157,12 +162,6 @@ class MainViewModel(private val application: Application, private val dbManager:
             }
         }
     }
-
-    // ---------------------------- EVENTS SYNCING [START]
-
-    val syncingProgress = MutableLiveData<Int>(0)
-
-    // ---------------------------- EVENTS SYNCING [END]
 
     // queue for permissions
     // [camera permission]

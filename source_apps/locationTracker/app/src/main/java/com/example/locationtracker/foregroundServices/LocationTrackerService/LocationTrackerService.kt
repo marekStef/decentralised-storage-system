@@ -284,6 +284,6 @@ class LocationTrackerService : Service() {
 
     private fun startSynchronisation() {
         updateLastSyncTime()
-        syncManager.startSyncing(initiatedFromBackground = true)
+        syncManager.startSyncing()
     }
 }
