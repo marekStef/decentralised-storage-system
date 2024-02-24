@@ -17,16 +17,21 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.example.locationtracker.MainActivity
 import com.example.locationtracker.R
+import com.example.locationtracker.constants.LocationTrackerServiceBroadcastParameters
+import com.example.locationtracker.constants.LocationTrackerServiceParameters
 import com.example.locationtracker.constants.Notifications.NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE
 import com.example.locationtracker.constants.Notifications.NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE
 import com.example.locationtracker.constants.Services.LOCATION_TRACKER_SERVICE_BROADCAST
-import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.constants.TimeRelated
+import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.NewLocation
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.eventSynchronisation.CentralizedSyncManager
 import com.example.locationtracker.utils.updateNotification
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalTime
 import java.util.Date
 import java.util.Locale
@@ -34,10 +39,35 @@ import java.util.Locale
 private var wakeLock: PowerManager.WakeLock? = null
 
 class LocationTrackerService : Service() {
-    private lateinit var dbManager: LogsManager;
+    private lateinit var syncManager: CentralizedSyncManager
+    private lateinit var dbManager: DatabaseManager;
 
     private var locationGatheringStartTime: LocalTime? = null
     private var locationGatheringEndTime: LocalTime? = null
+
+    private var shouldSyncToDataStorageAutomatically: Boolean = false
+
+    private var lastDataSyncTime: Long = 0L
+
+    private fun setShouldSyncToDataStorageAutomatically(should: Boolean) {
+        shouldSyncToDataStorageAutomatically = should
+        Log.d("LOCATION TRACKING SERVICE", "--------> (automatic sync changed) : ${should}")
+    }
+
+    private fun wasDataSyncedInTheLast24Hours(): Boolean {
+        val currentTime = Instant.now().toEpochMilli()
+        return (currentTime - lastDataSyncTime) < TimeRelated._24_HOURS_IN_MILLISECONDS
+    }
+
+    private fun updateLastSyncTime() {
+        lastDataSyncTime = Instant.now().toEpochMilli()
+        Log.d("LOCATION TRACKER SERVICE - LAST SYNC TIME", "Last sync time updated: ${lastDataSyncTime}")
+        sendLastSyncTimeBroadcast(lastDataSyncTime)
+    }
+
+    private fun isPhoneConnectedToTheCorrectNetwork(): Boolean {
+        return true
+    }
 
     private fun isActiveTimeNow(): Boolean {
         if (locationGatheringStartTime == locationGatheringEndTime)
@@ -57,7 +87,7 @@ class LocationTrackerService : Service() {
     private lateinit var handler: Handler
 
     enum class Actions {
-        START, STOP
+        START, STOP, ENABLE_AUTOMATIC_SYNC, DISABLE_AUTOMATIC_SYNC
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -66,14 +96,28 @@ class LocationTrackerService : Service() {
 
     private fun sendServiceStatusBroadcast(isRunning: Boolean) {
         val intent = Intent(LOCATION_TRACKER_SERVICE_BROADCAST)
-        intent.putExtra("isRunning", isRunning)
+        intent.putExtra(
+            LocationTrackerServiceBroadcastParameters.LOCATION_TRACKER_SERVICE_IS_RUNNING_BROADCAST_PARAMETER,
+            isRunning
+        )
         sendBroadcast(intent)
     }
+
+    private fun sendLastSyncTimeBroadcast(lastSyncTime: Long, isRunning: Boolean = true) {
+        val intent = Intent(LOCATION_TRACKER_SERVICE_BROADCAST)
+        intent.putExtra(
+            LocationTrackerServiceBroadcastParameters.LOCATION_TRACKER_SERVICE_IS_RUNNING_BROADCAST_PARAMETER,
+            isRunning
+        )
+        sendBroadcast(intent)
+    }
+
 
     override fun onCreate() {
         super.onCreate()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        dbManager = LogsManager.getInstance(this);
+        dbManager = DatabaseManager.getInstance(this);
+        syncManager = CentralizedSyncManager.getInstance(application)
 
         PreferencesManager(this).setIsLocationTrackerServiceRunning(true)
         sendServiceStatusBroadcast(true)
@@ -97,17 +141,22 @@ class LocationTrackerService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             Actions.START.toString() -> {
-                val startTimeStr = intent.getStringExtra("startTime")
-                val endTimeStr = intent.getStringExtra("endTime")
+                val startTimeStr = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_START_TIME_PARAMETER)
+                val endTimeStr = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_END_TIME_PARAMETER)
 
                 locationGatheringStartTime = startTimeStr?.let { LocalTime.parse(it) }
                 locationGatheringEndTime = endTimeStr?.let { LocalTime.parse(it) }
+
+                val automaticSynchronisationOn: Boolean = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_AUTOMATIC_SYNC_PARAMETER).toBoolean()
+                setShouldSyncToDataStorageAutomatically(automaticSynchronisationOn)
 
                 start()
                 return START_STICKY
             }
 
             Actions.STOP.toString() -> stopSelf()
+            Actions.ENABLE_AUTOMATIC_SYNC.toString() -> setShouldSyncToDataStorageAutomatically(true)
+            Actions.DISABLE_AUTOMATIC_SYNC.toString() -> setShouldSyncToDataStorageAutomatically(false)
         }
         return super.onStartCommand(intent, flags, startId)
     }
@@ -215,6 +264,10 @@ class LocationTrackerService : Service() {
             if (isActiveTimeNow()) {
                 logLocation()
             }
+            // regardless of the active time, check whether the location data should be synced
+            if (!wasDataSyncedInTheLast24Hours() && isPhoneConnectedToTheCorrectNetwork()) {
+                startSynchronisation()
+            }
             else {
                 updateNotification(
                     applicationContext,
@@ -227,5 +280,10 @@ class LocationTrackerService : Service() {
             // Post the Runnable again with a delay
             handler.postDelayed(this, 5000)
         }
+    }
+
+    private fun startSynchronisation() {
+        updateLastSyncTime()
+        syncManager.startSyncing(initiatedFromBackground = true)
     }
 }

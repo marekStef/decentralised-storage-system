@@ -8,6 +8,7 @@ import com.example.locationtracker.constants.SharedPreferences as constants
 import com.example.locationtracker.data.database.Database
 import com.example.locationtracker.data.database.DatabaseClient
 import com.example.locationtracker.data.database.entities.Location
+import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.utils.convertLongToTime
 import kotlinx.coroutines.Dispatchers
@@ -16,34 +17,20 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 
-class LogsManager private constructor(private var db: Database, private val context: Context) {
+class DatabaseManager private constructor(private var db: Database, private val context: Context) {
     // for signleton pattern
     companion object {
 
         @SuppressLint("StaticFieldLeak")
         @Volatile
-        private var instance: LogsManager? = null
+        private var instance: DatabaseManager? = null
 
-        fun getInstance(context: Context): LogsManager =
+        fun getInstance(context: Context): DatabaseManager =
             instance ?: synchronized(this) {
-                instance ?: LogsManager(DatabaseClient.getDatabase(context), context).also {
+                instance ?: DatabaseManager(DatabaseClient.getDatabase(context), context).also {
                     instance = it
                 }
             }
-    }
-
-
-
-
-    fun saveSyncInfo(syncInfo: SyncInfo) {
-        val syncInfoSharedPreferences = context.getSharedPreferences(constants.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
-        syncInfoSharedPreferences.edit {
-            putString(constants.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSyncTime)
-            // putInt(EVENTS_NOT_SYNCED, syncInfo.eventsNotSynced)
-            // putString(OLDEST_EVENT_TIME_NOT_SYNCED, syncInfo.oldestEventTimeNotSynced)
-            putInt(constants.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED, syncInfo.numberOfSyncedEvents)
-            apply()
-        }
     }
 
     suspend fun getCountOfNotSynchronisedLocationsForSyncInfo(): Int {
@@ -59,11 +46,22 @@ class LogsManager private constructor(private var db: Database, private val cont
     suspend fun getSyncInfo(): SyncInfo {
         val syncInfoSharedPreferences = context.getSharedPreferences(constants.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
         val numberOfNotSyncedEvents = getCountOfNotSynchronisedLocationsForSyncInfo()
+
+        val syncStatusString = syncInfoSharedPreferences.getString(
+            constants.SYNCHRONISATION_INFO_SYNC_STATUS,
+            EventsSyncingStatus.NOT_SYNCED_YET.toString()
+        ) ?: EventsSyncingStatus.NOT_SYNCED_YET.toString()
+
         return SyncInfo(
             lastSyncTime = syncInfoSharedPreferences.getString(
                 constants.SYNCHRONISATION_INFO_LAST_SYNC,
                 "Not Synced Yet"
             ) ?: "",
+            syncMessage = syncInfoSharedPreferences.getString(
+                constants.SYNCHRONISATION_INFO_SYNC_MESSAGE,
+                ""
+            ) ?: "",
+            syncStatus = EventsSyncingStatus.valueOf(syncStatusString),
             numberOfNotSyncedEvents = numberOfNotSyncedEvents,
             oldestEventTimeNotSynced = getTimeOfOldestNotSyncedEvent(),
             numberOfSyncedEvents = syncInfoSharedPreferences.getInt(

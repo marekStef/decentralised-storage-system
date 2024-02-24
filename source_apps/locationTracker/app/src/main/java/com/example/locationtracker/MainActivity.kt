@@ -24,11 +24,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.locationtracker.constants.LocationTrackerServiceBroadcastParameters
 import com.example.locationtracker.constants.ScreensNames
 
 import com.example.locationtracker.constants.Services
-import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.constants.Workers
+import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.screens.ProfilesAndPermissionsScreen.ProfilesAndPermissionsScreen
 import com.example.locationtracker.screens.SettingsScreenForRegisteredApp.SettingsScreenForRegisteredApp
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
@@ -39,9 +42,10 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
-    private lateinit var dbManager : LogsManager;
+    private lateinit var dbManager : DatabaseManager;
     private lateinit var mainViewModel: MainViewModel
     private lateinit var dataStorageRegistrationViewModel: DataStorageRegistrationViewModel
 
@@ -60,10 +64,43 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val serviceStatusReceiver = object : BroadcastReceiver() {
+    private val locationServiceInfoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val isRunning = intent.getBooleanExtra("isRunning", false)
+            val isRunning = intent.getBooleanExtra(
+                LocationTrackerServiceBroadcastParameters.LOCATION_TRACKER_SERVICE_IS_RUNNING_BROADCAST_PARAMETER,false
+            )
             mainViewModel.serviceRunningLiveData.postValue(isRunning)
+        }
+    }
+
+    private val synchronisationWorkerInfoReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val progress = intent.getIntExtra(
+                Workers.SYNCHRONISATION_WORKER_PROGRESS_PARAMETER_BROADCAST,0
+            )
+            val additionalNumberOfSyncedEvents = intent.getIntExtra(
+                Workers.SYNCHRONISATION_WORKER_ADDITIONAL_NUMBER_OF_SYNCED_EVENTS_PARAMETER_BROADCAST,
+                0
+            )
+            val syncMessage = intent.getStringExtra(
+                Workers.SYNCHRONISATION_WORKER_SYNC_MESSAGE_PARAMETER_BROADCAST
+            )
+            val lastSynchronisationTime: Long = intent.getLongExtra(
+                Workers.SYNCHRONISATION_WORKER_LAST_SYNC_TIME_IN_MILLIS_PARAMETER_BROADCAST, 0L
+            )
+            val statusString = intent.getStringExtra(
+                Workers.SYNCHRONISATION_WORKER_SYNC_STATUS_PARAMETER_BROADCAST
+            )
+            val status = if (statusString != null) EventsSyncingStatus.valueOf(statusString) else EventsSyncingStatus.NOT_SYNCED_YET
+
+            mainViewModel.syncingProgress.postValue(progress)
+            mainViewModel.updateSyncStatus(status)
+            mainViewModel.updateAdditionalNumberOfSynchronisedEvents(additionalNumberOfSyncedEvents)
+            mainViewModel.updateSyncMessage(syncMessage)
+
+            if (lastSynchronisationTime != 0L) {
+                mainViewModel.updateLastSynchronisation(Date(lastSynchronisationTime))
+            }
         }
     }
 
@@ -76,21 +113,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
 
-        dbManager = LogsManager.getInstance(this);
+        dbManager = DatabaseManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         Log.d("still here", "heeere---")
         dataStorageRegistrationViewModel = ViewModelProvider(this, viewModelFactory)[DataStorageRegistrationViewModel::class.java]
 
         requestBatteryOptimisationPermission()
 
-        registerReceiver(serviceStatusReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
+        registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
+        registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST)) // Register the broadcast receiver
 
         initCreateDocumentLauncher()
 
         mainViewModel.tempFilePath.observe(this) { filePath ->
             if (filePath != null) {
                 // Launch the file picker
-                createDocumentLauncher.launch("new_file_name.csv")
+                createDocumentLauncher.launch("locations_${convertDateToFormattedString(Date())}.csv")
             }
         }
 
@@ -135,7 +173,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(serviceStatusReceiver) // Unregister the broadcast receiver to prevent memory leaks
+        unregisterReceiver(locationServiceInfoReceiver) // Unregister the broadcast receiver to prevent memory leaks
     }
 
     override fun onStop() {
@@ -146,7 +184,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, logsManager: LogsManager, applicationContext: Context, activity: Activity) {
+fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, databaseManager: DatabaseManager, applicationContext: Context, activity: Activity) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -169,7 +207,7 @@ fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataSt
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
 
-        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsManager, applicationContext) }
+        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, databaseManager, applicationContext) }
 
         composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, preferencesManager, activity) }
 
@@ -178,4 +216,3 @@ fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataSt
         composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel, activity) }
     }
 }
-

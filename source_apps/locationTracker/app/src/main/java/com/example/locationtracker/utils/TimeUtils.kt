@@ -13,3 +13,8 @@ fun convertLongToTime(time: Long?, defaultValue: String): String {
     val date = Date(time)
     return convertDateToFormattedString(date)
 }
+
+fun getCurrentTimeInMillis(): Long {
+    val now = Date()
+    return now.time
+}

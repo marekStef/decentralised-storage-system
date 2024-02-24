@@ -1,7 +1,6 @@
 package com.example.locationtracker.viewModel
 
 import android.app.Application
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -10,42 +9,23 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.locationtracker.constants.App
-import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 
-import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
-import com.example.locationtracker.eventSynchronisation.associateAppWithDataStorageAppHolder
-import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
-import com.example.locationtracker.eventSynchronisation.registerNewProfileToDataStorage
-import com.example.locationtracker.eventSynchronisation.sendPermissionRequestToServer
+import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.AppSettings
-import com.example.locationtracker.model.DataStorageDetails
-import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
 import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.utils.convertDateToFormattedString
 import com.example.locationtracker.workManagers.ExportLocationsWorker
-import com.example.locationtracker.workManagers.SynchronisationWorker
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.time.LocalTime
 import java.util.Date
 
-enum class EventsSyncingStatus {
-    NOT_SYNCED_YET,
-    SYNCING,
-    SYNCED_SUCCESSFULLY,
-    SYNCHRONISATION_FAILED
-}
-
-class MainViewModel(private val application: Application, private val dbManager: LogsManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
+class MainViewModel(private val application: Application, private val dbManager: DatabaseManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
 
 
     private val workManager = WorkManager.getInstance(application)
@@ -57,7 +37,8 @@ class MainViewModel(private val application: Application, private val dbManager:
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo
 
-    val serviceRunningLiveData = MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
+    val serviceRunningLiveData =
+        MutableLiveData<Boolean>(preferencesManager.isLocationTrackerServiceRunning())
 
     init {
         loadAppSettings()
@@ -73,10 +54,12 @@ class MainViewModel(private val application: Application, private val dbManager:
         val currentSettings = _appSettings.value ?: defaultAppSettings
         _appSettings.value = currentSettings.copy(selectedEndTimeForLocationLogging = value)
     }
+
     fun updateAppSettingsStartTime(value: LocalTime) {
         val currentSettings = _appSettings.value ?: defaultAppSettings
         _appSettings.value = currentSettings.copy(selectedStartTimeForLocationLogging = value)
     }
+
     fun updateAppSettingsAutoSync(value: Boolean) {
         val currentSettings = _appSettings.value ?: defaultAppSettings
         _appSettings.value = currentSettings.copy(isAutoSyncToggled = value)
@@ -86,17 +69,31 @@ class MainViewModel(private val application: Application, private val dbManager:
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
         _syncInfo.value = currentSyncInfo.copy(lastSyncTime = convertDateToFormattedString(date))
     }
-    fun updateNumberOfSynchronisedEvents(numberOfSyncedEvents: Int) {
+
+    fun updateAdditionalNumberOfSynchronisedEvents(additionalEvents: Int) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
-        _syncInfo.value = currentSyncInfo.copy(numberOfSyncedEvents = currentSyncInfo.numberOfSyncedEvents + numberOfSyncedEvents)
+        _syncInfo.value =
+            currentSyncInfo.copy(numberOfSyncedEvents = currentSyncInfo.numberOfSyncedEvents + additionalEvents)
     }
+
     fun updateNumberOfNotSynchronisedEvents(count: Int) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
         _syncInfo.value = currentSyncInfo.copy(numberOfNotSyncedEvents = count)
     }
+
     fun updateLastNotSynchronisedEvent(value: String) {
         val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
         _syncInfo.value = currentSyncInfo.copy(oldestEventTimeNotSynced = value)
+    }
+
+    fun updateSyncMessage(message: String?) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = message?.let { currentSyncInfo.copy(syncMessage = it) }
+    }
+
+    fun updateSyncStatus(status: EventsSyncingStatus) {
+        val currentSyncInfo = _syncInfo.value ?: defaultSyncInfo
+        _syncInfo.value = currentSyncInfo.copy(syncStatus = status)
     }
 
     // csv exporting
@@ -111,7 +108,8 @@ class MainViewModel(private val application: Application, private val dbManager:
         workManager.enqueue(request)
     }
 
-    private val _tempFilePath = MutableLiveData<String?>() // file path if it's requested to open dialog, otherwise null
+    private val _tempFilePath =
+        MutableLiveData<String?>() // file path if it's requested to open dialog, otherwise null
     val tempFilePath: LiveData<String?> = _tempFilePath
 
     fun setTempFilePath(filePath: String) {
@@ -134,7 +132,7 @@ class MainViewModel(private val application: Application, private val dbManager:
     }
 
     private fun saveSynchronisationInfo() {
-        _syncInfo.value?.let { dbManager.saveSyncInfo(it) }
+        _syncInfo.value?.let { preferencesManager.saveSyncInfo(it) }
     }
 
     fun loadSynchronisationInfo() {
@@ -151,7 +149,7 @@ class MainViewModel(private val application: Application, private val dbManager:
                 try {
                     updateNumberOfNotSynchronisedEvents(dbManager.getCountOfNotSynchronisedLocationsForSyncInfo())
                     updateLastNotSynchronisedEvent(dbManager.getTimeOfOldestNotSyncedEvent())
-                    Log.d("FETCHING", "FEEEEEEEEEEEEEEEEEEEEEEEEETCHING")
+//                    Log.d("FETCHING", "FEEEEEEEEEEEEEEEEEEEEEEEEETCHING")
                 } catch (e: Exception) {
 
                 }
@@ -162,48 +160,7 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     // ---------------------------- EVENTS SYNCING [START]
 
-    private val _progress = MutableStateFlow(0)
-    val progress = _progress.asStateFlow()
-
-    private val _lastSyncStatus = MutableStateFlow(EventsSyncingStatus.NOT_SYNCED_YET)
-    val lastSyncStatus = _lastSyncStatus.asStateFlow()
-
-    private val _syncCompletionTime = MutableStateFlow<Date?>(null)
-    val syncCompletionTime = _syncCompletionTime.asStateFlow()
-
-    fun startSyncing() {
-        val request = OneTimeWorkRequestBuilder<SynchronisationWorker>().build()
-        WorkManager.getInstance(application).enqueue(request)
-        _lastSyncStatus.value = EventsSyncingStatus.SYNCING
-
-        WorkManager.getInstance(application).getWorkInfoByIdLiveData(request.id).observeForever { workInfo ->
-            when (workInfo?.state) {
-                WorkInfo.State.RUNNING -> {
-                    val progress = workInfo.progress.getInt(SynchronisationWorker.Progress, 0)
-                    val numberOfSyncedEvents: Int = workInfo.progress.getInt(SynchronisationWorker.SyncedEvents, 0)
-                    _progress.value = progress
-                    updateNumberOfSynchronisedEvents(numberOfSyncedEvents)
-                }
-                WorkInfo.State.SUCCEEDED -> {
-                    _lastSyncStatus.value = EventsSyncingStatus.SYNCED_SUCCESSFULLY
-                    _syncCompletionTime.value = Date()
-                    updateLastSynchronisation(Date())
-                }
-                WorkInfo.State.FAILED, WorkInfo.State.CANCELLED -> {
-                    _lastSyncStatus.value = EventsSyncingStatus.SYNCHRONISATION_FAILED
-                    _syncCompletionTime.value = Date()
-                    updateLastSynchronisation(Date())
-                }
-                else -> {}
-            }
-        }
-
-        viewModelScope.launch {
-            SynchronisationWorker.syncProgress.collect {
-                _progress.value = it
-            }
-        }
-    }
+    val syncingProgress = MutableLiveData<Int>(0)
 
     // ---------------------------- EVENTS SYNCING [END]
 

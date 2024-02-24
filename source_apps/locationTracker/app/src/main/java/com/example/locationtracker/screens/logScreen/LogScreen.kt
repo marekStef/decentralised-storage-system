@@ -1,9 +1,6 @@
 package com.example.locationtracker
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -12,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.database.entities.Location
 
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,7 +48,7 @@ import java.util.Locale
 
 
 @Composable
-fun LogScreen(navController: NavController, logsManager: LogsManager, applicationContext: Context) {
+fun LogScreen(navController: NavController, databaseManager: DatabaseManager, applicationContext: Context) {
     var showDeleteLocationsDialog by remember { mutableStateOf(false) }
 
     var locations by remember { mutableStateOf(listOf<Location>()) } // mutable state list that holds the current locations to be displayed; defined with remember to survive recompositions and initialized with an empty list
@@ -65,7 +62,7 @@ fun LogScreen(navController: NavController, logsManager: LogsManager, applicatio
     fun refreshLocations() {
         coroutineScope.launch {
             loading = true
-            val newLocations = logsManager.fetchLocations(limit, offset)
+            val newLocations = databaseManager.fetchLocations(limit, offset)
             locations += newLocations
             moreAvailable = newLocations.size == limit
             loading = false
@@ -75,7 +72,7 @@ fun LogScreen(navController: NavController, logsManager: LogsManager, applicatio
 
     fun deleteAllLocations() {
         coroutineScope.launch {
-            logsManager.deleteAllLocations()
+            databaseManager.deleteAllLocations()
             locations = emptyList()
         }
     }

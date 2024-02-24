@@ -3,8 +3,7 @@ package com.example.locationtracker.foregroundServices.LocationTrackerService
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import com.example.locationtracker.constants.LocationTrackerServiceParameters
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
@@ -45,13 +44,35 @@ fun toggleLocationGatheringService(
         if (action == LocationTrackerService.Actions.START.toString()) {
             if (appSettings != null) {
                 intent.putExtra(
-                    "startTime",
+                    LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_START_TIME_PARAMETER,
                     appSettings.selectedStartTimeForLocationLogging.toString()
                 )
-                intent.putExtra("endTime", appSettings.selectedEndTimeForLocationLogging.toString())
+                intent.putExtra(
+                    LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_END_TIME_PARAMETER,
+                    appSettings.selectedEndTimeForLocationLogging.toString()
+                )
+                intent.putExtra(
+                    LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_AUTOMATIC_SYNC_PARAMETER,
+                    appSettings.isAutoSyncToggled.toString()
+                )
             }
         }
+        applicationContext.startForegroundService(intent)
+    }
+}
 
+fun sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation(
+    applicationContext: Context,
+    shouldSyncAutomatically: Boolean
+) {
+    val action = if (shouldSyncAutomatically) {
+        LocationTrackerService.Actions.ENABLE_AUTOMATIC_SYNC.toString()
+    } else {
+        LocationTrackerService.Actions.DISABLE_AUTOMATIC_SYNC.toString()
+    }
+
+    Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
+        intent.action = action
         applicationContext.startForegroundService(intent)
     }
 }

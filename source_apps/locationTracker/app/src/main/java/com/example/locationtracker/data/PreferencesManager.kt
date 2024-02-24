@@ -2,6 +2,8 @@ package com.example.locationtracker.data
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import androidx.core.content.edit
+import com.example.locationtracker.constants.SharedPreferences
 import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREF_MAIN_KEY
 import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREFERENCES
 import com.example.locationtracker.constants.SharedPreferences.APPLICATION_SETTINGS_PREF_IS_APP_REGISTERED
@@ -9,8 +11,12 @@ import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETA
 import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETAILS_PREFERENCES
 import com.example.locationtracker.constants.SharedPreferences.LOCATION_TRACKER_SERVICE_RUNNING_FLAG
 import com.example.locationtracker.constants.SharedPreferences.LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES
+import com.example.locationtracker.constants.Workers
+import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
+import com.example.locationtracker.model.EmptyDataStorageDetails
+import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -23,6 +29,7 @@ import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 class PreferencesManager constructor(private val context: Context) {
     fun resetAllPreferences() {
@@ -64,10 +71,26 @@ class PreferencesManager constructor(private val context: Context) {
         editor.apply()
     }
 
+    fun saveSyncInfo(syncInfo: SyncInfo) {
+        val syncInfoSharedPreferences = context.getSharedPreferences(SharedPreferences.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        syncInfoSharedPreferences.edit {
+            putString(SharedPreferences.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSyncTime)
+            putString(SharedPreferences.SYNCHRONISATION_INFO_SYNC_MESSAGE, syncInfo.syncMessage)
+            // putInt(EVENTS_NOT_SYNCED, syncInfo.eventsNotSynced)
+            // putString(OLDEST_EVENT_TIME_NOT_SYNCED, syncInfo.oldestEventTimeNotSynced)
+            putInt(SharedPreferences.SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED, syncInfo.numberOfSyncedEvents)
+            apply()
+        }
+    }
+
+    fun savePartialSyncInfo(progress: Int? = null, additionalNumberOfSyncedEvents: Int? = null, syncMessage: String? = null, lastSynchronisationTime: Long? = null, syncStatus: EventsSyncingStatus? = null) {
+
+    }
+
     fun loadDataStorageDetails(): DataStorageDetails {
         val sharedPreferences = context.getSharedPreferences(DATA_STORAGE_DETAILS_PREFERENCES, Context.MODE_PRIVATE)
 
-        val json = sharedPreferences.getString(DATA_STORAGE_DETAILS, null) ?: return DataStorageDetails("3001", "192.168.137.1", null, null, null, "", null)
+        val json = sharedPreferences.getString(DATA_STORAGE_DETAILS, null) ?: return EmptyDataStorageDetails
         val gson = Gson()
         return gson.fromJson(json, DataStorageDetails::class.java)
     }

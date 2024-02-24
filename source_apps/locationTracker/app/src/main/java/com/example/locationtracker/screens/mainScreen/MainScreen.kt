@@ -45,6 +45,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.foregroundServices.LocationTrackerService.sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
@@ -57,7 +58,6 @@ import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 
-
 @Composable
 fun MainScreen(
     navController: NavController,
@@ -66,8 +66,7 @@ fun MainScreen(
     applicationContext: Context,
     activity: Activity
 ) {
-    // Observe SyncInfo from the ViewModel
-    val syncInfo by viewModel.syncInfo.observeAsState()
+
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
     val context = LocalContext.current
@@ -79,6 +78,8 @@ fun MainScreen(
     )
 
     val appSettings by viewModel.appSettings.observeAsState()
+
+    val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
 //    val FineLocationPermissionResultLauncher = rememberLauncherForActivityResult(
 //        contract = ActivityResultContracts.RequestPermission(),
@@ -118,17 +119,12 @@ fun MainScreen(
         }
     }
 
-//    syncInfo?.let { info: SyncInfo ->
-//        SyncStatusCard(syncInfo = info)
-//    }
     Column(Modifier.background(Color.White)) {
 
         Box(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-
-            // Apply the vertical gradient from top to bottom
         ) {
             Column(
                 modifier = Modifier
@@ -136,9 +132,8 @@ fun MainScreen(
                     .padding(0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                SyncStatusCard(viewModel)
 
-
-                syncInfo?.let { SyncStatusCard(it) }
                 LazyColumn() {
                     item {
                         Box() {
@@ -202,11 +197,23 @@ fun MainScreen(
                                     verticalAlignment = Alignment.CenterVertically, // This will align the children of the Row vertically to the center
                                     modifier = Modifier.fillMaxWidth() // This will make the Row take the full width of its parent
                                 ) {
-                                    Text(
-                                        text = "Auto Sync",
-                                        fontSize = 16.sp,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Row {
+                                            Text(
+                                                text = "Auto Sync",
+                                                fontSize = 16.sp,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        }
+                                        Row {
+                                            Text(
+                                                text = "App will try to sync locations once per 24 hours",
+                                                fontSize = 10.sp,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        }
+                                    }
+
 
                                     Switch(
                                         checked = appSettings?.isAutoSyncToggled ?: false,
@@ -216,16 +223,18 @@ fun MainScreen(
                                                 return@Switch
                                             }
                                             viewModel.updateAppSettingsAutoSync(isChecked)
+                                            if (isServiceRunning)
+                                                sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation(applicationContext, isChecked)
                                         },
                                         colors = SwitchDefaults.colors(
                                             checkedThumbColor = colorResource(id = R.color.gray_light5),
                                             uncheckedThumbColor = colorResource(id = R.color.gray_light7),
                                             checkedTrackColor = colorResource(id = R.color.gray_green1).copy(
                                                 alpha = 0.7f
-                                            ), // Optional: Track color when switch is ON
+                                            ),
                                             uncheckedTrackColor = colorResource(id = R.color.gray_light1).copy(
                                                 alpha = 0.3f
-                                            ), // Optional: Track color when switch is OFF
+                                            ),
                                         )
                                     )
                                 }
@@ -334,11 +343,9 @@ fun MainScreen(
                                             )
                                         }
                                     }
-
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -372,8 +379,6 @@ fun MainScreen(
         BottomActionBar(activity, viewModel, navController, applicationContext, appSettings)
     }
 }
-
-
 
 fun openAppSettings(activity: Activity) {
     val intent = Intent(

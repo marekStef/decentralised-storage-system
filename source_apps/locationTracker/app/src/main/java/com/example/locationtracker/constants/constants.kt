@@ -1,23 +1,21 @@
 package com.example.locationtracker.constants
 
-object Constants {
-
-}
-
 object App {
     const val APP_NAME = "location_track"
 }
 
 object SharedPreferences {
     const val SYNCHRONISATION_INFO_SHARED_PREFERENCES =
-        "com.example.locationtracker.data.database.syncinfo_preferences_v99"
+        "com.example.locationtracker.data.database.syncinfo_preferences_v9999999"
     const val SYNCHRONISATION_INFO_LAST_SYNC = "last_sync"
+    const val SYNCHRONISATION_INFO_SYNC_MESSAGE = "sync_message"
+    const val SYNCHRONISATION_INFO_SYNC_STATUS = "sync_status"
     const val SYNCHRONISATION_INFO_EVENTS_NOT_SYNCED = "events_not_synced"
     const val SYNCHRONISATION_INFO_OLDEST_EVENT_TIME_NOT_SYNCED = "oldest_event_not_synced"
     const val SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED = "total_events_synced"
 
     const val LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES =
-        "location_tracker_service_shared_preferences_v755"
+        "location_tracker_service_shared_preferences_v75599979"
     const val LOCATION_TRACKER_SERVICE_RUNNING_FLAG = "is_service_running_flag"
 
     const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferencess"
@@ -31,6 +29,16 @@ object SharedPreferences {
 
 object Services {
     const val LOCATION_TRACKER_SERVICE_BROADCAST = "SERVICE_STATUS_ACTION"
+}
+
+object LocationTrackerServiceParameters {
+    const val LOCATION_TRACKER_SERVICE_START_TIME_PARAMETER = "startTime"
+    const val LOCATION_TRACKER_SERVICE_END_TIME_PARAMETER = "endTime"
+    const val LOCATION_TRACKER_SERVICE_AUTOMATIC_SYNC_PARAMETER = "automaticSync"
+}
+
+object LocationTrackerServiceBroadcastParameters {
+    const val LOCATION_TRACKER_SERVICE_IS_RUNNING_BROADCAST_PARAMETER = "isRunning"
 }
 
 object Notifications {
@@ -62,4 +70,18 @@ object ScreensNames {
     const val PROFILES_AND_PERMISSIONS_SCREEN = "profilesAndPermissions"
     const val REGISTRATION_SCREEN = "registrationScreen"
     const val SETTINGS_SCREEN_FOR_REGISTERED_APP = "settingsScreenForRegisteredApp"
+}
+
+object TimeRelated {
+    const val _24_HOURS_IN_MILLISECONDS = 24*60*60*1000
+}
+
+object Workers {
+    const val SYNCHRONISATION_WORKER_UNIQUE_NAME = "___synchronisation_worker___"
+    const val SYNCHRONISATION_WORKER_BROADCAST = "SYNCHRONISATION_WORKER_BROADCAST"
+    const val SYNCHRONISATION_WORKER_PROGRESS_PARAMETER_BROADCAST = "SYNCHRONISATION_WORKER_PROGRESS_PARAMETER_BROADCAST"
+    const val SYNCHRONISATION_WORKER_SYNC_STATUS_PARAMETER_BROADCAST = "SYNCHRONISATION_WORKER_SYNC_STATUS_PARAMETER_BROADCAST"
+    const val SYNCHRONISATION_WORKER_SYNC_MESSAGE_PARAMETER_BROADCAST = "SYNCHRONISATION_WORKER_SYNC_MESSAGE_PARAMETER_BROADCAST"
+    const val SYNCHRONISATION_WORKER_ADDITIONAL_NUMBER_OF_SYNCED_EVENTS_PARAMETER_BROADCAST = "SYNCHRONISATION_WORKER_ADDITIONAL_NUMBER_OF_SYNCED_EVENTS_PARAMETER_BROADCAST"
+    const val SYNCHRONISATION_WORKER_LAST_SYNC_TIME_IN_MILLIS_PARAMETER_BROADCAST = "SYNCHRONISATION_WORKER_LAST_SYNC_TIME_IN_MILLIS_PARAMETER_BROADCAST"
 }

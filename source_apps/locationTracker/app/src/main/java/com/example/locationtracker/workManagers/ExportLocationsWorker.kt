@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import com.example.locationtracker.data.LogsManager
+import com.example.locationtracker.data.DatabaseManager
 import java.io.File
 
 class ExportLocationsWorker(
@@ -14,7 +14,7 @@ class ExportLocationsWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            var dbManager : LogsManager = LogsManager.getInstance(appContext);
+            var dbManager : DatabaseManager = DatabaseManager.getInstance(appContext);
             val file = File(applicationContext.cacheDir, "locations.csv")
             dbManager.exportLocationsToCsv(file)
 
