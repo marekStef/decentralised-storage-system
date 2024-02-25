@@ -27,6 +27,7 @@ import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.NewLocation
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.CentralizedSyncManager
+import com.example.locationtracker.utils.getCurrentSsid
 import com.example.locationtracker.utils.updateNotification
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -44,8 +45,8 @@ class LocationTrackerService : Service() {
 
     private var locationGatheringStartTime: LocalTime? = null
     private var locationGatheringEndTime: LocalTime? = null
-
     private var shouldSyncToDataStorageAutomatically: Boolean = false
+    private var networkNameForAutoSync: String? = null
 
     private var lastDataSyncTime: Long = 0L
 
@@ -66,7 +67,8 @@ class LocationTrackerService : Service() {
     }
 
     private fun isPhoneConnectedToTheCorrectNetwork(): Boolean {
-        return true
+        if (networkNameForAutoSync == null) return false
+        return getCurrentSsid(application) == networkNameForAutoSync
     }
 
     private fun isActiveTimeNow(): Boolean {
@@ -87,7 +89,7 @@ class LocationTrackerService : Service() {
     private lateinit var handler: Handler
 
     enum class Actions {
-        START, STOP, ENABLE_AUTOMATIC_SYNC, DISABLE_AUTOMATIC_SYNC
+        START, STOP, ENABLE_AUTOMATIC_SYNC, DISABLE_AUTOMATIC_SYNC, SET_NEW_NETWORK_NAME
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -143,6 +145,7 @@ class LocationTrackerService : Service() {
             Actions.START.toString() -> {
                 val startTimeStr = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_START_TIME_PARAMETER)
                 val endTimeStr = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_END_TIME_PARAMETER)
+                networkNameForAutoSync = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_NETWORK_NAME_PARAMETER)
 
                 locationGatheringStartTime = startTimeStr?.let { LocalTime.parse(it) }
                 locationGatheringEndTime = endTimeStr?.let { LocalTime.parse(it) }
@@ -157,6 +160,9 @@ class LocationTrackerService : Service() {
             Actions.STOP.toString() -> stopSelf()
             Actions.ENABLE_AUTOMATIC_SYNC.toString() -> setShouldSyncToDataStorageAutomatically(true)
             Actions.DISABLE_AUTOMATIC_SYNC.toString() -> setShouldSyncToDataStorageAutomatically(false)
+            Actions.SET_NEW_NETWORK_NAME.toString() -> {
+                networkNameForAutoSync = intent.getStringExtra(LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_NETWORK_NAME_PARAMETER)
+            }
         }
         return super.onStartCommand(intent, flags, startId)
     }

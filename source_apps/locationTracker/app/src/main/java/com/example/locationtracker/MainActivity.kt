@@ -109,6 +109,11 @@ class MainActivity : ComponentActivity() {
         requestDisableBatteryOptimization(this)
     }
 
+    private fun registerReceivers() {
+        registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
+        registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST)) // Register the broadcast receiver
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
@@ -120,8 +125,7 @@ class MainActivity : ComponentActivity() {
 
         requestBatteryOptimisationPermission()
 
-        registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
-        registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST)) // Register the broadcast receiver
+        registerReceivers()
 
         initCreateDocumentLauncher()
 

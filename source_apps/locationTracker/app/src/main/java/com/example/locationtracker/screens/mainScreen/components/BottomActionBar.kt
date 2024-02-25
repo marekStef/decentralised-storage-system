@@ -26,6 +26,7 @@ import com.example.locationtracker.R
 import com.example.locationtracker.constants.ScreensNames
 import com.example.locationtracker.foregroundServices.LocationTrackerService.toggleLocationGatheringService
 import com.example.locationtracker.model.AppSettings
+import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.viewModel.MainViewModel
 
 @Composable
@@ -34,7 +35,8 @@ fun BottomActionBar(
     viewModel: MainViewModel,
     navController: NavController,
     applicationContext: Context,
-    appSettings: AppSettings?
+    appSettings: AppSettings?,
+    dataStorageDetails: DataStorageDetails
 ) {
     // This Column aligns the buttons to the bottom
     Column(
@@ -81,7 +83,7 @@ fun BottomActionBar(
 
             ExportButton(activity, viewModel)
 
-            ServiceControlButton(applicationContext, viewModel, appSettings)
+            ServiceControlButton(applicationContext, viewModel, appSettings, dataStorageDetails)
         }
 
 //            }
@@ -109,7 +111,8 @@ fun BottomActionBar(
 fun ServiceControlButton(
     applicationContext: Context,
     viewModel: MainViewModel,
-    appSettings: AppSettings?
+    appSettings: AppSettings?,
+    dataStorageDetails: DataStorageDetails
 ) {
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
@@ -129,7 +132,8 @@ fun ServiceControlButton(
             toggleLocationGatheringService(
                 isServiceRunning,
                 applicationContext,
-                appSettings
+                appSettings,
+                dataStorageDetails
             )
         }) {
         Text(

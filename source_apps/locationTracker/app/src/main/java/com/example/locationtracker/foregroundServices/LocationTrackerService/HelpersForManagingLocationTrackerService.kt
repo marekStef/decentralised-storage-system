@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.example.locationtracker.constants.LocationTrackerServiceParameters
 import com.example.locationtracker.model.AppSettings
+import com.example.locationtracker.model.DataStorageDetails
+import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
 
@@ -19,7 +21,12 @@ fun stopLocationGatheringServiceIfRunning(
 
     if (!isServiceRunning) return
 
-    toggleLocationGatheringService(isServiceRunning, applicationContext, appSettings)
+    toggleLocationGatheringService(
+        isServiceRunning,
+        applicationContext,
+        appSettings,
+        null
+    )
 
     showAlertDialogWithOkButton(
         activity,
@@ -31,7 +38,8 @@ fun stopLocationGatheringServiceIfRunning(
 fun toggleLocationGatheringService(
     isServiceRunning: Boolean,
     applicationContext: Context,
-    appSettings: AppSettings?
+    appSettings: AppSettings?,
+    dataStorageDetails: DataStorageDetails?
 ) {
     val action = if (isServiceRunning) {
         LocationTrackerService.Actions.STOP.toString()
@@ -55,6 +63,15 @@ fun toggleLocationGatheringService(
                     LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_AUTOMATIC_SYNC_PARAMETER,
                     appSettings.isAutoSyncToggled.toString()
                 )
+                if (dataStorageDetails != null) {
+                    dataStorageDetails.networkSSID.let {
+                        intent.putExtra(
+                            LocationTrackerServiceParameters.LOCATION_TRACKER_SERVICE_NETWORK_NAME_PARAMETER,
+                            dataStorageDetails.networkSSID
+                        )
+                    }
+                }
+
             }
         }
         applicationContext.startForegroundService(intent)

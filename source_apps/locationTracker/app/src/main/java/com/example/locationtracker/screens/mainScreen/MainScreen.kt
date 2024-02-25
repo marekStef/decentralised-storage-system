@@ -47,6 +47,7 @@ import androidx.navigation.NavController
 import com.example.locationtracker.constants.ScreensNames
 import com.example.locationtracker.foregroundServices.LocationTrackerService.sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
+import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
 import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
@@ -67,7 +68,7 @@ fun MainScreen(
     activity: Activity
 ) {
 
-    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
+    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(EmptyDataStorageDetails)
 
     val context = LocalContext.current
     val dialoPermissionsQueue = viewModel.visiblePermissionDialogQueue
@@ -376,7 +377,7 @@ fun MainScreen(
                         })
                 }
         }
-        BottomActionBar(activity, viewModel, navController, applicationContext, appSettings)
+        BottomActionBar(activity, viewModel, navController, applicationContext, appSettings, dataStorageDetails)
     }
 }
 

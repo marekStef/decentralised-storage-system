@@ -6,7 +6,7 @@ object App {
 
 object SharedPreferences {
     const val SYNCHRONISATION_INFO_SHARED_PREFERENCES =
-        "com.example.locationtracker.data.database.syncinfo_preferences_v999999999"
+        "com.example.locationtracker.data.database.syncinfo_preferences_v9999999999"
     const val SYNCHRONISATION_INFO_LAST_SYNC = "last_sync"
     const val SYNCHRONISATION_INFO_SYNC_MESSAGE = "sync_message"
     const val SYNCHRONISATION_INFO_SYNC_STATUS = "sync_status"
@@ -16,7 +16,7 @@ object SharedPreferences {
     const val SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED = "total_events_synced"
 
     const val LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES =
-        "location_tracker_service_shared_preferences_v755999799"
+        "location_tracker_service_shared_preferences_v7559997999"
     const val LOCATION_TRACKER_SERVICE_RUNNING_FLAG = "is_service_running_flag"
 
     const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferencess"
@@ -35,6 +35,7 @@ object Services {
 object LocationTrackerServiceParameters {
     const val LOCATION_TRACKER_SERVICE_START_TIME_PARAMETER = "startTime"
     const val LOCATION_TRACKER_SERVICE_END_TIME_PARAMETER = "endTime"
+    const val LOCATION_TRACKER_SERVICE_NETWORK_NAME_PARAMETER = "network_name"
     const val LOCATION_TRACKER_SERVICE_AUTOMATIC_SYNC_PARAMETER = "automaticSync"
 }
 
