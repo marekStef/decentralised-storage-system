@@ -45,6 +45,11 @@ class MainViewModel(private val application: Application, private val dbManager:
         loadSynchronisationInfo()
     }
 
+    fun resetViewModel() {
+        _syncInfo.value = defaultSyncInfo
+        _appSettings.value = defaultAppSettings
+    }
+
     fun saveViewModel() {
         saveSynchronisationInfo()
         saveAppSettings()
@@ -160,6 +165,12 @@ class MainViewModel(private val application: Application, private val dbManager:
                 }
                 delay(1000L)
             }
+        }
+    }
+
+    fun deleteAllLocations() {
+        viewModelScope.launch {
+            dbManager.deleteAllLocations()
         }
     }
 

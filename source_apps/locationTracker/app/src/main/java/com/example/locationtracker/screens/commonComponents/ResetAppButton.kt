@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.data.database.DatabaseClient
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
@@ -27,6 +29,8 @@ fun resetApplication(applicationContext: Context, viewModel: MainViewModel, acti
     var preferencesManager = PreferencesManager(applicationContext)
     preferencesManager.resetAllPreferences()
     stopLocationGatheringServiceIfRunning(applicationContext, viewModel, activity)
+    viewModel.deleteAllLocations()
+    viewModel.resetViewModel()
     navController.navigate(ScreensNames.REGISTRATION_SCREEN)
 }
 

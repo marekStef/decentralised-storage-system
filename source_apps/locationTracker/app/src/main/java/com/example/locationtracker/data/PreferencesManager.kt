@@ -11,6 +11,7 @@ import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETA
 import com.example.locationtracker.constants.SharedPreferences.DATA_STORAGE_DETAILS_PREFERENCES
 import com.example.locationtracker.constants.SharedPreferences.LOCATION_TRACKER_SERVICE_RUNNING_FLAG
 import com.example.locationtracker.constants.SharedPreferences.LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES
+import com.example.locationtracker.constants.SharedPreferences.SYNCHRONISATION_INFO_SHARED_PREFERENCES
 import com.example.locationtracker.constants.Workers
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.AppSettings
@@ -48,6 +49,10 @@ class PreferencesManager constructor(private val context: Context) {
         // Reset data storage details preferences
         val dataStoragePrefs = context.getSharedPreferences(DATA_STORAGE_DETAILS_PREFERENCES, MODE_PRIVATE)
         dataStoragePrefs.edit().clear().apply()
+
+        // Reset sync info preferences
+        val syncInfoPrefs = context.getSharedPreferences(SYNCHRONISATION_INFO_SHARED_PREFERENCES, MODE_PRIVATE)
+        syncInfoPrefs.edit().clear().apply()
     }
 
     fun setIsLocationTrackerServiceRunning(isActive: Boolean) {
@@ -73,7 +78,7 @@ class PreferencesManager constructor(private val context: Context) {
     }
 
     fun saveSyncInfo(syncInfo: SyncInfo) {
-        val syncInfoSharedPreferences = context.getSharedPreferences(SharedPreferences.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val syncInfoSharedPreferences = context.getSharedPreferences(SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
         syncInfoSharedPreferences.edit {
             putString(SharedPreferences.SYNCHRONISATION_INFO_LAST_SYNC, syncInfo.lastSyncTime)
             putString(SharedPreferences.SYNCHRONISATION_INFO_SYNC_MESSAGE, syncInfo.syncMessage)
@@ -85,7 +90,7 @@ class PreferencesManager constructor(private val context: Context) {
     }
 
     fun savePartialSyncInfo(progress: Int? = null, additionalNumberOfSyncedEvents: Int? = null, syncMessage: String? = null, lastSynchronisationTimeInMillis: Long? = null, syncStatus: EventsSyncingStatus? = null) {
-        val syncInfoSharedPreferences = context.getSharedPreferences(SharedPreferences.SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
+        val syncInfoSharedPreferences = context.getSharedPreferences(SYNCHRONISATION_INFO_SHARED_PREFERENCES, Context.MODE_PRIVATE)
         syncInfoSharedPreferences.edit {
             progress?.let {
                 putInt(SharedPreferences.SYNCHRONISATION_INFO_SYNC_PROGRESS, it)
