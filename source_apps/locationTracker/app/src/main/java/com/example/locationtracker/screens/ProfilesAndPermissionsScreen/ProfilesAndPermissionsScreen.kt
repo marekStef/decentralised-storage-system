@@ -280,7 +280,7 @@ fun ProfilesAndPermissionsScreen(
 
 
                         CustomDefaultButton(
-                            "Proceed to the app[DEBUG]",
+                            "Proceed to the app",
                             backgroundColor = colorResource(id = R.color.green3),
                             textColor = Color.White
                         ) {
@@ -295,20 +295,20 @@ fun ProfilesAndPermissionsScreen(
                         }
                     }
 
-                    CustomDefaultButton(
-                        "Proceed to the app[DEBUG]",
-                        backgroundColor = colorResource(id = R.color.green3),
-                        textColor = Color.White
-                    ) {
-                        preferencesManager.setIsAppProperlyRegistered(true)
-                        navController.navigate(ScreensNames.MAIN_SCREEN) {
-                            // so that the user cannot get back
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                        }
-                        showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
-                    }
+//                    CustomDefaultButton(
+//                        "Proceed to the app[DEBUG]",
+//                        backgroundColor = colorResource(id = R.color.green3),
+//                        textColor = Color.White
+//                    ) {
+//                        preferencesManager.setIsAppProperlyRegistered(true)
+//                        navController.navigate(ScreensNames.MAIN_SCREEN) {
+//                            // so that the user cannot get back
+//                            popUpTo(navController.graph.startDestinationId) {
+//                                inclusive = true
+//                            }
+//                        }
+//                        showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
+//                    }
                 }
             }
         }
