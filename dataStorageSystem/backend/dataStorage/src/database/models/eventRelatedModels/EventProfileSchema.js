@@ -25,7 +25,7 @@ const ProfileSchema = new mongoose.Schema({
         }
     },
     schema: {
-        type: String,
+        type: Object,
         required: true
     }
 });

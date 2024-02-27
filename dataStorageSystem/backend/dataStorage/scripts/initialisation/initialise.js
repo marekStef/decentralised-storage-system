@@ -18,7 +18,7 @@ const create_app_core_profile_for_definining_other_profiles = () => {
             sourceAppName: process.env.DATA_STORAGE_DOMAIN,
             acceptedDate: new Date()
         },
-        schema: JSON.stringify(appCoreProfileSchema_v1)
+        schema: appCoreProfileSchema_v1
     };
 
     ProfileSchema.create(profileData)

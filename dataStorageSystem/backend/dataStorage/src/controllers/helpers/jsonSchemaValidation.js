@@ -29,9 +29,9 @@ const validateJsonSchema = (schema, json) => {
     }
 }
 
-function isValidJSON(jsonString) {
+function isValidJSON(json) {
     try {
-        JSON.parse(jsonString);
+        JSON.stringify(json);
         return true;
     } catch (error) {
         return false;

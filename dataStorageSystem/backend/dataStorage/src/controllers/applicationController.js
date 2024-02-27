@@ -24,6 +24,22 @@ const associate_app_with_storage_app_holder = async (req, res) => {
     if (!associationTokenId || !nameDefinedByApp)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.ASSOCIATION_TOKEN_OR_NAME_MISSING);
 
+    // // DELETE - ONLY FOR DEBUGGING!
+    // const jwtPayload = {
+    //     appId: "appHolder._id",
+    //     nameDefinedByUser: "appHolder.nameDefinedByUser",
+    //     nameDefinedByApp
+    // };
+    // const generatedJwtToken = generateJwtToken(jwtPayload);
+    // res.status(httpStatusCodes.OK).json({
+    //     message: applicationResponseMessages.success.APP_ASSOCIATED_WITH_STORAGE_APP_HOLDER,
+    //     app: "appHolder", // remove when deployed,
+    //     jwtTokenForPermissionRequestsAndProfiles: generatedJwtToken
+    // });
+    // return;
+
+    // // END OF DELETE - ONLY FOR DEBUGGING!
+
     try {
         // Find the association token
         const token = await OneTimeAssociationToken.findById(associationTokenId).populate('app');
@@ -119,7 +135,7 @@ const register_new_profile = async (req, res) => {
             if (!referencedProfile) {
                 return generateBadResponse(res, httpStatusCodes.NOT_FOUND, applicationResponseMessages.error.PROFILE_DOES_NOT_EXIST);
             }
-            let isNewProfileEventValid = validateJsonSchema(JSON.parse(referencedProfile.schema), {name, metadata, schema});
+            let isNewProfileEventValid = validateJsonSchema(referencedProfile.schema, {name, metadata, schema});
 
             console.log("is it valid?" + isNewProfileEventValid)
             if (!isNewProfileEventValid) {
