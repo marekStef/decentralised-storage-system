@@ -1,21 +1,31 @@
 {
-  "name": "authservice",
+  "name": "datastorage",
   "version": "1.0.0",
-  "description": "Authentication and Authorization component responsible for issuing tokens and making data trusted before they come to main dataStorage component",
+  "description": "Main application for datastorage",
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exitcrash index.js",
+    "initialise": "node scripts/initialisation/initialise.js",
+    "delete": "node scripts/deletion/deleteDatabase.js",
+    "delete_and_initialise": "npm run delete && npm run initialise",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Marek Stefanec",
+  "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "nodemon": "^3.1.0"
-  },
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "mongoose": "^8.2.0",
-    "winston": "^3.11.0"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.1",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^9.0.1",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

@@ -13,7 +13,8 @@ const EventSchema = new mongoose.Schema({
     },
     profile: {
         type: String,
-        required: true
+        unique: true,
+        // required: true
     },
     source: {
         type: String,
@@ -26,7 +27,7 @@ const EventSchema = new mongoose.Schema({
     }
   },
   payload: {
-    type: String,
+    type: Object,
     required: true
   }
 });

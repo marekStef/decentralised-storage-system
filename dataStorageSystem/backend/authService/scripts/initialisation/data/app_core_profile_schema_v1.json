@@ -1,23 +1,29 @@
 {
     "type": "object",
     "properties": {
-        "name": { "type": "string" },
         "metadata": {
             "type": "object",
             "properties": {
                 "createdDate": { "type": "string", "format": "date-time" },
                 "profile": { "type": "string" },
-                "sourceAppName": { "type": "string" },
+                "source": { "type": "string" },
                 "acceptedDate": { "type": "string", "format": "date-time" }
             },
             "required": [
                 "createdDate",
                 "profile",
-                "sourceAppName",
+                "source",
                 "acceptedDate"
             ]
         },
-        "schema": { "type": "object" }
+        "payload": { 
+            "type": "object",
+            "properties": {
+                "profile_name": { "type": "string" },
+                "json_schema": { "type": "object" }
+            },
+            "required": ["profile_name", "json_schema"]
+        }
     },
-    "required": ["name", "metadata", "schema"]
+    "required": ["metadata", "payload"]
 }
