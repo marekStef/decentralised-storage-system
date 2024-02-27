@@ -1,0 +1,21 @@
+{
+  "name": "authservice",
+  "version": "1.0.0",
+  "description": "Authentication and Authorization component responsible for issuing tokens and making data trusted before they come to main dataStorage component",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exitcrash index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Marek Stefanec",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "mongoose": "^8.2.0",
+    "winston": "^3.11.0"
+  }
+}
