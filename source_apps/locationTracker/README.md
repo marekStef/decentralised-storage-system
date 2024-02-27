@@ -160,10 +160,8 @@ Z tohohle místa je pak možné i celou aplikaci resetovat do původního stavu.
 Na závěr je ješte vidět obrazovku, která poskytuje seznam dat. K této aplikaci se dá projit z tlačítka `Show Data` na hlavní obrazovke.
 
 
-
-
 <div style="text-align: center;">
     <img src="README_RESOURCES/17.jpg" height="600" alt="17">
 </div>
 
-
+Všechny http requesty jsou plně funknční kromě http requestu na poslání lokačních dat. Je tam jenom mockup, který simuluje zpoždění síti. Samotná synchronizace je ale plně funkční - do http requestovací synchronizační funkce je posíláno postupně 1000 lokací, aby request nebyl příliš velký a procento úspěchu je takisto správně updateováno.

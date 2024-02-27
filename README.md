@@ -1,4 +1,11 @@
-## Update 16.8.2023
+# Data Storage System
+TODO
+
+------------------------------------------------------------
+
+Irrelevant info to the readme (will be deleted in the future)
+
+##### Update 16.8.2023
 Zacal jsem s implementaci toho vedlejsiho serveru pro ukladani tych transformacnich funkcii, jak jsme se bavili na stretnuti v pondeli, 14.8.2023. `DataViewStore` je prave ten server na to ukladani nejen jednotlivych funkci ale celych modulov - jak jste chteli. Ten `DataViewStore` je ta cast, kterou ste nakreslil napravo dole od storage ve ctverci(obrazok niz) - je tam pravdepodobne napsano `Plugin store`.
 
 [Meeting notes](./README_RESOURCES//meeting_notes_14_8_2023.pdf)
