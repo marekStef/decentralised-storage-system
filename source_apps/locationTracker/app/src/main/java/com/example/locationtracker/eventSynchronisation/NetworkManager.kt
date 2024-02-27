@@ -81,7 +81,6 @@ suspend fun associateAppWithDataStorageAppHolder(
                     Result.failure(RuntimeException("Token not found in response"))
                 }
             } else {
-                // Extracting error message from response
                 val errorBody = response.body?.string()
                 val errorMessage = if (errorBody != null) {
                     try {

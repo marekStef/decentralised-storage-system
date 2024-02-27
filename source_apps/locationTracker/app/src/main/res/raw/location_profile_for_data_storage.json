@@ -10,11 +10,31 @@
       "type": "number",
       "minimum": -180,
       "maximum": 180
+    },
+    "accuracy": {
+      "type": "number"
+    },
+    "altitude": {
+      "type": "number"
+    },
+    "speed": {
+      "type": "number"
+    },
+    "speedAccuracyMetersPerSecond": {
+      "type": "number"
+    },
+    "time": {
+      "type": "number"
     }
   },
   "required": [
     "latitude",
-    "longitude"
+    "longitude",
+    "accuracy",
+    "altitude",
+    "speed",
+    "speedAccuracyMetersPerSecond",
+    "time",
   ],
   "additionalProperties": false
 }

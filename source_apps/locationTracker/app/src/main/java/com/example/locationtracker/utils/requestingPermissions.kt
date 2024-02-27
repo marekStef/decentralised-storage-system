@@ -123,9 +123,6 @@ fun requestDisableBatteryOptimization(activity: MainActivity) {
 //    }
 //}
 //
-//
-//// Ensure to adjust your onRequestPermissionsResult to handle the callback logic and determine if all permissions have been granted.
-//
 //fun checkAndRequestLocationPermissions(activity: Activity, onComplete: (Boolean) -> Unit): Boolean {
 //    if (hasAllNecessaryLocationPermissions(activity)) {
 //        // All necessary permissions are already granted

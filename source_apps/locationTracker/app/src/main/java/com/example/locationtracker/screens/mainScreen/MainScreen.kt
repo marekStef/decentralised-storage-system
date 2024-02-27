@@ -158,8 +158,8 @@ fun MainScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically, // This will align the children of the Row vertically to the center
-                                    modifier = Modifier.fillMaxWidth() // This will make the Row take the full width of its parent
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
                                         text = "Active Hours",
@@ -195,8 +195,8 @@ fun MainScreen(
                                 }
 
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically, // This will align the children of the Row vertically to the center
-                                    modifier = Modifier.fillMaxWidth() // This will make the Row take the full width of its parent
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Column(modifier = Modifier.weight(1f)) {
                                         Row {
@@ -257,10 +257,10 @@ fun MainScreen(
                                 }
 
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically, // This will align the children of the Row vertically to the center
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(start = 20.dp)// This will make the Row take the full width of its parent
+                                        .padding(start = 20.dp)
                                 ) {
                                     Column {
 

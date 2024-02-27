@@ -110,8 +110,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun registerReceivers() {
-        registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST)) // Register the broadcast receiver
-        registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST)) // Register the broadcast receiver
+        registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST))
+        registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -177,7 +177,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(locationServiceInfoReceiver) // Unregister the broadcast receiver to prevent memory leaks
+        unregisterReceiver(locationServiceInfoReceiver) // Unregistering the broadcast receiver to prevent memory leaks
     }
 
     override fun onStop() {
