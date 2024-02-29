@@ -1,12 +1,12 @@
-import { format, startOfWeek, endOfWeek, getDay, addDays } from "date-fns";
+import { format, startOfWeek, endOfWeek, getDay, addDays, formatISO  } from "date-fns";
 
 class WeekDatesClassComponent {
     getStartOfWeek(date = new Date()) {
-        return startOfWeek(date, { weekStartsOn: 0 });
+        return startOfWeek(date, { weekStartsOn: 1 });
     }
 
     getEndOfWeek(date = new Date()) {
-        return endOfWeek(date, { weekStartsOn: 0 });
+        return endOfWeek(date, { weekStartsOn: 1 });
     }
 
     getCurrentDayName(date = new Date()) {
@@ -24,8 +24,16 @@ class WeekDatesClassComponent {
         return format(new Date(), "eeee")
     }
 
+    getFormatDateInISO(date = new Date()) {
+        return format(date, 'yyyy-MM-dd');
+    }
+
+    getReadableDateWithoutTime(date = new Date()) {
+        return format(date, 'd.MMMM');
+    }
+
     getCurrentDayNumber(date = new Date()) {
-        return format(date, 'd');
+        return parseInt(format(date, 'd'))
     }
 
     getWeekDaysWithDates = () => {
