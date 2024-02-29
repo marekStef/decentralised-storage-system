@@ -1,23 +1,50 @@
 import React, { useState, useEffect } from "react";
+import './index.css';
 
-// Represents a single event
-const Event = ({ event, topOffset, leftOffset, width }) => (
-    <div
-        style={{
-            position: "absolute",
-            top: `${topOffset}px`,
-            left: `${leftOffset}%`,
-            width: `${width}%`,
-            padding: "5px",
-            margin: "1px 0",
-            backgroundColor: "lightgrey",
-            borderRadius: "5px",
-        }}
-    >
-        <strong>{event.title}</strong> <br />
-        {event.startTime} - {event.endTime}
-    </div>
-);
+const getEventHeight = (calendarHeight, durationInMinutes) => {
+    const hourHeight = calendarHeight / 24;
+    const eventHeight = (durationInMinutes / 60) * hourHeight;
+    return eventHeight
+}
+
+const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
+    const startTime = event.startTime.split(":").map(Number);
+    const endTime = event.endTime.split(":").map(Number);
+    const durationMinutes =
+        endTime[0] * 60 + endTime[1] - (startTime[0] * 60 + startTime[1]);
+
+    const eventHeight = getEventHeight(calendarHeight, durationMinutes)
+
+    const fontSize = "11px";
+
+    return (
+        <div
+            style={{
+                position: "absolute",
+                top: `${topOffset}px`,
+                left: `${leftOffset}%`,
+                width: `${width}%`,
+                height: `${eventHeight}px`,
+                padding: "1px",
+                margin: "1px 0",
+                borderRadius: "5px",
+                fontSize: fontSize,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                border: "1px gray solid",
+            }}
+            className="bg-slate-100 hover:bg-slate-200 cursor-pointer"
+        >
+            <strong title={event.title}>
+                {event.title.substring(0, 10) +
+                    (event.title.length > 10 ? "..." : "")}{" "}
+                {event.startTime} - {event.endTime}
+            </strong>{" "}
+            <br />
+        </div>
+    );
+};
 
 const HourLine = ({ position }) => (
     <div
@@ -48,99 +75,12 @@ const TimeLabel = ({ index, calendarHeight, headerHeight }) => (
     </div>
 );
 
-const HourSlot = ({
-    day,
-    index,
-    calendarHeight,
-    headerHeight,
-    handleHourClick,
-}) => (
-    <div
-        key={index}
-        onClick={() => handleHourClick(day, index)}
-        style={{
-            height: `${calendarHeight / 24}px`,
-            position: "absolute",
-            top: `${headerHeight + index * (calendarHeight / 24)}px`,
-            width: "100%",
-            cursor: "pointer",
-            ":hover": {
-                backgroundColor: "#f0f0f0", // This will only work with a CSS-in-JS library that supports pseudo-selectors
-            },
-        }}
-    >
-        {/* Empty div for hour slot */}
-    </div>
-);
-
-const DayColumn = ({
-    day,
-    headerHeight,
-    calendarHeight,
-    events,
-    adjustEventPositions,
-    calculateTopOffset,
-    handleHourClick,
-}) => {
-    const adjustedEvents = adjustEventPositions(events);
-
-    return (
-        <div
-            key={day}
-            style={{
-                flex: 1,
-                borderLeft: "1px solid grey",
-                position: "relative",
-                height: "100vh",
-            }}
-        >
-            <div
-                style={{
-                    height: `${headerHeight}px`,
-                    position: "absolute",
-                    top: 0,
-                    width: "100%",
-                    textAlign: "center",
-                    borderBottom: "1px solid grey",
-                    backgroundColor: "white",
-                    zIndex: 1,
-                }}
-            >
-                {day}
-            </div>
-
-            {/* Hour Slots */}
-            {Array.from({ length: 24 }).map((_, index) => (
-                <HourSlot
-                    key={index}
-                    day={day}
-                    index={index}
-                    calendarHeight={calendarHeight}
-                    headerHeight={headerHeight}
-                    handleHourClick={handleHourClick}
-                />
-            ))}
-
-            {/* Events */}
-            {adjustedEvents.map((event, index) => (
-                <Event
-                    key={index}
-                    event={event}
-                    topOffset={calculateTopOffset(event.startTime)}
-                    leftOffset={event.leftOffset}
-                    width={event.width}
-                />
-            ))}
-        </div>
-    );
-};
-
 const WeekView = () => {
     const [events, setEvents] = useState({
         Monday: [
             { title: "Meeting", startTime: "10:30", endTime: "11:00" },
-            { title: "Meeting 2", startTime: "10:50", endTime: "11:00" },
-            { title: "Meeting 3", startTime: "10:55", endTime: "11:00" },
+            { title: "Meeting 2", startTime: "10:50", endTime: "11:05" },
+            { title: "Meeting 3", startTime: "10:55", endTime: "11:10" },
         ],
         Tuesday: [],
         Wednesday: [],
@@ -161,25 +101,29 @@ const WeekView = () => {
     ];
 
     // The height of the header with day names
-    const headerHeight = 80; // Adjust this value to match your actual header height
+    const headerHeight = 80;
     // Total height of the calendar (excluding the header)
     const [calendarHeight, setCalendarHeight] = useState(0);
+    const [calendarWidth, setCalendarWidth] = useState(0);
 
-    useEffect(() => {
-        setCalendarHeight(window.innerHeight - headerHeight);
-    }, []);
+    const topOffsetPercentage = 0.2;
+    const leftOffsetPercentage = 0.2;
 
-    // Set the initial calendarHeight based on the current window dimensions
+    // initial calendarHeight based on the current window dimensions
     useEffect(() => {
         const updateDimensions = () => {
-            setCalendarHeight(window.innerHeight - headerHeight);
+            const offset = window.innerHeight * topOffsetPercentage
+            setCalendarHeight(window.innerHeight * 2 - offset);
+
+            setCalendarWidth(window.innerWidth - leftOffsetPercentage)
+
+            // setCalendarHeight(window.innerHeight * 2 - headerHeight);
         };
 
         updateDimensions();
 
         window.addEventListener("resize", updateDimensions);
 
-        // Cleanup of the event listener when the component unmounts
         return () => window.removeEventListener("resize", updateDimensions);
     }, []);
 
@@ -218,7 +162,8 @@ const WeekView = () => {
         eventsWithPosition.forEach((event, index, array) => {
             for (let i = 0; i < index; i++) {
                 const otherEvent = array[i];
-                if (event.startInMinutes < otherEvent.endInMinutes) { // They overlap
+                if (event.startInMinutes < otherEvent.endInMinutes) {
+                    // They overlap
                     event.leftOffset = otherEvent.leftOffset + 20; // Move to the right
                     event.width = 50;
                     otherEvent.width = 50;
@@ -230,27 +175,50 @@ const WeekView = () => {
     };
 
     return (
-        <div style={{ display: "flex", position: "relative", height: "100vh" }}>
-            {/* Hour Lines */}
-            {Array.from({ length: 24 }).map((_, index) => (
-                <HourLine
-                    key={index}
-                    position={headerHeight + index * (calendarHeight / 24)}
-                />
-            ))}
+        <div
+        style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            width: "99vw",
+            paddingTop: `${topOffsetPercentage}vh`,
+        }}
+        >
 
-            {/* Time Labels on the Left */}
-            <div style={{ width: "50px", position: "absolute" }}>
-                {Array.from({ length: 24 }).map((_, index) => (
-                    <TimeLabel
-                        index={index}
-                        calendarHeight={calendarHeight}
-                        headerHeight={headerHeight}
-                    />
-                ))}
+            <div style={{ height: `${topOffsetPercentage * 100}vh`, position: "absolute", top: 0, width: "100%", zIndex: 2 }}>
+                <h1>hi</h1>
             </div>
 
-            {/* Day Columns
+            <div style={{ height: `${(1 - topOffsetPercentage) * 100}vh`, top: `${topOffsetPercentage * 100}vh`, left: `${leftOffsetPercentage * 100}vw`, position: "absolute", overflowY: "scroll", width: `${(1 - leftOffsetPercentage) * 100}vw` }}>
+                <div
+                    style={{
+                        display: "flex",
+                        position: "relative",
+                        height: "100vh",
+                    }}
+                >
+                    {/* Hour Lines */}
+                    {Array.from({ length: 24 }).map((_, index) => (
+                        <HourLine
+                            key={index}
+                            position={
+                                headerHeight + index * (calendarHeight / 24)
+                            }
+                        />
+                    ))}
+
+                    {/* Time Labels on the Left */}
+                    <div style={{ width: "50px", position: "absolute" }}>
+                        {Array.from({ length: 24 }).map((_, index) => (
+                            <TimeLabel
+                                index={index}
+                                calendarHeight={calendarHeight}
+                                headerHeight={headerHeight}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Day Columns
             <div style={{ display: "flex", flex: 1, marginLeft: "50px" }}>
                 {daysOfWeek.map((day) => (
                     <DayColumn
@@ -266,72 +234,87 @@ const WeekView = () => {
                 ))}
             </div> */}
 
-            <div style={{ display: "flex", flex: 1, marginLeft: "50px" }}>
-                {daysOfWeek.map((day) => {
-                    const adjustedEvents = adjustEventPositions(events[day]);
+                    <div
+                        style={{ display: "flex", flex: 1, marginLeft: "50px" }}
+                    >
+                        {daysOfWeek.map((day) => {
+                            const adjustedEvents = adjustEventPositions(
+                                events[day]
+                            );
 
-                    return (
-                        <div
-                            key={day}
-                            style={{
-                                flex: 1,
-                                borderLeft: "1px solid grey",
-                                position: "relative",
-                                height: "100vh",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    height: `${headerHeight}px`,
-                                    position: "absolute",
-                                    top: 0,
-                                    width: "100%",
-                                    textAlign: "center",
-                                    borderBottom: "1px solid grey",
-                                    backgroundColor: "white",
-                                    zIndex: 1,
-                                }}
-                            >
-                                {day}
-                            </div>
-
-                            {/* Hour Slots */}
-                            {Array.from({ length: 24 }).map((_, index) => (
+                            return (
                                 <div
-                                    key={index}
-                                    onClick={() => handleHourClick(day, index)}
+                                    key={day}
                                     style={{
-                                        height: `${calendarHeight / 24}px`,
-                                        position: "absolute",
-                                        top: `${
-                                            headerHeight +
-                                            index * (calendarHeight / 24)
-                                        }px`,
-                                        width: "100%",
-                                        cursor: "pointer",
-                                        border: "1px solid red",
+                                        flex: 1,
+                                        borderLeft: "1px solid grey",
+                                        position: "relative",
+                                        height: "100vh",
                                     }}
-                                    className="bg-red-600"
                                 >
-                                    {/* Empty */}
-                                </div>
-                            ))}
+                                    <div
+                                        style={{
+                                            height: `${headerHeight}px`,
+                                            position: "absolute",
+                                            top: 0,
+                                            width: "100%",
+                                            textAlign: "center",
+                                            borderBottom: "1px solid grey",
+                                            backgroundColor: "white",
+                                            zIndex: 1,
+                                        }}
+                                    >
+                                        {day}
+                                    </div>
 
-                            {/* Events */}
-                            {adjustedEvents.map((event, index) => (
-                                <Event
-                                    key={index}
-                                    event={event}
-                                    topOffset={calculateTopOffset(
-                                        event.startTime
+                                    {/* Hour Slots */}
+                                    {Array.from({ length: 24 }).map(
+                                        (_, index) => (
+                                            <div
+                                                key={index}
+                                                onClick={() =>
+                                                    handleHourClick(day, index)
+                                                }
+                                                style={{
+                                                    height: `${
+                                                        calendarHeight / 24
+                                                    }px`,
+                                                    position: "absolute",
+                                                    top: `${
+                                                        headerHeight +
+                                                        index *
+                                                            (calendarHeight /
+                                                                24)
+                                                    }px`,
+                                                    width: "100%",
+                                                    border: "1px solid red",
+                                                }}
+                                                className="hover:bg-slate-50"
+                                            >
+                                                {/* Empty */}
+                                            </div>
+                                        )
                                     )}
-                                    leftOffset={event.leftOffset}
-                                    width={event.width}
-                                />
-                            ))}
-                        </div>
-                    );
-                })}
+
+                                    {/* Events */}
+
+                                    {adjustedEvents.map((event, index) => (
+                                        <Event
+                                            key={index}
+                                            event={event}
+                                            topOffset={calculateTopOffset(
+                                                event.startTime
+                                            )}
+                                            leftOffset={event.leftOffset}
+                                            width={event.width}
+                                            calendarHeight={calendarHeight}
+                                        />
+                                    ))}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
         </div>
     );
