@@ -8,4 +8,13 @@ body {
     margin: 0;
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  }
+}
+
+.hour_line {
+    position: absolute;
+            left: 0;
+            right: 0;
+            border-top: 1px solid #e9ecef;
+            z-index: 10;
+    /* background-color: #e9ecef; */
+}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./index.css";
+import { colors } from "@/constants/colors";
+import Calendar from "@/data/Calendar";
 
 const getEventHeight = (calendarHeight, durationInMinutes) => {
     const hourHeight = calendarHeight / 24;
@@ -49,23 +51,19 @@ const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
 
 const HourLine = ({ position }) => (
     <div
+        className="hour_line"
         style={{
-            position: "absolute",
             top: `${position}px`,
-            left: 0,
-            right: 0,
-            borderTop: "1px solid gray",
-            zIndex: 10,
         }}
     />
 );
 
-const CurrentHourLine = ({ position }) => (
+const CurrentHourLine = ({ position, leftOffset }) => (
     <div
         style={{
             position: "absolute",
             top: `${position}px`,
-            left: 0,
+            left: `${leftOffset - 5}px`,
             right: 0,
             zIndex: 10,
         }}
@@ -91,7 +89,7 @@ const CurrentHourLine = ({ position }) => (
             }}
         />
     </div>
-    
+
 );
 
 // const CurrentHourLine = ({ topOffset, headerHeight }) => {
@@ -118,26 +116,34 @@ const CurrentHourLine = ({ position }) => (
 const TimeLabel = ({ index, calendarHeight, headerHeight }) => {
     const slotHeight = calendarHeight / 24
     return (
-    <div
-        key={index}
-        style={{
-            height: `${slotHeight}px`,
-            position: "absolute",
-            top: `${headerHeight + index * (slotHeight) - slotHeight / 2.7}px`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-        }}
-    >
-        {index}:00
-    </div>
-)};
+        <div
+            key={index}
+            style={{
+                height: `${slotHeight}px`,
+                position: "absolute",
+                top: `${headerHeight + index * (slotHeight) - slotHeight / 2.7}px`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 20
+            }}
+        >
+            {index}:00
+        </div>
+    )
+};
 
 const WeekView = () => {
-    const [currentTime, setCurrentTime] = useState<Date>(new Date())
+    const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date())
     const [currentTimeHorizontalLineOffset, setCurrentTimeHorizontalLineOffset] = useState<number>(0)
 
+    // console.log(Calendar.getCurrentDayName())
+    // console.log(Calendar.getWeekDaysWithDates());
     const scrollContainerRef = useRef(null);
+
+    // data related
+    const [startOfWeekDate, setStartOfWeekDate] = useState<Date>(Calendar.getStartOfWeek())
+    const [endOfWeekDate, setEndOfWeekDate] = useState<Date>(Calendar.getEndOfWeek())
 
     const [events, setEvents] = useState({
         Monday: [
@@ -153,18 +159,11 @@ const WeekView = () => {
         Sunday: [],
     });
 
-    const daysOfWeek = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
+    const [daysOfWeek, setDaysOfWeek] = useState(Calendar.getWeekDaysWithDates())
 
     // The height of the header with day names
-    const headerHeight = 40;
+    const headerHeight = 60;
+    const calendarLeftColumnHoursWidthInPixels = 50
     // Total height of the calendar (excluding the header)
     const [screenHeight, setScreenHeight] = useState(0);
     const [screenWidth, setScreenWidth] = useState(0);
@@ -177,7 +176,7 @@ const WeekView = () => {
 
     const calendarTopOffsetInPixels = screenHeight * topOffsetPercentage;
     const numberOfSecondsInDay = 86400
-    const currentHourInSeconds = currentTime.getHours() * 60 * 60 + currentTime.getMinutes() * 60 + currentTime.getSeconds()
+    const currentHourInSeconds = currentDateTime.getHours() * 60 * 60 + currentDateTime.getMinutes() * 60 + currentDateTime.getSeconds()
 
     const currentHourOffsetInPixels = (calendarHeight / numberOfSecondsInDay) * currentHourInSeconds
 
@@ -204,7 +203,7 @@ const WeekView = () => {
 
         const updateCurrentHour = () => {
             const now = new Date();
-            setCurrentTime(now)
+            setCurrentDateTime(now)
         };
 
         updateDimensions();
@@ -311,6 +310,7 @@ const WeekView = () => {
                 >
                     {/* Current time line */}
                     <CurrentHourLine
+                        leftOffset={calendarLeftColumnHoursWidthInPixels}
                         position={currentHourOffsetInPixels}
                     />
 
@@ -325,9 +325,10 @@ const WeekView = () => {
                     ))}
 
                     {/* Time Labels on the Left */}
-                    <div style={{ width: "50px", position: "absolute" }}>
+                    <div style={{ width: `${calendarLeftColumnHoursWidthInPixels}px`, position: "absolute" }}>
                         {Array.from({ length: 24 }).map((_, index) => (
                             <TimeLabel
+                                key={index}
                                 index={index}
                                 calendarHeight={calendarHeight}
                                 headerHeight={headerHeight}
@@ -382,37 +383,44 @@ const WeekView = () => {
                             //  marginLeft: '50px'
                         }}
                     >
+                        <div style={{
+                            position: "relative",
+                            height: `${calendarHeight + headerHeight}px`,
+                        }}>
+
                         <div
-                                        style={{
-                                            height: `${headerHeight}px`,
-                                            position: "sticky",
-                                            top: 0,
-                                            width: '50px',
-                                            textAlign: "center",
-                                            backgroundColor: "white",
-                                            zIndex: 100,
-                                            boxShadow:
-                                                "0 2px 4px rgba(0,0,0,0.1)",
-                                        }}
-                                    >
-                                        Time
-                                    </div>
+                            style={{
+                                height: `${headerHeight}px`,
+                                position: "sticky",
+                                top: 0,
+                                width: `${calendarLeftColumnHoursWidthInPixels}px`,
+                                borderBottom: `1px solid ${colors.gray2}`,
+                                textAlign: "center",
+                                backgroundColor: "white",
+                                zIndex: 100,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center'
+                            }}
+                        >
+                            {/* <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>Time</p> */}
+                        </div>
+                        </div>
 
                         {daysOfWeek.map((day) => {
                             const adjustedEvents = adjustEventPositions(
-                                events[day]
+                                events[day.dayName]
                             );
 
                             return (
                                 <div
-                                    key={day}
+                                    key={day.dayName}
                                     style={{
                                         flex: 1,
-                                        borderLeft: "1px solid grey",
+                                        // borderLeft: `1px solid ${colors.gray2}`,
                                         position: "relative",
-                                        height: `${
-                                            calendarHeight + headerHeight
-                                        }px`,
+                                        height: `${calendarHeight + headerHeight
+                                            }px`,
                                     }}
                                 >
                                     <div
@@ -424,11 +432,22 @@ const WeekView = () => {
                                             textAlign: "center",
                                             backgroundColor: "white",
                                             zIndex: 100,
-                                            boxShadow:
-                                                "0 2px 4px rgba(0,0,0,0.1)",
+                                            borderBottom: `1px solid ${colors.gray2}`,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
                                         }}
                                     >
-                                        {day}
+                                        <p style={{ fontSize: `1rem`, padding: 0, margin: 0, color: 'gray' }}>{day.dayName}</p>
+                                        <div style={{
+                                            borderRadius: Calendar.getCurrentDayNumber() === day.dayNumberInMonth ? '1rem' : '0',
+                                            backgroundColor: Calendar.getCurrentDayNumber() === day.dayNumberInMonth ? 'red' : 'transparent',
+                                            color: Calendar.getCurrentDayNumber() === day.dayNumberInMonth ? 'white' : 'black',
+                                            fontSize: `1rem`, padding: '0.1rem 0.6rem', margin: 0
+                                        }}>
+                                            {day.dayNumberInMonth}
+                                        </div>
                                     </div>
 
                                     {/* Hour Slots */}
@@ -442,7 +461,7 @@ const WeekView = () => {
                                                     onClick={(e) => {
                                                         const clickY = e.nativeEvent.offsetY;
 
-                                                        const minute = Math.max(0, Math.floor((clickY / slotHeight) * 60 ))
+                                                        const minute = Math.max(0, Math.floor((clickY / slotHeight) * 60))
 
                                                         console.log(clickY)
                                                         handleHourClick(
@@ -453,13 +472,14 @@ const WeekView = () => {
                                                     }}
                                                     style={{
                                                         height: `${slotHeight}px`,
+                                                        borderLeft: `1px solid ${colors.gray2}`,
                                                         position: "absolute",
                                                         top: `${topOffset}px`,
                                                         width: `100%`,
                                                         // borderTop:
                                                         //     "1px solid gray",
                                                     }}
-                                                    className="hover:bg-slate-50"
+                                                    className="hover:bg-slate-50 bg-white"
                                                 >
                                                     {/* Empty */}
                                                 </div>
