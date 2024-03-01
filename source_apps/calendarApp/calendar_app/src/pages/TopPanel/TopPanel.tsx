@@ -1,6 +1,6 @@
 import React from 'react';
 import { colors } from '@/constants/colors';
-import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5';
+import { IoTodayOutline } from 'react-icons/io5';
 
 import WeekNavigationButtons from './components/WeekNavigationButtons';
 import SelectedWeek from '@/data/SelectedWeek';
@@ -34,6 +34,7 @@ const TopPanel: React.FC<TopPanelParams> = (params) => {
                         alignItems: 'center',
                     }}
                 >
+                    
                     <h1
                         style={{padding: '0.5rem'}}
                     >{Calendar.getReadableDateWithoutTime(params.selectedWeek.startOfWeek)}-{Calendar.getReadableDateWithoutTime(params.selectedWeek.endOfWeek)}</h1>

@@ -29,6 +29,10 @@ const SelectedHourLine: React.FC<SelectedHourLineParams> = ({ topOffset, leftOff
             }}
         >
             <p style={{fontSize: '0.7rem', color: colors.green5, textWrap: 'wrap', textAlign: 'center'}}>New Event</p>
+
+            <p style={{fontSize: '0.7rem', color: colors.green5, textWrap: 'wrap', textAlign: 'center'}}>{topOffset}</p>
+            <p style={{fontSize: '0.7rem', color: colors.green5, textWrap: 'wrap', textAlign: 'center'}}>-</p>
+            <p style={{fontSize: '0.7rem', color: colors.green5, textWrap: 'wrap', textAlign: 'center'}}>{heightInPixels}</p>
         </div>
     </div>
 );

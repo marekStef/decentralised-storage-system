@@ -13,6 +13,7 @@ import EventsManager, { Events } from "@/data/EventsManager";
 import { SyncLoader } from "react-spinners";
 import { timeConstants } from "@/constants/timeConstants";
 import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
+import { isToday } from "date-fns";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -278,7 +279,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             params.events.events[day.dayInUTC]
                         );
 
-                        const isThisToday = Calendar.getCurrentDayNumber() === parseInt(day.dayNumberInMonth)
+                        const isThisToday = isToday(day.date)
 
                         return (
                             <div

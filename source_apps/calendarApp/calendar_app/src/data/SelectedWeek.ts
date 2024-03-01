@@ -17,6 +17,10 @@ class SelectedWeek {
         this.endOfWeek = endOfWeek;
     }
 
+    getCurrentWeek(): SelectedWeek {
+      return new SelectedWeek();
+    }
+
     getNextWeek(): SelectedWeek {
       const nextStartOfWeek = new Date(this.startOfWeek);
       nextStartOfWeek.setDate(this.startOfWeek.getDate() + 7);
