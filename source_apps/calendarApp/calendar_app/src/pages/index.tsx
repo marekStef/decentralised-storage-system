@@ -5,8 +5,8 @@ import LeftPanel from './LeftPanel/LeftPanel';
 import TopPanel from './TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
-import NewEventDialog, { NewEventDialogData } from '@/components/NewEventDialog/NewEventDialog';
 import EventsManager, { Events } from '@/data/EventsManager';
+import NewEventDialogMaterial, { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 
 const eventsManager = new EventsManager();
 
@@ -21,12 +21,8 @@ const Index = () => {
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
     const [newEventDialogData, setNewEventDialogData] = useState<NewEventDialogData | null>(null)
 
-    const openNewEventDialogHandler = (day: DayOfWeek, hour: number, minute: number) => {
-        setNewEventDialogData({
-            day,
-            hour,
-            minute
-        });
+    const openNewEventDialogHandler = (data: NewEventDialogData) => {
+        setNewEventDialogData(data);
     }
 
     // event related [START]
@@ -69,7 +65,9 @@ const Index = () => {
                 paddingTop: `${calendarViewTopOffsetPercentage}vh`,
             }}
         >
-            <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/>
+            {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
+
+            <NewEventDialogMaterial open={newEventDialogData} handleClose={() => setNewEventDialogData(null)} newEventDialogData={newEventDialogData}/>
             <div
                 style={{
                     height: `${calendarViewTopOffsetPercentage * 100}vh`,

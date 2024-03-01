@@ -14,6 +14,7 @@ import { SyncLoader } from "react-spinners";
 import { timeConstants } from "@/constants/timeConstants";
 import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
 import { isToday } from "date-fns";
+import { NewEventDialogData } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -22,7 +23,7 @@ interface WeekViewParams {
     calendarViewLeftOffsetPercentage: number,
     calendarViewRightOffsetPercentage: number,
     selectedWeek: SelectedWeek,
-    openNewEventDialogHandler: (day: DayOfWeek, hour: number, minute: number) => void,
+    openNewEventDialogHandler: (data: NewEventDialogData) => void,
     isLoadingEvents: boolean,
     events: Events
 }
@@ -55,9 +56,11 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     const currentHourOffsetInPixels = (calendarHeightWithoutHeader / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
 
-    // useEffect(() => {
-    //     setDaysOfWeek(Calendar.getWeekDaysWithDates(params.selectedWeek))
-    // }, [])
+    const [weekDaysWithDatesForSelectedWeek, setWeekDaysWithDatesForSelectedWeek] = useState<Array<DayOfWeek> | null>(null)
+
+    useEffect(() => {
+        setWeekDaysWithDatesForSelectedWeek(params.selectedWeek.getWeekDaysWithDates())
+    }, [params.selectedWeek])
 
     // effect for scrolling the container to the current hour line
     useEffect(() => {
@@ -274,7 +277,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                         </div>
                     </div>
 
-                    {params.selectedWeek.getWeekDaysWithDates()?.map((day) => {
+                    {weekDaysWithDatesForSelectedWeek?.map((day) => {
                         const adjustedEvents = adjustEventPositions(
                             params.events.events[day.dayInUTC]
                         );
@@ -339,7 +342,11 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                                     //     minute
                                                     // );
 
-                                                    params.openNewEventDialogHandler(day, hour, minute);
+                                                    params.openNewEventDialogHandler({
+                                                        startTimeDate: new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute),
+                                                        endTimeDate: null
+                                                    });
+
                                                 }}
                                                 style={{
                                                     height: `${slotHeight}px`,

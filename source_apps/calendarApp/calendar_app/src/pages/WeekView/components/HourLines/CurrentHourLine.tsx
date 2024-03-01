@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface CurrentHourLineParams {
     position: number,
@@ -6,7 +6,16 @@ interface CurrentHourLineParams {
     heightInPixels: number
 }
 
-const CurrentHourLine : React.FC<CurrentHourLineParams> = ({ position, leftOffset, heightInPixels = 2 }) => (
+const CurrentHourLine : React.FC<CurrentHourLineParams> = ({ position, leftOffset, heightInPixels = 2 }) => {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      // to prevent rendering on server
+      setIsClient(true);
+    }, []);
+
+    return isClient && (
+    
     <div
         style={{
             position: "absolute",
@@ -37,6 +46,6 @@ const CurrentHourLine : React.FC<CurrentHourLineParams> = ({ position, leftOffse
             }}
         />
     </div>
-);
+)};
 
 export default CurrentHourLine;
