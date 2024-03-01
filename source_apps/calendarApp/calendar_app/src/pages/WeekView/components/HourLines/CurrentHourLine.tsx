@@ -1,28 +1,12 @@
 import React from "react";
 
+interface CurrentHourLineParams {
+    position: number,
+    leftOffset: number,
+    heightInPixels: number
+}
 
-// const CurrentHourLine = ({ topOffset, headerHeight }) => {
-//     const currentDate = new Date();
-//     const currentHour = currentDate.getHours();
-//     const currentMinute = currentDate.getMinutes();
-//     const hourHeight = calendarHeight / 24;
-//     const topPosition = headerHeight + (currentHour + currentMinute / 60) * hourHeight;
-
-//     return (
-//         <div
-//             style={{
-//                 position: "absolute",
-//                 top: `${topPosition}px`,
-//                 left: 0,
-//                 right: 0,
-//                 borderTop: "2px solid red", // Make it more visible
-//                 zIndex: 20, // Ensure it's above other items but below the sticky header
-//             }}
-//         />
-//     );
-// };
-
-const CurrentHourLine = ({ position, leftOffset }) => (
+const CurrentHourLine : React.FC<CurrentHourLineParams> = ({ position, leftOffset, heightInPixels = 2 }) => (
     <div
         style={{
             position: "absolute",
@@ -48,7 +32,7 @@ const CurrentHourLine = ({ position, leftOffset }) => (
                 position: "absolute",
                 left: 0,
                 right: 0,
-                borderTop: "2px solid red",
+                borderTop: `${heightInPixels}px solid red`,
                 zIndex: 100,
             }}
         />

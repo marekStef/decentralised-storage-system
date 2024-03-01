@@ -12,17 +12,19 @@ import SelectedWeek, { DayOfWeek } from "@/data/SelectedWeek";
 import EventsManager, { Events } from "@/data/EventsManager";
 import { SyncLoader } from "react-spinners";
 import { timeConstants } from "@/constants/timeConstants";
+import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
 
 interface WeekViewParams {
     screenHeight: number,
     screenWidth: number,
     calendarViewTopOffsetPercentage: number,
     calendarViewLeftOffsetPercentage: number,
+    calendarViewRightOffsetPercentage: number,
     selectedWeek: SelectedWeek,
-    openNewEventDialogHandler: (day: DayOfWeek, hour: number, minute: number) => void
+    openNewEventDialogHandler: (day: DayOfWeek, hour: number, minute: number) => void,
+    isLoadingEvents: boolean,
+    events: Events
 }
-
-const eventsManager = new EventsManager();
 
 const WeekView: React.FC<WeekViewParams> = (params) => {
     const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date())
@@ -31,10 +33,6 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     // console.log(Calendar.getCurrentDayName())
     // console.log(Calendar.getWeekDaysWithDates());
     const scrollContainerRef = useRef(null);
-
-    const [events, setEvents] = useState<Events>(new Events());
-
-    const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true)
 
     // console.log(Calendar.getFormatDateInISO())
 
@@ -48,6 +46,8 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     const [calendarWidth, setCalendarWidth] = useState(0);
 
     const calendarTopOffsetInPixels = params.screenHeight * params.calendarViewTopOffsetPercentage;
+    const calendarLeftOffsetInPixels = params.screenWidth * params.calendarViewLeftOffsetPercentage;
+
     const currentHourInSeconds = currentDateTime.getHours() * 60 * 60 + currentDateTime.getMinutes() * 60 + currentDateTime.getSeconds()
 
     const calendarHeightWithoutHeader = calendarHeight - headerHeight;
@@ -57,20 +57,6 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     // useEffect(() => {
     //     setDaysOfWeek(Calendar.getWeekDaysWithDates(params.selectedWeek))
     // }, [])
-
-    useEffect(() => {
-        console.log("Loading for: ", params.selectedWeek.startOfWeek)
-        setDaysOfWeek(params.selectedWeek.getWeekDaysWithDates())
-
-        setEvents(new Events())
-        setIsLoadingEvents(true);
-        
-        eventsManager.getEventsForSelectedWeek(params.selectedWeek)
-            .then(events => {
-                setEvents(events)
-                setIsLoadingEvents(false)
-            })
-    }, [params.selectedWeek])
 
     // effect for scrolling the container to the current hour line
     useEffect(() => {
@@ -86,7 +72,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             setCalendarHeight(window.innerHeight * 2 - offset);
             // setCalendarHeight(window.innerHeight * 2 - headerHeight);
 
-            setCalendarWidth(window.innerWidth * (1 - params.calendarViewLeftOffsetPercentage));
+            setCalendarWidth(window.innerWidth * (1 - params.calendarViewLeftOffsetPercentage - params.calendarViewRightOffsetPercentage));
         };
 
         const updateCurrentHour = () => {
@@ -105,7 +91,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             window.removeEventListener("resize", updateDimensions);
             clearInterval(intervalId)
         }
-    }, [params.screenHeight, params.screenWidth, params.calendarViewLeftOffsetPercentage]);
+    }, [params.screenHeight, params.screenWidth, params.calendarViewLeftOffsetPercentage, params.calendarViewRightOffsetPercentage]);
 
     const handleHourClick = (day: DayOfWeek, hour: number, minute: number) => {
         console.log(`Hour clicked: ${day}, ${hour}:${minute}`);
@@ -163,10 +149,10 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 height: `${(1 - params.calendarViewTopOffsetPercentage) * 100}vh`,
                 // height: `${calendarHeight}px`,
                 top: `${calendarTopOffsetInPixels}px`,
-                left: `${params.calendarViewLeftOffsetPercentage * 100}vw`,
+                left: `${calendarLeftOffsetInPixels}px`,
                 position: "absolute",
                 overflowY: "scroll",
-                width: `${(1 - params.calendarViewLeftOffsetPercentage) * 100}vw`,
+                width: `${calendarWidth}px`,
             }}
         >
             <div
@@ -182,9 +168,11 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     position={headerHeight + currentHourOffsetInPixels}
                 />
 
-                <CurrentHourLine
-                    leftOffset={(calendarWidth - calendarLeftColumnHoursWidthInPixels) / 7 + calendarLeftColumnHoursWidthInPixels}
-                    position={headerHeight + currentHourOffsetInPixels}
+                <DraggableNewEventPreview 
+                    startOffsetInPixels={calendarTopOffsetInPixels} 
+                    scrollContainerRef={scrollContainerRef} 
+                    calendarLeftOffsetInPixels={calendarLeftOffsetInPixels}
+                    hourSlotWidth={(calendarWidth - calendarLeftColumnHoursWidthInPixels) / 7}
                 />
 
                 {/* Hour Lines */}
@@ -279,15 +267,15 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             {/* <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>Time</p> */}
                             <SyncLoader
                                 color='black'
-                                loading={isLoadingEvents}
+                                loading={params.isLoadingEvents}
                                 size={5}
                             />
                         </div>
                     </div>
 
-                    {daysOfWeek?.map((day) => {
+                    {params.selectedWeek.getWeekDaysWithDates()?.map((day) => {
                         const adjustedEvents = adjustEventPositions(
-                            events.events[day.dayInUTC]
+                            params.events.events[day.dayInUTC]
                         );
 
                         const isThisToday = Calendar.getCurrentDayNumber() === parseInt(day.dayNumberInMonth)

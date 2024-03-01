@@ -6,6 +6,9 @@ import TopPanel from './TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
 import NewEventDialog, { NewEventDialogData } from '@/components/NewEventDialog/NewEventDialog';
+import EventsManager, { Events } from '@/data/EventsManager';
+
+const eventsManager = new EventsManager();
 
 const Index = () => {
     const [screenHeight, setScreenHeight] = useState(0);
@@ -13,6 +16,7 @@ const Index = () => {
 
     const calendarViewTopOffsetPercentage = 0.1;
     const calendarViewLeftOffsetPercentage = 0.2;
+    const calendarViewRightOffsetPercentage = 0.01;
 
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
     const [newEventDialogData, setNewEventDialogData] = useState<NewEventDialogData | null>(null)
@@ -25,6 +29,24 @@ const Index = () => {
         });
     }
 
+    // event related [START]
+
+    const [events, setEvents] = useState<Events>(new Events());
+    const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true)
+
+    useEffect(() => {
+        console.log("Loading for: ", selectedWeek.startOfWeek)
+
+        setEvents(new Events())
+        setIsLoadingEvents(true);
+        
+        eventsManager.getEventsForSelectedWeek(selectedWeek)
+            .then(events => {
+                setEvents(events)
+                setIsLoadingEvents(false)
+            })
+    }, [selectedWeek])
+
     useEffect(() => {
         const updateDimensions = () => {
             setScreenHeight(window.innerHeight);
@@ -34,6 +56,8 @@ const Index = () => {
         updateDimensions();
         window.addEventListener("resize", updateDimensions);
     }, []);
+
+    // event related [END]
 
     return (
         <div
@@ -62,7 +86,7 @@ const Index = () => {
                     height: `${( 1 - calendarViewTopOffsetPercentage) * 100}vh`,
                     position: "absolute",
                     top: `${calendarViewTopOffsetPercentage * 100}vh`,
-                    width: `${calendarViewLeftOffsetPercentage * 100}vw`,
+                    width: `${(calendarViewLeftOffsetPercentage) * 100}vw`,
                     zIndex: 2,
                 }}>
                     <LeftPanel />
@@ -72,8 +96,11 @@ const Index = () => {
                 screenWidth={screenWidth}
                 calendarViewTopOffsetPercentage={calendarViewTopOffsetPercentage}
                 calendarViewLeftOffsetPercentage={calendarViewLeftOffsetPercentage}
+                calendarViewRightOffsetPercentage={calendarViewRightOffsetPercentage}
                 selectedWeek={selectedWeek}
                 openNewEventDialogHandler={openNewEventDialogHandler}
+                isLoadingEvents={isLoadingEvents}
+                events={events}
             />
             </div>
     )

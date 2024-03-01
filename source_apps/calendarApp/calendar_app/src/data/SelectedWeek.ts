@@ -47,7 +47,7 @@ class SelectedWeek {
       const result = daysOfWeek.map((day, index) => {
         const dayDate = addDays(startOfTheWeek, index);
         return {
-          dayName: day,
+          dayName: Calendar.getDayName(dayDate),
           dayInUTC: dayDate.toISOString(),
           date: dayDate,
           dayNumberInMonth: format(dayDate, 'dd')

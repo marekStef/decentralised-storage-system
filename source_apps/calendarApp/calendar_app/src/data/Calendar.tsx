@@ -10,7 +10,7 @@ class WeekDatesClassComponent {
         return endOfWeek(date, { weekStartsOn: 1 });
     }
 
-    getCurrentDayName(date = new Date()) {
+    getDayName(date = new Date()) {
         // const dayNames = [
         //     "Sunday",
         //     "Monday",
@@ -22,7 +22,7 @@ class WeekDatesClassComponent {
         // ];
         // return dayNames[getDay(date)];
 
-        return format(new Date(), "eeee")
+        return format(date, "eee")
     }
 
     getFormatDateInISO(date = new Date()) {
