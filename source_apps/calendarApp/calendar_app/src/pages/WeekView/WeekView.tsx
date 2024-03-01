@@ -8,17 +8,18 @@ import HourLine from "./components/HourLines/HourLine";
 import CurrentHourLine from "./components/HourLines/CurrentHourLine";
 import TimeLabel from "./components/TimeLabel/TimeLabel";
 
-import SelectedWeek from "@/data/SelectedWeek";
+import SelectedWeek, { DayOfWeek } from "@/data/SelectedWeek";
 import EventsManager, { Events } from "@/data/EventsManager";
-import MoonLoader from "react-spinners/MoonLoader";
-import { BounceLoader, SyncLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
+import { timeConstants } from "@/constants/timeConstants";
 
 interface WeekViewParams {
     screenHeight: number,
     screenWidth: number,
     calendarViewTopOffsetPercentage: number,
     calendarViewLeftOffsetPercentage: number,
-    selectedWeek: SelectedWeek
+    selectedWeek: SelectedWeek,
+    openNewEventDialogHandler: (day: DayOfWeek, hour: number, minute: number) => void
 }
 
 const eventsManager = new EventsManager();
@@ -35,9 +36,9 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true)
 
-    console.log(Calendar.getFormatDateInISO())
+    // console.log(Calendar.getFormatDateInISO())
 
-    const [daysOfWeek, setDaysOfWeek] = useState(Calendar.getWeekDaysWithDates())
+    const [daysOfWeek, setDaysOfWeek] = useState<Array<DayOfWeek> | null>(null)
 
     // The height of the header with day names
     const headerHeight = 60;
@@ -46,17 +47,21 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     const [calendarHeight, setCalendarHeight] = useState(0);
     const [calendarWidth, setCalendarWidth] = useState(0);
 
-    const leftOffsetPercentage = 0.2;
-
     const calendarTopOffsetInPixels = params.screenHeight * params.calendarViewTopOffsetPercentage;
-    const numberOfSecondsInDay = 86400
     const currentHourInSeconds = currentDateTime.getHours() * 60 * 60 + currentDateTime.getMinutes() * 60 + currentDateTime.getSeconds()
 
     const calendarHeightWithoutHeader = calendarHeight - headerHeight;
 
-    const currentHourOffsetInPixels = (calendarHeightWithoutHeader / numberOfSecondsInDay) * currentHourInSeconds
+    const currentHourOffsetInPixels = (calendarHeightWithoutHeader / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
+
+    // useEffect(() => {
+    //     setDaysOfWeek(Calendar.getWeekDaysWithDates(params.selectedWeek))
+    // }, [])
 
     useEffect(() => {
+        console.log("Loading for: ", params.selectedWeek.startOfWeek)
+        setDaysOfWeek(params.selectedWeek.getWeekDaysWithDates())
+
         setEvents(new Events())
         setIsLoadingEvents(true);
         
@@ -81,7 +86,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             setCalendarHeight(window.innerHeight * 2 - offset);
             // setCalendarHeight(window.innerHeight * 2 - headerHeight);
 
-            setCalendarWidth(window.innerWidth - params.calendarViewLeftOffsetPercentage);
+            setCalendarWidth(window.innerWidth * (1 - params.calendarViewLeftOffsetPercentage));
         };
 
         const updateCurrentHour = () => {
@@ -100,9 +105,9 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             window.removeEventListener("resize", updateDimensions);
             clearInterval(intervalId)
         }
-    }, [params.screenHeight, params.screenWidth]);
+    }, [params.screenHeight, params.screenWidth, params.calendarViewLeftOffsetPercentage]);
 
-    const handleHourClick = (day: number, hour: number, minute: number) => {
+    const handleHourClick = (day: DayOfWeek, hour: number, minute: number) => {
         console.log(`Hour clicked: ${day}, ${hour}:${minute}`);
         alert(`Hour clicked: ${day}, ${hour}:${minute}`);
     };
@@ -152,9 +157,6 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
 
     return (
-
-
-
         <div
             ref={scrollContainerRef}
             style={{
@@ -177,6 +179,11 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 {/* Current time line */}
                 <CurrentHourLine
                     leftOffset={calendarLeftColumnHoursWidthInPixels}
+                    position={headerHeight + currentHourOffsetInPixels}
+                />
+
+                <CurrentHourLine
+                    leftOffset={(calendarWidth - calendarLeftColumnHoursWidthInPixels) / 7 + calendarLeftColumnHoursWidthInPixels}
                     position={headerHeight + currentHourOffsetInPixels}
                 />
 
@@ -278,9 +285,9 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                         </div>
                     </div>
 
-                    {daysOfWeek.map((day) => {
+                    {daysOfWeek?.map((day) => {
                         const adjustedEvents = adjustEventPositions(
-                            events.events[day.dayName]
+                            events.events[day.dayInUTC]
                         );
 
                         const isThisToday = Calendar.getCurrentDayNumber() === parseInt(day.dayNumberInMonth)
@@ -337,11 +344,13 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                                     const minute = Math.max(0, Math.floor((clickY / slotHeight) * 60))
 
                                                     console.log(clickY)
-                                                    handleHourClick(
-                                                        day,
-                                                        hour,
-                                                        minute
-                                                    );
+                                                    // handleHourClick(
+                                                    //     day,
+                                                    //     hour,
+                                                    //     minute
+                                                    // );
+
+                                                    params.openNewEventDialogHandler(day, hour, minute);
                                                 }}
                                                 style={{
                                                     height: `${slotHeight}px`,

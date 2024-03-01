@@ -4,7 +4,8 @@ import WeekView from './WeekView/WeekView'
 import LeftPanel from './LeftPanel/LeftPanel';
 import TopPanel from './TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
-import SelectedWeek from '@/data/SelectedWeek';
+import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
+import NewEventDialog, { NewEventDialogData } from '@/components/NewEventDialog/NewEventDialog';
 
 const Index = () => {
     const [screenHeight, setScreenHeight] = useState(0);
@@ -14,6 +15,15 @@ const Index = () => {
     const calendarViewLeftOffsetPercentage = 0.2;
 
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
+    const [newEventDialogData, setNewEventDialogData] = useState<NewEventDialogData | null>(null)
+
+    const openNewEventDialogHandler = (day: DayOfWeek, hour: number, minute: number) => {
+        setNewEventDialogData({
+            day,
+            hour,
+            minute
+        });
+    }
 
     useEffect(() => {
         const updateDimensions = () => {
@@ -35,6 +45,7 @@ const Index = () => {
                 paddingTop: `${calendarViewTopOffsetPercentage}vh`,
             }}
         >
+            <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/>
             <div
                 style={{
                     height: `${calendarViewTopOffsetPercentage * 100}vh`,
@@ -62,6 +73,7 @@ const Index = () => {
                 calendarViewTopOffsetPercentage={calendarViewTopOffsetPercentage}
                 calendarViewLeftOffsetPercentage={calendarViewLeftOffsetPercentage}
                 selectedWeek={selectedWeek}
+                openNewEventDialogHandler={openNewEventDialogHandler}
             />
             </div>
     )

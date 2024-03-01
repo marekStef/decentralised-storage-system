@@ -1,4 +1,5 @@
 import { format, startOfWeek, endOfWeek, getDay, addDays, formatISO  } from "date-fns";
+import SelectedWeek from "./SelectedWeek";
 
 class WeekDatesClassComponent {
     getStartOfWeek(date = new Date()) {
@@ -35,21 +36,6 @@ class WeekDatesClassComponent {
     getCurrentDayNumber(date = new Date()) {
         return parseInt(format(date, 'd'))
     }
-
-    getWeekDaysWithDates = () => {
-        const startOfTheWeek = startOfWeek(new Date(), { weekStartsOn: 1 }); // Start week on Monday
-        const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-      
-        return daysOfWeek.map((day, index) => {
-          const dayDate = addDays(startOfTheWeek, index);
-          return {
-            dayName: day,
-            // date: format(dayDate, 'yyyy-MM-dd')
-            date: dayDate,
-            dayNumberInMonth: format(dayDate, 'dd')
-          };
-        });
-      };
 }
 
 export default new WeekDatesClassComponent();
