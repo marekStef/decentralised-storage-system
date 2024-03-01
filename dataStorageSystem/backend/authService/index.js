@@ -5,8 +5,8 @@ const registerRoutes = require('./src/routeRegistrar');
 
 const logger = require('./src/logger/winston');
 
-const db = require('./src/database/Database')
-db.connect();
+// const db = require('./src/database/Database')
+// db.connect();
 
 const app = express();
 app.use(express.json());

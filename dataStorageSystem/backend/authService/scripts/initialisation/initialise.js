@@ -1,15 +1,15 @@
 const axios = require("axios")
 const {v4: uuidv4} = require("uuid");
 require('dotenv').config();
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 const appCoreProfileSchema_v1 = require('./data/app_core_profile_schema_v1.json');
 
 const DataStorage = require('../../src/externalComponents/DataStorage')
 
-mongoose.connect(process.env.MONGO_DB_URI, {})
-    .then(() => console.log('MongoDB successfully connected'))
-    .catch(err => console.error('Could not connect to database (mongodb):', err));
+// mongoose.connect(process.env.MONGO_DB_URI, {})
+//     .then(() => console.log('MongoDB successfully connected'))
+//     .catch(err => console.error('Could not connect to database (mongodb):', err));
 
 const sendEventsToDataStorage = async (events) => {
     DataStorage.sendEventsToDataStorage(events)
@@ -23,6 +23,7 @@ const sendEventsToDataStorage = async (events) => {
             }
         })
         .catch(({code, message}) => {
+            console.log("!!! look at the problem in dataStorage")
             console.log(message)
         })
 

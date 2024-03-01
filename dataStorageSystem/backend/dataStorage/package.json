@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon --exitcrash index.js",
-    "initialise": "node scripts/initialisation/initialise.js",
-    "delete": "node scripts/deletion/deleteDatabase.js",
-    "delete_and_initialise": "npm run delete && npm run initialise",
+    "delete_database": "node scripts/deletion/deleteDatabase.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
