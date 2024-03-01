@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "7a73cd7e-0b66-4b6e-9854-14b4787255f6",
+		"name": "dataStorageSystemApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17094174"
+	},
+	"item": [
+		{
+			"name": "general",
+			"item": [
+				{
+					"name": "check_presence",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{AUTH_SERVER_URL}}/status_info/checks/check_data_storage_presence",
+							"host": [
+								"{{AUTH_SERVER_URL}}"
+							],
+							"path": [
+								"status_info",
+								"checks",
+								"check_data_storage_presence"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authService",
+			"item": [
+				{
+					"name": "adminApi",
+					"item": [
+						{
+							"name": "get_one_app_-1",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/65c8de38f80d9b0baafafbe1",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"apps",
+										"65c8de38f80d9b0baafafbe1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_all_apps_0",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"apps"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "register_new_app_1",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"nameDefinedByUser\": \"My New app\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/register_new_app",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"register_new_app"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_association_token_2",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"appHolderId\": \"65de5978b923cf44dd97831a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/generate_one_time_association_token",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"generate_one_time_association_token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get_unapproved_permissions_requests_6",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"permissions",
+										"get_unapproved_permissions_requests"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "approve_permission_request_7",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"permissionId\": \"65de68033887ce0336d15bc8\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/approve_permission_request",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"permissions",
+										"approve_permission_request"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "revoke_permission_9",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"permissionId\": \"65c634fd1b6deae674c26af1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/revoke_permission",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"permissions",
+										"revoke_permission"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "appApi",
+					"item": [
+						{
+							"name": "associate_with_storage_app_holder_3",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"associationTokenId\": \"65de5980b923cf44dd97831e\",\r\n    \"nameDefinedByApp\": \"ahoj.kasdlfj\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/associate_with_storage_app_holder",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"associate_with_storage_app_holder"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create_new_profile_4",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZGU1OTc4YjkyM2NmNDRkZDk3ODMxYSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IGFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmthc2RsZmoiLCJpYXQiOjE3MDkwNzA3MzAsImV4cCI6MTExNzYzNTA3MzB9.VLHULgpWWI1aINj16uT7ZYwlj5AvltXO1zbZ3Vfq15Q\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/register_new_profile",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"register_new_profile"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "request_new_permissions_5",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZGU1OTc4YjkyM2NmNDRkZDk3ODMxYSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IGFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmthc2RsZmoiLCJpYXQiOjE3MDkwNzA3MzAsImV4cCI6MTExNzYzNTA3MzB9.VLHULgpWWI1aINj16uT7ZYwlj5AvltXO1zbZ3Vfq15Q\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/request_new_permissions",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"request_new_permissions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "upload_new_events_8",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVkZTY4MDMzODg3Y2UwMzM2ZDE1YmM4IiwiYXBwSWQiOiI2NWRlNTk3OGI5MjNjZjQ0ZGQ5NzgzMWEiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMi0yN1QyMjo1Mzo1NS40NzNaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzA5MDc0NDM1LCJleHAiOjExMTc2MzU0NDM1fQ.Pe9uJfz8YT8HHHGxIQEMkuBvfcxWTNzyWhxRJVavq9I\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"ahoj.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            },\r\n            \"metadata\": {\r\n                \"profile\": \"ahoj.com/first_profile\",\r\n                \"createdData\": \"2024-02-08T21:56:18.277Z\"\r\n            }\r\n        }\r\n    ]\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/upload_new_events",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"upload_new_events"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

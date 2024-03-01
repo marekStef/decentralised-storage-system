@@ -1,9 +1,10 @@
 # Data Storage System
-TODO
 
-------------------------------------------------------------
+Instrukce pro setup:
+1. Rozbehnuti [hlavniho dataStorage systemu](./dataStorageSystem/README.md)
+2. Rozbehnuti [jednotlivych source appiek](./source_apps/README.md)
 
-Irrelevant info to the readme (will be deleted in the future)
+<!-- Irrelevant info to the readme (will be deleted in the future)
 
 ##### Update 16.8.2023
 Zacal jsem s implementaci toho vedlejsiho serveru pro ukladani tych transformacnich funkcii, jak jsme se bavili na stretnuti v pondeli, 14.8.2023. `DataViewStore` je prave ten server na to ukladani nejen jednotlivych funkci ale celych modulov - jak jste chteli. Ten `DataViewStore` je ta cast, kterou ste nakreslil napravo dole od storage ve ctverci(obrazok niz) - je tam pravdepodobne napsano `Plugin store`.
@@ -47,7 +48,7 @@ Predstavovali jste si tuhle cast nejak takhle?
 
 ###### UseCases & funkcni pozadavky
 
-Usecases a funkční požadavky jsou v overleafu - sekce `kap02_navrh.text` Bol by som velmi vdecny, ak by jste si nasli cas a pripadne mi dali feedback, ci je to dobre, nebo jestli jsem to napsal zcela spatne.
+Usecases a funkční požadavky jsou v overleafu - sekce `kap02_navrh.text` Bol by som velmi vdecny, ak by jste si nasli cas a pripadne mi dali feedback, ci je to dobre, nebo jestli jsem to napsal zcela spatne. -->
 
 ---
 

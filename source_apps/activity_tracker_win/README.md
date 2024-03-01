@@ -1,3 +1,5 @@
+# Activity Tracker C++
+
 This C++ needs curl library to be compiled.
 
 Instructions for adding curl library:
