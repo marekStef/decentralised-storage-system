@@ -1,4 +1,4 @@
-# Backend system `dataStorage`
+# Backend
 
 Backend je momentalne rozdelen na 3 casti:
 - `dataStorage`
@@ -17,4 +17,4 @@ Ted je mozne pristoupit k samotnimu setupu DataStorage [zde](./dataStorage/READM
 
 #### AuthService
 
-Setup `AuthService` nevyzaduji pristup k `MongoDb` databazi a je pomerne primocari [zde](./authService/README.md)
+Setup `AuthService` nevyzaduji pristup k `MongoDb` databazi a je pomerne primocarej [zde](./authService/README.md)
