@@ -1,6 +1,6 @@
 import React from "react";
 
-const TimeLabel = ({ index, calendarHeight, headerHeight }) => {
+const TimeLabel = ({ index, calendarHeight, headerHeight, calendarLeftColumnHoursWidthInPixels }) => {
     const slotHeight = calendarHeight / 24
     return (
         <div
@@ -12,7 +12,8 @@ const TimeLabel = ({ index, calendarHeight, headerHeight }) => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                zIndex: 20
+                zIndex: 20,
+                width: `${calendarLeftColumnHoursWidthInPixels}px`
             }}
         >
             {index}:00

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import "./index.css";
 import { colors } from "@/constants/colors";
 import Calendar from "@/data/Calendar";
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 import Event from "./components/Event/Event";
 import HourLine from "./components/HourLines/HourLine";
@@ -15,6 +16,7 @@ import { timeConstants } from "@/constants/timeConstants";
 import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
 import { isToday } from "date-fns";
 import { NewEventDialogData } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
+import useScrollbarWidth from "@/customHooks/useScrollbarWidth";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -68,6 +70,8 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             scrollContainerRef.current.scrollTop = currentHourOffsetInPixels - 100; // 100px to ensure the line is not right at the top
         }
     }, [calendarHeight]);
+
+    const scrollbarWidth = useScrollbarWidth(scrollContainerRef);
 
     // initial calendarHeight based on the current window dimensions
     useEffect(() => {
@@ -145,6 +149,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
         return eventsWithPosition;
     };
 
+    const slotWidth = Math.floor((calendarWidth - calendarLeftColumnHoursWidthInPixels - scrollbarWidth) / 7)
 
     return (
         <div
@@ -173,10 +178,15 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 />
 
                 <DraggableNewEventPreview 
-                    startOffsetInPixels={calendarTopOffsetInPixels} 
+                    calendarTopOffsetInPixels={calendarTopOffsetInPixels} 
+                    headerHeight={headerHeight}
+                    calendarHeight={calendarHeight}
                     scrollContainerRef={scrollContainerRef} 
                     calendarLeftOffsetInPixels={calendarLeftOffsetInPixels}
-                    hourSlotWidth={(calendarWidth - calendarLeftColumnHoursWidthInPixels) / 7}
+                    hourSlotWidth={slotWidth}
+                    hourSlotHeight={calendarHeight / 24}
+                    calendarWidth={calendarWidth}
+                    calendarLeftColumnHoursWidthInPixels={calendarLeftColumnHoursWidthInPixels}
                 />
 
                 {/* Hour Lines */}
@@ -197,6 +207,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             index={index}
                             calendarHeight={calendarHeight}
                             headerHeight={headerHeight}
+                            calendarLeftColumnHoursWidthInPixels={calendarLeftColumnHoursWidthInPixels}
                         />
                     ))}
                 </div>
@@ -269,6 +280,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             }}
                         >
                             {/* <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>Time</p> */}
+                            <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>{slotWidth}</p>
                             <SyncLoader
                                 color='black'
                                 loading={params.isLoadingEvents}
@@ -288,7 +300,8 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             <div
                                 key={day.dayName}
                                 style={{
-                                    flex: 1,
+                                    // flex: 1,
+                                    width: `${slotWidth}px`,
                                     // borderLeft: `1px solid ${colors.gray2}`,
                                     position: "relative",
                                     height: `${calendarHeight + headerHeight
