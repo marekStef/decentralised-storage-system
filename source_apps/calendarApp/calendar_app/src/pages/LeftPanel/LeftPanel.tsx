@@ -1,10 +1,21 @@
 import { colors } from '@/constants/colors';
 import React from 'react';
+import MonthMinimap from './components/MonthMinimap/MonthMinimap';
+import SelectedWeek from '@/data/SelectedWeek';
+import { SelectedMonth } from '@/data/SelectedMonth';
 
-const LeftPanel = () => {
+interface LeftPanelParams {
+    calendarHeaderHeightInPixels: number,
+    selectedWeek: SelectedWeek,
+    selectedMonth: SelectedMonth,
+    setSelectedWeek: (week: SelectedWeek | ((prevWeek: SelectedWeek) => SelectedWeek)) => void;
+    setSelectedMonth: (week: SelectedMonth | ((prevMonth: SelectedMonth) => SelectedMonth)) => void;
+}
+
+const LeftPanel: React.FC<LeftPanelParams> = params => {
     return (
-        <div style={{width: '100%', height: '100%', padding: '1rem', backgroundColor: colors.gray1}}>
-            <h1>Left Panel</h1>
+        <div style={{marginTop: `${params.calendarHeaderHeightInPixels}px`, backgroundColor: 'white', padding: "0 1rem"}}>
+            <MonthMinimap selectedMonth={params.selectedMonth} selectedWeek={params.selectedWeek} setSelectedWeek={params.setSelectedWeek} setSelectedMonth={params.setSelectedMonth}/>
         </div>
     )
 }

@@ -1,14 +1,16 @@
 import React from 'react';
 import { colors } from '@/constants/colors';
-import { IoTodayOutline } from 'react-icons/io5';
+import { IoSettingsOutline } from 'react-icons/io5';
 
-import WeekNavigationButtons from './components/WeekNavigationButtons';
+import WeekNavigationButtons from './components/WeekNavigationButtons/WeekNavigationButtons';
 import SelectedWeek from '@/data/SelectedWeek';
 import Calendar from '@/data/Calendar';
+import SquareButton from '../../components/SquareButton/SquareButton';
 
 interface TopPanelParams {
     selectedWeek: SelectedWeek,
     setSelectedWeek: (week: SelectedWeek | ((prevWeek: SelectedWeek) => SelectedWeek)) => void;
+    openSettings: () => void;
 }
 
 const TopPanel: React.FC<TopPanelParams> = (params) => {
@@ -34,10 +36,17 @@ const TopPanel: React.FC<TopPanelParams> = (params) => {
                         alignItems: 'center',
                     }}
                 >
+
+                    <SquareButton onClick={params.openSettings}>
+                        <IoSettingsOutline size={24} />{" "}
+                    </SquareButton>
+
                     
                     <h1
                         style={{padding: '0.5rem'}}
-                    >{Calendar.getReadableDateWithoutTime(params.selectedWeek.startOfWeek)}-{Calendar.getReadableDateWithoutTime(params.selectedWeek.endOfWeek)}</h1>
+                    >
+                        {Calendar.getReadableDateWithoutTime(params.selectedWeek.startOfWeek)}-{Calendar.getReadableDateWithoutTime(params.selectedWeek.endOfWeek)}
+                    </h1>
                     <WeekNavigationButtons setSelectedWeek={params.setSelectedWeek} />
                 </div>
 

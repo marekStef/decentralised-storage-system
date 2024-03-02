@@ -4,6 +4,7 @@ import { IoChevronBackOutline, IoChevronForwardOutline, IoTodayOutline } from "r
 
 import "./WeekNavigationButtons.css";
 import SelectedWeek from "@/data/SelectedWeek";
+import SquareButton from "@/components/SquareButton/SquareButton";
 
 interface WeekNavigationButtonsParams {
     setSelectedWeek: (week: SelectedWeek | ((prevWeek: SelectedWeek) => SelectedWeek)) => void;
@@ -26,40 +27,13 @@ const WeekNavigationButtons: React.FC<WeekNavigationButtonsParams> = (params) =>
     return (
         
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <button
-                    onClick={handlePreviousWeek}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: '0.4rem',
-                        borderWidth: '1px',
-                        borderColor: colors.gray2,
-                        borderStyle: 'solid',
-                    }}
-                    className="hover:bg-slate-50"
-                >
+                <SquareButton onClick={handlePreviousWeek}>
                     <IoChevronBackOutline size={24} />{" "}
-                </button>
-                <button
-                    onClick={handleNextWeek}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: '0.4rem',
-                        borderWidth: '1px',
-                        borderColor: colors.gray2,
-                        borderStyle: 'solid',
-                    }}
-                    className="hover:bg-slate-50"
-                >
+                </SquareButton>
+
+                <SquareButton onClick={handleNextWeek}>
                     <IoChevronForwardOutline size={24} />{" "}
-                </button>
+                </SquareButton>
 
                 <button
                         onClick={handleCurrentWeek}

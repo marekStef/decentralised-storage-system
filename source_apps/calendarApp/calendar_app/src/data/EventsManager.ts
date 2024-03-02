@@ -44,7 +44,7 @@ const mockupEvents = (selectedWeek: SelectedWeek) => {
         { title: "Workshop", startTime: "15:20", endTime: "16:20", color: '#3cd' }
     ]
 
-    console.log(JSON.stringify(result))
+    // console.log(JSON.stringify(result))
 
     return result;
 };

@@ -24,6 +24,7 @@ interface WeekViewParams {
     calendarViewTopOffsetPercentage: number,
     calendarViewLeftOffsetPercentage: number,
     calendarViewRightOffsetPercentage: number,
+    calendarHeaderHeightInPixels: number,
     selectedWeek: SelectedWeek,
     openNewEventDialogHandler: (data: NewEventDialogData) => void,
     isLoadingEvents: boolean,
@@ -43,7 +44,6 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     const [daysOfWeek, setDaysOfWeek] = useState<Array<DayOfWeek> | null>(null)
 
     // The height of the header with day names
-    const headerHeight = 60;
     const calendarLeftColumnHoursWidthInPixels = 50
     // Total height of the calendar (excluding the header)
     const [calendarHeight, setCalendarHeight] = useState(0);
@@ -54,7 +54,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     const currentHourInSeconds = currentDateTime.getHours() * 60 * 60 + currentDateTime.getMinutes() * 60 + currentDateTime.getSeconds()
 
-    const calendarHeightWithoutHeader = calendarHeight - headerHeight;
+    const calendarHeightWithoutHeader = calendarHeight - params.calendarHeaderHeightInPixels;
 
     const currentHourOffsetInPixels = (calendarHeightWithoutHeader / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
 
@@ -78,7 +78,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
         const updateDimensions = () => {
             const offset = window.innerHeight * params.calendarViewTopOffsetPercentage;
             setCalendarHeight(window.innerHeight * 2 - offset);
-            // setCalendarHeight(window.innerHeight * 2 - headerHeight);
+            // setCalendarHeight(window.innerHeight * 2 - params.calendarHeaderHeightInPixels);
 
             setCalendarWidth(window.innerWidth * (1 - params.calendarViewLeftOffsetPercentage - params.calendarViewRightOffsetPercentage));
         };
@@ -112,7 +112,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
             .split(":")
             .map((num) => parseInt(num, 10));
         const hourHeight = calendarHeight / 24;
-        return headerHeight + hours * hourHeight + (minutes * hourHeight) / 60;
+        return params.calendarHeaderHeightInPixels + hours * hourHeight + (minutes * hourHeight) / 60;
     };
 
     const adjustEventPositions = (dayEvents) => {
@@ -174,12 +174,12 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 {/* Current time line */}
                 <CurrentHourLine
                     leftOffset={calendarLeftColumnHoursWidthInPixels}
-                    position={headerHeight + currentHourOffsetInPixels}
+                    position={params.calendarHeaderHeightInPixels + currentHourOffsetInPixels}
                 />
 
                 <DraggableNewEventPreview 
                     calendarTopOffsetInPixels={calendarTopOffsetInPixels} 
-                    headerHeight={headerHeight}
+                    headerHeight={params.calendarHeaderHeightInPixels}
                     calendarHeight={calendarHeight}
                     scrollContainerRef={scrollContainerRef} 
                     calendarLeftOffsetInPixels={calendarLeftOffsetInPixels}
@@ -194,7 +194,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     <HourLine
                         key={index}
                         position={
-                            headerHeight + index * (calendarHeight / 24)
+                            params.calendarHeaderHeightInPixels + index * (calendarHeight / 24)
                         }
                     />
                 ))}
@@ -206,7 +206,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             key={index}
                             index={index}
                             calendarHeight={calendarHeight}
-                            headerHeight={headerHeight}
+                            headerHeight={params.calendarHeaderHeightInPixels}
                             calendarLeftColumnHoursWidthInPixels={calendarLeftColumnHoursWidthInPixels}
                         />
                     ))}
@@ -218,7 +218,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     <DayColumn
                         key={day}
                         day={day}
-                        headerHeight={headerHeight}
+                        headerHeight={params.calendarHeaderHeightInPixels}
                         calendarHeight={calendarHeight}
                         events={events[day]}
                         adjustEventPositions={adjustEventPositions}
@@ -232,13 +232,13 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                         style={{
                             width: "50px",
                             background: "red",
-                            height: `${headerHeight}px`,
+                            height: `${params.calendarHeaderHeightInPixels}px`,
                             position: "relative",
                         }}
                     >
                         <div
                             style={{
-                                height: `${headerHeight}px`,
+                                height: `${params.calendarHeaderHeightInPixels}px`,
                                 position: "sticky",
                                 top: 0,
                                 width: "100%",
@@ -261,12 +261,12 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 >
                     <div style={{
                         position: "relative",
-                        height: `${calendarHeight + headerHeight}px`,
+                        height: `${calendarHeight + params.calendarHeaderHeightInPixels}px`,
                     }}>
 
                         <div
                             style={{
-                                height: `${headerHeight}px`,
+                                height: `${params.calendarHeaderHeightInPixels}px`,
                                 position: "sticky",
                                 top: 0,
                                 width: `${calendarLeftColumnHoursWidthInPixels}px`,
@@ -304,13 +304,12 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                     width: `${slotWidth}px`,
                                     // borderLeft: `1px solid ${colors.gray2}`,
                                     position: "relative",
-                                    height: `${calendarHeight + headerHeight
-                                        }px`,
+                                    height: `${calendarHeight + params.calendarHeaderHeightInPixels}px`,
                                 }}
                             >
                                 <div
                                     style={{
-                                        height: `${headerHeight}px`,
+                                        height: `${params.calendarHeaderHeightInPixels}px`,
                                         position: "sticky",
                                         top: 0,
                                         width: "100%",
@@ -339,7 +338,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 {Array.from({ length: 24 }).map(
                                     (_, hour) => {
                                         const slotHeight = calendarHeight / 24
-                                        const topOffset = headerHeight + hour * slotHeight;
+                                        const topOffset = params.calendarHeaderHeightInPixels + hour * slotHeight;
                                         return (
                                             <div
                                                 key={hour}

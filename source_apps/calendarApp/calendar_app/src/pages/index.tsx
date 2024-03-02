@@ -7,19 +7,25 @@ import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
 import EventsManager, { Events } from '@/data/EventsManager';
 import NewEventDialogMaterial, { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
+import CalendarSettings from '@/components/CalendarSettings/CalendarSettings';
+import { SelectedMonth } from '@/data/SelectedMonth';
 
 const eventsManager = new EventsManager();
+
+const calendarViewTopOffsetPercentage = 0.1;
+const calendarViewLeftOffsetPercentage = 0.2;
+const calendarViewRightOffsetPercentage = 0.01;
+const calendarHeaderHeightInPixels = 60;
 
 const Index = () => {
     const [screenHeight, setScreenHeight] = useState(0);
     const [screenWidth, setScreenWidth] = useState(0);
 
-    const calendarViewTopOffsetPercentage = 0.1;
-    const calendarViewLeftOffsetPercentage = 0.2;
-    const calendarViewRightOffsetPercentage = 0.01;
-
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
+    const [selectedMonth, setSelectedMonth] = useState<SelectedMonth>(new SelectedMonth())
+
     const [newEventDialogData, setNewEventDialogData] = useState<NewEventDialogData | null>(null)
+    const [openedSettings, setOpenedSettings] = useState<boolean>(false);
 
     const openNewEventDialogHandler = (data: NewEventDialogData) => {
         setNewEventDialogData(data);
@@ -51,6 +57,8 @@ const Index = () => {
 
         updateDimensions();
         window.addEventListener("resize", updateDimensions);
+
+        setSelectedMonth(new SelectedMonth())
     }, []);
 
     // event related [END]
@@ -68,6 +76,8 @@ const Index = () => {
             {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
 
             <NewEventDialogMaterial open={newEventDialogData} handleClose={() => setNewEventDialogData(null)} newEventDialogData={newEventDialogData}/>
+            <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)}/>
+
             <div
                 style={{
                     height: `${calendarViewTopOffsetPercentage * 100}vh`,
@@ -77,7 +87,11 @@ const Index = () => {
                     zIndex: 2,
                 }}
             >
-                <TopPanel selectedWeek={selectedWeek} setSelectedWeek={setSelectedWeek}/>
+                <TopPanel 
+                    selectedWeek={selectedWeek} 
+                    setSelectedWeek={setSelectedWeek} 
+                    openSettings={() => setOpenedSettings(true)} 
+                />
             </div>
 
             <div style={{
@@ -87,7 +101,13 @@ const Index = () => {
                     width: `${(calendarViewLeftOffsetPercentage) * 100}vw`,
                     zIndex: 2,
                 }}>
-                    <LeftPanel />
+                    <LeftPanel 
+                        calendarHeaderHeightInPixels={calendarHeaderHeightInPixels}
+                        selectedWeek={selectedWeek}
+                        selectedMonth={selectedMonth}
+                        setSelectedWeek={setSelectedWeek} 
+                        setSelectedMonth={setSelectedMonth}
+                    />
             </div>
             <WeekView
                 screenHeight={screenHeight}
@@ -95,6 +115,7 @@ const Index = () => {
                 calendarViewTopOffsetPercentage={calendarViewTopOffsetPercentage}
                 calendarViewLeftOffsetPercentage={calendarViewLeftOffsetPercentage}
                 calendarViewRightOffsetPercentage={calendarViewRightOffsetPercentage}
+                calendarHeaderHeightInPixels={calendarHeaderHeightInPixels}
                 selectedWeek={selectedWeek}
                 openNewEventDialogHandler={openNewEventDialogHandler}
                 isLoadingEvents={isLoadingEvents}
