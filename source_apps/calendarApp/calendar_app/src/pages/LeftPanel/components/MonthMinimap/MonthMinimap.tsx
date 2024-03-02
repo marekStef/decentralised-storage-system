@@ -20,7 +20,7 @@ const MonthMinimap : React.FC<MonthMinimapParams> = params => {
   const [selectedDayInMinimap, setSelectedDayInMinimap] = useState<Date | null>();
 
   // to include 7 days before and after the selected month
-  const extendedStartDate = subDays(startDate, 7);
+  const extendedStartDate = startOfWeek(startDate, {weekStartsOn: 1});
   const extendedEndDate = addDays(endDate, 7);
 
   const daysToDisplay = eachDayOfInterval({
@@ -65,6 +65,13 @@ const MonthMinimap : React.FC<MonthMinimapParams> = params => {
 
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(20px, 1fr))', gap: '2px' }}>
+        { Array.from({ length: 7 }, (_, i) => {
+            return (
+                <div key={i} style={{ textAlign: 'center', padding: '2px', backgroundColor: 'white', color: colors.grey[400], cursor: 'pointer' }}>
+                    {format(daysToDisplay[i], 'eeeee')}
+                </div>
+            )
+        })}
         {daysToDisplay.map((day, index) => {
             let backgroundColor: string = colors.grey[50];
             let color = 'black';
