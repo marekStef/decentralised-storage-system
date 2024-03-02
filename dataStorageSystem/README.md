@@ -6,6 +6,8 @@ Rozbehnuti backendu se nachazi [zde](./backend/README.md) a rozbehnuti frontendu
 
 Vsechny requesty, ktere momentalne umi backend jsou v tomhle adresari. Je to export API requestov z postmanu na dany system. Jednotlive requesty maji sva jmena zakoncene cislami. Tyhle cisla indikuji poradi, ve kterych by se meli vykonavat. Tento json export je exportnuty z program `PostMan`, ktery by bylo vhodne mit nainstalovany. Pak je mozne jednoduse importovat tento export do postmanu a pripadne v sekci `Environment` zmenit `URL` `authService` serveru, pokud se `authService` spusti na jinem portu nez 3000. [Export je zde.](./dataStorageSystemApi.postman_collection.json)
 
+Je dulezite poznamenat, ze vsechny zatim implementovane requesty jsou k dispozicii na ukazku prave v danem exportu, teda je vhodnejsi backend radejsi zkouset z postmana jako z frontendu.
+
 ### Spusteni jednotlivych casti backendu
 
 Instrukce pro spusteni jednotlivych casti systemu jsou [zde.](./backend/README.md)
