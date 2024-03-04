@@ -1,19 +1,27 @@
+import { Event } from "@/data/EventsManager";
 import React from "react";
 
-
-const getEventHeight = (calendarHeight, durationInMinutes) => {
+const getEventHeight = (calendarHeight: number, durationInMinutes: number) => {
     const hourHeight = calendarHeight / 24;
     const eventHeight = (durationInMinutes / 60) * hourHeight;
     return eventHeight;
 };
 
-const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
-    const startTime = event.startTime.split(":").map(Number);
-    const endTime = event.endTime.split(":").map(Number);
-    const durationMinutes =
-        endTime[0] * 60 + endTime[1] - (startTime[0] * 60 + startTime[1]);
+interface EventUIParams {
+    event: Event;
+    topOffset: number;
+    leftOffset: number;
+    width: number;
+    calendarHeight: number;
+}
 
-    const eventHeight = getEventHeight(calendarHeight, durationMinutes);
+const EventUI: React.FC<EventUIParams> = (params) => {
+    // const startTime = event.startTime.split(":").map(Number);
+    // const endTime = event.endTime.split(":").map(Number);
+    const durationMinutes = params.event.endTime.getHours() * 60 + params.event.endTime.getMinutes() 
+        - (params.event.startTime.getHours() * 60 + params.event.startTime.getMinutes());
+
+    const eventHeight = getEventHeight(params.calendarHeight, durationMinutes);
 
     const fontSize = "11px";
 
@@ -21,9 +29,9 @@ const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
             <div
                 style={{
                     position: "absolute",
-                    top: `${topOffset}px`,
-                    left: `${leftOffset}%`,
-                    width: `${width}%`,
+                    top: `${params.topOffset}px`,
+                    left: `${params.leftOffset}%`,
+                    width: `${params.width}%`,
                     height: `${eventHeight}px`,
                     padding: "1px",
                     margin: "1px 0",
@@ -33,15 +41,17 @@ const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
                     border: "1px #ccc solid",
-                    backgroundColor: event.color ?? 'white',
+                    backgroundColor: params.event.color ?? 'white',
                     zIndex: 50
                 }}
                 className="hover:shadow-md cursor-pointer"
             >
-                <strong title={event.title}>
-                    {event.title.substring(0, 10) +
-                        (event.title.length > 10 ? "..." : "")}{" "}
-                    {event.startTime} - {event.endTime}
+                <strong title={params.event.title}>
+                    <p>{params.event.title}</p>
+                    <p>{params.event.description}</p>
+                    {/* {params.event.title.substring(0, 10) +
+                        (params.event.title.length > 10 ? "..." : "")}{" "} */}
+                    {params.event.startTime.toISOString()} - {params.event.endTime.toISOString()}
                 </strong>{" "}
                 <br />
                 </div>
@@ -49,4 +59,4 @@ const Event = ({ event, topOffset, leftOffset, width, calendarHeight }) => {
     );
 };
 
-export default Event;
+export default EventUI;

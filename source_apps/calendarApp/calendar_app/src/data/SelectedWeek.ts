@@ -1,4 +1,4 @@
-import { addDays, format, startOfWeek } from "date-fns";
+import { addDays, format, isWithinInterval, startOfWeek } from "date-fns";
 import Calendar from "./Calendar";
 
 export interface DayOfWeek {
@@ -15,6 +15,10 @@ class SelectedWeek {
     constructor(startOfWeek: Date = Calendar.getStartOfWeek(), endOfWeek: Date = Calendar.getEndOfWeek()) {
         this.startOfWeek = startOfWeek;
         this.endOfWeek = endOfWeek;
+    }
+
+    isGivenDateInThisWeek(dateToCheck: Date): boolean {
+      return isWithinInterval(dateToCheck, { start: this.startOfWeek, end: this.endOfWeek });
     }
 
     getCurrentWeek(): SelectedWeek {
@@ -40,7 +44,6 @@ class SelectedWeek {
     }
 
     getDayInThisWeekAccordingToIndexStartingFromMonday(index: number) {
-      console.log("////", this.startOfWeek)
       return addDays(this.startOfWeek, index)
     }
 
@@ -58,8 +61,8 @@ class SelectedWeek {
         };
       });
 
-      console.log('hmmm')
-      console.log(result)
+      // console.log('hmmm')
+      // console.log(result)
       return result;
     };
 }

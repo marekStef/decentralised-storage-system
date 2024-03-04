@@ -38,7 +38,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [startTime, setStartTime] = useState<Date>(startTimeDate);
-    const [endTime, setEndTime] = useState<Date>(endTimeDate);
+    const [endTime, setEndTime] = useState<Date | null>(endTimeDate);
     const [color, setColor] = useState(colors[0].value);
 
     const handleSubmit = () => {
@@ -76,7 +76,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, 
                 </LocalizationProvider>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="cs" >
-                    <DateTimePicker label="End Time" value={dayjs(endTime)} onChange={(newValue) => setEndTime(newValue)}/>
+                    <DateTimePicker label="End Time" value={dayjs(endTime)} onChange={(newValue: Date | null) => setEndTime(newValue)}/>
                 </LocalizationProvider>
                 
                 <FormControl fullWidth margin="normal">

@@ -9,20 +9,24 @@ const convertToLowerMultipleOf5 = (num: number) : number => {
     return Math.round(num / 5) * 5;
 }
 
-const disableTextSelection = document => {
+const disableTextSelection = (document: Document) => {
     document.body.style.userSelect = 'none';
 }
 
-const enableTextSelection = (document) : void => {
+const enableTextSelection = (document: Document) : void => {
     document.body.style.userSelect = '';
 }
 
-const getAdjustedYOffsetWithRespectToScroll = (scrollContainerRef, event: MouseEvent) : number => {
+const getAdjustedYOffsetWithRespectToScroll = (scrollContainerRef: React.RefObject<HTMLDivElement>, event: MouseEvent) : number => {
+    if (!scrollContainerRef.current) 
+        return 0;
     const scrollOffset = scrollContainerRef.current.scrollTop;
     return event.clientY + scrollOffset;
 }
 
-const getAdjustedXOffsetWithRespectToScroll = (scrollContainerRef, event: MouseEvent) : number => {
+const getAdjustedXOffsetWithRespectToScroll = (scrollContainerRef: React.RefObject<HTMLDivElement>, event: MouseEvent) : number => {
+    if (!scrollContainerRef.current) 
+        return 0;
     return event.clientX + scrollContainerRef.current.scrollLeft;
 }
 
@@ -48,6 +52,15 @@ const getSelectedMinuteBasedOnVerticalOffsetStartingFromTheFirstHourRow = (verti
 
 interface DraggableNewEventPreviewParams {
     openNewEventDialogHandler: (data: NewEventDialogData) => void
+    hourSlotHeight: number,
+    calendarLeftOffsetInPixels: number,
+    calendarLeftColumnHoursWidthInPixels: number,
+    calendarTopOffsetInPixels: number,
+    headerHeight: number,
+    hourSlotWidth: number,
+    scrollContainerRef: React.RefObject<HTMLDivElement>,
+    calendarHeight: number,
+    calendarWidth: number
 }
 
 const getNumberOfMinutesBasedOnTheOffsetAndSlotHeight = (startOffset: number, endOffset: number, slotHeight: number) => {
@@ -60,6 +73,7 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
     const [startY, setStartY] = useState(0);
     const [currentY, setCurrentY] = useState(0);
     const [selectedStartTime, setSelectedStartTime] = useState({
+        dayIndex: 0,
         hour: 0,
         minute: 0
     });
@@ -145,27 +159,30 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
                 const adjustedXOffset = getAdjustedXOffsetWithRespectToScroll(params.scrollContainerRef, event)
 
                 const horizontalOffsetStartingFromTheFirstDayColumn = getHorizontalOffsetStartingAtTheFirstAtTheStartOfFirstDayColumn(adjustedXOffset, params.calendarLeftOffsetInPixels, params.calendarLeftColumnHoursWidthInPixels);
-                const selectedDayIndex = getSelectedDayIndexBasedOnFirstHorizontalIndexAndHourSlot(horizontalOffsetStartingFromTheFirstDayColumn, params.hourSlotWidth);
+                const dayIndex = getSelectedDayIndexBasedOnFirstHorizontalIndexAndHourSlot(horizontalOffsetStartingFromTheFirstDayColumn, params.hourSlotWidth);
 
                 const verticalOffsetStartingFromTheFirstHourRow = getVerticalOffsetStartingFromTheFirstHourRow(adjustedStartY, params.calendarTopOffsetInPixels, params.headerHeight);
                 const selectedHourIndex = getSelectedHourBasedOnVerticalOffsetStartingFromTheFirstHourRow(verticalOffsetStartingFromTheFirstHourRow, params.hourSlotHeight)
                 const selectedMinuteIndex = getSelectedMinuteBasedOnVerticalOffsetStartingFromTheFirstHourRow(verticalOffsetStartingFromTheFirstHourRow, params.hourSlotHeight)
 
-                if (selectedDayIndex < 0 || selectedHourIndex < 0) return;
+                if (dayIndex < 0 || selectedHourIndex < 0) return;
+
 
                 setSelectedStartTime({
+                    dayIndex,
                     hour: selectedHourIndex,
                     minute: selectedMinuteIndex
                 });
 
                 selectedStartTimeRef.current = {
+                    dayIndex,
                     hour: selectedHourIndex,
                     minute: selectedMinuteIndex
                 }
 
                 disableTextSelection(document);
 
-                console.log(selectedDayIndex)
+                console.log(dayIndex)
 
                 const calendarYOffsetStart = params.calendarTopOffsetInPixels + params.headerHeight;
                 const fiveMinuteYOffset = calendarYOffsetStart + (selectedHourIndex * params.hourSlotHeight + (params.hourSlotHeight / 60) * selectedMinuteIndex)
@@ -176,7 +193,7 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
 
                 const calendarXOffsetStart = params.calendarLeftOffsetInPixels + params.calendarLeftColumnHoursWidthInPixels
 
-                setStartX(calendarXOffsetStart + selectedDayIndex * (params.hourSlotWidth))
+                setStartX(calendarXOffsetStart + dayIndex * (params.hourSlotWidth))
                 setIsDragging(true);
             }
         };

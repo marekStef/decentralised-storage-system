@@ -43,7 +43,7 @@ const Index = () => {
         setIsLoadingEvents(true);
         
         eventsManager.getEventsForSelectedWeek(selectedWeek)
-            .then(events => {
+            .then((events: Events) => {
                 setEvents(events)
                 setIsLoadingEvents(false)
             })

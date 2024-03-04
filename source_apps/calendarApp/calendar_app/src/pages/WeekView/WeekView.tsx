@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import "./index.css";
 import { colors } from "@/constants/colors";
 import Calendar from "@/data/Calendar";
-import { Scrollbars } from 'react-custom-scrollbars-2';
 
-import Event from "./components/Event/Event";
+import EventUI from "./components/Event/Event";
+import { Event } from "@/data/EventsManager";
 import HourLine from "./components/HourLines/HourLine";
 import CurrentHourLine from "./components/HourLines/CurrentHourLine";
 import TimeLabel from "./components/TimeLabel/TimeLabel";
@@ -17,6 +17,7 @@ import DraggableNewEventPreview from "./components/DraggableNewEventPreview/Drag
 import { isToday } from "date-fns";
 import { NewEventDialogData } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 import useScrollbarWidth from "@/customHooks/useScrollbarWidth";
+import { convertToLowerMultipleOf5 } from "./components/DraggableNewEventPreview/helpers/timehelpers";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -37,7 +38,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     // console.log(Calendar.getCurrentDayName())
     // console.log(Calendar.getWeekDaysWithDates());
-    const scrollContainerRef = useRef(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     // console.log(Calendar.getFormatDateInISO())
 
@@ -107,25 +108,24 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
     };
 
     // Function to calculate top offset based on event's start time
-    const calculateTopOffset = (startTime) => {
-        const [hours, minutes] = startTime
-            .split(":")
-            .map((num) => parseInt(num, 10));
+    const calculateTopOffset = (startTime: Date) => {
+        // const [hours, minutes] = startTime
+        //     .split(":")
+        //     .map((num) => parseInt(num, 10));
         const hourHeight = calendarHeight / 24;
-        return params.calendarHeaderHeightInPixels + hours * hourHeight + (minutes * hourHeight) / 60;
+        return params.calendarHeaderHeightInPixels + startTime.getHours() * hourHeight + (startTime.getMinutes() * hourHeight) / 60;
     };
 
-    const adjustEventPositions = (dayEvents) => {
+    const adjustEventPositions = (dayEvents: Event[]) => {
         if (!dayEvents) return [];
         // Converting event times to minutes for comparison
         const eventsWithPosition = dayEvents.map((event) => ({
             ...event,
             startInMinutes:
-                parseInt(event.startTime.split(":")[0], 10) * 60 +
-                parseInt(event.startTime.split(":")[1], 10),
+                event.startTime.getHours() * 60 +
+                event.startTime.getMinutes(),
             endInMinutes:
-                parseInt(event.endTime.split(":")[0], 10) * 60 +
-                parseInt(event.endTime.split(":")[1], 10),
+                event.endTime.getHours() * 60 + event.endTime.getMinutes(),
             leftOffset: 0,
             width: 100,
         }));
@@ -175,6 +175,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                 <CurrentHourLine
                     leftOffset={calendarLeftColumnHoursWidthInPixels}
                     position={params.calendarHeaderHeightInPixels + currentHourOffsetInPixels}
+                    heightInPixels={2}
                 />
 
                 <DraggableNewEventPreview 
@@ -281,9 +282,9 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             }}
                         >
                             {/* <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>Time</p> */}
-                            <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>{slotWidth}</p>
+                            {/* <p style={{ fontSize: `1rem`, padding: 0, margin: 0 }}>{slotWidth}</p> */}
                             <SyncLoader
-                                color='black'
+                                color={colors.gray2}
                                 loading={params.isLoadingEvents}
                                 size={5}
                             />
@@ -346,7 +347,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                                 onClick={(e) => {
                                                     const clickY = e.nativeEvent.offsetY;
 
-                                                    const minute = Math.max(0, Math.floor((clickY / slotHeight) * 60))
+                                                    const minute = convertToLowerMultipleOf5(Math.max(0, Math.floor((clickY / slotHeight) * 60)))
 
                                                     console.log(clickY)
                                                     // handleHourClick(
@@ -381,8 +382,8 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 {/* Events */}
 
                                 {adjustedEvents.map((event, index) => (
-                                    <Event
-                                        key={index}
+                                    <EventUI
+                                        key={event.id}
                                         event={event}
                                         topOffset={calculateTopOffset(
                                             event.startTime

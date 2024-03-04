@@ -1,67 +1,65 @@
+import { zeroOutTimeInDate } from "@/pages/WeekView/components/DraggableNewEventPreview/helpers/timehelpers";
 import Calendar from "./Calendar";
 import SelectedWeek from "./SelectedWeek";
 
-const mockupEvents = (selectedWeek: SelectedWeek) => {
-    let result = {};
+export class Event {
+    id: string;
+    startTime: Date;
+    endTime: Date;
+    color: string;
 
-    // monday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(0).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00" },
-        { title: "Meeting 2", startTime: "10:50", endTime: "11:05" },
-        { title: "Meeting 3", startTime: "10:55", endTime: "11:10" },
-    ]
-
-    // tuesday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(1).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00" },
-    ]
-
-    // wednesday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(2).toISOString()] = [
-    ]
-
-    // thursday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(3).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00", color: '#3cd' },
-        { title: "Workshop", startTime: "15:20", endTime: "16:20", color: '#3cd' }
-    ]
-
-    // friday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(4).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00", color: '#3cd' },
-        { title: "Workshop", startTime: "15:20", endTime: "16:20", color: '#3cd' }
-    ]
-
-    // saturday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(5).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00", color: '#3cd' },
-        { title: "Workshop", startTime: "15:20", endTime: "16:20", color: '#3cd' }
-    ]
-
-    // sunday
-    result[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(6).toISOString()] = [
-        { title: "Meeting", startTime: "10:30", endTime: "11:00", color: '#3cd' },
-        { title: "Workshop", startTime: "15:20", endTime: "16:20", color: '#3cd' }
-    ]
-
-    // console.log(JSON.stringify(result))
-
-    return result;
-};
-
-export class Events {
-    events: any;
-    constructor(events: any = {}) {
-        this.events = events;
+    title: string;
+    description: string;
+    constructor(id: string, startTime: Date, endTime: Date, title: string, description: string, color: string) {
+        this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.title = title;
+        this.description = description;
+        this.color = color;
     }
 }
 
+const mockupEvents2 = [
+    new Event("1", new Date(2024, 2, 5, 15, 30, 0), new Date(2024, 2, 5, 18, 45), "New Event 1", "This is some event", "#ccc"),
+    new Event("2", new Date(2024, 2, 5, 15, 50, 0), new Date(2024, 2, 5, 16, 45), "New Event 1", "This is some event", "#dad"),
+]
+
+export type EventsMap = { [key: string]: Event[] }
+
+export class Events {
+    events: EventsMap = {}
+
+    constructor(events: EventsMap = {}) {
+        this.events = events;
+    }
+
+}
+
 class EventsManager {
-    getEventsForSelectedWeek(selectedWeek: SelectedWeek) {
-        return new Promise((res, rej) => {
+    getEventsForSelectedWeek(selectedWeek: SelectedWeek): Promise<Events> {
+        return new Promise<Events>((res, rej) => {
             setTimeout(() => {
-                res(new Events(mockupEvents(selectedWeek)));
-            }, 1000);
+
+                const events = new Events()
+
+                for (let i = 0; i < 7; ++i) {
+                    events.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
+                }
+
+                // console.log(events.events)
+
+                for (let j = 0;  j < mockupEvents2.length; ++j) {
+                    const current = mockupEvents2[j];
+
+                    if (selectedWeek.isGivenDateInThisWeek(current.startTime))
+                        events.events[zeroOutTimeInDate(current.startTime).toISOString()].push(current)
+                }
+
+                // console.log(events.events)
+                res(events)
+
+            }, 500);
         });
     }
 }

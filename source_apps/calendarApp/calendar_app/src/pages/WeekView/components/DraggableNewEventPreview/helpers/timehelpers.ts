@@ -1,5 +1,15 @@
 import { timeConstants } from "@/constants/timeConstants";
 
+export function convertToLowerMultipleOf5(num: number) : number {
+    return Math.round(num / 5) * 5;
+}
+
+export function zeroOutTimeInDate(date: Date): Date {
+    const dateCopy = new Date(date.getTime());
+    dateCopy.setHours(0, 0, 0, 0);
+    return dateCopy;
+}
+
 export function createTime(hour: number, minute: number): Date {
     const now = new Date();
     const year = now.getFullYear();
