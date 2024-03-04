@@ -22,7 +22,7 @@ const CurrentHourLine : React.FC<CurrentHourLineParams> = ({ position, leftOffse
             top: `${position}px`,
             left: `${leftOffset - 5}px`,
             right: 0,
-            zIndex: 10,
+            zIndex: 100,
         }}
     >
         <div

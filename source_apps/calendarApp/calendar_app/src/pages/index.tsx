@@ -5,7 +5,7 @@ import LeftPanel from './LeftPanel/LeftPanel';
 import TopPanel from './TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
-import EventsManager, { Events } from '@/data/EventsManager';
+import EventsManager, { Event, Events } from '@/data/EventsManager';
 import NewEventDialogMaterial, { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 import CalendarSettings from '@/components/CalendarSettings/CalendarSettings';
 import { SelectedMonth } from '@/data/SelectedMonth';
@@ -35,6 +35,37 @@ const Index = () => {
 
     const [events, setEvents] = useState<Events>(new Events());
     const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true)
+
+    const [isCreatingNewEvent, setIsCreatingNewEvent] = useState<boolean>(false)
+
+    const createNewEventHandler = (newEvent: Event): Promise<void> => {
+        return new Promise<void>((res, rej) => {
+            if (isCreatingNewEvent) return;
+
+            setIsCreatingNewEvent(true);
+    
+            eventsManager.createNewEvent(newEvent)
+                .then((response => {
+                    // if the user is currently looking at the week in which they create new newEvent - display that newEvent
+                    if (selectedWeek.isGivenDateInThisWeek(newEvent.startTime)) {
+                        setEvents((events: Events) => {
+                            events.events[newEvent.getDayOfThisEvent().toISOString()] = [
+                                ...events.events[newEvent.getDayOfThisEvent().toISOString()],
+                                newEvent
+                            ]
+                            return events;
+                        })
+                    }
+                    res();
+                }))
+                .catch(err => {
+                    rej()
+                })
+                .finally(() => {
+                    setIsCreatingNewEvent(false)
+                })
+        })
+    }
 
     useEffect(() => {
         console.log("Loading for: ", selectedWeek.startOfWeek)
@@ -75,7 +106,13 @@ const Index = () => {
         >
             {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
 
-            <NewEventDialogMaterial open={newEventDialogData != null} handleClose={() => setNewEventDialogData(null)} newEventDialogData={newEventDialogData}/>
+            <NewEventDialogMaterial 
+                open={newEventDialogData != null} 
+                handleClose={() => setNewEventDialogData(null)} 
+                newEventDialogData={newEventDialogData}
+                createNewEventHandler={createNewEventHandler}
+                isCreatingNewEvent={isCreatingNewEvent}
+            />
             <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)}/>
 
             <div

@@ -10,7 +10,7 @@ export class Event {
 
     title: string;
     description: string;
-    constructor(id: string, startTime: Date, endTime: Date, title: string, description: string, color: string) {
+    constructor(startTime: Date, endTime: Date, title: string, description: string, color: string, id: string = "") {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -18,11 +18,17 @@ export class Event {
         this.description = description;
         this.color = color;
     }
+
+    getDayOfThisEvent(): Date {
+        const dateCopy = new Date(this.startTime.getTime());
+        dateCopy.setHours(0, 0, 0, 0);
+        return dateCopy;
+    }
 }
 
 const mockupEvents2 = [
-    new Event("1", new Date(2024, 2, 5, 15, 30, 0), new Date(2024, 2, 5, 18, 45), "New Event 1", "This is some event", "#ccc"),
-    new Event("2", new Date(2024, 2, 5, 15, 50, 0), new Date(2024, 2, 5, 16, 45), "New Event 1", "This is some event", "#dad"),
+    new Event(new Date(2024, 2, 5, 15, 30, 0), new Date(2024, 2, 5, 18, 45), "New Event 1", "This is some event", "#ccc", "1"),
+    new Event(new Date(2024, 2, 5, 15, 50, 0), new Date(2024, 2, 5, 16, 45), "New Event 1", "This is some event", "#dad", "2"),
 ]
 
 export type EventsMap = { [key: string]: Event[] }
@@ -53,7 +59,7 @@ class EventsManager {
                     const current = mockupEvents2[j];
 
                     if (selectedWeek.isGivenDateInThisWeek(current.startTime))
-                        events.events[zeroOutTimeInDate(current.startTime).toISOString()].push(current)
+                        events.events[current.getDayOfThisEvent().toISOString()].push(current)
                 }
 
                 // console.log(events.events)
@@ -61,6 +67,18 @@ class EventsManager {
 
             }, 500);
         });
+    }
+
+    createNewEvent(event: Event): Promise<boolean> {
+        return new Promise((res, rej) => {
+            event.id = event.startTime.toISOString() + event.endTime.toISOString();
+            mockupEvents2.push(event)
+            setTimeout(() => {
+                res({
+                    _id: event.id
+                });
+            }, 500)
+        })
     }
 }
 
