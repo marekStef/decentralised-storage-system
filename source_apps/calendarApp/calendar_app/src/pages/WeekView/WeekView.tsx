@@ -187,6 +187,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     hourSlotHeight={calendarHeight / 24}
                     calendarWidth={calendarWidth}
                     calendarLeftColumnHoursWidthInPixels={calendarLeftColumnHoursWidthInPixels}
+                    openNewEventDialogHandler={params.openNewEventDialogHandler}
                 />
 
                 {/* Hour Lines */}
@@ -354,10 +355,10 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                                     //     minute
                                                     // );
 
-                                                    params.openNewEventDialogHandler({
-                                                        startTimeDate: new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute),
-                                                        endTimeDate: null
-                                                    });
+                                                    params.openNewEventDialogHandler(new NewEventDialogData(
+                                                        new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute),
+                                                        null
+                                                    ));
 
                                                 }}
                                                 style={{

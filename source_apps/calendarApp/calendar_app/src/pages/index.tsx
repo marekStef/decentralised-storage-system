@@ -75,7 +75,7 @@ const Index = () => {
         >
             {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
 
-            <NewEventDialogMaterial open={newEventDialogData} handleClose={() => setNewEventDialogData(null)} newEventDialogData={newEventDialogData}/>
+            <NewEventDialogMaterial open={newEventDialogData != null} handleClose={() => setNewEventDialogData(null)} newEventDialogData={newEventDialogData}/>
             <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)}/>
 
             <div

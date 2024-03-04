@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import CurrentHourLine from '../HourLines/CurrentHourLine';
 import SelectedHourLine from '../HourLines/SelectedHourLine';
 import { timeConstants } from '@/constants/timeConstants';
+import { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
+import { addDurationToTime, createTime } from './helpers/timehelpers';
 
 const convertToLowerMultipleOf5 = (num: number) : number => {
     return Math.round(num / 5) * 5;
@@ -44,18 +46,33 @@ const getSelectedMinuteBasedOnVerticalOffsetStartingFromTheFirstHourRow = (verti
     return convertToLowerMultipleOf5((60 / hourSlotHeight) * (verticalOffsetStartingFromTheFirstHourRow % hourSlotHeight));
 }
 
-const DraggableNewEventPreview = params => {
+interface DraggableNewEventPreviewParams {
+    openNewEventDialogHandler: (data: NewEventDialogData) => void
+}
+
+const getNumberOfMinutesBasedOnTheOffsetAndSlotHeight = (startOffset: number, endOffset: number, slotHeight: number) => {
+    return convertToLowerMultipleOf5(((endOffset - startOffset) / slotHeight) * 60)
+}
+
+const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (params) => {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     const [currentY, setCurrentY] = useState(0);
-
     const [selectedStartTime, setSelectedStartTime] = useState({
         hour: 0,
         minute: 0
     });
 
+    // this needs to be here for useCallback to work !
+    const startYRef = useRef(startY);
+    const currentYRef = useRef(currentY);
+    const selectedStartTimeRef = useRef(selectedStartTime);
+
+    
+
     const [durationTime, setDurationTime] = useState(0);
+
 
     const handleMouseMove = (event: MouseEvent) => {
         if (isDragging && params.scrollContainerRef && params.scrollContainerRef.current) {
@@ -63,28 +80,63 @@ const DraggableNewEventPreview = params => {
             const adjustedCurrentY = event.clientY + scrollOffset;
 
             setCurrentY(adjustedCurrentY);
+            currentYRef.current = adjustedCurrentY;
             setDurationTime(convertToLowerMultipleOf5(( timeConstants.ONE_HOUR_IN_MINUTES / params.hourSlotHeight ) * (adjustedCurrentY - startY)))
         }
     };
 
+    const openNewEventDialogHandler = useCallback(() => {
+        // console.log(`current: ${currentYRef.current}, start: ${startYRef.current}`)
+        console.log(selectedStartTimeRef.current)
+        const duration = getNumberOfMinutesBasedOnTheOffsetAndSlotHeight(startYRef.current, currentYRef.current, params.hourSlotHeight);
+        if (duration > 0 && duration < timeConstants.NUMBER_OF_MINUTES_IN_DAY) {
+            console.log(duration)
+            params.openNewEventDialogHandler(new NewEventDialogData(
+                createTime(selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute),
+                addDurationToTime(selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute, duration)
+            ));
+        }
+        // console.log(duration);
+      }, [selectedStartTimeRef, startYRef, currentYRef, params.hourSlotHeight]);
+
+    
+
     useEffect(() => {
+        // const openNewEventDialogHandler = () => {
+            // params.openNewEventDialogHandler(new NewEventDialogData(
+            //     createTime(selectedStartTime.hour, selectedStartTime.minute),
+            //     addDurationToTime(selectedStartTime.hour, selectedStartTime.minute, calculateDuration())
+            // ));
+        // }
+
         const handleMouseUp = () => {
+            openNewEventDialogHandler();
             setIsDragging(false);
             enableTextSelection(document);
         };
 
-        if (isDragging && params.scrollContainerRef.current) {
-            params.scrollContainerRef.current.addEventListener('mousemove', handleMouseMove);
+        if (params.scrollContainerRef.current) {
             params.scrollContainerRef.current.addEventListener('mouseup', handleMouseUp);
         }
 
         return () => {
             if (params.scrollContainerRef.current) {
-                document.removeEventListener('mousemove', handleMouseMove);
                 document.removeEventListener('mouseup', handleMouseUp);
             }
         };
-    }, [isDragging]); // Only re-run the effect if isDragging changes
+    }, [params.scrollContainerRef.current]); // Only re-run the effect if isDragging changes
+
+    useEffect(() => {
+        if (isDragging && params.scrollContainerRef.current) {
+            params.scrollContainerRef.current.addEventListener('mousemove', handleMouseMove);
+        }
+
+        return () => {
+            if (params.scrollContainerRef.current) {
+                document.removeEventListener('mousemove', handleMouseMove);
+            }
+        }
+    }, [isDragging])
 
     useEffect(() => {
         const handleMouseDown = (event: MouseEvent) => {
@@ -106,6 +158,11 @@ const DraggableNewEventPreview = params => {
                     minute: selectedMinuteIndex
                 });
 
+                selectedStartTimeRef.current = {
+                    hour: selectedHourIndex,
+                    minute: selectedMinuteIndex
+                }
+
                 disableTextSelection(document);
 
                 console.log(selectedDayIndex)
@@ -114,6 +171,7 @@ const DraggableNewEventPreview = params => {
                 const fiveMinuteYOffset = calendarYOffsetStart + (selectedHourIndex * params.hourSlotHeight + (params.hourSlotHeight / 60) * selectedMinuteIndex)
 
                 setStartY(fiveMinuteYOffset);
+                startYRef.current = fiveMinuteYOffset;
                 setCurrentY(fiveMinuteYOffset);
 
                 const calendarXOffsetStart = params.calendarLeftOffsetInPixels + params.calendarLeftColumnHoursWidthInPixels

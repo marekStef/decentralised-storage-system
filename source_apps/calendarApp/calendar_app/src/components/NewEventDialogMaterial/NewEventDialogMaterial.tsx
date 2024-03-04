@@ -14,9 +14,13 @@ const colors = [
     { name: 'Green', value: '#4caf50' },
 ];
 
-export interface NewEventDialogData {
-    startTimeDate: Date | null,
-    endTimeDate: Date | null,
+export class NewEventDialogData {
+    startTimeDate: Date | null;
+    endTimeDate: Date | null;
+    constructor(startTimeDate: Date | null, endTimeDate: Date | null) {
+        this.startTimeDate = startTimeDate;
+        this.endTimeDate = endTimeDate;
+    }
 }
 
 interface NewEventDialogMaterialParams {
