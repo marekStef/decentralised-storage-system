@@ -5,7 +5,7 @@ import { IoSettingsOutline } from 'react-icons/io5';
 import WeekNavigationButtons from './components/WeekNavigationButtons/WeekNavigationButtons';
 import SelectedWeek from '@/data/SelectedWeek';
 import Calendar from '@/data/Calendar';
-import SquareButton from '../../components/SquareButton/SquareButton';
+import SquareButton from '@/components/SquareButton/SquareButton';
 
 interface TopPanelParams {
     selectedWeek: SelectedWeek,

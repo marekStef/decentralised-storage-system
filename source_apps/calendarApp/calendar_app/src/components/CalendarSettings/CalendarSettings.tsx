@@ -22,6 +22,7 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={() => {localStorage.removeItem('calendarSetupComplete')}}>Reset</Button>
             </DialogActions>
         </Dialog>
     );
