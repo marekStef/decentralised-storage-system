@@ -4,7 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/cs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { addMinutes } from 'date-fns';
 import { timeConstants } from '@/constants/timeConstants';
 
@@ -51,6 +51,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, 
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [startTime, setStartTime] = useState<Date>(startTimeDate);
+    // const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
     const [endTime, setEndTime] = useState<Date | null>(endTimeDate);
     const [color, setColor] = useState(colorsForSelection[0].value);
 
@@ -101,11 +102,11 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, 
                     onChange={(e) => setDescription(e.target.value)}
                 />
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="cs">
-                    <DateTimePicker label="Start Time" value={dayjs(startTime)} onChange={(newValue: Date | null) => setStartTime(newValue ?? new Date())} />
+                    <DateTimePicker label="Start Time" value={dayjs(startTime)} onChange={(newValue: Date | null) => setStartTime(new Date(newValue))} />
                 </LocalizationProvider>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="cs" >
-                    <DateTimePicker label="End Time" value={dayjs(endTime)} onChange={(newValue: Date | null) => setEndTime(newValue)} />
+                    <DateTimePicker label="End Time" value={dayjs(endTime)} onChange={(newValue: Date | null) => setEndTime(new Date(newValue))} />
                 </LocalizationProvider>
 
                 <FormControl fullWidth margin="normal">

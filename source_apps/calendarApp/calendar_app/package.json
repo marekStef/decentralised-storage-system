@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -14,7 +14,8 @@
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
     "@mui/styled-engine-sc": "^6.0.0-alpha.17",
-    "@mui/x-date-pickers": "^6.19.5",
+    "@mui/x-date-pickers": "^6.19.6",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
     "date-fns": "^3.3.1",
     "dayjs": "^1.11.10",
     "next": "14.1.0",

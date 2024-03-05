@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import networkManager from '@/Network/NetworkManager';
 
 import {
     Container,
@@ -9,7 +10,7 @@ import {
     CircularProgress,
     Box,
     Tooltip,
-    ToggleButton, ToggleButtonGroup
+    ToggleButton, ToggleButtonGroup, InputLabel, Select, MenuItem, SelectChangeEvent, Alert
 } from '@mui/material';
 
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -17,6 +18,10 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import SendIcon from '@mui/icons-material/UploadFileOutlined';
 import AssociationIcon from '@mui/icons-material/ConnectWithoutContactOutlined';
 import ActivityButton from '@mui/icons-material/LocalActivity';
+import persistenceManager, { HttpProtocolType } from '@/data/PersistenceManager';
+import appConstants from '@/constants/appConstants';
+
+import { useAlert } from '@/components/Alert/AlertProvider';
 
 enum PossibleResultsWithServer {
     NOT_TRIED,
@@ -26,8 +31,9 @@ enum PossibleResultsWithServer {
 }
 
 const InitialSetup = () => {
-    const [ipAddress, setIpAddress] = useState('');
-    const [port, setPort] = useState('');
+    const [protocol, setProtocol] = useState<HttpProtocolType>(HttpProtocolType.http);
+    const [ipAddress, setIpAddress] = useState('127.0.0.1');
+    const [port, setPort] = useState('3000');
     const [associationToken, setAssociationToken] = useState('')
 
     const [checkingServerReachability, setCheckingServerReachability] = useState(false);
@@ -50,32 +56,47 @@ const InitialSetup = () => {
     };
 
     const checkServerReachability = () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const isReachable = Math.random() < 0.5;
-                resolve(isReachable);
-            }, 500);
-        });
-    };
+        // setCheckingServerReachability(true);
 
-    const handleSubmit = () => {
-        setCheckingServerReachability(true);
-        checkServerReachability().then((isReachable) => {
-            setReachable(isReachable);
-            setCheckingServerReachability(false);
-        });
+        persistenceManager.setServerHttpMethod(protocol)
+        persistenceManager.setServerIPAddress(ipAddress)
+        persistenceManager.setServerPort(port)
+        // localStorage.setItem('calendarSetupComplete', "true")
+        networkManager.checkServerPresence()
+            .then(isPresent => {
+                if (isPresent) {
+                    console.log('Server is up and running');
+                } else {
+                    console.log('Server is down');
+                }
+                setReachable(isPresent == true);
+
+            })
+            .finally(() => {
+                setCheckingServerReachability(false);
+            })
     };
 
     const associateCalendarWithSystem = () => {
         setAssociationWithServerStatus(PossibleResultsWithServer.IS_LOADING);
 
-        setTimeout(() => {
-            const isReachable = Math.random() < 0.5;
-            if (isReachable)
-                setAssociationWithServerStatus(PossibleResultsWithServer.SUCCESS);
-            else
+        networkManager.associateWithDataStorage(associationToken, appConstants.appName)
+            .then(jwtToken => {
+                alert(jwtToken)
                 setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
-        }, 500);
+            })
+            .catch(message => {
+                alert(message)
+                setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
+            })
+
+        // setTimeout(() => {
+        //     const isReachable = Math.random() < 0.5;
+        //     if (isReachable)
+        //         setAssociationWithServerStatus(PossibleResultsWithServer.SUCCESS);
+        //     else
+        //         setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
+        // }, 500);
     }
 
     const sendProfiles = () => {
@@ -111,6 +132,20 @@ const InitialSetup = () => {
             </Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
+                    <Select
+                        labelId="protocol-select-label"
+                        label="Protocol"
+                        id="protocol-select"
+                        value={protocol}
+                        onChange={(event: SelectChangeEvent<HttpProtocolType>) => setProtocol(event.target.value)}
+                        disabled={reachable == true}
+                    >
+                        <MenuItem value={HttpProtocolType.http}>HTTP</MenuItem>
+                        <MenuItem value={HttpProtocolType.https}>HTTPS</MenuItem>
+                    </Select>
+                </Grid>
+
+                <Grid item xs={12}>
                     <TextField
                         fullWidth
                         label="IP Address"
@@ -141,7 +176,7 @@ const InitialSetup = () => {
                                     variant="contained"
                                     color="primary"
                                     fullWidth
-                                    onClick={handleSubmit}
+                                    onClick={checkServerReachability}
                                     disabled={checkingServerReachability}
                                     startIcon={checkingServerReachability ? <CircularProgress size={20} color="inherit" /> : <ActivityButton />}
                                 >
@@ -179,7 +214,7 @@ const InitialSetup = () => {
                         disabled={associationWithServerStatus == PossibleResultsWithServer.SUCCESS}
                     />
                 </Grid>
-                
+
                 {associationWithServerStatus != PossibleResultsWithServer.SUCCESS && (
                     <Grid item xs={12}>
                         <Tooltip title="Associate calendar with the system" enterDelay={3000}>
@@ -201,7 +236,7 @@ const InitialSetup = () => {
                         </Tooltip>
                     </Grid>
                 )}
-                
+
                 <Grid item xs={12} container justifyContent="center" alignItems="center">
                     {associationWithServerStatus == PossibleResultsWithServer.SUCCESS && (
                         <>
@@ -227,7 +262,7 @@ const InitialSetup = () => {
                                     fullWidth
                                     onClick={sendProfiles}
                                     disabled={
-                                        !reachable 
+                                        !reachable
                                         || associationWithServerStatus != PossibleResultsWithServer.SUCCESS
                                         || profilesSendingStatus == PossibleResultsWithServer.IS_LOADING
                                     }
@@ -239,7 +274,7 @@ const InitialSetup = () => {
                         </Tooltip>
                     </Grid>
                 )}
-                
+
 
                 <Grid item xs={12} container justifyContent="center" alignItems="center">
                     {profilesSendingStatus == PossibleResultsWithServer.SUCCESS && (
@@ -265,11 +300,11 @@ const InitialSetup = () => {
                                 fullWidth
                                 onClick={sendPermissions}
                                 disabled={
-                                    !reachable 
+                                    !reachable
                                     || associationWithServerStatus != PossibleResultsWithServer.SUCCESS
-                                    || profilesSendingStatus != PossibleResultsWithServer.SUCCESS 
+                                    || profilesSendingStatus != PossibleResultsWithServer.SUCCESS
                                     || permissionsSendingStatus == PossibleResultsWithServer.IS_LOADING
-                                    || permissionsSendingStatus == PossibleResultsWithServer.SUCCESS 
+                                    || permissionsSendingStatus == PossibleResultsWithServer.SUCCESS
                                 }
                                 startIcon={permissionsSendingStatus == PossibleResultsWithServer.IS_LOADING ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
                             >

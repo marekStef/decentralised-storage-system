@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
 import { colors } from '@mui/material';
+import persistenceManager from '@/data/PersistenceManager';
 
 const Index = () => {
     const [showLoadingText, setShowLoadingText] = useState(false);
@@ -10,6 +11,8 @@ const Index = () => {
         setTimeout(() => {
             setShowLoadingText(true);
         }, 1000)
+        persistenceManager.loadDataFromLocalStorage();
+        
     }, [])
     return (
         <h1

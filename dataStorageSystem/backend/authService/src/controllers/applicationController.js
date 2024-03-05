@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 
@@ -24,6 +26,9 @@ const associate_app_with_storage_app_holder = async (req, res) => {
 
     if (!associationTokenId || !nameDefinedByApp)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.ASSOCIATION_TOKEN_OR_NAME_MISSING);
+
+    if (!mongoose.Types.ObjectId.isValid(associationTokenId))
+        return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.INVALID_ASSOCIATION_TOKEN);
 
     // // DELETE - ONLY FOR DEBUGGING!
     // const jwtPayload = {
