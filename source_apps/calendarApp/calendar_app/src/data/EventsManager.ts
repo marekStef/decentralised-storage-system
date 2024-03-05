@@ -1,7 +1,7 @@
-import { zeroOutTimeInDate } from "@/pages/WeekView/components/DraggableNewEventPreview/helpers/timehelpers";
 import Calendar from "./Calendar";
 import SelectedWeek from "./SelectedWeek";
 
+// when updating this event, update EventProfileSchema as well
 export class Event {
     id: string;
     startTime: Date;

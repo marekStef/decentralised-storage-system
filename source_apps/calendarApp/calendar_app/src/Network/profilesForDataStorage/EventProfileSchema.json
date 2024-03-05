@@ -1,0 +1,40 @@
+{
+    "title": "Event",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Unique identifier for the event."
+        },
+        "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The start time of the event."
+        },
+        "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The end time of the event."
+        },
+        "color": {
+            "type": "string",
+            "description": "A string representing the color associated with the event."
+        },
+        "title": {
+            "type": "string",
+            "description": "The title of the event."
+        },
+        "description": {
+            "type": "string",
+            "description": "A detailed description of the event."
+        }
+    },
+    "required": [
+        "startTime",
+        "endTime",
+        "title",
+        "description",
+        "color"
+    ],
+    "additionalProperties": false
+}
