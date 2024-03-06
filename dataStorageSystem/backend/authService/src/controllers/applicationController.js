@@ -175,6 +175,8 @@ const register_new_profile = async (req, res) => {
         }
     }
     catch (err) {
+        if (err?.code == httpStatusCodes.CONFLICT)
+            return generateBadResponse(res, httpStatusCodes.CONFLICT, generalResponseMessages.DUPLICATE_ERROR)
         console.log(err)
         console.error('Error registering new profile:', err);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
