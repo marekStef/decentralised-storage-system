@@ -10,11 +10,15 @@ class PersistenceManager {
     port: string | null = null;
     httpMethod: string | null = null;
 
+    jwtTokenForPermissionRequestsAndProfiles: string | null = null;
+
     public loadDataFromLocalStorage() {
         this.ip = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
         this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT)
         this.httpMethod = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
         this.httpMethod = HttpProtocolType.http
+
+        this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
     }
 
     public setServerIPAddress(ip: string) {
@@ -36,6 +40,15 @@ class PersistenceManager {
         return `${this.httpMethod}://${this.ip}:${this.port}`
     }
 
+    public setJwtTokenForPermissionsAndProfiles(token: string): void {
+        this.jwtTokenForPermissionRequestsAndProfiles = token;
+        localStorage.setItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES, token)
+    }
+
+    public getJwtTokenForPermissionsAndProfiles(): string | null {
+        console.log("marko")
+        return this.jwtTokenForPermissionRequestsAndProfiles;
+    }
 }
 
 export default new PersistenceManager()

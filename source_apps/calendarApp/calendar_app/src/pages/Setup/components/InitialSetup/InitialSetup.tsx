@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import networkManager from '@/Network/NetworkManager';
 
 import {
@@ -21,7 +21,7 @@ import ActivityButton from '@mui/icons-material/LocalActivity';
 import persistenceManager, { HttpProtocolType } from '@/data/PersistenceManager';
 import appConstants from '@/constants/appConstants';
 
-import { useAlert } from '@/components/Alert/AlertProvider';
+import { showSuccess, showError } from '@/components/AlertProvider/AlertProvider';
 
 enum PossibleResultsWithServer {
     NOT_TRIED,
@@ -31,6 +31,7 @@ enum PossibleResultsWithServer {
 }
 
 const InitialSetup = () => {
+
     const [protocol, setProtocol] = useState<HttpProtocolType>(HttpProtocolType.http);
     const [ipAddress, setIpAddress] = useState('127.0.0.1');
     const [port, setPort] = useState('3000');
@@ -57,10 +58,9 @@ const InitialSetup = () => {
 
     const checkServerReachability = () => {
         // setCheckingServerReachability(true);
-
-        persistenceManager.setServerHttpMethod(protocol)
-        persistenceManager.setServerIPAddress(ipAddress)
-        persistenceManager.setServerPort(port)
+        persistenceManager.setServerHttpMethod(protocol);
+        persistenceManager.setServerIPAddress(ipAddress);
+        persistenceManager.setServerPort(port);
         // localStorage.setItem('calendarSetupComplete', "true")
         networkManager.checkServerPresence()
             .then(isPresent => {
@@ -80,35 +80,34 @@ const InitialSetup = () => {
     const associateCalendarWithSystem = () => {
         setAssociationWithServerStatus(PossibleResultsWithServer.IS_LOADING);
 
+
         networkManager.associateWithDataStorage(associationToken, appConstants.appName)
             .then(jwtToken => {
-                alert(jwtToken)
-                setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
+                // alert(jwtToken);
+                persistenceManager.setJwtTokenForPermissionsAndProfiles(jwtToken);
+                setAssociationWithServerStatus(PossibleResultsWithServer.SUCCESS);
             })
             .catch(message => {
-                alert(message)
+                showError(message)
                 setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
+                // setAssociationWithServerStatus(PossibleResultsWithServer.SUCCESS);
             })
-
-        // setTimeout(() => {
-        //     const isReachable = Math.random() < 0.5;
-        //     if (isReachable)
-        //         setAssociationWithServerStatus(PossibleResultsWithServer.SUCCESS);
-        //     else
-        //         setAssociationWithServerStatus(PossibleResultsWithServer.FAILED);
-        // }, 500);
     }
 
     const sendProfiles = () => {
         setProfilesSendingStatus(PossibleResultsWithServer.IS_LOADING);
-
-        setTimeout(() => {
-            const isReachable = Math.random() < 0.5;
-            if (isReachable)
+        networkManager.createNewCalendarEventProfileInDataStorage()
+            .then(message => {
+                showSuccess(message)
                 setProfilesSendingStatus(PossibleResultsWithServer.SUCCESS);
-            else
+            })
+            .catch(message => {
+                showError(message)
                 setProfilesSendingStatus(PossibleResultsWithServer.FAILED);
-        }, 500);
+            })
+            .finally(() => {
+
+            })
     };
 
     const sendPermissions = () => {
