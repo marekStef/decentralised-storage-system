@@ -1,5 +1,4 @@
 import appConstants from "@/constants/appConstants";
-import dataStorageConstants from "@/constants/dataStorageConstants";
 import networkRoutes from "@/constants/networkRoutes";
 import persistenceManager from "@/data/PersistenceManager";
 
@@ -67,10 +66,10 @@ class NetworkManager {
     }
 
     public async createNewCalendarEventProfileInDataStorage(): Promise<any> {
-        const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles()
+        const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles();
         console.log('---', jwtTokenForPermissionRequestsAndProfiles)
         
-        const rootProfile = dataStorageConstants.DATA_STORAGE_ROOT_PROFILE;
+        const rootProfile = appConstants.DATA_STORAGE_ROOT_PROFILE;
         let schema: string = '';
 
         return new Promise(async (res, rej) => {
@@ -111,6 +110,37 @@ class NetworkManager {
                 .catch(error => {
                     console.error('error:', error);
                     rej(error.message || 'Network error during new profile creation');
+                });
+        });
+    }
+
+    public async requestPermissionsForProfile(): Promise<any> {
+        const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles();
+
+        const data = {
+            jwtTokenForPermissionRequestsAndProfiles,
+            permissionsRequest: appConstants.permissonsObjectForCalendarEventPermissionRequest
+        };
+    
+        return new Promise((res, rej) => {
+            if (jwtTokenForPermissionRequestsAndProfiles == null)
+                rej("Your app does not have token saved for this operation");
+
+            this.post(networkRoutes.REQUEST_PERMISSIONS_ROUTE, data)
+                .then(response => {
+                    console.log('Permissions request successful:', response.message);
+                    if (response.generatedAccessToken) {
+                        res({
+                            message: response.message,
+                            generatedAccessToken: response.generatedAccessToken
+                        });
+                    } else {
+                        res({ message: response.message });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error requesting permissions:', error);
+                    rej(error.message || 'Unknown error during permissions request');
                 });
         });
     }

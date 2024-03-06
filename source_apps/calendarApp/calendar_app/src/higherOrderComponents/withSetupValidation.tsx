@@ -1,5 +1,6 @@
 import React, { ComponentType, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import persistenceManager from '@/data/PersistenceManager';
 
 interface WithSetupValidationOptions {
   redirectToIfNotSetup?: string;
@@ -14,8 +15,8 @@ function withSetupValidation<P extends React.JSX.IntrinsicAttributes>(
     const Router = useRouter();
     
     const isCalendarSetupSuccessfully = (): boolean => {
-      console.log('here', localStorage.getItem('calendarSetupComplete'))
-        return Boolean(localStorage.getItem('calendarSetupComplete'));
+      persistenceManager.loadDataFromLocalStorage();
+      return persistenceManager.areAllValuesSet();
     };
 
     useEffect(() => {
@@ -30,6 +31,7 @@ function withSetupValidation<P extends React.JSX.IntrinsicAttributes>(
       }
 
       if (setupComplete) {
+        console.log("here")
         Router.replace(redirectToIfSetup);
         return;
       }

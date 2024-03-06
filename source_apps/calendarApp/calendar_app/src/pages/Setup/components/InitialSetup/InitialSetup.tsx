@@ -105,21 +105,30 @@ const InitialSetup = () => {
                 showError(message)
                 setProfilesSendingStatus(PossibleResultsWithServer.FAILED);
             })
-            .finally(() => {
-
-            })
     };
 
     const sendPermissions = () => {
         setPermissionsSendingStatus(PossibleResultsWithServer.IS_LOADING);
 
-        setTimeout(() => {
-            const isReachable = Math.random() < 0.5;
-            if (isReachable)
+        networkManager.requestPermissionsForProfile()
+            .then(response => {
+                showSuccess(response.message)
+                // alert(response.generatedAccessToken)
                 setPermissionsSendingStatus(PossibleResultsWithServer.SUCCESS);
-            else
+                persistenceManager.setTokenForEventsManipulation(response.generatedAccessToken);
+            })
+            .catch(message => {
+                showError(message)
                 setPermissionsSendingStatus(PossibleResultsWithServer.FAILED);
-        }, 500);
+            })
+
+        // setTimeout(() => {
+        //     const isReachable = Math.random() < 0.5;
+        //     if (isReachable)
+        //         setPermissionsSendingStatus(PossibleResultsWithServer.SUCCESS);
+        //     else
+        //         setPermissionsSendingStatus(PossibleResultsWithServer.FAILED);
+        // }, 500);
 
         // localStorage.setItem('calendarSetupComplete', "true")
     };

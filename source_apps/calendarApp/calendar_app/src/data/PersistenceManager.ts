@@ -12,13 +12,16 @@ class PersistenceManager {
 
     jwtTokenForPermissionRequestsAndProfiles: string | null = null;
 
+    tokenForEventsManipulation: string | null = null;
+
     public loadDataFromLocalStorage() {
-        this.ip = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
-        this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT)
-        this.httpMethod = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
-        this.httpMethod = HttpProtocolType.http
+        this.ip = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS);
+        this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT);
+        this.httpMethod = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS);
+        this.httpMethod = HttpProtocolType.http;
 
         this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
+        this.tokenForEventsManipulation = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
     }
 
     public setServerIPAddress(ip: string) {
@@ -46,8 +49,27 @@ class PersistenceManager {
     }
 
     public getJwtTokenForPermissionsAndProfiles(): string | null {
-        console.log("marko")
+        console.log(this.jwtTokenForPermissionRequestsAndProfiles)
         return this.jwtTokenForPermissionRequestsAndProfiles;
+    }
+
+    public setTokenForEventsManipulation(token: string): void {
+        localStorage.setItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION, token)
+        this.tokenForEventsManipulation = token;
+    }
+
+    public getTokenForEventsManipulation(): string | null {
+        return this.tokenForEventsManipulation;
+    }
+
+    public areAllValuesSet(): boolean {
+        const areAllValuesSet = this.ip != null 
+            && this.port != null 
+            && this.httpMethod != null 
+            && this.jwtTokenForPermissionRequestsAndProfiles != null 
+            && this.tokenForEventsManipulation != null;
+        console.log('are all values set: ', this);
+        return areAllValuesSet;
     }
 }
 
