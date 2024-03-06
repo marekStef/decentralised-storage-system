@@ -43,7 +43,7 @@ class SelectedWeek {
       return new SelectedWeek(prevStartOfWeek, prevEndOfWeek);
     }
 
-    getDayInThisWeekAccordingToIndexStartingFromMonday(index: number) {
+    getDayInThisWeekAccordingToIndexStartingFromMonday(index: number): Date {
       return addDays(this.startOfWeek, index)
     }
 

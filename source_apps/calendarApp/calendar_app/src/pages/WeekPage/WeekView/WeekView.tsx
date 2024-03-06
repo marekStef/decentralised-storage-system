@@ -189,6 +189,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     calendarWidth={calendarWidth}
                     calendarLeftColumnHoursWidthInPixels={calendarLeftColumnHoursWidthInPixels}
                     openNewEventDialogHandler={params.openNewEventDialogHandler}
+                    selectedWeek={params.selectedWeek}
                 />
 
                 {/* Hour Lines */}

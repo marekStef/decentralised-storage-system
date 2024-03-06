@@ -3,7 +3,8 @@ import CurrentHourLine from '../HourLines/CurrentHourLine';
 import SelectedHourLine from '../HourLines/SelectedHourLine';
 import { timeConstants } from '@/constants/timeConstants';
 import { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
-import { addDurationToTime, createTime } from './helpers/timehelpers';
+import { addDurationToTime, setTime } from './helpers/timehelpers';
+import SelectedWeek from '@/data/SelectedWeek';
 
 const convertToLowerMultipleOf5 = (num: number) : number => {
     return Math.round(num / 5) * 5;
@@ -60,7 +61,8 @@ interface DraggableNewEventPreviewParams {
     hourSlotWidth: number,
     scrollContainerRef: React.RefObject<HTMLDivElement>,
     calendarHeight: number,
-    calendarWidth: number
+    calendarWidth: number,
+    selectedWeek: SelectedWeek
 }
 
 const getNumberOfMinutesBasedOnTheOffsetAndSlotHeight = (startOffset: number, endOffset: number, slotHeight: number) => {
@@ -101,17 +103,21 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
 
     const openNewEventDialogHandler = useCallback(() => {
         // console.log(`current: ${currentYRef.current}, start: ${startYRef.current}`)
-        console.log(selectedStartTimeRef.current)
+        // console.log(selectedStartTimeRef.current)
         const duration = getNumberOfMinutesBasedOnTheOffsetAndSlotHeight(startYRef.current, currentYRef.current, params.hourSlotHeight);
         if (duration > 0 && duration < timeConstants.NUMBER_OF_MINUTES_IN_DAY) {
-            console.log(duration)
+            // console.log(duration)
+            // console.log(selectedStartTimeRef.current.dayIndex)
+            const selectedDayDate: Date = params.selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(selectedStartTimeRef.current.dayIndex);
+            const startTime: Date = setTime(selectedDayDate, selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute)
+            // console.log(startTime)
             params.openNewEventDialogHandler(new NewEventDialogData(
-                createTime(selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute),
-                addDurationToTime(selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute, duration)
+                startTime,
+                addDurationToTime(startTime, duration)
             ));
         }
         // console.log(duration);
-      }, [selectedStartTimeRef, startYRef, currentYRef, params.hourSlotHeight]);
+      }, [selectedStartTimeRef, startYRef, currentYRef, params.hourSlotHeight, params.selectedWeek]);
 
     
 
@@ -182,7 +188,7 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
 
                 disableTextSelection(document);
 
-                console.log(dayIndex)
+                // console.log(dayIndex)
 
                 const calendarYOffsetStart = params.calendarTopOffsetInPixels + params.headerHeight;
                 const fiveMinuteYOffset = calendarYOffsetStart + (selectedHourIndex * params.hourSlotHeight + (params.hourSlotHeight / 60) * selectedMinuteIndex)

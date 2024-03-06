@@ -7,6 +7,7 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs from 'dayjs';
 import { addMinutes } from 'date-fns';
 import { timeConstants } from '@/constants/timeConstants';
+import { useRouter } from 'next/router';
 
 interface CalendarSetttingsParams {
     open: boolean,
@@ -14,6 +15,13 @@ interface CalendarSetttingsParams {
 }
 
 const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose }) => {
+    const Router = useRouter();
+    
+    const resetCalendarSettingHandler = () => {
+        localStorage.removeItem('calendarSetupComplete')
+        Router.replace('/');
+    }
+
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>CalendPro Settings</DialogTitle>
@@ -22,7 +30,7 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={() => {localStorage.removeItem('calendarSetupComplete')}}>Reset</Button>
+                <Button onClick={resetCalendarSettingHandler}>Reset</Button>
             </DialogActions>
         </Dialog>
     );

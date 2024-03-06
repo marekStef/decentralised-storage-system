@@ -1,4 +1,5 @@
 import { timeConstants } from "@/constants/timeConstants";
+import { addMinutes } from "date-fns";
 
 export function convertToLowerMultipleOf5(num: number) : number {
     return Math.round(num / 5) * 5;
@@ -10,21 +11,13 @@ export function zeroOutTimeInDate(date: Date): Date {
     return dateCopy;
 }
 
-export function createTime(hour: number, minute: number): Date {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const day = now.getDate();
+export function setTime(baseDate: Date, hour: number, minute: number): Date {
+    baseDate.setHours(hour);
+    baseDate.setMinutes(minute, 0, 0);
 
-    const dateWithTime = new Date(year, month, day, hour, minute);
-
-    return dateWithTime;
+    return baseDate;
 }
 
-export function addDurationToTime(hour: number, minute: number, durationInMinutes: number): Date {
-    const initialDate = createTime(hour, minute);
-
-    const newTime = new Date(initialDate.getTime() + durationInMinutes * timeConstants.NUMBER_OF_MILLISECONDS_IN_A_MINUTE);
-
-    return newTime;
+export function addDurationToTime(baseDate: Date, durationInMinutes: number): Date {
+    return addMinutes(baseDate, durationInMinutes);
 }
