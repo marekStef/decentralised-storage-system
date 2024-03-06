@@ -12,8 +12,8 @@ import {
 } from '@mui/material';
 
 import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
-import InitialSetup from './components/InitialSetup/InitialSetup';
-import PairingToExistingSetup from './components/PairingToExistingSetup/PairingToExistingSetup';
+import InitialSetup from '../../components/forPages/forSetupPage/InitialSetup/InitialSetup';
+import PairingToExistingSetup from '../../components/forPages/forSetupPage/PairingToExistingSetup/PairingToExistingSetup';
 
 enum SetupOption {
     INITIAL_SETUP,

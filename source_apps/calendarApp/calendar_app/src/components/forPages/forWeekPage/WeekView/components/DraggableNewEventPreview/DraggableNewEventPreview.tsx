@@ -4,7 +4,7 @@ import SelectedHourLine from '../HourLines/SelectedHourLine';
 import { timeConstants } from '@/constants/timeConstants';
 import { addDurationToTime, setTime } from './helpers/timehelpers';
 import SelectedWeek from '@/data/SelectedWeek';
-import { Event } from '../../../../../data/EventsManager';
+import { Event } from '../../../../../../data/EventsManager';
 import { NewEventDialogOpenMode } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 
 const convertToLowerMultipleOf5 = (num: number) : number => {

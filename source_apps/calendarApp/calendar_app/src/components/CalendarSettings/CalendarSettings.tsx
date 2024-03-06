@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { addMinutes } from 'date-fns';
 import { timeConstants } from '@/constants/timeConstants';
 import { useRouter } from 'next/router';
+import persistenceManager from '@/data/PersistenceManager';
 
 interface CalendarSetttingsParams {
     open: boolean,
@@ -18,7 +19,7 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
     const Router = useRouter();
     
     const resetCalendarSettingHandler = () => {
-        localStorage.removeItem('calendarSetupComplete')
+        persistenceManager.resetAllValues();
         Router.replace('/');
     }
 

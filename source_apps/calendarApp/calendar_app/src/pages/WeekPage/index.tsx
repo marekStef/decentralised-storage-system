@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 
-import WeekView from './WeekView/WeekView'
-import LeftPanel from './LeftPanel/LeftPanel';
-import TopPanel from './TopPanel/TopPanel';
+import WeekView from '../../components/forPages/forWeekPage/WeekView/WeekView'
+import LeftPanel from '../../components/forPages/forWeekPage/LeftPanel/LeftPanel';
+import TopPanel from '../../components/forPages/forWeekPage/TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
 import EventsManager, { Event, Events } from '@/data/EventsManager';
