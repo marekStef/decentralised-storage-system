@@ -1,5 +1,7 @@
+import { addMinutes } from "date-fns";
 import Calendar from "./Calendar";
 import SelectedWeek from "./SelectedWeek";
+import { timeConstants } from "@/constants/timeConstants";
 
 // when updating this event, update EventProfileSchema as well
 export class Event {
@@ -10,7 +12,7 @@ export class Event {
 
     title: string;
     description: string;
-    constructor(startTime: Date, endTime: Date, title: string, description: string, color: string, id: string = "") {
+    constructor(startTime: Date, endTime: Date, title: string, description: string, color: string = "#fff", id: string = "") {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -23,6 +25,12 @@ export class Event {
         const dateCopy = new Date(this.startTime.getTime());
         dateCopy.setHours(0, 0, 0, 0);
         return dateCopy;
+    }
+
+    static getNewEventWithDefaultDuration(startTime: Date, endTime: Date | null = null): Event {
+        if (endTime == null)
+            endTime = addMinutes(startTime, timeConstants.THIRTY_MINUTES_IN_MINUTES);
+        return new Event(startTime, endTime, "", "");
     }
 }
 

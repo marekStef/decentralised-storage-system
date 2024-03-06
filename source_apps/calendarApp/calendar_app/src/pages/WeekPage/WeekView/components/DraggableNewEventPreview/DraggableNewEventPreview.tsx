@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import CurrentHourLine from '../HourLines/CurrentHourLine';
 import SelectedHourLine from '../HourLines/SelectedHourLine';
 import { timeConstants } from '@/constants/timeConstants';
-import { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 import { addDurationToTime, setTime } from './helpers/timehelpers';
 import SelectedWeek from '@/data/SelectedWeek';
+import { Event } from '../../../../../data/EventsManager';
+import { NewEventDialogOpenMode } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 
 const convertToLowerMultipleOf5 = (num: number) : number => {
     return Math.round(num / 5) * 5;
@@ -52,7 +53,7 @@ const getSelectedMinuteBasedOnVerticalOffsetStartingFromTheFirstHourRow = (verti
 }
 
 interface DraggableNewEventPreviewParams {
-    openNewEventDialogHandler: (data: NewEventDialogData) => void
+    openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void
     hourSlotHeight: number,
     calendarLeftOffsetInPixels: number,
     calendarLeftColumnHoursWidthInPixels: number,
@@ -111,10 +112,10 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
             const selectedDayDate: Date = params.selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(selectedStartTimeRef.current.dayIndex);
             const startTime: Date = setTime(selectedDayDate, selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute)
             // console.log(startTime)
-            params.openNewEventDialogHandler(new NewEventDialogData(
-                startTime,
-                addDurationToTime(startTime, duration)
-            ));
+            params.openNewEventDialogHandler(
+                Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)),
+                NewEventDialogOpenMode.NEW_EVENT
+            );
         }
         // console.log(duration);
       }, [selectedStartTimeRef, startYRef, currentYRef, params.hourSlotHeight, params.selectedWeek]);
@@ -122,13 +123,6 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
     
 
     useEffect(() => {
-        // const openNewEventDialogHandler = () => {
-            // params.openNewEventDialogHandler(new NewEventDialogData(
-            //     createTime(selectedStartTime.hour, selectedStartTime.minute),
-            //     addDurationToTime(selectedStartTime.hour, selectedStartTime.minute, calculateDuration())
-            // ));
-        // }
-
         const handleMouseUp = () => {
             openNewEventDialogHandler();
             setIsDragging(false);

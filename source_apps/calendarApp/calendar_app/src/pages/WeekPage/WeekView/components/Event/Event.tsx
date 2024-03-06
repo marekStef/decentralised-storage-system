@@ -6,6 +6,7 @@ import React, { useState } from "react";
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 
 const getEventHeight = (calendarHeight: number, durationInMinutes: number) => {
     const hourHeight = calendarHeight / 24;
@@ -70,11 +71,12 @@ const EventPopover = ({
 };
 
 interface EventUIParams {
-    event: Event;
-    topOffset: number;
-    leftOffset: number;
-    width: number;
-    calendarHeight: number;
+    event: Event,
+    topOffset: number,
+    leftOffset: number,
+    width: number,
+    calendarHeight: number,
+    openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void,
 }
 
 const EventUI: React.FC<EventUIParams> = (params) => {
@@ -92,7 +94,7 @@ const EventUI: React.FC<EventUIParams> = (params) => {
     const open = Boolean(anchorEl);
 
     const handleEventEdit = () => {
-        // todo
+        params.openNewEventDialogHandler(params.event, NewEventDialogOpenMode.EDIT_EXISTING_EVENT);
     }
 
     // const durationMinutes = params.event.endTime.getHours() * 60 + params.event.endTime.getMinutes() 

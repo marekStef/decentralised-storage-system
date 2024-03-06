@@ -6,7 +6,7 @@ import TopPanel from './TopPanel/TopPanel';
 import Calendar from '@/data/Calendar';
 import SelectedWeek, { DayOfWeek } from '@/data/SelectedWeek';
 import EventsManager, { Event, Events } from '@/data/EventsManager';
-import NewEventDialogMaterial, { NewEventDialogData } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
+import NewEventDialogMaterial, { NewEventDialogOpenMode } from '@/components/NewEventDialogMaterial/NewEventDialogMaterial';
 import CalendarSettings from '@/components/CalendarSettings/CalendarSettings';
 import { SelectedMonth } from '@/data/SelectedMonth';
 import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
@@ -25,19 +25,21 @@ const WeekPage = () => {
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
     const [selectedMonth, setSelectedMonth] = useState<SelectedMonth>(new SelectedMonth())
 
-    const [newEventDialogData, setNewEventDialogData] = useState<NewEventDialogData | null>(null)
     const [openedSettings, setOpenedSettings] = useState<boolean>(false);
-
-    const openNewEventDialogHandler = (data: NewEventDialogData) => {
-        setNewEventDialogData(data);
-    }
 
     // event related [START]
 
     const [events, setEvents] = useState<Events>(new Events());
     const [isLoadingEvents, setIsLoadingEvents] = useState<boolean>(true)
 
+    const [newEventDialogData, setNewEventDialogData] = useState<Event | null>(null)
     const [isCreatingNewEvent, setIsCreatingNewEvent] = useState<boolean>(false)
+    const [eventDialogMode, setEventDialogMode] = useState<NewEventDialogOpenMode>(NewEventDialogOpenMode.CLOSED);
+
+    const openNewEventDialogHandler = (data: Event, dialogMode: NewEventDialogOpenMode) => {
+        setNewEventDialogData(data);
+        setEventDialogMode(dialogMode);
+    }
 
     const createNewEventHandler = (newEvent: Event): Promise<void> => {
         return new Promise<void>((res, rej) => {
@@ -108,11 +110,11 @@ const WeekPage = () => {
             {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
 
             <NewEventDialogMaterial 
-                open={newEventDialogData != null} 
                 handleClose={() => setNewEventDialogData(null)} 
                 newEventDialogData={newEventDialogData}
                 createNewEventHandler={createNewEventHandler}
                 isCreatingNewEvent={isCreatingNewEvent}
+                mode={eventDialogMode}
             />
             <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)}/>
 

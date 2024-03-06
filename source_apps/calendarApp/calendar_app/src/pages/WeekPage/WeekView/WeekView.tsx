@@ -15,9 +15,9 @@ import { SyncLoader } from "react-spinners";
 import { timeConstants } from "@/constants/timeConstants";
 import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
 import { isToday } from "date-fns";
-import { NewEventDialogData } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 import useScrollbarWidth from "@/customHooks/useScrollbarWidth";
 import { convertToLowerMultipleOf5 } from "./components/DraggableNewEventPreview/helpers/timehelpers";
+import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -27,7 +27,7 @@ interface WeekViewParams {
     calendarViewRightOffsetPercentage: number,
     calendarHeaderHeightInPixels: number,
     selectedWeek: SelectedWeek,
-    openNewEventDialogHandler: (data: NewEventDialogData) => void,
+    openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void,
     isLoadingEvents: boolean,
     events: Events
 }
@@ -357,11 +357,10 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                                     //     minute
                                                     // );
 
-                                                    params.openNewEventDialogHandler(new NewEventDialogData(
-                                                        new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute),
-                                                        null
-                                                    ));
-
+                                                    params.openNewEventDialogHandler(
+                                                        Event.getNewEventWithDefaultDuration(new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute)),
+                                                        NewEventDialogOpenMode.NEW_EVENT
+                                                    )
                                                 }}
                                                 style={{
                                                     height: `${slotHeight}px`,
@@ -382,16 +381,17 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
                                 {/* Events */}
 
-                                {adjustedEvents.map((event, index) => (
+                                {adjustedEvents.map((event: Event, index: number) => (
                                     <EventUI
                                         key={event.id}
-                                        event={event}
                                         topOffset={calculateTopOffset(
                                             event.startTime
                                         )}
                                         leftOffset={event.leftOffset}
                                         width={event.width}
                                         calendarHeight={calendarHeight}
+                                        openNewEventDialogHandler={params.openNewEventDialogHandler}
+                                        event={event}
                                     />
                                 ))}
                             </div>

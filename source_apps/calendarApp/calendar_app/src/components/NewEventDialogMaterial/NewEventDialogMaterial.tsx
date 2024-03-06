@@ -25,56 +25,67 @@ const colorsForSelection = [
     { name: 'Green4', value: '#90a955' },
 ];
 
-export class NewEventDialogData {
-    startTimeDate: Date | null;
-    endTimeDate: Date | null;
-    constructor(startTimeDate: Date | null, endTimeDate: Date | null) {
-        this.startTimeDate = startTimeDate;
-        this.endTimeDate = endTimeDate;
-    }
+export enum NewEventDialogOpenMode {
+    NEW_EVENT,
+    EDIT_EXISTING_EVENT,
+    CLOSED
 }
 
 interface NewEventDialogMaterialParams {
-    open: boolean,
     handleClose: () => void,
-    newEventDialogData: NewEventDialogData | null,
+    newEventDialogData: Event | null,
     createNewEventHandler: (newEvent: Event) => Promise<void>,
-    isCreatingNewEvent: boolean
+    isCreatingNewEvent: boolean,
+    mode: NewEventDialogOpenMode
 }
 
-const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, handleClose, newEventDialogData, createNewEventHandler, isCreatingNewEvent }) => {
-    if (newEventDialogData == null) return null;
+const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) => {
+    if (params.newEventDialogData == null) return null;
 
-    const startTimeDate: Date = newEventDialogData.startTimeDate ?? new Date();
-    const endTimeDate: Date = newEventDialogData.endTimeDate ?? addMinutes(startTimeDate, timeConstants.THIRTY_MINUTES_IN_MINUTES);
+    const startTimeDate: Date = params.newEventDialogData.startTime;
+    const endTimeDate: Date = params.newEventDialogData.endTime;
 
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+    const [title, setTitle] = useState(params.newEventDialogData.title);
+    const [description, setDescription] = useState(params.newEventDialogData.description);
     const [startTime, setStartTime] = useState<Date>(startTimeDate);
     // const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
     const [endTime, setEndTime] = useState<Date | null>(endTimeDate);
     const [color, setColor] = useState(colorsForSelection[0].value);
 
-    const handleSubmit = () => {
+    const createNewEventHandler = () => {
         console.log({ title, description, startTime, endTime, color });
         if (endTime == null) return;
         const newEvent: Event = new Event(startTime, endTime, title, description, color);
-        createNewEventHandler(newEvent)
+        params.createNewEventHandler(newEvent)
             .then(_ => {
-                handleClose();
+                params.handleClose();
             })
             .catch(_ => {
                 // there was some error
             })
+    }
+
+    const editExistingEventHandler = () => {
+        alert('todo')
+    }
+
+    const handleSubmit = () => {
+        if (params.mode == NewEventDialogOpenMode.EDIT_EXISTING_EVENT) {
+            editExistingEventHandler();
+        }
+        else if (params.mode == NewEventDialogOpenMode.NEW_EVENT) {
+            createNewEventHandler();
+        }
+       
     };
 
     return (
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={params.mode != NewEventDialogOpenMode.CLOSED} onClose={params.handleClose}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-                <DialogTitle>Add New Event</DialogTitle>
+                <DialogTitle>{params.mode == NewEventDialogOpenMode.EDIT_EXISTING_EVENT ? "Edit" : "Add"} New Event</DialogTitle>
                 <SyncLoader
                     color={colors.grey[400]}
-                    loading={isCreatingNewEvent}
+                    loading={params.isCreatingNewEvent}
                     size={5}
                 />
 
@@ -130,8 +141,8 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = ({ open, 
                 </FormControl>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={handleSubmit}>Add Event</Button>
+                <Button onClick={params.handleClose}>Cancel</Button>
+                <Button onClick={handleSubmit}>{params.mode == NewEventDialogOpenMode.EDIT_EXISTING_EVENT ? "Edit" : "Add"} Event</Button>
             </DialogActions>
         </Dialog>
     );
