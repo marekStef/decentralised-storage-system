@@ -15,9 +15,9 @@ Pak staci spustit v tehle directory `docker compose up --build`.
 
 #### DataStorage
 
-`DataStorage` vyzaduje pro fungovani `MongoDb` databazi. Pred pokracovanim je tedy nutno ji mat pripravenou lokalne na PC. Instrukce pro instalaci `MongoDb` databaze jsou [zde](https://www.mongodb.com/docs/manual/installation/).
+`DataStorage` vyzaduje pro fungovani `MongoDb` databazi. Pred pokracovanim je tedy nutno ji mat pripravenou lokalne na PC. Neni mozne ji jenom nainstalovat [odsud](https://www.mongodb.com/docs/manual/installation/). Duvodem je to, ze potrebujeme mit mongo db databazi nastavenou jako `MongoDB replica` - to nam dovoli pouzivat nektere dodatecne `MongoDB` features - jako jsou transakce ( ty budou pouzite pri ukladani viacerych eventov).
 
-Po uspesnem nainstalovani je potrebne tuhle databazi nastartovat a obdrzet od ni pristupovou `url`.
+Po uspesnem nastartovani databazi pres docker je potrebne od ni obdrzet pristupovou `url`.
 
 Ted je mozne pristoupit k samotnimu setupu DataStorage [zde](./dataStorage/README.md)
 
