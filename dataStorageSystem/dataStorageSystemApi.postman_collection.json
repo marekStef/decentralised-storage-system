@@ -82,7 +82,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nameDefinedByUser\": \"My New app\"\r\n}",
+									"raw": "{\r\n    \"nameDefinedByUser\": \"My New App\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -110,7 +110,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"65de5978b923cf44dd97831a\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"65e9ecd1de476ee7b4a271c7\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -158,7 +158,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"permissionId\": \"65de68033887ce0336d15bc8\"\r\n}",
+									"raw": "{\r\n    \"permissionId\": \"65ea0c91fb2ea0babc837c0a\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -221,7 +221,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"65de5980b923cf44dd97831e\",\r\n    \"nameDefinedByApp\": \"ahoj.kasdlfj\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"65e9ecd6de476ee7b4a271cb\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -249,7 +249,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZGU1OTc4YjkyM2NmNDRkZDk3ODMxYSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IGFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmthc2RsZmoiLCJpYXQiOjE3MDkwNzA3MzAsImV4cCI6MTExNzYzNTA3MzB9.VLHULgpWWI1aINj16uT7ZYwlj5AvltXO1zbZ3Vfq15Q\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -277,7 +277,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZGU1OTc4YjkyM2NmNDRkZDk3ODMxYSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IGFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmthc2RsZmoiLCJpYXQiOjE3MDkwNzA3MzAsImV4cCI6MTExNzYzNTA3MzB9.VLHULgpWWI1aINj16uT7ZYwlj5AvltXO1zbZ3Vfq15Q\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -305,7 +305,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVkZTY4MDMzODg3Y2UwMzM2ZDE1YmM4IiwiYXBwSWQiOiI2NWRlNTk3OGI5MjNjZjQ0ZGQ5NzgzMWEiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMi0yN1QyMjo1Mzo1NS40NzNaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzA5MDc0NDM1LCJleHAiOjExMTc2MzU0NDM1fQ.Pe9uJfz8YT8HHHGxIQEMkuBvfcxWTNzyWhxRJVavq9I\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"ahoj.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            },\r\n            \"metadata\": {\r\n                \"profile\": \"ahoj.com/first_profile\",\r\n                \"createdData\": \"2024-02-08T21:56:18.277Z\"\r\n            }\r\n        }\r\n    ]\r\n    \r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"CalendarPro.com_CalendarEventProfile\",\r\n    \"events\": [\r\n        {\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -325,8 +325,108 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "CheckAccessTokenStatus10",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"checkAccessTokenStatus"
+									],
+									"query": [
+										{
+											"key": "accessToken",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ"
+										},
+										{
+											"key": "",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllEventsOfGivenProfile11",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/get_all_events_for_given_access_token?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"get_all_events_for_given_access_token"
+									],
+									"query": [
+										{
+											"key": "accessToken",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ"
+										}
+									]
+								}
+							},
+							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "dataStorage",
+			"item": [
+				{
+					"name": "getFilteredEvents",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"metadataMustContain\": {\r\n        \"profile\": \"CalendarPro.com_CalendarEventProfile\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DATA_STORAGE_URL}}/app/api/get_filtered_events",
+							"host": [
+								"{{DATA_STORAGE_URL}}"
+							],
+							"path": [
+								"app",
+								"api",
+								"get_filtered_events"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
