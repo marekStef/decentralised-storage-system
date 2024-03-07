@@ -115,7 +115,7 @@ const InitialSetup = () => {
                 showSuccess(response.message)
                 // alert(response.generatedAccessToken)
                 setPermissionsSendingStatus(PossibleResultsWithServer.SUCCESS);
-                persistenceManager.setTokenForEventsManipulation(response.generatedAccessToken);
+                persistenceManager.setAccessTokenForEvents(response.generatedAccessToken);
             })
             .catch(message => {
                 showError(message)

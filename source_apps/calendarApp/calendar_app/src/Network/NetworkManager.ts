@@ -1,16 +1,40 @@
 import appConstants from "@/constants/appConstants";
-import networkRoutes from "@/constants/networkRoutes";
+import {networkRoutes, networkStatusCodes} from "@/constants/networkConstants";
 import persistenceManager from "@/data/PersistenceManager";
+
+import { Event } from "@/data/EventsManager";
 
 class NetworkManager {
     // GET request
-    private async get<T>(endpoint: string): Promise<T> {
-        console.log('endpoint', `${persistenceManager.getServerLocation()}${endpoint}`);
-        const response = await fetch(`${persistenceManager.getServerLocation()}${endpoint}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
+    // private async get<T>(endpoint: string): Promise<T> {
+    //     return new Promise((res, rej) => {
+    //         fetch(`${persistenceManager.getServerLocation()}${endpoint}`)
+    //             .then(response => response.json().then(body => response.ok ? res({...body, status: response.status}) : rej({...body, status: response.status})))
+    //             .catch(error => rej(error));
+    //     })
+
+    //     // console.log('endpoint', `${persistenceManager.getServerLocation()}${endpoint}`);
+    //     // const response = await ;
+    //     // if (!response.ok) {
+    //     //     throw new Error('Network response was not ok');
+    //     // }
+    //     // return response.json();
+    // }
+
+    private async get<T>(endpoint: string, queryParams?: Record<string, any>): Promise<T> {
+        const toQueryString = (params: Record<string, any>) => {
+            return Object.keys(params)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                .join('&');
+        };
+    
+        const queryString = queryParams ? `?${toQueryString(queryParams)}` : '';
+        
+        return new Promise((res, rej) => {
+            fetch(`${persistenceManager.getServerLocation()}${endpoint}${queryString}`)
+                .then(response => response.json().then(body => response.ok ? res({...body, status: response.status}) : rej({...body, status: response.status})))
+                .catch(error => rej(error));
+        });
     }
 
     // POST request
@@ -98,7 +122,7 @@ class NetworkManager {
 
             this.post(networkRoutes.REGISTER_NEW_PROFILE_ROUTE, data)
                 .then(response => {
-                    if (response.status === 201) {
+                    if (response.status === networkStatusCodes.CREATED) {
                         console.log('Success:', response.message);
                         res(response.message);
                     } else {
@@ -143,6 +167,64 @@ class NetworkManager {
                     rej(error.message || 'Unknown error during permissions request');
                 });
         });
+    }
+
+    public async checkAccessTokenStatus(accessToken: string): Promise<boolean> {
+        return new Promise(async (res, rej) => {
+            try {
+                const response: { isActive: boolean } = await this.get(networkRoutes.CHECK_ACCESS_TOKEN_FOR_REQUESTED_PERMISSION, {
+                    accessToken
+                });
+                console.log(response);
+                res(response.isActive)
+            } catch (error) {
+                console.error('Error checking server presence:', error);
+                res(false);
+            }
+        }) 
+    }
+
+    public async createNewEvent(event: Event): Promise<any> {
+        console.log('creating new event');
+        return new Promise(async (res, rej) => {
+            const accessToken = persistenceManager.getAccessTokenForEvents();
+
+            if (accessToken == null)
+                rej("Your app does not have token saved for this operation");
+
+            const isActive = await this.checkAccessTokenStatus(accessToken!)
+            if (!isActive) {
+                return rej("You have not granted access to this app for accessing calendar events. You need to do it before the calendar can manipulate events.")
+            }
+
+
+            const data = {
+                accessToken,
+                profileCommonForAllEventsBeingUploaded: appConstants.calendarEventProfileName,
+                events: [
+                    {
+                        payload: event,
+                        metadata: {
+                            createdDate: new Date().toISOString(),
+                            profile: appConstants.calendarEventProfileName
+                        }
+                    }
+                ]
+            }
+
+            this.post(networkRoutes.UPLOAD_NEW_EVENTS_ROUTE, data)
+                .then(response => {
+                    console.log('Events uploaded successfully', response);
+                    res({
+                        message: 'Event was created',
+                        newEvent: response.events[0]
+                    });
+                })
+                .catch(error => {
+                    console.error('Error uploading events:', error);
+                    rej(error.message || 'Unknown error when creating event');
+                });
+        })
     }
 
 }

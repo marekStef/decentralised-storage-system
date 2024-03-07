@@ -10,6 +10,9 @@ import NewEventDialogMaterial, { NewEventDialogOpenMode } from '@/components/New
 import CalendarSettings from '@/components/CalendarSettings/CalendarSettings';
 import { SelectedMonth } from '@/data/SelectedMonth';
 import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
+import { showError, showSuccess } from '@/components/AlertProvider/AlertProvider';
+
+import networkManager from '@/Network/NetworkManager';
 
 const eventsManager = new EventsManager();
 
@@ -47,7 +50,7 @@ const WeekPage = () => {
 
             setIsCreatingNewEvent(true);
     
-            eventsManager.createNewEvent(newEvent)
+            networkManager.createNewEvent(newEvent)
                 .then((response => {
                     // if the user is currently looking at the week in which they create new newEvent - display that newEvent
                     if (selectedWeek.isGivenDateInThisWeek(newEvent.startTime)) {
@@ -59,10 +62,12 @@ const WeekPage = () => {
                             return events;
                         })
                     }
+                    showSuccess(response.message);
                     res();
+                    console.log('---', response)
                 }))
                 .catch(err => {
-                    rej()
+                    showError(err);
                 })
                 .finally(() => {
                     setIsCreatingNewEvent(false)

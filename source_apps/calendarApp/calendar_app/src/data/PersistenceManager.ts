@@ -12,7 +12,7 @@ class PersistenceManager {
 
     jwtTokenForPermissionRequestsAndProfiles: string | null = null;
 
-    tokenForEventsManipulation: string | null = null;
+    accessTokenForEvents: string | null = null;
 
     public loadDataFromLocalStorage() {
         this.ip = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS);
@@ -21,7 +21,7 @@ class PersistenceManager {
         this.httpMethod = HttpProtocolType.http;
 
         this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
-        this.tokenForEventsManipulation = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
+        this.accessTokenForEvents = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
     }
 
     public setServerIPAddress(ip: string) {
@@ -53,13 +53,13 @@ class PersistenceManager {
         return this.jwtTokenForPermissionRequestsAndProfiles;
     }
 
-    public setTokenForEventsManipulation(token: string): void {
+    public setAccessTokenForEvents(token: string): void {
         localStorage.setItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION, token)
-        this.tokenForEventsManipulation = token;
+        this.accessTokenForEvents = token;
     }
 
-    public getTokenForEventsManipulation(): string | null {
-        return this.tokenForEventsManipulation;
+    public getAccessTokenForEvents(): string | null {
+        return this.accessTokenForEvents;
     }
 
     public areAllValuesSet(): boolean {
@@ -67,7 +67,7 @@ class PersistenceManager {
             && this.port != null 
             && this.httpMethod != null 
             && this.jwtTokenForPermissionRequestsAndProfiles != null 
-            && this.tokenForEventsManipulation != null;
+            && this.accessTokenForEvents != null;
         console.log('are all values set: ', this);
         return areAllValuesSet;
     }
@@ -77,7 +77,7 @@ class PersistenceManager {
         this.port = null;
         this.httpMethod = null;
         this.jwtTokenForPermissionRequestsAndProfiles = null;
-        this.tokenForEventsManipulation = null;
+        this.accessTokenForEvents = null;
 
         // localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION)
         // localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES)

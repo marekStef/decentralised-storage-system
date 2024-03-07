@@ -77,17 +77,17 @@ class EventsManager {
         });
     }
 
-    createNewEvent(event: Event): Promise<boolean> {
-        return new Promise((res, rej) => {
-            event.id = event.startTime.toISOString() + event.endTime.toISOString();
-            mockupEvents2.push(event)
-            setTimeout(() => {
-                res({
-                    _id: event.id
-                });
-            }, 500)
-        })
-    }
+    // createNewEvent(event: Event): Promise<boolean> {
+    //     return new Promise((res, rej) => {
+    //         event.id = event.startTime.toISOString() + event.endTime.toISOString();
+    //         mockupEvents2.push(event)
+    //         setTimeout(() => {
+    //             res({
+    //                 _id: event.id
+    //             });
+    //         }, 500)
+    //     })
+    // }
 }
 
 export default EventsManager;
