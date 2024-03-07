@@ -6,7 +6,8 @@ export const networkRoutes = {
     REQUEST_PERMISSIONS_ROUTE: '/app/api/request_new_permissions',
     CHECK_ACCESS_TOKEN_FOR_REQUESTED_PERMISSION: '/app/api/checkAccessTokenStatus',
 
-    UPLOAD_NEW_EVENTS_ROUTE: '/app/api/upload_new_events'
+    UPLOAD_NEW_EVENTS_ROUTE: '/app/api/upload_new_events',
+    GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN: '/app/api/get_all_events_for_given_access_token'
 }
 
 export const networkStatusCodes = {

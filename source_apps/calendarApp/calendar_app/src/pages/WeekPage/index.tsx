@@ -91,6 +91,12 @@ const WeekPage = () => {
                 setEvents(events)
                 setIsLoadingEvents(false)
             })
+            .catch(errMessage => {
+                showError(errMessage);
+            })
+            .finally(() => {
+                setIsLoadingEvents(false);
+            })
     }, [selectedWeek])
 
     useEffect(() => {

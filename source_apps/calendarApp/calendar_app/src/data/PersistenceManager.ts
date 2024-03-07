@@ -68,7 +68,6 @@ class PersistenceManager {
             && this.httpMethod != null 
             && this.jwtTokenForPermissionRequestsAndProfiles != null 
             && this.accessTokenForEvents != null;
-        console.log('are all values set: ', this);
         return areAllValuesSet;
     }
 

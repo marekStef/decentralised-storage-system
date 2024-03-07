@@ -223,6 +223,28 @@ class NetworkManager {
         })
     }
 
+    public getAllCalendarEvents(): Promise<any> {
+        return new Promise(async (res, rej) => {
+            const accessToken = persistenceManager.getAccessTokenForEvents();
+            if (accessToken == null)
+                rej("Your app does not have token saved for this operation");
+            
+            try {
+                const response: { events: Array<object>, count: number } = await this.get(networkRoutes.GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN, {
+                    accessToken
+                });
+                // console.log(response);
+                res({
+                    ...response,
+                    events: response.events.map(event => Event.convertEventReceivedFromServerToThisEvent(event))
+                });
+            } catch (error) {
+                console.error('Error getting calendar events:', error);
+                rej('Error getting calendar events');
+            }
+        }) 
+    }
+
 }
 
 export default new NetworkManager()

@@ -11,7 +11,6 @@ const Index = () => {
         setTimeout(() => {
             setShowLoadingText(true);
         }, 1000)
-        persistenceManager.loadDataFromLocalStorage();
         
     }, [])
     return (

@@ -3,6 +3,7 @@ import Calendar from "./Calendar";
 import SelectedWeek from "./SelectedWeek";
 import { timeConstants } from "@/constants/timeConstants";
 import appConstants from "@/constants/appConstants";
+import networkManager from "@/Network/NetworkManager";
 
 // when updating this event, update EventProfileSchema as well
 export class EventPayload {
@@ -112,29 +113,53 @@ export class Events {
 }
 
 class EventsManager {
+    // getEventsForSelectedWeek(selectedWeek: SelectedWeek): Promise<Events> {
+    //     return new Promise<Events>((res, rej) => {
+    //         setTimeout(() => {
+
+    //             const events = new Events()
+
+    //             for (let i = 0; i < 7; ++i) {
+    //                 events.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
+    //             }
+
+    //             // console.log(events.events)
+
+    //             for (let j = 0;  j < mockupEvents2.length; ++j) {
+    //                 const current = mockupEvents2[j];
+
+    //                 if (selectedWeek.isGivenDateInThisWeek(current.payload.startTime))
+    //                     events.events[current.getDayOfThisEvent().toISOString()].push(current)
+    //             }
+
+    //             // console.log(events.events)
+    //             res(events)
+
+    //         }, 500);
+    //     });
+    // }
     getEventsForSelectedWeek(selectedWeek: SelectedWeek): Promise<Events> {
         return new Promise<Events>((res, rej) => {
-            setTimeout(() => {
-
-                const events = new Events()
-
-                for (let i = 0; i < 7; ++i) {
-                    events.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
-                }
-
-                // console.log(events.events)
-
-                for (let j = 0;  j < mockupEvents2.length; ++j) {
-                    const current = mockupEvents2[j];
-
-                    if (selectedWeek.isGivenDateInThisWeek(current.payload.startTime))
-                        events.events[current.getDayOfThisEvent().toISOString()].push(current)
-                }
-
-                // console.log(events.events)
-                res(events)
-
-            }, 500);
+            networkManager.getAllCalendarEvents()
+                .then((eventsData) => {
+                    console.log(eventsData);
+                    const events = new Events()
+                    for (let i = 0; i < 7; ++i) {
+                        events.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
+                    }
+                    for (let j = 0;  j < eventsData.events.length; ++j) {
+                        const current = eventsData.events[j];
+    
+                        if (selectedWeek.isGivenDateInThisWeek(current.payload.startTime))
+                            events.events[current.getDayOfThisEvent().toISOString()].push(current)
+                    }
+                    console.log('here?');
+                    res(events)
+                })
+                .catch(err => {
+                    console.log(err);
+                    rej(err);
+                })
         });
     }
 }
