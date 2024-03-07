@@ -5,7 +5,13 @@ Backend je momentalne rozdelen na 3 casti:
 - `authService`
 - `dataViewStore` (tento je potrebne nyni ignorovat - neni nijak zapojen do momentalniho stavu backendu a slozil jen jako testovani jedne funkcionality v minulosti. V budoucnu zapojen bude)
 
-## Spusteni jednotlivych casti backendu
+## Spusteni jednotlivych casti backendu s Dockerem
+
+Pred pokracovanim je potrebne si precist o dockeru [zde pri dataStorage](./dataStorage/README.md) a takisto [zde pri authService](./authService/README.md)
+
+Pak staci spustit v tehle directory `docker compose up --build`.
+
+## Spusteni jednotlivych casti backendu bez Dockeru
 
 #### DataStorage
 

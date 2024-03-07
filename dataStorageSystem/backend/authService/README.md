@@ -3,9 +3,59 @@
 
 This is the component responsible for making incoming data trusted before they continue on their way to `DataStorage` component.
 
-### Setup a Spusteni
+### Setup a Spusteni s Dockerem
+
+Pri dockeri je potrebne se ujistit, ze v `.env` mame odkomentovane spravne veci:
+
+```env
+# MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting
+MONGO_DB_URI=mongodb://mongo1:27017/accessDb # for docker
+
+# DATA_STORAGE_URL=http://localhost:3005 # for manual starting
+DATA_STORAGE_URL=http://data_storage:3005 # for dockerr
+```
+
+Pro spusteni je vsechno dulezite napsane [zde](../README.md).
+
+Po spusteni `docker compose up --build` je jeste potrebne inicializovat tuhle `authService`. Tahle `authService` je sice spustena automaticky pomoci hlavniho `docker-compose.yml` ale manualne je potrebne aby pri prvnim spusteni se nasetupovala ( pridanim root profilov do databaze).
+
+```docker
+docker ps
+```
+
+Bude se to pravdepodobne volat takhle: `backend-auth_service-1`.
+
+Pak jiz muzeme spustit dany script:
+
+```docker
+docker exec backend-data_storage-1 npm run delete_database
+```
+
+Vysledkem by melo byt tohle:
+
+```docker
+C:\Users\stefanec>docker exec backend-auth_service-1 npm run initialise_service
+
+> datastorage@1.0.0 initialise_service
+> node scripts/initialisation/initialise.js
+
+Event uploaded successfully: Events were created successfully
+Event uploaded successfully: Events were created successfully
+```
+
+### Setup a Spusteni bez Dockeru
 
 #### .env uprava
+
+Potrebujeme odkomentovat a zakomentovat nasledovne v `.env` souboru:
+
+```env
+MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting
+# MONGO_DB_URI=mongodb://mongo1:27017/accessDb # for docker
+
+DATA_STORAGE_URL=http://localhost:3005 # for manual starting
+# DATA_STORAGE_URL=http://data_storage:3005 # for docker
+```
 
 V `.env` souboru je podstatni klic `DATA_STORAGE_URL`. V pripade, ze se menil port v projektu `dataStorage`, je nutno tuhle zmenu reflektovat i zde v `.env` (vice informaci v README komponenty `dataStorage` [zde](../dataStorage/README.md)).
 
