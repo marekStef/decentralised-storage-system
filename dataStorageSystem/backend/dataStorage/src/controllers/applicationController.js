@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const eventsRelatedResponseMessages = require('../constants/forApiResponses/eventsRelated');
@@ -10,60 +12,78 @@ const eventsRelated = require('../constants/forApiResponses/eventsRelated');
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
 // saves the event into db
-const saveNewEvent = async (res, event) => {
-	console.log(event)
-	// Validate event against Profile schema
-	if (!event.metadata || !event.metadata.profile == undefined || !event.metadata.source == undefined) {
-		throw Error({
-			statusCode: httpStatusCodes.BAD_REQUEST,
-			message: 'Event does not contain correct metadata'
-		});
-	}
+const saveNewEvent = async (session, event) => {
+    console.log(event);
+    // Validate event against Profile schema
+    if (!event.metadata || !event.metadata.profile === undefined || !event.metadata.source === undefined) {
+        throw {
+            statusCode: httpStatusCodes.BAD_REQUEST,
+            message: 'Event does not contain correct metadata',
+        };
+    }
 
-	try {
-		const newEvent = new EventSchema(event);
-		await newEvent.save();
-	} catch (error) {
-		console.log(error)
-		if (error.code == mongoDbCodes.DUPLICATE_ERROR)
-			throw Error({
-				statusCode: httpStatusCodes.CONFLICT,
-				message: eventsRelated.DUPLICATE
-			});
-		else {
-			console.error('Error saving new event:', error);
-			throw Error({
-				statusCode: httpStatusCodes.INTERNAL_SERVER_ERROR,
-				message: generalResponseMessages.INTERNAL_SERVER_ERROR
-			});
-		}
-	}
-}
+    try {
+        const newEvent = new EventSchema(event);
+        await newEvent.save({ session }); // Save using the session for transaction
+        return newEvent; // Return the event for later use
+    } catch (error) {
+        console.log(error);
+        if (error.code == mongoDbCodes.DUPLICATE_ERROR)
+            throw {
+                statusCode: httpStatusCodes.CONFLICT,
+                message: eventsRelated.DUPLICATE,
+            };
+        else {
+            console.error('Error saving new event:', error);
+            throw {
+                statusCode: httpStatusCodes.INTERNAL_SERVER_ERROR,
+                message: generalResponseMessages.INTERNAL_SERVER_ERROR,
+            };
+        }
+    }
+};
 
 const uploadNewEvents = async (req, res) => {
-	const {
-		events
-	} = req.body;
+	console.log('here2')
+    const { events } = req.body;
 
-	if (!events) {
-		return res.status(httpStatusCodes.BAD_REQUEST).json({
-			message: eventsRelatedResponseMessages.error.MISSING_REQUIRED_FIELDS
-		});
-	}
+    if (!events) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({
+            message: eventsRelatedResponseMessages.error.MISSING_REQUIRED_FIELDS,
+        });
+    }
 
-	try {
-		await Promise.all(events.map(event => saveNewEvent(res, event))); // todo - if something goes wrong in the middle of the work - i should delete the saved events
-		res.status(httpStatusCodes.CREATED).json({
-			message: eventsRelatedResponseMessages.success.EVENTS_CREATED_SUCCESSFULLY
-		});
-	} catch (err) {
-		res.status(err.statusCode).json({
-			message: err.message
-		});
-		console.log(err);
-		console.log("<<<<<<1");
-		return err;
-	}
+	let session = null;
+    try {
+		session = await mongoose.startSession(); // Start a MongoDB session (!!! needs mongodb with replica to be set - look at readme)
+		session.startTransaction(); // Start the transaction
+
+        const savedEvents = await Promise.all(events.map(event => saveNewEvent(session, event)));
+        await session.commitTransaction(); // Commit the transaction if all saves succeed
+
+        // Map saved events to include IDs and other necessary data
+        // const responseEvents = savedEvents.map(event => ({
+        //     id: event._id,
+        //     ...event.toJSON(),
+        // }));
+
+		// console.log(savedEvents);
+
+        res.status(httpStatusCodes.CREATED).json({
+            message: eventsRelatedResponseMessages.success.EVENTS_CREATED_SUCCESSFULLY,
+            events: savedEvents,
+        });
+    } catch (err) {
+		if (session != null)
+        	await session.abortTransaction(); // Rollback the transaction on error
+        res.status(err.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: err.message || 'An error occurred',
+        });
+        console.log(err);
+    } finally {
+		if (session != null)
+        	session.endSession(); // End the session whether success or fail
+    }
 };
 
 const getFilteredEvents = async (req, res) => {

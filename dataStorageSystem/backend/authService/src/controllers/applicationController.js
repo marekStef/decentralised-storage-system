@@ -296,8 +296,8 @@ const sendEventsToDataStorage = async (res, events) => {
         });
 
         if (response.status === 201) {
-            console.log('Event uploaded successfully:', response.data.message);
-            return res.status(201).json({ message: response.data.message });
+            console.log('Event uploaded successfully:', response.data);
+            return res.status(201).json({ message: response.data.message, events: response.data.events });
         } else {
             // Other status codes except for 500
             console.error('Unexpected response status:', response.status);
