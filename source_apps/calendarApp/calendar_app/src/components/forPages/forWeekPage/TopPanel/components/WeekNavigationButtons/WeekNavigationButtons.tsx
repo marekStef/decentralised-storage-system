@@ -7,21 +7,22 @@ import SelectedWeek from "@/data/SelectedWeek";
 import SquareButton from "@/components/SquareButton/SquareButton";
 
 interface WeekNavigationButtonsParams {
-    setSelectedWeek: (week: SelectedWeek | ((prevWeek: SelectedWeek) => SelectedWeek)) => void;
+    selectedWeek: SelectedWeek,
+    setSelectedWeek: (week: SelectedWeek) => void;
 }
 
 
 const WeekNavigationButtons: React.FC<WeekNavigationButtonsParams> = (params) => {
     const handlePreviousWeek = () => {
-        params.setSelectedWeek(currWeek => currWeek.getPreviousWeek())
+        params.setSelectedWeek(params.selectedWeek.getPreviousWeek())
     };
 
     const handleNextWeek = () => {
-        params.setSelectedWeek(currWeek => currWeek.getNextWeek())
+        params.setSelectedWeek(params.selectedWeek.getNextWeek())
     };
 
     const handleCurrentWeek = () => {
-        params.setSelectedWeek(currWeek => currWeek.getCurrentWeek())
+        params.setSelectedWeek(params.selectedWeek.getCurrentWeek())
     }
 
     return (

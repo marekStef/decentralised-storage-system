@@ -202,22 +202,18 @@ class NetworkManager {
                 accessToken,
                 profileCommonForAllEventsBeingUploaded: appConstants.calendarEventProfileName,
                 events: [
-                    {
-                        payload: event,
-                        metadata: {
-                            createdDate: new Date().toISOString(),
-                            profile: appConstants.calendarEventProfileName
-                        }
-                    }
+                    event.getEventInFormForSending()
                 ]
             }
+
+            console.log(event.getEventInFormForSending())
 
             this.post(networkRoutes.UPLOAD_NEW_EVENTS_ROUTE, data)
                 .then(response => {
                     console.log('Events uploaded successfully', response);
                     res({
                         message: 'Event was created',
-                        newEvent: response.events[0]
+                        newEvent: Event.convertEventReceivedFromServerToThisEvent(response.events[0])
                     });
                 })
                 .catch(error => {

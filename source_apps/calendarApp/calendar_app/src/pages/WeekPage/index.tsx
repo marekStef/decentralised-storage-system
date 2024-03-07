@@ -13,6 +13,7 @@ import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
 import { showError, showSuccess } from '@/components/AlertProvider/AlertProvider';
 
 import networkManager from '@/Network/NetworkManager';
+import { isSameWeek } from 'date-fns';
 
 const eventsManager = new EventsManager();
 
@@ -27,6 +28,11 @@ const WeekPage = () => {
 
     const [selectedWeek, setSelectedWeek] = useState<SelectedWeek>(new SelectedWeek())
     const [selectedMonth, setSelectedMonth] = useState<SelectedMonth>(new SelectedMonth())
+
+    const setSelectedWeekHandler = (newWeek: SelectedWeek): void => {
+        if (isSameWeek(selectedWeek.startOfWeek, newWeek.startOfWeek)) return;
+        setSelectedWeek(newWeek);
+    }
 
     const [openedSettings, setOpenedSettings] = useState<boolean>(false);
 
@@ -53,18 +59,17 @@ const WeekPage = () => {
             networkManager.createNewEvent(newEvent)
                 .then((response => {
                     // if the user is currently looking at the week in which they create new newEvent - display that newEvent
-                    if (selectedWeek.isGivenDateInThisWeek(newEvent.startTime)) {
+                    if (selectedWeek.isGivenDateInThisWeek(newEvent.payload.startTime)) {
                         setEvents((events: Events) => {
                             events.events[newEvent.getDayOfThisEvent().toISOString()] = [
                                 ...events.events[newEvent.getDayOfThisEvent().toISOString()],
-                                newEvent
+                                response.newEvent
                             ]
                             return events;
                         })
                     }
                     showSuccess(response.message);
                     res();
-                    console.log('---', response)
                 }))
                 .catch(err => {
                     showError(err);
@@ -134,7 +139,7 @@ const WeekPage = () => {
             >
                 <TopPanel 
                     selectedWeek={selectedWeek} 
-                    setSelectedWeek={setSelectedWeek} 
+                    setSelectedWeek={setSelectedWeekHandler} 
                     openSettings={() => setOpenedSettings(true)} 
                 />
             </div>
@@ -150,7 +155,7 @@ const WeekPage = () => {
                         calendarHeaderHeightInPixels={calendarHeaderHeightInPixels}
                         selectedWeek={selectedWeek}
                         selectedMonth={selectedMonth}
-                        setSelectedWeek={setSelectedWeek} 
+                        setSelectedWeek={setSelectedWeekHandler} 
                         setSelectedMonth={setSelectedMonth}
                     />
             </div>

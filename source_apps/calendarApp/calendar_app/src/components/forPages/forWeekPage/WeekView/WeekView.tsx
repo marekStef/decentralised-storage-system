@@ -122,10 +122,10 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
         const eventsWithPosition = dayEvents.map((event) => ({
             ...event,
             startInMinutes:
-                event.startTime.getHours() * 60 +
-                event.startTime.getMinutes(),
+                event.payload.startTime.getHours() * 60 +
+                event.payload.startTime.getMinutes(),
             endInMinutes:
-                event.endTime.getHours() * 60 + event.endTime.getMinutes(),
+                event.payload.endTime.getHours() * 60 + event.payload.endTime.getMinutes(),
             leftOffset: 0,
             width: 100,
         }));
@@ -385,7 +385,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                     <EventUI
                                         key={event.id}
                                         topOffset={calculateTopOffset(
-                                            event.startTime
+                                            event.payload.startTime
                                         )}
                                         leftOffset={event.leftOffset}
                                         width={event.width}

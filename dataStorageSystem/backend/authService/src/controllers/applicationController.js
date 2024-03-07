@@ -273,13 +273,29 @@ const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
-const transformEvent = (res, profileNeededToBePresentInAllEvents, event, sourceAppName) => {
+const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName) => {
     // Validate event against Profile schema
-    if (!event.metadata || !event.metadata.profile)
-        throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Event does not contain correct metadata' }));
+    if (!event.metadata || !event.metadata.profile) {
+        throw {
+            statusCode: httpStatusCodes.BAD_REQUEST,
+            message: 'Event does not contain correct metadata'
+        }
+    }
 
-    if (event.metadata.profile != profileNeededToBePresentInAllEvents)
-        throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: 'One of the events has different profile set in metadata' }));
+    if (!event.payload) {
+        throw {
+            statusCode: httpStatusCodes.BAD_REQUEST,
+            message: 'Event does not contain payload'
+        }
+    }
+
+
+    if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
+        throw{
+            statusCode: httpStatusCodes.NOT_FOUND,
+            message: 'One of the events has different profile set in metadata'
+        }
+    }
 
     // todo - repair checking profile - currently new events are not checked against it
 
@@ -307,8 +323,8 @@ const transformEvent = (res, profileNeededToBePresentInAllEvents, event, sourceA
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
-const transformEvents = (res, profileNeededToBePresentInAllEvents, events, sourceAppName) => {
-    return events.map(event => transformEvent(res, profileNeededToBePresentInAllEvents, event, sourceAppName))
+const transformEvents = (profileNeededToBePresentInAllEvents, events, sourceAppName) => {
+    return events.map(event => transformEvent(profileNeededToBePresentInAllEvents, event, sourceAppName))
 }
 
 // sends events to dataStorage component
@@ -372,13 +388,21 @@ const uploadNewEvents = async (req, res) => {
     let sourceAppName = dataAccessPermission.app.nameDefinedByApp
 
     // add the events
-    let updatedEvents = transformEvents(res, profileCommonForAllEventsBeingUploaded, events, sourceAppName)
+
+    let updatedEvents;
+    try {
+        updatedEvents = transformEvents(profileCommonForAllEventsBeingUploaded, events, sourceAppName)
+    }
+    catch (errResponse) {
+        console.log(errResponse)
+        return res.status(errResponse.statusCode).json({ message: errResponse.message })
+    }
 
     try {
         await sendEventsToDataStorage(res, updatedEvents)
     } catch (errResponse) {
-        console.log(errResponse);
-        console.log("<<<<<<1");
+        // console.log(errResponse);
+        // console.log("<<<<<<1");
         return errResponse;
     }
 };

@@ -10,7 +10,7 @@ import { timeConstants } from '@/constants/timeConstants';
 
 import { SyncLoader } from "react-spinners";
 
-import { Event } from '@/data/EventsManager';
+import { Event, EventMetadata, EventPayload } from '@/data/EventsManager';
 
 const colorsForSelection = [
     { name: 'Red1', value: '#9b2226' },
@@ -42,11 +42,11 @@ interface NewEventDialogMaterialParams {
 const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) => {
     if (params.newEventDialogData == null) return null;
 
-    const startTimeDate: Date = params.newEventDialogData.startTime;
-    const endTimeDate: Date = params.newEventDialogData.endTime;
+    const startTimeDate: Date = params.newEventDialogData.payload.startTime;
+    const endTimeDate: Date = params.newEventDialogData.payload.endTime;
 
-    const [title, setTitle] = useState(params.newEventDialogData.title);
-    const [description, setDescription] = useState(params.newEventDialogData.description);
+    const [title, setTitle] = useState(params.newEventDialogData.payload.title);
+    const [description, setDescription] = useState(params.newEventDialogData.payload.description);
     const [startTime, setStartTime] = useState<Date>(startTimeDate);
     // const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
     const [endTime, setEndTime] = useState<Date | null>(endTimeDate);
@@ -55,7 +55,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     const createNewEventHandler = () => {
         console.log({ title, description, startTime, endTime, color });
         if (endTime == null) return;
-        const newEvent: Event = new Event(startTime, endTime, title, description, color);
+        const newEvent: Event = new Event(null, new EventPayload(startTime, endTime, title, description, color), new EventMetadata());
         params.createNewEventHandler(newEvent)
             .then(_ => {
                 params.handleClose();

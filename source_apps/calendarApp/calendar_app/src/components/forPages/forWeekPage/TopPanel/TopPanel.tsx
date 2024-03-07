@@ -9,7 +9,7 @@ import SquareButton from '@/components/SquareButton/SquareButton';
 
 interface TopPanelParams {
     selectedWeek: SelectedWeek,
-    setSelectedWeek: (week: SelectedWeek | ((prevWeek: SelectedWeek) => SelectedWeek)) => void;
+    setSelectedWeek: (week: SelectedWeek) => void;
     openSettings: () => void;
 }
 
@@ -47,7 +47,10 @@ const TopPanel: React.FC<TopPanelParams> = (params) => {
                     >
                         {Calendar.getReadableDateWithoutTime(params.selectedWeek.startOfWeek)}-{Calendar.getReadableDateWithoutTime(params.selectedWeek.endOfWeek)}
                     </h1>
-                    <WeekNavigationButtons setSelectedWeek={params.setSelectedWeek} />
+                    <WeekNavigationButtons 
+                        selectedWeek={params.selectedWeek}
+                        setSelectedWeek={params.setSelectedWeek} 
+                    />
                 </div>
 
             </div>
