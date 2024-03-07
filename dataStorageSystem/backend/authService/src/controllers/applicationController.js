@@ -248,6 +248,29 @@ const request_new_permissions = async (req, res) => {
     }
 };
 
+const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
+    const { accessToken } = req.query;
+
+    if (!accessToken)
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.MISSING_REQUIRED_FIELDS });
+
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(accessToken);
+    } catch (error) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
+    }
+
+    const { dataAccessPermissionId } = decodedToken;
+
+    const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
+    const isActive = dataAccessPermission && dataAccessPermission.isActive;
+
+    return res.status(httpStatusCodes.OK).json({
+        isActive
+    })
+}
+
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
 const transformEvent = (res, profileNeededToBePresentInAllEvents, event, sourceAppName) => {
@@ -364,5 +387,6 @@ module.exports = {
     associate_app_with_storage_app_holder,
     register_new_profile,
     request_new_permissions,
+    isAccessTokenForGivenPermissionRequestActive,
     uploadNewEvents
 }
