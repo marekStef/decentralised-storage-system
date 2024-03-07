@@ -89,13 +89,22 @@ const uploadNewEvents = async (req, res) => {
 const getFilteredEvents = async (req, res) => {
 	try {
 		const {
-			payloadMustContain
+			payloadMustContain,
+			metadataMustContain
 		} = req.body;
 
 		// returned events must contain exactly the same values in payload which are specified in payloadMustContain object
 		let query = {};
-		for (const [key, value] of Object.entries(payloadMustContain)) {
-			query[`payload.${key}`] = value;
+		if (payloadMustContain != null) {
+			for (const [key, value] of Object.entries(payloadMustContain)) {
+				query[`payload.${key}`] = value;
+			}
+		}
+
+		if (metadataMustContain != null) {
+			for (const [key, value] of Object.entries(metadataMustContain)) {
+				query[`metadata.${key}`] = value;
+			}
 		}
 
 		const events = await EventSchema.find(query);

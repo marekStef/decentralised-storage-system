@@ -407,10 +407,67 @@ const uploadNewEvents = async (req, res) => {
     }
 };
 
+const getAllEventsOfGivenProfile = async (req, res) => {
+    const { accessToken } = req.query;
+
+    if (!accessToken) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.MISSING_REQUIRED_FIELDS });
+    }
+
+    // Decode JWT accessToken
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(accessToken);
+    } catch (error) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
+    }
+
+    const { dataAccessPermissionId } = decodedToken;
+
+    const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
+    if (!dataAccessPermission || !dataAccessPermission.isActive) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+    }
+
+    const hasCreatePermission = dataAccessPermission.permission.read == true;
+    if (!hasCreatePermission) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.NO_READ_PERMISSION_FOR_EVENT });
+    }
+
+    // let sourceAppName = dataAccessPermission.app.nameDefinedByApp
+
+    try {
+        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/get_filtered_events`, {
+            metadataMustContain: {
+                profile: dataAccessPermission.permission.profile
+            }
+        });
+
+        if (response.status == httpStatusCodes.OK) {
+            // console.log('Event received successflly:', response.data);
+            return res.status(httpStatusCodes.OK).json({ events: response.data.data, count: response.data.count });
+        } else {
+            // Other status codes except for 500
+            console.error('Unexpected response status:', response);
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch eventss" });
+        }
+    } catch (error) {
+        console.error('Error fetching events:', error);
+
+        if (error.response && error.response.status === 500) {
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch events2" });
+        } else {
+            // network issue
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch events3" }); // todo - this is useless as of now
+        }
+    }
+}
+
 module.exports = {
     associate_app_with_storage_app_holder,
     register_new_profile,
     request_new_permissions,
     isAccessTokenForGivenPermissionRequestActive,
-    uploadNewEvents
+    uploadNewEvents,
+    getAllEventsOfGivenProfile
 }

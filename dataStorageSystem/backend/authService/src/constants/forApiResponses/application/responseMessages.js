@@ -24,6 +24,7 @@ module.exports = {
         PROFILE_NOT_FOUND: "Profile not found",
 
         NO_CREATE_PERMISSION_FOR_EVENT_CREATION: "No create permission for this event",
+        NO_READ_PERMISSION_FOR_EVENT: "No read permission for this event",
 
         INVALID_OR_EXPIRED_ACCESS_TOKEN: "Invalid or expired access token"
     },

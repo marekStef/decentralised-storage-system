@@ -13,5 +13,7 @@ router.post('/request_new_permissions', applicationController.request_new_permis
 
 router.post('/upload_new_events', applicationController.uploadNewEvents);
 
+router.get('/get_all_events_for_given_access_token', applicationController.getAllEventsOfGivenProfile);
+
 
 module.exports = router;
