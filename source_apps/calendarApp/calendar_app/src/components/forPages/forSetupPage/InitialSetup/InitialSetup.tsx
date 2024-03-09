@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import networkManager from '@/Network/NetworkManager';
+import { useRouter } from 'next/router';
 
 import {
     Container,
@@ -31,6 +32,7 @@ enum PossibleResultsWithServer {
 }
 
 const InitialSetup = () => {
+    const Router = useRouter();
 
     const [protocol, setProtocol] = useState<HttpProtocolType>(HttpProtocolType.http);
     const [ipAddress, setIpAddress] = useState('127.0.0.1');
@@ -100,6 +102,7 @@ const InitialSetup = () => {
             .then(message => {
                 showSuccess(message)
                 setProfilesSendingStatus(PossibleResultsWithServer.SUCCESS);
+                Router.replace('/');
             })
             .catch(message => {
                 showError(message)

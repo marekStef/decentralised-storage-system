@@ -58,6 +58,7 @@ const WeekPage = () => {
     
             networkManager.createNewEvent(newEvent)
                 .then((response => {
+                    console.log(response);
                     // if the user is currently looking at the week in which they create new newEvent - display that newEvent
                     if (selectedWeek.isGivenDateInThisWeek(newEvent.payload.startTime)) {
                         setEvents((events: Events) => {

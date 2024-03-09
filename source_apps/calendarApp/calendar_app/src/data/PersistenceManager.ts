@@ -78,12 +78,11 @@ class PersistenceManager {
         this.jwtTokenForPermissionRequestsAndProfiles = null;
         this.accessTokenForEvents = null;
 
-        // localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION)
-        // localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES)
-        // localStorage.removeItem(localStorageConstants.DATA_STORAGE_REQUEST_METHOD_TYPE)
+        localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION)
+        localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES)
+        localStorage.removeItem(localStorageConstants.DATA_STORAGE_REQUEST_METHOD_TYPE)
         localStorage.removeItem(localStorageConstants.DATA_STORAGE_PORT)
-        // localStorage.removeItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
-
+        localStorage.removeItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
     }
 }
 

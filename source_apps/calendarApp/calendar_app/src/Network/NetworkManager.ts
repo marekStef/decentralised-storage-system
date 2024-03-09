@@ -54,8 +54,9 @@ class NetworkManager {
 
     public async checkServerPresence(): Promise<boolean> {
         try {
-            const response: { status: string } = await this.get(networkRoutes.SERVER_REACHABILITY_ROUTE);
-            return response.status === 'OK';
+            const response: { status: number } = await this.get(networkRoutes.SERVER_REACHABILITY_ROUTE);
+            console.log(response);
+            return response.status == networkStatusCodes.OK;
         } catch (error) {
             console.error('Error checking server presence:', error);
             return false;
