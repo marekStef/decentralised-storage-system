@@ -5,7 +5,7 @@ const { executeSourceCode } = require('../controllers/codeExecutionController');
 
 
 const registerRoutes = () => {
-    router.post('/executeSourceCode', executeSourceCode);
+    router.post('/executeSourceCode/:sourceCodeId', executeSourceCode);
 
     return router;
 }

@@ -5,6 +5,16 @@ const httpStatusCodes = require('../constants/httpStatusCodes');
 
 const {getDirectoryForSourceCodes} = require('./helpers/directory');
 
+const sourceCodeSpecificConstants = require('../constants/sourceCodeSpecific');
+
+const isOneFileNamedMain = (files) => {
+    const filteredFiles = files.filter(file =>
+        file.originalname === sourceCodeSpecificConstants.SOURCE_CODE_MAIN_ENTRY_FILE_NAME
+    );
+
+    return filteredFiles.length === 1;
+}
+
 const uploadNewSourceCode = (req, res) => {
     const files = req.files;
     if (!files || files.length === 0) {
@@ -14,6 +24,11 @@ const uploadNewSourceCode = (req, res) => {
     const allJavascriptFiles = files.every(file =>
         path.extname(file.originalname).toLowerCase() === '.js'
     );
+
+    // One file must be named `main.js`
+    if (!isOneFileNamedMain(files)) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: `Exactly one file must be named ${sourceCodeSpecificConstants.SOURCE_CODE_MAIN_ENTRY_FILE_NAME}`})
+    }
 
     if (!allJavascriptFiles) {
         return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'All files must be JavaScript files.'});
