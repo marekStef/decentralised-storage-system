@@ -24,9 +24,17 @@ const executeSourceCode = (req, res) => {
     }
 
     const mainEntryModulePath = path.join(pathToSourceCode, sourceCodeSpecificConstants.SOURCE_CODE_MAIN_ENTRY_FILE_NAME);
-    const dynamicModule = require(mainEntryModulePath);
-    if (!dynamicModule) {
-        return res.status(400).send('Source code not available - it exists but some error happened while loading it');
+
+    let dynamicModule;
+    try {
+        dynamicModule = require(mainEntryModulePath);
+        if (!dynamicModule) {
+            return res.status(400).send('Source code not available - it exists but some error happened while loading it');
+        }
+    }
+    catch (err) {
+        console.log(err.message);
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'There is a syntax error. Code could not be loaded' });
     }
 
     try {

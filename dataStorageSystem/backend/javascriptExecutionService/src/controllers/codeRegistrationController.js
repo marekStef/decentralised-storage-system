@@ -49,7 +49,7 @@ const uploadNewSourceCode = (req, res) => {
         }
 
         // Return the unique directory name as the folder id
-        return res.status(httpStatusCodes.CREATED).json({ message: 'Files were uploaded', filesId: uniqueDirName});
+        return res.status(httpStatusCodes.CREATED).json({ message: 'Files were uploaded', sourceCodeId: uniqueDirName});
     } catch (error) {
         console.error('Failed to process files:', error);
         return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during the uploading' });

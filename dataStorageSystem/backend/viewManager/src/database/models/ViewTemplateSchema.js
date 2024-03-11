@@ -10,12 +10,12 @@ const ViewTemplateMetadataSchema = new mongoose.Schema({
 }, {_id: false}); // _id is set to false so that Mongoose does not create an _id for the nested object
 
 const ViewTemplateSchema = new mongoose.Schema({
-	identifier: {
-		type: String,
-		required: true,
-		unique: true
-	},
-	identifierForUploadedSourceCodeInGivenService: { // id for the uploaded code. this is because the uploaded code will be saved directly in the services so the view manager needs to know which code to call
+	// identifier: {
+	// 	type: String,
+	// 	required: true,
+	// 	unique: true
+	// },
+	sourceCodeId: { // id for the uploaded code. this is because the uploaded code will be saved directly in the services so the view manager needs to know which code to call
 		type: String,
 		required: true
 	},
@@ -31,9 +31,9 @@ const ViewTemplateSchema = new mongoose.Schema({
 		type: [ProfilePermissionSchema],
 		required: true
 	},
-	source: { // who registered this template (this should be a unique app name)
-		type: String
-	},
+	// source: { // who registered this template (this should be a unique app name)
+	// 	type: String
+	// },
 	configuration: {
 		type: Object,
 		required: true
@@ -43,6 +43,6 @@ const ViewTemplateSchema = new mongoose.Schema({
 const ViewTemplate = mongoose.model('ViewTemplate', ViewTemplateSchema);
 
 module.exports = {
-	ViewTemplateMetadata,
+	ViewTemplateMetadataSchema,
 	ViewTemplate
 };

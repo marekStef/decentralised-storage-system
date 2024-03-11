@@ -1,16 +1,47 @@
 const express = require('express');
+const multer = require('multer');
+const fs = require('fs');
+const {v4: uuidv4} = require("uuid");
 
 const { startJavascriptExecutionService } = require('./src/servicesUtils/jsExecutionServiceUtil');
 const { gracefulShutdown } = require('./src/shutdown/shutdownUtils');
 
+const registerTemplatesRoutes = require('./src/routes/templatesRelatedRoutes');
+
 const app = express();
+app.use(express.json());
+
 const port = 10000;
 
-startJavascriptExecutionService();
+const db = require('./src/database/Database')
+db.connect();
 
-app.get('/', (req, res) => {
-    res.send('ViewManager is running. Monitoring JavaScriptExecutionService.');
+// startJavascriptExecutionService();
+
+const UPLOADS_TEMPORARY_DIRECTORY = './temp_uploads';
+const MAXIMUM_UPLOAD_LIMIT_PER_FILE = 1024 * 1024 * 5; // 5 MB
+const MAXIMUM_NUMBER_OF_UPLOADED_FILES_PER_REQUEST = 10;
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (!fs.existsSync(UPLOADS_TEMPORARY_DIRECTORY)) {
+            fs.mkdirSync(UPLOADS_TEMPORARY_DIRECTORY, { recursive: true });
+        }
+        cb(null, UPLOADS_TEMPORARY_DIRECTORY)
+    },
+    filename: function (req, file, cb) {
+        cb(null, uuidv4() + '-' + Date.now() + '-' + file.originalname)
+    }
 });
+
+const uploadMulterMiddleware = multer({ 
+    storage: storage,
+    fileSize: MAXIMUM_UPLOAD_LIMIT_PER_FILE,
+    files: MAXIMUM_NUMBER_OF_UPLOADED_FILES_PER_REQUEST
+});
+
+
+app.use('/', registerTemplatesRoutes(uploadMulterMiddleware))
 
 app.listen(port, () => {
     console.log(`ViewManager listening at http://localhost:${port}`);
