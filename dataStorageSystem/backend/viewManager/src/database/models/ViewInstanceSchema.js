@@ -6,25 +6,21 @@ const ViewInstanceSchema = new mongoose.Schema({
         ref: 'ViewTemplate',
         required: true
     },
-    identifier: {
-        type: String,
-        required: true,
-        unique: true
-    },
+    // identifier: {
+    //     type: String,
+    //     required: true,
+    //     unique: true
+    // },
     createdDate: {
         type: Date,
         default: Date.now
     },
-    source: {
-        type: String,
-        required: true
-    },
+    // source: {
+    //     type: String,
+    //     required: true
+    // },
     accessTokensToProfiles: { // tokens to profiles defined in ViewTemplate ( keys must be the profile names defined in "profiles" in ViewTemplateSchema)
         type: Object
-    },
-    tokenToThisViewInstance: {
-        type: String,
-        unique: true,
     }
 });
 

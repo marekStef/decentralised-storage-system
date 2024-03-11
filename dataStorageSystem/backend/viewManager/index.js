@@ -7,6 +7,7 @@ const { startJavascriptExecutionService } = require('./src/servicesUtils/jsExecu
 const { gracefulShutdown } = require('./src/shutdown/shutdownUtils');
 
 const registerTemplatesRoutes = require('./src/routes/templatesRelatedRoutes');
+const registerViewInstancesRoutes = require('./src/routes/viewInstancesRoutes');
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,7 @@ const uploadMulterMiddleware = multer({
 
 
 app.use('/', registerTemplatesRoutes(uploadMulterMiddleware))
+app.use('/', registerViewInstancesRoutes());
 
 app.listen(port, () => {
     console.log(`ViewManager listening at http://localhost:${port}`);

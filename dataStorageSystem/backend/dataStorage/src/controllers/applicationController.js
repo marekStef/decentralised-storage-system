@@ -43,8 +43,8 @@ const saveNewEvent = async (session, event) => {
     }
 };
 
-const uploadNewEvents = async (req, res) => {
-	console.log('here2')
+// this is transaction version
+const uploadNewEvents_TransactionsVersion = async (req, res) => {
     const { events } = req.body;
 
     if (!events) {
@@ -86,6 +86,31 @@ const uploadNewEvents = async (req, res) => {
     }
 };
 
+const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
+    const { events } = req.body;
+
+    if (!events) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({
+            message: eventsRelatedResponseMessages.error.MISSING_REQUIRED_FIELDS,
+        });
+    }
+
+    try {
+        const savedEvents = await Promise.all(events.map(event => saveNewEvent(null, event)));
+        console.log(savedEvents);
+
+        res.status(httpStatusCodes.CREATED).json({
+            message: eventsRelatedResponseMessages.success.EVENTS_CREATED_SUCCESSFULLY,
+            events: savedEvents,
+        });
+    } catch (err) {
+        res.status(err.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: err.message || 'An error occurred',
+        });
+        console.log(err);
+    }
+};
+
 const getFilteredEvents = async (req, res) => {
 	try {
 		const {
@@ -124,6 +149,6 @@ const getFilteredEvents = async (req, res) => {
 };
 
 module.exports = {
-	uploadNewEvents,
+	uploadNewEvents: uploadNewEvents_VersionWithoutTransactions,
 	getFilteredEvents
 }

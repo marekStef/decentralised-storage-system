@@ -3,7 +3,7 @@ const fs = require('fs');
 const FormData = require('form-data');
 const axios = require('axios');
 
-const httpStatusCodes = require("../../../javascriptExecutionService/constants/httpStatusCodes");
+const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
 const {allowedRuntimes} = require('../constants/viewsRelated');
 
