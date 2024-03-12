@@ -3,6 +3,11 @@ const allowedRuntimes = [
     'python'
 ]
 
+const isAllowedRuntime = runtime => {
+    return allowedRuntimes.includes(runtime);
+}
+
 module.exports = {
-    allowedRuntimes
+    allowedRuntimes,
+    isAllowedRuntime
 }

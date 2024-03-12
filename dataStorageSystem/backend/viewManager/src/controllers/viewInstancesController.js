@@ -4,7 +4,10 @@ const axios = require('axios');
 const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
 const ViewInstance = require("../database/models/ViewInstanceSchema");
+const {allowedRuntimes} = require('../constants/viewsRelated');
 
+const JAVASCRIPT_RUNTIME = 'javascript';
+const PYTHON_RUNTIME = 'python';
 
 const createNewViewInstance = async (req, res) => {
     const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles } = req.body;
@@ -23,12 +26,12 @@ const createNewViewInstance = async (req, res) => {
         // Check if the ViewTemplate exists
         viewTemplate = await ViewTemplate.findById(viewTemplateId);
         if (!viewTemplate) {
-            return res.status(404).json({ message: 'ViewTemplate not found' });
+            return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'ViewTemplate not found' });
         }
     }
     catch (error) {
         console.error('Error looking for view template:', error);
-        return res.status(500).json({ message: 'Could not fetch info about view template' });
+        return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Could not fetch info about view template' });
     }
     
     accessTokensToProfiles = {}
@@ -50,7 +53,7 @@ const createNewViewInstance = async (req, res) => {
         try {
             const response = await axios.post(`${process.env.AUTH_SERVICE_URI}/app/api/request_new_permissions`, permissionsRequest);
 
-            if (response.status === 201) {
+            if (response.status === httpStatusCodes.CREATED) {
                 accessTokensToProfiles[profileItem.profile] = response.data.generatedAccessToken;
             } else {
                 return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Permissions for given view instance could not be created' });
@@ -80,11 +83,96 @@ const createNewViewInstance = async (req, res) => {
         console.log(err);
         return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during saving of new view instance' });
     }
-
-
-    
 };
 
+const prepareDataForExecutionService = (accessTokensToProfiles, configuration, clientCustomData) => {
+    return [accessTokensToProfiles, configuration, clientCustomData]
+}
+
+const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {
+    let executionServiceUrl = null;
+    
+    if (runtime == JAVASCRIPT_RUNTIME) {
+        executionServiceUrl = process.env.JAVASCRIPT_EXECUTION_SERVICE_URI;
+
+    } else if (runtime == PYTHON_RUNTIME) {
+        executionServiceUrl = process.env.PYTHON_EXECUTION_SERVICE_URI;
+    }
+    else { // unknown runtime (this should not happen as such view template should not be allowed to be created)
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Bad runtime' });
+    }
+
+    try {
+        const response = await axios.post(
+            `${executionServiceUrl}/executeSourceCode/${sourceCodeId}`, 
+            { parametersForMainEntry}
+        );
+
+        console.log(response);
+
+        if (response.status === httpStatusCodes.OK) {
+            res.status(httpStatusCodes.OK).json({
+                message: response.data.message,
+                result: response.data.result
+            })
+        } else {
+            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: response.message });
+        }
+    }
+    catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+            console.error('Error trying to run source code:', error.response.data.message);
+            return res.status(httpStatusCodes.BAD_REQUEST).send({message: `runtime service says: ${error.response.data.message}`});
+        } else {
+            console.error('Network or other error:', error.message);
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to run given view'});
+        }
+    }
+}
+
+const runViewInstance = async (req, res) => {
+    const { viewInstanceId, clientCustomData } = req.body;
+
+    if (!viewInstanceId || !clientCustomData) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewInstanceId and clientCustomData are required' });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(viewInstanceId))
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'viewInstanceId is not a correct id' });
+
+    let viewInstance = null;
+
+    try {
+        viewInstance = await ViewInstance.findById(viewInstanceId)
+            .populate('viewTemplate')
+            .exec();
+    } catch (error) {
+        console.error('Error fetching ViewInstance with populated ViewTemplate:', error);
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching ViewInstance' });
+    }
+
+    if (!viewInstance) {
+        return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'ViewInstance not found' });
+    }
+    
+    try {
+        const {sourceCodeId, metadata, configuration} = viewInstance.viewTemplate;
+        const runtime = metadata.runtime;
+
+        await executeViewInstanceSourceCodeBasedOnRuntime(
+            res,
+            runtime, 
+            sourceCodeId, 
+            prepareDataForExecutionService(viewInstance.accessTokensToProfiles, configuration, clientCustomData)
+        );
+    }
+    catch (err) {
+        console.log(err);
+        res.status(err.statusCode).json({ message: err.message });
+    }
+}
+
 module.exports = {
-    createNewViewInstance
+    createNewViewInstance,
+    runViewInstance
 }

@@ -44,7 +44,7 @@ const executeSourceCode = (req, res) => {
     }
     catch (err) {
         console.log(err.message);
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Main entry module for this source code is not a module - it does not export one function.' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: `Problem loading a module (${err.message})` });
     }
 }
 

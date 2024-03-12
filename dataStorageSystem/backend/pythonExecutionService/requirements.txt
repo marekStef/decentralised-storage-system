@@ -2,3 +2,4 @@ Flask
 python-dotenv 
 Flask-Uploads
 uuid
+python-dotenv

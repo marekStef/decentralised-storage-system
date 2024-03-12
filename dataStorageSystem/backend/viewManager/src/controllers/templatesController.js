@@ -5,11 +5,7 @@ const axios = require('axios');
 
 const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
-const {allowedRuntimes} = require('../constants/viewsRelated');
-
-const isAllowedRuntime = runtime => {
-    return allowedRuntimes.includes(runtime);
-}
+const {isAllowedRuntime} = require('../constants/viewsRelated');
 
 const cleanFiles = files => {
     files.forEach(file => {
