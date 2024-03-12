@@ -110,7 +110,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"65e9ecd1de476ee7b4a271c7\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"65ef40c3334155fc82606913\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -158,7 +158,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"permissionId\": \"65ea0c91fb2ea0babc837c0a\"\r\n}",
+									"raw": "{\r\n    \"permissionId\": \"65ec875616c7c86638272a48\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -215,13 +215,74 @@
 					"name": "appApi",
 					"item": [
 						{
+							"name": "views",
+							"item": [
+								{
+									"name": "createNewViewInstance",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"viewTemplateId\": \"65f0ad801e769997641425c7\",\r\n    \"configuration\": {}\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{AUTH_SERVER_URL}}/app/api/register_new_view_instance",
+											"host": [
+												"{{AUTH_SERVER_URL}}"
+											],
+											"path": [
+												"app",
+												"api",
+												"register_new_view_instance"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "runViewInstance",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"viewAccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWV3SW5zdGFuY2VJZCI6IjY1ZjBiMWQ3NGEzYzQwMWQzZGFlOTk1MyIsImFwcElkIjoiNjVlOWVjZDFkZTQ3NmVlN2I0YTI3MWM3IiwiYXV0aFNlcnZpY2VWaWV3QWNjZXNzSWQiOiI2NWYwYjFkN2E3M2EwYjZhYzRiZDBhOTgiLCJpYXQiOjE3MTAyNzI5ODMsImV4cCI6MTExNzc1NTI5ODN9.QIwMeKBVCnLR1X4oCSv70n6pcdGiG4_vvmKOdK8aqLs\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"new\"\r\n    }\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{AUTH_SERVER_URL}}/app/api/run_view_instance",
+											"host": [
+												"{{AUTH_SERVER_URL}}"
+											],
+											"path": [
+												"app",
+												"api",
+												"run_view_instance"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
 							"name": "associate_with_storage_app_holder_3",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"65e9ecd6de476ee7b4a271cb\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"65ef40cb334155fc82606917\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -249,7 +310,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZWY0MGMzMzM0MTU1ZmM4MjYwNjkxMyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDE3ODUxNSwiZXhwIjoxMTE3NzQ1ODUxNX0.o1JBlVqQi8YTKT-jNw0Ap0qJfRsN7tSyGLPFKGeBtJY\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -344,7 +405,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlZjQxZTMzMzQxNTVmYzgyNjA2OTJkIiwiYXBwSWQiOiI2NWU5ZWNkMWRlNDc2ZWU3YjRhMjcxYzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHAxLmNvbS9wcm9maWxlMSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5IjpmYWxzZSwiZGVsZXRlIjpmYWxzZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xMVQxNzozOTo0Ny44OTBaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwMTc4Nzg3LCJleHAiOjExMTc3NDU4Nzg3fQ.Obux7rEu2T7lWaEX_19b6gYEV8RmnDWOY3Qe8StK6tM",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -356,11 +417,11 @@
 									"query": [
 										{
 											"key": "accessToken",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ"
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlZjQxZTMzMzQxNTVmYzgyNjA2OTJkIiwiYXBwSWQiOiI2NWU5ZWNkMWRlNDc2ZWU3YjRhMjcxYzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHAxLmNvbS9wcm9maWxlMSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5IjpmYWxzZSwiZGVsZXRlIjpmYWxzZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xMVQxNzozOTo0Ny44OTBaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwMTc4Nzg3LCJleHAiOjExMTc3NDU4Nzg3fQ.Obux7rEu2T7lWaEX_19b6gYEV8RmnDWOY3Qe8StK6tM"
 										},
 										{
 											"key": "",
-											"value": null,
+											"value": "",
 											"disabled": true
 										}
 									]
@@ -423,6 +484,230 @@
 								"app",
 								"api",
 								"get_filtered_events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "viewManager",
+			"item": [
+				{
+					"name": "createNewViewTemplate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"/C:/Users/stefanec/Desktop/bakalarka_/2_managementsystem/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/main.js",
+										"/C:/Users/stefanec/Desktop/bakalarka_/2_managementsystem/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/second.js"
+									]
+								},
+								{
+									"key": "profiles",
+									"value": "[{\"profile\": \"app1.com/profile1\", \"read\": true, \"create\": true, \"modify\": false, \"delete\": false}, {\"profile\": \"app2.com/profile2\", \"read\": true, \"create\": true, \"modify\": true, \"delete\": true}]",
+									"type": "text"
+								},
+								{
+									"key": "runtime",
+									"value": "python",
+									"type": "text"
+								},
+								{
+									"key": "configuration",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{VIEW_MANAGER_URL}}/createNewViewTemplate",
+							"host": [
+								"{{VIEW_MANAGER_URL}}"
+							],
+							"path": [
+								"createNewViewTemplate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteViewTemplate",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{VIEW_MANAGER_URL}}/deleteViewTemplate/1",
+							"host": [
+								"{{VIEW_MANAGER_URL}}"
+							],
+							"path": [
+								"deleteViewTemplate",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createNewViewInstance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"viewTemplateId\": \"65f0ad801e769997641425c7\",\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"configuration\": {\r\n        \"from\":\"23.12.2020\",\r\n        \"to\":\"24.12.2026\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{VIEW_MANAGER_URL}}/createNewViewInstance",
+							"host": [
+								"{{VIEW_MANAGER_URL}}"
+							],
+							"path": [
+								"createNewViewInstance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "runViewInstance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"viewInstanceId\": \"65f05d82feeb9705a1b95937\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"this is from client data\"\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{VIEW_MANAGER_URL}}/runViewInstance",
+							"host": [
+								"{{VIEW_MANAGER_URL}}"
+							],
+							"path": [
+								"runViewInstance"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "jsExecutionService",
+			"item": [
+				{
+					"name": "uploadNewSourceCode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49",
+										"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{JS_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
+							"host": [
+								"{{JS_EXECUTION_SERVICE_URL}}"
+							],
+							"path": [
+								"uploadNewSourceCode"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "executeSourceCode",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"parametersForMainEntry\": [{\"marek\": \"hey\"}]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{JS_EXECUTION_SERVICE_URL}}/executeSourceCode/6598ac89-fa10-41b0-b71f-76cd1eb88369",
+							"host": [
+								"{{JS_EXECUTION_SERVICE_URL}}"
+							],
+							"path": [
+								"executeSourceCode",
+								"6598ac89-fa10-41b0-b71f-76cd1eb88369"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pythonExecutionService",
+			"item": [
+				{
+					"name": "uploadNewSourceCode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": [
+										"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d",
+										"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
+							"host": [
+								"{{PYTHON_EXECUTION_SERVICE_URL}}"
+							],
+							"path": [
+								"uploadNewSourceCode"
 							]
 						}
 					},

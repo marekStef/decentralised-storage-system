@@ -1,0 +1,8 @@
+{
+  "label": "View Manager",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "Component for managing views and taking care of executing them on other components based on specified criteria"
+  }
+}

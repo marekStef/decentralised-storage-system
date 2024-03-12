@@ -1,0 +1,8 @@
+{
+  "label": "JS Execution Service",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Component for registering and executing user defined custom javascript code"
+  }
+}

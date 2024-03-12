@@ -1,0 +1,8 @@
+{
+  "label": "AuthService",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Component for authentication and authorisation"
+  }
+}

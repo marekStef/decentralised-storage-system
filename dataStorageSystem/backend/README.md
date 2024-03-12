@@ -3,7 +3,11 @@
 Backend je momentalne rozdelen na 3 casti:
 - `dataStorage`
 - `authService`
-- `dataViewStore` (tento je potrebne nyni ignorovat - neni nijak zapojen do momentalniho stavu backendu a slozil jen jako testovani jedne funkcionality v minulosti. V budoucnu zapojen bude)
+- `viewManager` (pracuje se na nom)
+- `javascriptExecutionService` (plne funkcni)
+- `pythonExecutionService` (pracuje se na nom)
+
+Important! Toto readme je momentalne outdated a nepocita s tym, ze authStorage jiz teda pro spravne fungovani potrebuje aby taky bezela `ViewManager` komponenta
 
 ## Spusteni jednotlivych casti backendu s Dockerem
 
