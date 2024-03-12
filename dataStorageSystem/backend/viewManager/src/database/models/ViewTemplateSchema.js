@@ -29,10 +29,6 @@ const ViewTemplateSchema = new mongoose.Schema({
 	// source: { // who registered this template (this should be a unique app name)
 	// 	type: String
 	// },
-	configuration: {
-		type: Object,
-		required: true
-	}
 });
 
 const ViewTemplate = mongoose.model('ViewTemplate', ViewTemplateSchema);

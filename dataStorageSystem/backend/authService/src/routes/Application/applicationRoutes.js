@@ -15,5 +15,9 @@ router.post('/upload_new_events', applicationController.uploadNewEvents);
 
 router.get('/get_all_events_for_given_access_token', applicationController.getAllEventsOfGivenProfile);
 
+router.post('/register_new_view_instance', applicationController.registerNewViewInstance);
+
+router.post('/run_view_instance', applicationController.runViewInstace);
+
 
 module.exports = router;

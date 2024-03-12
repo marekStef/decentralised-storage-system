@@ -21,7 +21,12 @@ const ViewInstanceSchema = new mongoose.Schema({
     // },
     accessTokensToProfiles: { // tokens to profiles defined in ViewTemplate ( keys must be the profile names defined in "profiles" in ViewTemplateSchema)
         type: Object
-    }
+    },
+	configuration: {
+		type: Object,
+		required: true,
+        default: {}
+	}
 });
 
 const ViewInstance = mongoose.model('ViewInstance', ViewInstanceSchema);

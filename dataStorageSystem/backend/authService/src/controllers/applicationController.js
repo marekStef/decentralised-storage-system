@@ -13,6 +13,7 @@ const {generateJwtToken, decodeJwtToken} = require('./helpers/jwtGenerator');
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema');
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
 const DataAccessPermissionSchema = require('../database/models/dataAccessRelatedModels/DataAccessPermissionSchema');
+const ViewAccessSchema = require('../database/models/viewsRelatedModels/ViewAccessSchema');
 
 const DataStorage = require('../externalComponents/DataStorage')
 
@@ -463,11 +464,111 @@ const getAllEventsOfGivenProfile = async (req, res) => {
     }
 }
 
+const checkWhetherAppWithGivenIdExists = async (appId) => {
+    try {
+        const app = await ApplicationSchema.findById(appId);
+        return app != null;
+    }
+    catch (err) {
+        return false;
+    }
+}
+
+const generateTokenForViewAccess = (viewInstanceId, appId, authServiceViewAccessId) => {
+    return generateJwtToken({
+        viewInstanceId,
+        appId,
+        authServiceViewAccessId
+    })
+}
+
+const decodeTokenForViewAccess = (token) => {
+    return decodeJwtToken(token);
+}
+
+const registerNewViewInstance = async (req, res) => {
+    const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
+
+    if (!viewTemplateId | !jwtTokenForPermissionRequestsAndProfiles || !configuration) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewTemplateId, jwtTokenForPermissionRequestsAndProfiles and configuration are required' });
+    }
+
+    let decodedToken;
+    try {
+        decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
+    } catch (error) {
+        return generateBadResponse(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
+    }
+
+    const { appId } = decodedToken;
+
+    if (!checkWhetherAppWithGivenIdExists(appId)) {
+        return generateBadResponse(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
+    }
+
+    let responseFromViewManager = null;
+
+    try {
+        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/createNewViewInstance`, {
+            viewTemplateId,
+            jwtTokenForPermissionRequestsAndProfiles,
+            configuration
+        });
+
+        if (responseFromViewManager.status != httpStatusCodes.CREATED) {
+            // Other status codes except for 500
+            console.error('Unexpected response status:', response);
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: response.data.message });
+        }
+    } catch (error) {
+        console.error('Error creating new view instance:', error);
+        if (error.response && error.response.data && error.response.data.message) {
+            console.error('Error from js execution service:', error.response.data.message);
+            res.status(error.response.status).send({message: error.response.data.message});
+        } else {
+            console.error('Network or other error:', error.message);
+            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed create new view instance'});
+        }
+    }
+
+    viewInstanceId = responseFromViewManager.data._id;
+
+    try {
+        const viewAccess = new ViewAccessSchema({
+            app: appId,
+            viewInstanceId,
+        });
+    
+        await viewAccess.save();
+        return res.status(httpStatusCodes.CREATED).json({ viewInstanceToken: generateTokenForViewAccess(viewInstanceId, appId, viewAccess._id) });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during saving of new view instance in auth service. Instance was created in view manager though.' });
+    }
+
+}
+
+const runViewInstace = async (req, res) => {
+    const { viewAccessToken, clientCustomData } = req.body;
+    if (!viewAccessToken || !clientCustomData) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewAccessToken and clientCustomData are required' });
+    }
+
+    const {viewInstanceId, appId, authServiceViewAccessId} = decodeTokenForViewAccess(viewAccessToken);
+
+    return res.status(httpStatusCodes.OK).json({ viewInstanceId, appId, authServiceViewAccessId })
+
+
+}
+
 module.exports = {
     associate_app_with_storage_app_holder,
     register_new_profile,
     request_new_permissions,
     isAccessTokenForGivenPermissionRequestActive,
     uploadNewEvents,
-    getAllEventsOfGivenProfile
+    getAllEventsOfGivenProfile,
+    registerNewViewInstance,
+    runViewInstace
 }

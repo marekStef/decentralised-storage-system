@@ -10,11 +10,20 @@ const JAVASCRIPT_RUNTIME = 'javascript';
 const PYTHON_RUNTIME = 'python';
 
 const createNewViewInstance = async (req, res) => {
-    const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles } = req.body;
+    const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
     // Simple validation
-    if (!viewTemplateId || !jwtTokenForPermissionRequestsAndProfiles) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewTemplateId and jwtTokenForPermissionRequestsAndProfiles are required' });
+    if (!viewTemplateId || !jwtTokenForPermissionRequestsAndProfiles || !configuration) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewTemplateId, configuration and jwtTokenForPermissionRequestsAndProfiles are required' });
+    }
+
+    console.log(configuration);
+    try {
+        JSON.stringify(configuration);
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'configuration is not a correct json object' });
     }
 
     if (!mongoose.Types.ObjectId.isValid(viewTemplateId))
@@ -73,7 +82,8 @@ const createNewViewInstance = async (req, res) => {
     try {
         const viewInstance = new ViewInstance({
             viewTemplate: viewTemplate._id,
-            accessTokensToProfiles
+            accessTokensToProfiles,
+            configuration
         });
     
         await viewInstance.save();
@@ -156,14 +166,14 @@ const runViewInstance = async (req, res) => {
     }
     
     try {
-        const {sourceCodeId, metadata, configuration} = viewInstance.viewTemplate;
+        const {sourceCodeId, metadata } = viewInstance.viewTemplate;
         const runtime = metadata.runtime;
 
         await executeViewInstanceSourceCodeBasedOnRuntime(
             res,
             runtime, 
             sourceCodeId, 
-            prepareDataForExecutionService(viewInstance.accessTokensToProfiles, configuration, clientCustomData)
+            prepareDataForExecutionService(viewInstance.accessTokensToProfiles, viewInstance.configuration, clientCustomData)
         );
     }
     catch (err) {

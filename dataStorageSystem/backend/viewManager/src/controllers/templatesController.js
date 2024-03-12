@@ -16,7 +16,7 @@ const cleanFiles = files => {
 // this is a multipart data request (due to those files being uploaded) - so the things in the body are only texts! They need to be parsed individually
 const createNewViewTemplate = async (req, res) => {
     const files = req.files;
-    let { profiles, runtime, configuration } = req.body;
+    let { profiles, runtime } = req.body;
 
     console.log(profiles);
 
@@ -28,16 +28,10 @@ const createNewViewTemplate = async (req, res) => {
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Profiles is not a correct json array' });
     }
 
-    try {
-        configuration = JSON.parse(configuration);
-    }
-    catch (e) {
-        console.log(e);
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'configuration is not a correct json object' });
-    }
+    
 
 
-    if (!profiles || !runtime || !configuration) {
+    if (!profiles || !runtime) {
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'All required fields must be present' });
     }
 
@@ -69,8 +63,7 @@ const createNewViewTemplate = async (req, res) => {
             const newViewTemplate = new ViewTemplate({
                 sourceCodeId: sourceCodeId,
                 metadata: { runtime: 'javascript' },
-                profiles: profiles,
-                configuration
+                profiles: profiles
             });
 
             await newViewTemplate.save(); // Save the new record to the database
