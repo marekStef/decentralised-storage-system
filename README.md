@@ -4,6 +4,8 @@ Instrukce pro setup:
 1. Rozbehnuti [hlavniho dataStorage systemu](./dataStorageSystem/README.md)
 2. Rozbehnuti [jednotlivych source appiek](./source_apps/README.md)
 
+Dokumentace bude coskoro [zde](./documentation/documentation)
+
 <!-- Irrelevant info to the readme (will be deleted in the future)
 
 ##### Update 16.8.2023
