@@ -34,9 +34,15 @@
 const { getResponseMessage } = require('./second');
 
 const helloWorld = async (accessTokensToProfiles, configuration, clientCustomData) => {
+    const tokenForCalendarEvents = accessTokensToProfiles["CalendarPro.com_CalendarEventProfile"];
+
+    console.log('here');
+
     return new Promise((res, rej) => {
-        fetch('https://dummy.restapiexample.com/api/v1/employees')
+        fetch(`http://localhost:3000/app/api/checkAccessTokenStatus?accessToken=${tokenForCalendarEvents}`)
+            .then(response => response.json())
             .then(response => {
+                console.log(response);
                 setTimeout(() => {
                     res({
                         message: 'this is object from view',
@@ -44,13 +50,14 @@ const helloWorld = async (accessTokensToProfiles, configuration, clientCustomDat
                         accessTokensToProfiles,
                         configuration,
                         clientCustomData,
-                        status: response.status
+                        isAccessTokenForCalendarEventsActive: response
                     });
                 }, 1000);
             })
             .catch(err => {
                 res({
-                    message: 'could not load fake json data from net'
+                    message: 'could not load fake json data from net',
+                    err: JSON.stringify(err)
                 })
             })
     })
