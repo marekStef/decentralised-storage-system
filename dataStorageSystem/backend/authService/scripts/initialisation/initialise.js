@@ -46,7 +46,13 @@ const sendEventsToDataStorage = async (events) => {
 }
 
 // Define the JSON schema for the profile
-const create_app_core_profile_for_definining_other_profiles = () => {
+const create_app_core_profile_for_definining_other_profiles = async () => {
+    const {code, body} = await DataStorage.getProfileFromDataStorage(process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME)
+    if (body.count != 0) {
+        console.log('profiles are already created in the storage');
+        return;
+    }
+
     // Create the profile
     const profileData = {
         metadata: {

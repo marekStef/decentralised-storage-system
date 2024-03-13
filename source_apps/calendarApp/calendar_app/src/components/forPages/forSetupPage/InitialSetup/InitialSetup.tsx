@@ -82,7 +82,6 @@ const InitialSetup = () => {
     const associateCalendarWithSystem = () => {
         setAssociationWithServerStatus(PossibleResultsWithServer.IS_LOADING);
 
-
         networkManager.associateWithDataStorage(associationToken, appConstants.appName)
             .then(jwtToken => {
                 // alert(jwtToken);
@@ -102,7 +101,6 @@ const InitialSetup = () => {
             .then(message => {
                 showSuccess(message)
                 setProfilesSendingStatus(PossibleResultsWithServer.SUCCESS);
-                Router.replace('/');
             })
             .catch(message => {
                 showError(message)
@@ -119,6 +117,7 @@ const InitialSetup = () => {
                 // alert(response.generatedAccessToken)
                 setPermissionsSendingStatus(PossibleResultsWithServer.SUCCESS);
                 persistenceManager.setAccessTokenForEvents(response.generatedAccessToken);
+                Router.replace('/');
             })
             .catch(message => {
                 showError(message)

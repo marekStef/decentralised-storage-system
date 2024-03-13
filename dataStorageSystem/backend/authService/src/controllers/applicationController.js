@@ -573,7 +573,7 @@ const runViewInstace = async (req, res) => {
     } catch (error) {
         return generateBadResponse(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
     }
-    
+
     const {viewInstanceId, appId, authServiceViewAccessId} = decodedToken;
 
     if (!checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager(authServiceViewAccessId, viewInstanceId)) {

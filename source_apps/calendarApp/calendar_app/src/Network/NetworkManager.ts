@@ -241,7 +241,7 @@ class NetworkManager {
                 });
             } catch (error) {
                 console.error('Error getting calendar events:', error);
-                rej('Error getting calendar events');
+                rej(`Error getting calendar events: ${error.message ?? 'Server not reachable probably'}`);
             }
         }) 
     }
