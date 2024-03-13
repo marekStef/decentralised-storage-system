@@ -36,8 +36,7 @@ const { getResponseMessage } = require('./second');
 const helloWorld = async (accessTokensToProfiles, configuration, clientCustomData) => {
     return new Promise((res, rej) => {
         fetch('https://dummy.restapiexample.com/api/v1/employees')
-            .then(response => response.json())
-            .then(body => {
+            .then(response => {
                 setTimeout(() => {
                     res({
                         message: 'this is object from view',
@@ -45,11 +44,15 @@ const helloWorld = async (accessTokensToProfiles, configuration, clientCustomDat
                         accessTokensToProfiles,
                         configuration,
                         clientCustomData,
-                        body
+                        status: response.status
                     });
                 }, 1000);
             })
-        
+            .catch(err => {
+                res({
+                    message: 'could not load fake json data from net'
+                })
+            })
     })
 }
 

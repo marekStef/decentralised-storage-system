@@ -1,6 +1,6 @@
 # Backend
 
-Backend je momentalne rozdelen na 3 casti:
+Backend je momentalne rozdelen na 5 casti:
 - `dataStorage`
 - `authService`
 - `viewManager` (pracuje se na nom)

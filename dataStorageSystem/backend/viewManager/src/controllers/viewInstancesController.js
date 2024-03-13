@@ -135,7 +135,7 @@ const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceC
             return res.status(httpStatusCodes.BAD_REQUEST).send({message: `runtime service says: ${error.response.data.message}`});
         } else {
             console.error('Network or other error:', error.message);
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to run given view'});
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to run given view - execution service seems to be down'});
         }
     }
 }

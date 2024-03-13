@@ -549,17 +549,60 @@ const registerNewViewInstance = async (req, res) => {
 
 }
 
+const checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager = async (viewAccessId, viewInstanceId) => {
+    try {
+        const viewAccess = await ViewAccessSchema.findById(viewAccessId);
+        if (viewAccess == null)
+            return false;
+        return viewAccess.viewInstanceId == viewInstanceId;
+    }
+    catch (err) {
+        return false;
+    }
+}
+
 const runViewInstace = async (req, res) => {
     const { viewAccessToken, clientCustomData } = req.body;
     if (!viewAccessToken || !clientCustomData) {
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewAccessToken and clientCustomData are required' });
     }
 
-    const {viewInstanceId, appId, authServiceViewAccessId} = decodeTokenForViewAccess(viewAccessToken);
+    let decodedToken;
+    try {
+        decodedToken = decodeTokenForViewAccess(viewAccessToken);
+    } catch (error) {
+        return generateBadResponse(res, httpStatusCodes.UNAUTHORIZED, applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN);
+    }
+    
+    const {viewInstanceId, appId, authServiceViewAccessId} = decodedToken;
 
-    return res.status(httpStatusCodes.OK).json({ viewInstanceId, appId, authServiceViewAccessId })
+    if (!checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager(authServiceViewAccessId, viewInstanceId)) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: 'Given view does not exist' });
+    }
 
+    let responseFromViewManager = null;
+    try {
+        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/runViewInstance`, {
+            viewInstanceId,
+            clientCustomData,
+        });
 
+        if (responseFromViewManager.status != httpStatusCodes.OK) {
+            console.error('Unexpected response status:', response);
+            return res.status(responseFromViewManager.status).json({ message: responseFromViewManager.data.message });
+        }
+
+        return res.status(httpStatusCodes.OK).json({ ...responseFromViewManager.data })
+    } catch (error) {
+        console.error('Error during running of view instance:', error);
+        if (error.response && error.response.data && error.response.data.message) {
+            console.error('Error from view manager:', error.response.data.message);
+            res.status(error.response.status).send({message: error.response.data.message});
+        } else {
+            console.error('Network or other error:', error.message);
+            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed run view instance - viewManager seems to be down'});
+        }
+    }
 }
 
 module.exports = {
