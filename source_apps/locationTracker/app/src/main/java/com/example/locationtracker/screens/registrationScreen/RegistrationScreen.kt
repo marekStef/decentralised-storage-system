@@ -128,13 +128,13 @@ fun RegistrationScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     CustomTextField(
-                        value = dataStorageDetails!!.ipAddress,
+                        value = dataStorageDetails?.ipAddress ?: "-",
                         onValueChange = { newIp -> dataStorageRegistrationViewModel.updateDataStorageIpAddress(newIp) },
                         label = "IP Address",
                     )
 
                     CustomTextField(
-                        value = dataStorageDetails!!.port,
+                        value = dataStorageDetails?.port ?: "-",
                         onValueChange = { newPort -> dataStorageRegistrationViewModel.updateDataStoragePort(newPort) },
                         label = "Port",
                         keyboardType = KeyboardType.Number
@@ -191,7 +191,7 @@ fun RegistrationScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     TextField(
-                        value = dataStorageDetails!!.associationTokenUsedDuringRegistration,
+                        value = dataStorageDetails?.associationTokenUsedDuringRegistration ?: "-",
                         onValueChange = { dataStorageRegistrationViewModel.updateDataStorageAssociationToken(it) },
                         label = { Text("Enter Data Storage Association Token") },
                         singleLine = true,

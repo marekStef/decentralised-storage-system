@@ -33,7 +33,7 @@ fun ExportButton(viewModelRef: WeakReference<MainViewModel>) {
     LaunchedEffect(workInfo) {
         when (workInfo?.state) {
             WorkInfo.State.SUCCEEDED -> {
-                val filePath = workInfo!!.outputData.getString("filePath")
+                val filePath = workInfo?.outputData?.getString("filePath") ?: return@LaunchedEffect
                 Log.d("ExportCSV", "File exported to: $filePath")
                 mainViewModel.setTempFilePath("$filePath") // this will trigger file picker to open
             }

@@ -123,13 +123,13 @@ fun SettingsScreenForRegisteredApp(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     CustomTextField(
-                        value = dataStorageDetails!!.ipAddress,
+                        value = dataStorageDetails?.ipAddress ?: "-",
                         onValueChange = { newValue -> dataStorageRegistrationViewModel.updateDataStorageIpAddress(newValue)},
                         label = "IP Address",
                     )
 
                     CustomTextField(
-                        value = dataStorageDetails!!.port,
+                        value = dataStorageDetails?.port ?: "-",
                         onValueChange = { newValue -> dataStorageRegistrationViewModel.updateDataStoragePort(newValue)},
                         label = "Port",
                         keyboardType = KeyboardType.Number

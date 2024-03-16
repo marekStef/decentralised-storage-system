@@ -49,8 +49,9 @@ enum class PermissionsStatusEnum {
 
 class DataStorageRegistrationViewModel(private val application: Application, private val preferencesManager: PreferencesManager): AndroidViewModel(application) {
     private fun saveDataStorageDetails() {
-        if (_dataStorageDetails.value == null) return
-        preferencesManager.saveDataStorageDetails(_dataStorageDetails.value!!)
+        _dataStorageDetails.value?.let { nonNullDataStorageValue ->
+            preferencesManager.saveDataStorageDetails(nonNullDataStorageValue)
+        }
     }
 
     // data storage server specific [START]
@@ -169,8 +170,15 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
         viewModelScope.launch {
             _isRegisteringLocationProfile.value = true
             val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
-            val ip: String = _dataStorageDetails.value?.ipAddress!!
-            val port: String = _dataStorageDetails.value?.port!!
+            val ip: String? = _dataStorageDetails.value?.ipAddress
+            val port: String? = _dataStorageDetails.value?.port
+
+            if (ip == null || port == null) {
+                _isRegisteringLocationProfile.value = false
+                _appProfileRegistrationStatus.value = ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED
+                callback(false, "IP address or port is missing")
+                return@launch
+            }
 
             val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, jsonSchema)
             _isRegisteringLocationProfile.value = false
@@ -194,8 +202,15 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
         viewModelScope.launch {
             _isAskingForPermissions.value = true
             val tokenForPermissionsAndProfiles: String = _dataStorageDetails.value?.tokenForPermissionsAndProfiles ?: ""
-            val ip: String = _dataStorageDetails.value?.ipAddress!!
-            val port: String = _dataStorageDetails.value?.port!!
+            val ip: String? = _dataStorageDetails.value?.ipAddress
+            val port: String? = _dataStorageDetails.value?.port
+
+            if (ip == null || port == null) {
+                _isAskingForPermissions.value = false
+                _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED
+                callback(false, "IP address or port is missing")
+                return@launch
+            }
 
             val result = sendPermissionRequestToServer(ip, port, tokenForPermissionsAndProfiles)
             _isAskingForPermissions.value = false

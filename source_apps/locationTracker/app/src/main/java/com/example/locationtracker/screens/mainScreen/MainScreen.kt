@@ -227,8 +227,10 @@ fun MainScreen(
                                     Switch(
                                         checked = appSettings?.isAutoSyncToggled ?: false,
                                         onCheckedChange = { isChecked: Boolean ->
-                                            if (dataStorageRegistrationViewModel.dataStorageDetails.value == null || dataStorageRegistrationViewModel.dataStorageDetails.value!!.networkSSID == null) {
-                                                viewModel.showAlertDialogWithOkButton("Cannot Set AutoSync", "Autosync cannot be turned on - you need to specifiy network SSID in the settings first")
+                                            val dataStorageDetailsValue = dataStorageRegistrationViewModel.dataStorageDetails.value
+
+                                            if (dataStorageDetailsValue == null || dataStorageDetails.networkSSID == null) {
+                                                viewModel.showAlertDialogWithOkButton("Cannot Set AutoSync", "Autosync cannot be turned on - you need to specify network SSID in the settings first")
                                                 return@Switch
                                             }
                                             viewModel.updateAppSettingsAutoSync(isChecked)

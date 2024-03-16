@@ -27,14 +27,9 @@ class CentralizedSyncManager private constructor(private val application: Applic
         private var isSyncing: Boolean = false
 
         fun getInstance(application: Application): CentralizedSyncManager {
-            if (instance == null) {
-                synchronized(this) {
-                    if (instance == null) {
-                        instance = CentralizedSyncManager(application)
-                    }
-                }
+            return instance ?: synchronized(this) {
+                instance ?: CentralizedSyncManager(application).also { instance = it }
             }
-            return instance!!
         }
     }
     fun startSyncing() {
