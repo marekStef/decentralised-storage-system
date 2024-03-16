@@ -26,13 +26,10 @@ import java.time.LocalTime
 import java.util.Date
 
 class MainViewModel(private val application: Application, private val dbManager: DatabaseManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
-
-
     private val workManager = WorkManager.getInstance(application)
 
     private val _appSettings = MutableLiveData<AppSettings>()
     val appSettings: LiveData<AppSettings> = _appSettings
-
 
     private val _syncInfo = MutableLiveData<SyncInfo>()
     val syncInfo: LiveData<SyncInfo> = _syncInfo

@@ -1,6 +1,5 @@
 package com.example.locationtracker
 
-import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -34,78 +33,62 @@ import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material.icons.filled.Terrain
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import kotlinx.coroutines.launch
+import com.example.locationtracker.viewModel.LogsScreenViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 @Composable
-fun LogScreen(navController: NavController, databaseManager: DatabaseManager, applicationContext: Context) {
-    var showDeleteLocationsDialog by remember { mutableStateOf(false) }
+fun LogScreen(navController: NavController, logsScreenViewModel: LogsScreenViewModel) {
+    val showDeleteLocationsDialog by logsScreenViewModel.showDeleteLocationsDialog.observeAsState()
+    val locations by logsScreenViewModel.locations.observeAsState(listOf<Location>())
+    val loading by logsScreenViewModel.loading.observeAsState(false)
+    val moreAvailable by logsScreenViewModel.moreAvailable.observeAsState(false)
 
-    var locations by remember { mutableStateOf(listOf<Location>()) } // mutable state list that holds the current locations to be displayed; defined with remember to survive recompositions and initialized with an empty list
-    val coroutineScope = rememberCoroutineScope()
-
-    var offset by remember { mutableStateOf(0) } // state to track the offset
-    val limit = 100
-    var loading by remember { mutableStateOf(false) }
-    var moreAvailable by remember { mutableStateOf(true) }
-
-    fun refreshLocations() {
-        coroutineScope.launch {
-            loading = true
-            val newLocations = databaseManager.fetchLocations(limit, offset)
-            locations += newLocations
-            moreAvailable = newLocations.size == limit
-            loading = false
-            offset += limit
-        }
-    }
-
-    fun deleteAllLocations() {
-        coroutineScope.launch {
-            databaseManager.deleteAllLocations()
-            locations = emptyList()
-        }
-    }
+//    fun refreshLocations() {
+//        coroutineScope.launch {
+//            loading = true
+//            val newLocations = databaseManager.fetchLocations(limit, offset)
+//            locations += newLocations
+//            moreAvailable = newLocations.size == limit
+//            loading = false
+//            offset += limit
+//        }
+//    }
 
     // LaunchedEffect(Unit) ensures refreshLocations is called when the composable first enters the composition,
     // effectively loading the locations initially and also providing a mechanism to refresh the list whenever the refresh button is tapped
     LaunchedEffect(Unit) {
-        refreshLocations()
+        logsScreenViewModel.loadMoreLocations();
     }
 
-    if (showDeleteLocationsDialog) {
+    if (showDeleteLocationsDialog == true) {
         AlertDialog(
-            onDismissRequest = { showDeleteLocationsDialog = false },
+            onDismissRequest = { logsScreenViewModel.setShowDeleteLocationsDialog(false) },
             title = { Text("Delete All Locations") },
             text = { Text("Are you sure you want to delete all locations? This action cannot be undone.") },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        deleteAllLocations()
-                        showDeleteLocationsDialog = false
+                        logsScreenViewModel.deleteAllLocations()
+                        logsScreenViewModel.setShowDeleteLocationsDialog(false)
                     }
                 ) {
                     Text("Confirm")
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteLocationsDialog = false }) {
+                TextButton(onClick = { logsScreenViewModel.setShowDeleteLocationsDialog(false) }) {
                     Text("Cancel")
                 }
             }
         )
     }
-
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -129,9 +112,7 @@ fun LogScreen(navController: NavController, databaseManager: DatabaseManager, ap
             backgroundColor = colorResource(id = R.color.header_background),
             actions = {
                 IconButton(onClick = {
-                    locations = listOf<Location>()
-                    offset = 0
-                    refreshLocations()
+                    logsScreenViewModel.refreshLocations()
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
@@ -139,7 +120,7 @@ fun LogScreen(navController: NavController, databaseManager: DatabaseManager, ap
                         tint = Color.White
                     )
                 }
-                IconButton(onClick = { showDeleteLocationsDialog = true }) {
+                IconButton(onClick = { logsScreenViewModel.setShowDeleteLocationsDialog(true) }) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
                         contentDescription = "Delete All Locations",
@@ -177,7 +158,7 @@ fun LogScreen(navController: NavController, databaseManager: DatabaseManager, ap
             modifier = Modifier.fillMaxSize()
         ) {
             items(locations) { location ->
-                LocationItem(location, applicationContext)
+                LocationItem(location)
             }
 
             if (moreAvailable) {
@@ -185,7 +166,7 @@ fun LogScreen(navController: NavController, databaseManager: DatabaseManager, ap
                     Button(
                         onClick = {
                             if (!loading) {
-                                refreshLocations()
+                                logsScreenViewModel.loadMoreLocations()
                             }
                         },
                         modifier = Modifier
@@ -206,7 +187,7 @@ fun LogScreen(navController: NavController, databaseManager: DatabaseManager, ap
 }
 
 @Composable
-fun LocationItem(location: Location, applicationContext: Context) {
+fun LocationItem(location: Location) {
     val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val dateString = dateFormatter.format(Date(location.time))
 

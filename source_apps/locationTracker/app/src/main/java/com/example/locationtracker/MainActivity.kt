@@ -38,6 +38,7 @@ import com.example.locationtracker.screens.SettingsScreenForRegisteredApp.Settin
 import com.example.locationtracker.screens.registrationScreen.RegistrationScreen
 import com.example.locationtracker.utils.*
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
+import com.example.locationtracker.viewModel.LogsScreenViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +48,8 @@ import java.util.Date
 
 class MainActivity : ComponentActivity() {
     private lateinit var dbManager : DatabaseManager;
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var mainViewModel: MainViewModel;
+    private lateinit var logsScreenViewModel: LogsScreenViewModel;
     private lateinit var dataStorageRegistrationViewModel: DataStorageRegistrationViewModel
 
     private lateinit var createDocumentLauncher: ActivityResultLauncher<String>
@@ -60,6 +62,9 @@ class MainActivity : ComponentActivity() {
             } else if (modelClass.isAssignableFrom(DataStorageRegistrationViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return DataStorageRegistrationViewModel(application, PreferencesManager(applicationContext)) as T
+            } else if (modelClass.isAssignableFrom(LogsScreenViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return LogsScreenViewModel(application, dbManager) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -132,6 +137,7 @@ class MainActivity : ComponentActivity() {
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         Log.d("still here", "heeere---")
         dataStorageRegistrationViewModel = ViewModelProvider(this, viewModelFactory)[DataStorageRegistrationViewModel::class.java]
+        logsScreenViewModel = ViewModelProvider(this, viewModelFactory)[LogsScreenViewModel::class.java]
 
         requestBatteryOptimisationPermission()
 
@@ -147,7 +153,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            MyApp(mainViewModel, dataStorageRegistrationViewModel, dbManager, applicationContext, this)
+            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, dbManager, applicationContext, this)
         }
     }
 
@@ -198,7 +204,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, databaseManager: DatabaseManager, applicationContext: Context, activity: Activity) {
+fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, databaseManager: DatabaseManager, applicationContext: Context, activity: Activity) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -221,7 +227,7 @@ fun MyApp(mainViewModel: MainViewModel, dataStorageRegistrationViewModel: DataSt
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
 
-        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, databaseManager, applicationContext) }
+        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModel) }
 
         composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, preferencesManager, activity) }
 
