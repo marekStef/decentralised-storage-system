@@ -56,7 +56,7 @@ fun ExportButton(activity: Activity, mainViewModel: MainViewModel) {
         ),
         onClick = { mainViewModel.exportData() }) {
         Text("Export to csv", style = TextStyle(
-            fontSize = 13.sp
+            fontSize = 11.sp
         )
         )
     }

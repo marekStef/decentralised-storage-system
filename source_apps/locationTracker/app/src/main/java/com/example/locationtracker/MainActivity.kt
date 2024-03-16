@@ -113,10 +113,10 @@ class MainActivity : ComponentActivity() {
     private fun registerReceivers() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST),
-                RECEIVER_NOT_EXPORTED
+                RECEIVER_EXPORTED
             )
             registerReceiver(synchronisationWorkerInfoReceiver, IntentFilter(Workers.SYNCHRONISATION_WORKER_BROADCAST),
-                RECEIVER_NOT_EXPORTED
+                RECEIVER_EXPORTED
             )
         } else {
             registerReceiver(locationServiceInfoReceiver, IntentFilter(Services.LOCATION_TRACKER_SERVICE_BROADCAST))

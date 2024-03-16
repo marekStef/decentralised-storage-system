@@ -76,7 +76,7 @@ fun BottomActionBar(
                 Text(
                     "Show Data",
                     style = TextStyle(
-                        fontSize = 13.sp
+                        fontSize = 11.sp
                     )
                 )
             }
@@ -139,7 +139,7 @@ fun ServiceControlButton(
         Text(
             if (isServiceRunning) "Stop Service" else "Start Service",
             style = TextStyle(
-                fontSize = 13.sp
+                fontSize = 11.sp
             )
         )
     }

@@ -288,13 +288,13 @@ fun RegistrationScreen(
                         Text(text = "Only then you will be able to proceed.")
                     }
 
-//                    CustomDefaultButton(
-//                        "Proceed to requesting permissions and profiles [debug]",
-//                        backgroundColor = colorResource(id = R.color.green3),
-//                        textColor = Color.White
-//                    ) {
-//                        navController.navigate("profilesAndPermissions")
-//                    }
+                    CustomDefaultButton(
+                        "Proceed to requesting permissions and profiles [debug]",
+                        backgroundColor = colorResource(id = R.color.green3),
+                        textColor = Color.White
+                    ) {
+                        navController.navigate("profilesAndPermissions")
+                    }
                 }
             }
         }
