@@ -51,7 +51,6 @@ import com.example.locationtracker.viewModel.ServerReachabilityEnum
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
@@ -140,10 +139,10 @@ fun ProfilesAndPermissionsScreen(
                         dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer() { isSuccess, message ->
                             if (isSuccess) {
                                 Log.d("Registering profile", "Success: $message")
-                                showAlertDialogWithOkButton("Success", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Success", message)
                             } else {
                                 Log.e("Registering profile", "Failure: $message")
-                                showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
                             }
                         }
                     }
@@ -197,20 +196,20 @@ fun ProfilesAndPermissionsScreen(
                         text = "Ask for permissions"
                     ) {
                         if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
-                            showAlertDialogWithOkButton("Error", "You need to register profiles first")
+                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", "You need to register profiles first")
                             return@CustomDefaultButton
                         }
 
                         dataStorageRegistrationViewModel.sendPermissionRequest() { isSuccess, message ->
                             if (isSuccess) {
                                 Log.d("Creating permission request", "Success: $message")
-                                showAlertDialogWithOkButton(
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
                                     "Success",
                                     "Permission request has been sent. You need to approve it now before the app sends some data"
                                 )
                             } else {
                                 Log.e("Creating permission request", "Failure: $message")
-                                showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
                             }
                         }
                     }
@@ -284,7 +283,7 @@ fun ProfilesAndPermissionsScreen(
                                     inclusive = true
                                 }
                             }
-                            showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
+                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
                         }
                     }
 
@@ -300,7 +299,7 @@ fun ProfilesAndPermissionsScreen(
                                 inclusive = true
                             }
                         }
-                        showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
+                        dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
                     }
                 }
             }

@@ -24,7 +24,7 @@ import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
 
 @Composable
-fun ExportButton(activity: Activity, mainViewModel: MainViewModel) {
+fun ExportButton(mainViewModel: MainViewModel) {
     val workInfo by mainViewModel.workInfo.observeAsState()
 
     LaunchedEffect(workInfo) {
@@ -35,7 +35,7 @@ fun ExportButton(activity: Activity, mainViewModel: MainViewModel) {
                 mainViewModel.setTempFilePath("$filePath") // this will trigger file picker to open
             }
             WorkInfo.State.FAILED -> {
-                showAlertDialogWithOkButton(activity, "Error", "There was an error generating the file")
+                mainViewModel.showAlertDialogWithOkButton("Error", "There was an error generating the file")
                 Log.e("ExportCSV", "Export failed")
             }
             else -> {}

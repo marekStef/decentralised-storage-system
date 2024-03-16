@@ -50,17 +50,6 @@ fun LogScreen(navController: NavController, logsScreenViewModel: LogsScreenViewM
     val loading by logsScreenViewModel.loading.observeAsState(false)
     val moreAvailable by logsScreenViewModel.moreAvailable.observeAsState(false)
 
-//    fun refreshLocations() {
-//        coroutineScope.launch {
-//            loading = true
-//            val newLocations = databaseManager.fetchLocations(limit, offset)
-//            locations += newLocations
-//            moreAvailable = newLocations.size == limit
-//            loading = false
-//            offset += limit
-//        }
-//    }
-
     // LaunchedEffect(Unit) ensures refreshLocations is called when the composable first enters the composition,
     // effectively loading the locations initially and also providing a mechanism to refresh the list whenever the refresh button is tapped
     LaunchedEffect(Unit) {

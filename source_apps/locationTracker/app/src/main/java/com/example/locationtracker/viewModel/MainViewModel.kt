@@ -1,6 +1,7 @@
 package com.example.locationtracker.viewModel
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
@@ -16,6 +17,7 @@ import com.example.locationtracker.constants.ScreensNames
 
 import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
+import com.example.locationtracker.eventSynchronisation.CentralizedSyncManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.AppSettings
@@ -198,6 +200,21 @@ class MainViewModel(private val application: Application, private val dbManager:
         deleteAllLocations()
         resetViewModel()
         navController.navigate(ScreensNames.REGISTRATION_SCREEN)
+    }
+
+    fun showAlertDialogWithOkButton(title: String, message: String) {
+        AlertDialog.Builder(application)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    val syncManager = CentralizedSyncManager.getInstance(application)
+    fun startSynchronisingGatheredData() {
+        syncManager.startSyncing();
     }
 
 }

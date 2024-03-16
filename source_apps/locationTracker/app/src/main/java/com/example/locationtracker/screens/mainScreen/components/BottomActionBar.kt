@@ -1,6 +1,5 @@
 package com.example.locationtracker.screens.mainScreen.components
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,7 +30,6 @@ import com.example.locationtracker.viewModel.MainViewModel
 
 @Composable
 fun BottomActionBar(
-    activity: Activity,
     viewModel: MainViewModel,
     navController: NavController,
     applicationContext: Context,
@@ -52,7 +50,7 @@ fun BottomActionBar(
 //
 //            ) {
         Row() {
-            SynchronisationComponent(activity, viewModel)
+            SynchronisationComponent(viewModel)
         }
         Row(
             modifier = Modifier
@@ -81,7 +79,7 @@ fun BottomActionBar(
                 )
             }
 
-            ExportButton(activity, viewModel)
+            ExportButton(viewModel)
 
             ServiceControlButton(applicationContext, viewModel, appSettings, dataStorageDetails)
         }

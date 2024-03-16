@@ -55,7 +55,6 @@ import com.example.locationtracker.screens.mainScreen.components.BottomActionBar
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.screens.mainScreen.components.TimeSetter
-import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 
@@ -65,7 +64,8 @@ fun MainScreen(
     viewModel: MainViewModel,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     applicationContext: Context,
-    activity: Activity
+    openAppSettings: () -> Unit,
+    arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean
 ) {
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(EmptyDataStorageDetails)
@@ -218,7 +218,7 @@ fun MainScreen(
                                         checked = appSettings?.isAutoSyncToggled ?: false,
                                         onCheckedChange = { isChecked: Boolean ->
                                             if (dataStorageRegistrationViewModel.dataStorageDetails.value == null || dataStorageRegistrationViewModel.dataStorageDetails.value!!.networkSSID == null) {
-                                                showAlertDialogWithOkButton(activity, "Cannot Set AutoSync", "Autosync cannot be turned on - you need to specifiy network SSID in the settings first")
+                                                viewModel.showAlertDialogWithOkButton("Cannot Set AutoSync", "Autosync cannot be turned on - you need to specifiy network SSID in the settings first")
                                                 return@Switch
                                             }
                                             viewModel.updateAppSettingsAutoSync(isChecked)
@@ -359,10 +359,7 @@ fun MainScreen(
                             Manifest.permission.ACCESS_BACKGROUND_LOCATION -> BackgroundLocationPermissionTextProvider()
                             else -> return@forEach
                         },
-                        isPermanentlyDeclined = !shouldShowRequestPermissionRationale(
-                            activity,
-                            permission
-                        ),
+                        isPermanentlyDeclined = arePermissionsRequestsPermanentlyDeclined(permission),
                         onDismiss = { viewModel.dismissDialog() },
                         onOkClick = {
                             viewModel.dismissDialog()
@@ -370,19 +367,9 @@ fun MainScreen(
                                 permissionsToRequest
                             )
                         },
-                        onGoToAppSettingsClick = {
-                            openAppSettings(activity)
-                        })
+                        onGoToAppSettingsClick = { openAppSettings() })
                 }
         }
-        BottomActionBar(activity, viewModel, navController, applicationContext, appSettings, dataStorageDetails)
+        BottomActionBar(viewModel, navController, applicationContext, appSettings, dataStorageDetails)
     }
-}
-
-fun openAppSettings(activity: Activity) {
-    val intent = Intent(
-        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-        Uri.fromParts("package", activity.packageName, null)
-    )
-    activity.startActivity(intent)
 }

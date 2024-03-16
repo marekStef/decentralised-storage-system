@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log;
 
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -21,6 +22,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -154,7 +156,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, applicationContext, this, showAlertDialogWithOkButton)
+            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined)
         }
     }
 
@@ -203,22 +205,29 @@ class MainActivity : ComponentActivity() {
         dataStorageRegistrationViewModel.saveViewModel()
     }
 
-    private val showAlertDialogWithOkButton: (String, String) -> Unit = { title, message ->
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+    private val openAppSettings: () -> Unit = {
+        val intent = Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", this.packageName, null)
+        )
+        this.startActivity(intent)
+    }
+
+    private val arePermissionsRequestsPermanentlyDeclined: (permission: String) -> Boolean = { permission ->
+        !ActivityCompat.shouldShowRequestPermissionRationale(
+            this,
+            permission
+        )
     }
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel,
+fun MyApp(mainViewModel: MainViewModel,
+          logsScreenViewModel: LogsScreenViewModel,
           dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-          applicationContext: Context, activity: Activity,
-          showAlertDialogWithOkButton: (String, String) -> Unit) {
+          applicationContext: Context,
+          openAppSettings: () -> Unit,
+          arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -239,13 +248,10 @@ fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, activity) }
-
+        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined) }
         composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModel) }
-
-        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
-        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
-
-        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
+        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel) }
+        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel) }
+        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel) }
     }
 }

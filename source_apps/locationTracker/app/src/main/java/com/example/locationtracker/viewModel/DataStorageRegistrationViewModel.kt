@@ -1,5 +1,6 @@
 package com.example.locationtracker.viewModel
 
+import android.app.AlertDialog
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -220,6 +221,16 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
 
     public fun setIsAppProperlyRegistered(isProperlyRegistered: Boolean) {
         preferencesManager.setIsAppProperlyRegistered(true)
+    }
+
+    fun showAlertDialogWithOkButton(title: String, message: String) {
+        AlertDialog.Builder(application)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
 }

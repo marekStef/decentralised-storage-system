@@ -54,7 +54,6 @@ import com.example.locationtracker.viewModel.ServerReachabilityEnum
 fun RegistrationScreen(
     navController: NavController,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
@@ -227,7 +226,7 @@ fun RegistrationScreen(
                             } else {
                                 // Handle failure
                                 Log.e("AssociateApp", "Failure: $message")
-                                showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
                             }
                         }
                     }

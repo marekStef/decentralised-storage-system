@@ -51,7 +51,6 @@ fun SettingsScreenForRegisteredApp(
     navController: NavController,
     viewModel: MainViewModel,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
@@ -204,7 +203,7 @@ fun SettingsScreenForRegisteredApp(
                         dataStorageRegistrationViewModel.setDataStorageNetworkSSID(ssid)
                         if (ssid == null) {
                             viewModel.updateAppSettingsAutoSync(false)
-                            showAlertDialogWithOkButton("AutoSync Turned Off", "No network ssid has been found - Auto Sync is off")
+                            viewModel.showAlertDialogWithOkButton("AutoSync Turned Off", "No network ssid has been found - Auto Sync is off")
                         }
                     }
 
@@ -234,7 +233,7 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ResetAppButton(applicationContext, viewModel, navController, showAlertDialogWithOkButton)
+                    ResetAppButton(applicationContext, viewModel, navController)
                 }
             }
         }

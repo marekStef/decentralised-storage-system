@@ -24,7 +24,7 @@ import com.example.locationtracker.foregroundServices.LocationTrackerService.sto
 import com.example.locationtracker.viewModel.MainViewModel
 
 @Composable
-fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController, showAlertDialogWithOkButton: (String, String) -> Unit) {
+fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController) {
     var showDialog by remember { mutableStateOf(false) }
 
     // Confirmation Dialog
@@ -41,7 +41,7 @@ fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navCon
                 ) {
                     showDialog = false
                     viewModel.resetApplication(applicationContext, navController);
-                    showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
+                    viewModel.showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
                 }
             },
             dismissButton = { CustomDefaultButton(text = "No", onClick = { showDialog = false }) }

@@ -36,8 +36,7 @@ import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
 
 @Composable
-fun SynchronisationComponent(activity: Activity, mainViewModel: MainViewModel) {
-    val syncManager = CentralizedSyncManager.getInstance(activity.application)
+fun SynchronisationComponent(mainViewModel: MainViewModel) {
     val syncInfo = mainViewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     Button(modifier = Modifier
@@ -48,7 +47,7 @@ fun SynchronisationComponent(activity: Activity, mainViewModel: MainViewModel) {
             containerColor = colorResource(id = R.color.green0),
             contentColor = colorResource(id = R.color.green3)
         ),
-        onClick = { syncManager.startSyncing() }
+        onClick = { mainViewModel.startSynchronisingGatheredData() }
     ){
         Row(verticalAlignment = Alignment.CenterVertically) {
             if (syncInfo.value.syncStatus == EventsSyncingStatus.SYNCING) {
