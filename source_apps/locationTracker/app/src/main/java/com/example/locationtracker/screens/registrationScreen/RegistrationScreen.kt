@@ -46,17 +46,15 @@ import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.screens.commonComponents.CustomTextField
-import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.AssociationWithDataStorageStatusEnum
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
-import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
 
 @Composable
 fun RegistrationScreen(
     navController: NavController,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-    activity: Activity,
+    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
@@ -229,7 +227,7 @@ fun RegistrationScreen(
                             } else {
                                 // Handle failure
                                 Log.e("AssociateApp", "Failure: $message")
-                                showAlertDialogWithOkButton(activity, "Error", message)
+                                showAlertDialogWithOkButton("Error", message)
                             }
                         }
                     }

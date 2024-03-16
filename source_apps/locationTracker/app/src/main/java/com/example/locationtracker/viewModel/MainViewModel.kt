@@ -1,18 +1,23 @@
 package com.example.locationtracker.viewModel
 
+import android.app.Activity
 import android.app.Application
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.example.locationtracker.constants.ScreensNames
 
 import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
+import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
@@ -186,4 +191,13 @@ class MainViewModel(private val application: Application, private val dbManager:
             visiblePermissionDialogQueue.add(permission)
         }
     }
+
+    fun resetApplication(applicationContext: Context, navController: NavController) {
+        preferencesManager.resetAllPreferences()
+        stopLocationGatheringServiceIfRunning(applicationContext, this)
+        deleteAllLocations()
+        resetViewModel()
+        navController.navigate(ScreensNames.REGISTRATION_SCREEN)
+    }
+
 }

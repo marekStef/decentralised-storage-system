@@ -175,7 +175,6 @@ fun MainScreen(
                                         stopLocationGatheringServiceIfRunning(
                                             applicationContext,
                                             viewModel,
-                                            activity
                                         )
                                     }
 
@@ -189,7 +188,6 @@ fun MainScreen(
                                         stopLocationGatheringServiceIfRunning(
                                             applicationContext,
                                             viewModel,
-                                            activity
                                         )
                                     }
                                 }

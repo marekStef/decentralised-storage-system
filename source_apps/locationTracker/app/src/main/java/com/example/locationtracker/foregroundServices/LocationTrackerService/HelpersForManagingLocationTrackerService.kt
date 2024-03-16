@@ -13,7 +13,6 @@ import com.example.locationtracker.viewModel.MainViewModel
 fun stopLocationGatheringServiceIfRunning(
     applicationContext: Context,
     viewModel: MainViewModel,
-    activity: Activity
 ) {
     val appSettings = viewModel.appSettings.value
 
@@ -29,7 +28,7 @@ fun stopLocationGatheringServiceIfRunning(
     )
 
     showAlertDialogWithOkButton(
-        activity,
+        applicationContext,
         "Location Tracker Service",
         "Location Tracking Service has been stopped."
     )

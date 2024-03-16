@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.locationtracker.R
 import com.example.locationtracker.constants.App
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 import com.example.locationtracker.data.PreferencesManager
@@ -15,6 +16,7 @@ import com.example.locationtracker.eventSynchronisation.registerNewProfileToData
 import com.example.locationtracker.eventSynchronisation.sendPermissionRequestToServer
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
+import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -153,7 +155,12 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
 
     // data storage server - profile creation [START]
 
-    fun registerLocationProfileInDataStorageServer(schema: String, callback: (Boolean, String) -> Unit) {
+    fun registerLocationProfileInDataStorageServer(callback: (Boolean, String) -> Unit) {
+        val jsonSchema = loadJsonSchemaFromRes(
+            context = application,
+            resourceId = R.raw.location_profile_for_data_storage
+        )
+
         Log.d("Registering (viewmode)", "Trying to register profile")
 
         if (_isRegisteringLocationProfile.value == true) return
@@ -164,7 +171,7 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
             val ip: String = _dataStorageDetails.value?.ipAddress!!
             val port: String = _dataStorageDetails.value?.port!!
 
-            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, schema)
+            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, jsonSchema)
             _isRegisteringLocationProfile.value = false
 
             result.onSuccess { data ->
@@ -209,6 +216,10 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
     fun setDataStorageNetworkSSID(ssid: String?) {
         val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
         _dataStorageDetails.value = currentDetails.copy(networkSSID = ssid)
+    }
+
+    public fun setIsAppProperlyRegistered(isProperlyRegistered: Boolean) {
+        preferencesManager.setIsAppProperlyRegistered(true)
     }
 
 }

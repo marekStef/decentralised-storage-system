@@ -1,6 +1,5 @@
 package com.example.locationtracker.screens.commonComponents
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
@@ -22,20 +21,10 @@ import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.data.database.DatabaseClient
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
-import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
 
-fun resetApplication(applicationContext: Context, viewModel: MainViewModel, activity: Activity, navController: NavController) {
-    var preferencesManager = PreferencesManager(applicationContext)
-    preferencesManager.resetAllPreferences()
-    stopLocationGatheringServiceIfRunning(applicationContext, viewModel, activity)
-    viewModel.deleteAllLocations()
-    viewModel.resetViewModel()
-    navController.navigate(ScreensNames.REGISTRATION_SCREEN)
-}
-
 @Composable
-fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController, activity: Activity) {
+fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController, showAlertDialogWithOkButton: (String, String) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
 
     // Confirmation Dialog
@@ -51,8 +40,8 @@ fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navCon
                     textColor = Color.White
                 ) {
                     showDialog = false
-                    resetApplication(applicationContext, viewModel, activity, navController)
-                    showAlertDialogWithOkButton(activity, "App Reset", "Your app has been successfully reset")
+                    viewModel.resetApplication(applicationContext, navController);
+                    showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
                 }
             },
             dismissButton = { CustomDefaultButton(text = "No", onClick = { showDialog = false }) }

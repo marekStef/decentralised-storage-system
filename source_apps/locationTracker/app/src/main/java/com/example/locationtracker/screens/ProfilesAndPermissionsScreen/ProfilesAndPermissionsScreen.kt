@@ -41,7 +41,6 @@ import com.example.locationtracker.constants.ScreensNames
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.utils.loadJsonSchemaFromRes
-import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.PermissionsStatusEnum
@@ -52,8 +51,7 @@ import com.example.locationtracker.viewModel.ServerReachabilityEnum
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
-    preferencesManager: PreferencesManager,
-    activity: Activity
+    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
@@ -138,20 +136,16 @@ fun ProfilesAndPermissionsScreen(
                     CustomDefaultButton(
                         text = "Register needed profiles"
                     ) {
-                        val jsonSchema = loadJsonSchemaFromRes(
-                            context = activity,
-                            resourceId = R.raw.location_profile_for_data_storage
-                        )
-                        dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer(jsonSchema) { isSuccess, message ->
+
+                        dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer() { isSuccess, message ->
                             if (isSuccess) {
                                 Log.d("Registering profile", "Success: $message")
-                                showAlertDialogWithOkButton(activity, "Success", message)
+                                showAlertDialogWithOkButton("Success", message)
                             } else {
                                 Log.e("Registering profile", "Failure: $message")
-                                showAlertDialogWithOkButton(activity, "Error", message)
+                                showAlertDialogWithOkButton("Error", message)
                             }
                         }
-                        Log.d("JSON", jsonSchema)
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -203,7 +197,7 @@ fun ProfilesAndPermissionsScreen(
                         text = "Ask for permissions"
                     ) {
                         if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
-                            showAlertDialogWithOkButton(activity, "Error", "You need to register profiles first")
+                            showAlertDialogWithOkButton("Error", "You need to register profiles first")
                             return@CustomDefaultButton
                         }
 
@@ -211,13 +205,12 @@ fun ProfilesAndPermissionsScreen(
                             if (isSuccess) {
                                 Log.d("Creating permission request", "Success: $message")
                                 showAlertDialogWithOkButton(
-                                    activity,
                                     "Success",
                                     "Permission request has been sent. You need to approve it now before the app sends some data"
                                 )
                             } else {
                                 Log.e("Creating permission request", "Failure: $message")
-                                showAlertDialogWithOkButton(activity, "Error", message)
+                                showAlertDialogWithOkButton("Error", message)
                             }
                         }
                     }
@@ -284,14 +277,14 @@ fun ProfilesAndPermissionsScreen(
                             backgroundColor = colorResource(id = R.color.green3),
                             textColor = Color.White
                         ) {
-                            preferencesManager.setIsAppProperlyRegistered(true)
+                            dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
                             navController.navigate(ScreensNames.MAIN_SCREEN) {
                                 // so that the user cannot get back
                                 popUpTo(navController.graph.startDestinationId) {
                                     inclusive = true
                                 }
                             }
-                            showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
+                            showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
                         }
                     }
 
@@ -300,14 +293,14 @@ fun ProfilesAndPermissionsScreen(
                         backgroundColor = colorResource(id = R.color.green3),
                         textColor = Color.White
                     ) {
-                        preferencesManager.setIsAppProperlyRegistered(true)
+                        dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
                         navController.navigate(ScreensNames.MAIN_SCREEN) {
                             // so that the user cannot get back
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true
                             }
                         }
-                        showAlertDialogWithOkButton(activity, "Welcome", "Your app has been successfully set!")
+                        showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
                     }
                 }
             }

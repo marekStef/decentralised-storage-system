@@ -1,6 +1,7 @@
 package com.example.locationtracker
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -153,7 +154,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, dbManager, applicationContext, this)
+            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, applicationContext, this, showAlertDialogWithOkButton)
         }
     }
 
@@ -201,10 +202,23 @@ class MainActivity : ComponentActivity() {
         mainViewModel.saveViewModel()
         dataStorageRegistrationViewModel.saveViewModel()
     }
+
+    private val showAlertDialogWithOkButton: (String, String) -> Unit = { title, message ->
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel, dataStorageRegistrationViewModel: DataStorageRegistrationViewModel, databaseManager: DatabaseManager, applicationContext: Context, activity: Activity) {
+fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel,
+          dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+          applicationContext: Context, activity: Activity,
+          showAlertDialogWithOkButton: (String, String) -> Unit) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
     SideEffect {
@@ -229,10 +243,9 @@ fun MyApp(mainViewModel: MainViewModel, logsScreenViewModel: LogsScreenViewModel
 
         composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModel) }
 
-        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, preferencesManager, activity) }
+        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
+        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
 
-        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel, activity) }
-
-        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel, activity) }
+        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel, showAlertDialogWithOkButton) }
     }
 }
