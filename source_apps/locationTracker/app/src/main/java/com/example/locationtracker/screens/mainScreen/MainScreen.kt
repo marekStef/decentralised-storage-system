@@ -57,16 +57,26 @@ import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.screens.mainScreen.components.TimeSetter
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
 fun MainScreen(
     navController: NavController,
-    viewModel: MainViewModel,
-    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+    viewModelRef: WeakReference<MainViewModel>,
+    dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
     applicationContext: Context,
     openAppSettings: () -> Unit,
     arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean
 ) {
+
+    val viewModel = viewModelRef.get()
+    val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get()
+
+    // viewModel is null because it has been garbage collected
+    if (viewModel == null || dataStorageRegistrationViewModel == null) {
+        Text(text = "ViewModels not available", color = Color.Red)
+        return
+    }
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(EmptyDataStorageDetails)
 
@@ -133,7 +143,7 @@ fun MainScreen(
                     .padding(0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SyncStatusCard(viewModel)
+                SyncStatusCard(viewModelRef)
 
                 LazyColumn() {
                     item {
@@ -174,7 +184,7 @@ fun MainScreen(
                                         viewModel.updateAppSettingsStartTime(it)
                                         stopLocationGatheringServiceIfRunning(
                                             applicationContext,
-                                            viewModel,
+                                            viewModelRef,
                                         )
                                     }
 
@@ -187,7 +197,7 @@ fun MainScreen(
                                         viewModel.updateAppSettingsEndTime(it)
                                         stopLocationGatheringServiceIfRunning(
                                             applicationContext,
-                                            viewModel,
+                                            viewModelRef,
                                         )
                                     }
                                 }
@@ -370,6 +380,6 @@ fun MainScreen(
                         onGoToAppSettingsClick = { openAppSettings() })
                 }
         }
-        BottomActionBar(viewModel, navController, applicationContext, appSettings, dataStorageDetails)
+        BottomActionBar(viewModelRef, navController, applicationContext, appSettings, dataStorageDetails)
     }
 }

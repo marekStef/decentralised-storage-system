@@ -22,9 +22,12 @@ import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.data.database.DatabaseClient
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
-fun ResetAppButton(applicationContext: Context, viewModel: MainViewModel, navController: NavController) {
+fun ResetAppButton(applicationContext: Context, viewModelRef: WeakReference<MainViewModel>, navController: NavController) {
+    val viewModel = viewModelRef.get() ?: return
+
     var showDialog by remember { mutableStateOf(false) }
 
     // Confirmation Dialog

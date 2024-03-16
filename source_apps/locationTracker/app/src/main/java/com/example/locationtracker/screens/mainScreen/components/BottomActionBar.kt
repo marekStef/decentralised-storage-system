@@ -27,10 +27,11 @@ import com.example.locationtracker.foregroundServices.LocationTrackerService.tog
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
 fun BottomActionBar(
-    viewModel: MainViewModel,
+    viewModelRef: WeakReference<MainViewModel>,
     navController: NavController,
     applicationContext: Context,
     appSettings: AppSettings?,
@@ -50,7 +51,7 @@ fun BottomActionBar(
 //
 //            ) {
         Row() {
-            SynchronisationComponent(viewModel)
+            SynchronisationComponent(viewModelRef)
         }
         Row(
             modifier = Modifier
@@ -79,9 +80,9 @@ fun BottomActionBar(
                 )
             }
 
-            ExportButton(viewModel)
+            ExportButton(viewModelRef)
 
-            ServiceControlButton(applicationContext, viewModel, appSettings, dataStorageDetails)
+            ServiceControlButton(applicationContext, viewModelRef, appSettings, dataStorageDetails)
         }
 
 //            }
@@ -108,10 +109,12 @@ fun BottomActionBar(
 @Composable
 fun ServiceControlButton(
     applicationContext: Context,
-    viewModel: MainViewModel,
+    viewModelRef: WeakReference<MainViewModel>,
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails
 ) {
+    val viewModel = viewModelRef.get() ?: return
+
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
     Button(

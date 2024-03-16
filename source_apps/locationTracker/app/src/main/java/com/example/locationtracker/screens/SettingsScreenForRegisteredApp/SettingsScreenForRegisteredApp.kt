@@ -44,14 +44,23 @@ import com.example.locationtracker.utils.getCurrentSsid
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
+import java.lang.ref.WeakReference
 
 @Composable
 fun SettingsScreenForRegisteredApp(
     applicationContext: Context,
     navController: NavController,
-    viewModel: MainViewModel,
-    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+    mainViewModelRef: WeakReference<MainViewModel>,
+    dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
 ) {
+    val viewModel = mainViewModelRef.get()
+    val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get()
+    // viewModel is null because it has been garbage collected
+    if (viewModel == null || dataStorageRegistrationViewModel == null) {
+        Text(text = "ViewModels not available", color = Color.Red)
+        return
+    }
+
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
         colorResource(id = R.color.header_background_2)
@@ -233,7 +242,7 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ResetAppButton(applicationContext, viewModel, navController)
+                    ResetAppButton(applicationContext, mainViewModelRef, navController)
                 }
             }
         }

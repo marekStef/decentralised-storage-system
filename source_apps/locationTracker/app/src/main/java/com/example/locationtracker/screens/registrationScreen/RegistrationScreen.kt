@@ -49,12 +49,15 @@ import com.example.locationtracker.screens.commonComponents.CustomTextField
 import com.example.locationtracker.viewModel.AssociationWithDataStorageStatusEnum
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
+import java.lang.ref.WeakReference
 
 @Composable
 fun RegistrationScreen(
     navController: NavController,
-    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+    dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
 ) {
+    val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get() ?: return
+
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
         colorResource(id = R.color.header_background_2)

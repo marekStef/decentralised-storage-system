@@ -34,9 +34,12 @@ import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
-fun SynchronisationComponent(mainViewModel: MainViewModel) {
+fun SynchronisationComponent(mainViewModelRef: WeakReference<MainViewModel>) {
+    val mainViewModel = mainViewModelRef.get() ?: return
+
     val syncInfo = mainViewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     Button(modifier = Modifier

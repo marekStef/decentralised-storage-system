@@ -9,11 +9,14 @@ import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 fun stopLocationGatheringServiceIfRunning(
     applicationContext: Context,
-    viewModel: MainViewModel,
+    viewModelRef: WeakReference<MainViewModel>,
 ) {
+    val viewModel = viewModelRef.get() ?: return
+
     val appSettings = viewModel.appSettings.value
 
     val isServiceRunning = viewModel.serviceRunningLiveData.value ?: false

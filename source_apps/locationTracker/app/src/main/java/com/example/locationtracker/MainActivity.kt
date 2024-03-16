@@ -47,6 +47,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
@@ -156,7 +157,12 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            MyApp(mainViewModel, logsScreenViewModel, dataStorageRegistrationViewModel, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined)
+            val mainViewModelRef = WeakReference(mainViewModel)
+            val logsScreenViewModelRef = WeakReference(logsScreenViewModel)
+            val dataStorageRegistrationViewModelRef = WeakReference(dataStorageRegistrationViewModel)
+
+            MyApp(mainViewModelRef, logsScreenViewModelRef, dataStorageRegistrationViewModelRef,
+                applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined)
         }
     }
 
@@ -222,9 +228,9 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyApp(mainViewModel: MainViewModel,
-          logsScreenViewModel: LogsScreenViewModel,
-          dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
+          logsScreenViewModelRef: WeakReference<LogsScreenViewModel>,
+          dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
           applicationContext: Context,
           openAppSettings: () -> Unit,
           arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean) {
@@ -248,10 +254,10 @@ fun MyApp(mainViewModel: MainViewModel,
 
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModel, dataStorageRegistrationViewModel, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined) }
-        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModel) }
-        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModel) }
-        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModel) }
-        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModel, dataStorageRegistrationViewModel) }
+        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModelRef, dataStorageRegistrationViewModelRef, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined) }
+        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModelRef) }
+        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModelRef) }
+        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModelRef) }
+        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModelRef, dataStorageRegistrationViewModelRef) }
     }
 }

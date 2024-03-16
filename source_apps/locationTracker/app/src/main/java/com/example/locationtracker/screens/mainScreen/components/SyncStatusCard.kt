@@ -29,9 +29,11 @@ import androidx.compose.ui.unit.sp
 import com.example.locationtracker.R
 import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
-fun SyncStatusCard(viewModel: MainViewModel) {
+fun SyncStatusCard(mainViewModelRef: WeakReference<MainViewModel>) {
+    val viewModel = mainViewModelRef.get() ?: return
     val syncInfo by viewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     val gradientColors = listOf(colorResource(id = R.color.header_background), colorResource(id = R.color.header_background_2))

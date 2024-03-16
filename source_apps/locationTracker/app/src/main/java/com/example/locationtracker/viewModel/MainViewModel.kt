@@ -29,6 +29,7 @@ import com.example.locationtracker.workManagers.ExportLocationsWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
 import java.time.LocalTime
 import java.util.Date
 
@@ -196,7 +197,7 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     fun resetApplication(applicationContext: Context, navController: NavController) {
         preferencesManager.resetAllPreferences()
-        stopLocationGatheringServiceIfRunning(applicationContext, this)
+        stopLocationGatheringServiceIfRunning(applicationContext, WeakReference(this))
         deleteAllLocations()
         resetViewModel()
         navController.navigate(ScreensNames.REGISTRATION_SCREEN)

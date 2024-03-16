@@ -46,12 +46,15 @@ import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.PermissionsStatusEnum
 import com.example.locationtracker.viewModel.ProfileRegistrationStatusEnum
 import com.example.locationtracker.viewModel.ServerReachabilityEnum
+import java.lang.ref.WeakReference
 
 @Composable
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
-    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
+    dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
 ) {
+    val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get() ?: return
+
     val gradientColors = listOf(
         colorResource(id = R.color.header_background),
         colorResource(id = R.color.header_background_2)

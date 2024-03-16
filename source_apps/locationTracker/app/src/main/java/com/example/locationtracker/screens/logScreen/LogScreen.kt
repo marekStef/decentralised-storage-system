@@ -38,13 +38,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import com.example.locationtracker.viewModel.LogsScreenViewModel
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 @Composable
-fun LogScreen(navController: NavController, logsScreenViewModel: LogsScreenViewModel) {
+fun LogScreen(navController: NavController, logsScreenViewModelRef: WeakReference<LogsScreenViewModel>) {
+    val logsScreenViewModel = logsScreenViewModelRef.get() ?: return
+
     val showDeleteLocationsDialog by logsScreenViewModel.showDeleteLocationsDialog.observeAsState()
     val locations by logsScreenViewModel.locations.observeAsState(listOf<Location>())
     val loading by logsScreenViewModel.loading.observeAsState(false)

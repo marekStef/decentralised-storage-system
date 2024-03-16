@@ -22,9 +22,12 @@ import androidx.work.WorkInfo
 import com.example.locationtracker.R
 import com.example.locationtracker.utils.showAlertDialogWithOkButton
 import com.example.locationtracker.viewModel.MainViewModel
+import java.lang.ref.WeakReference
 
 @Composable
-fun ExportButton(mainViewModel: MainViewModel) {
+fun ExportButton(viewModelRef: WeakReference<MainViewModel>) {
+    val mainViewModel = viewModelRef.get() ?: return
+
     val workInfo by mainViewModel.workInfo.observeAsState()
 
     LaunchedEffect(workInfo) {
