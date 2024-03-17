@@ -1,12 +1,8 @@
 package com.example.locationtracker
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -21,40 +17,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.locationtracker.constants.ScreensNames
-import com.example.locationtracker.foregroundServices.LocationTrackerService.sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation
-import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.EmptyDataStorageDetails
+import com.example.locationtracker.screens.mainScreen.components.ActiveHoursSetter
+import com.example.locationtracker.screens.mainScreen.components.AutoSyncSetter
 import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
 import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.BottomActionBar
 import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
+import com.example.locationtracker.screens.mainScreen.components.DataStorageDetailsSection
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
-import com.example.locationtracker.screens.mainScreen.components.TimeSetter
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
@@ -74,11 +65,13 @@ fun MainScreen(
 
     // viewModel is null because it has been garbage collected
     if (viewModel == null || dataStorageRegistrationViewModel == null) {
-        Text(text = "ViewModels not available", color = Color.Red)
+        Text(text = stringResource(id = R.string.view_models_not_available), color = Color.Red)
         return
     }
 
-    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(EmptyDataStorageDetails)
+    val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(
+        EmptyDataStorageDetails
+    )
 
     val context = LocalContext.current
     val dialoPermissionsQueue = viewModel.visiblePermissionDialogQueue
@@ -155,7 +148,7 @@ fun MainScreen(
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
-                                    text = "Settings",
+                                    text = stringResource(id = R.string.settings),
                                     fontSize = 24.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black
@@ -167,194 +160,36 @@ fun MainScreen(
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
 
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = "Active Hours",
-                                        fontSize = 16.sp,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                                ActiveHoursSetter(
+                                    context,
+                                    applicationContext,
+                                    appSettings,
+                                    viewModelRef
+                                )
 
-                                    TimeSetter(
-                                        context,
-                                        appSettings?.selectedStartTimeForLocationLogging
-                                    ) {
-                                        viewModel.updateAppSettingsStartTime(it)
-                                        stopLocationGatheringServiceIfRunning(
-                                            applicationContext,
-                                            viewModelRef,
-                                        )
-                                    }
-
-                                    Spacer(modifier = Modifier.width(5.dp))
-
-                                    TimeSetter(
-                                        context,
-                                        appSettings?.selectedEndTimeForLocationLogging
-                                    ) {
-                                        viewModel.updateAppSettingsEndTime(it)
-                                        stopLocationGatheringServiceIfRunning(
-                                            applicationContext,
-                                            viewModelRef,
-                                        )
-                                    }
-                                }
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Column(modifier = Modifier.weight(1f)) {
-                                        Row {
-                                            Text(
-                                                text = "Auto Sync",
-                                                fontSize = 16.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                        }
-                                        Row {
-                                            Text(
-                                                text = "App will try to sync locations once per 24 hours",
-                                                fontSize = 10.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-                                        }
-                                    }
-
-
-                                    Switch(
-                                        checked = appSettings?.isAutoSyncToggled ?: false,
-                                        onCheckedChange = { isChecked: Boolean ->
-                                            val dataStorageDetailsValue = dataStorageRegistrationViewModel.dataStorageDetails.value
-
-                                            if (dataStorageDetailsValue == null || dataStorageDetails.networkSSID == null) {
-                                                viewModel.showAlertDialogWithOkButton("Cannot Set AutoSync", "Autosync cannot be turned on - you need to specify network SSID in the settings first")
-                                                return@Switch
-                                            }
-                                            viewModel.updateAppSettingsAutoSync(isChecked)
-                                            if (isServiceRunning)
-                                                sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation(applicationContext, isChecked)
-                                        },
-                                        colors = SwitchDefaults.colors(
-                                            checkedThumbColor = colorResource(id = R.color.gray_light5),
-                                            uncheckedThumbColor = colorResource(id = R.color.gray_light7),
-                                            checkedTrackColor = colorResource(id = R.color.gray_green1).copy(
-                                                alpha = 0.7f
-                                            ),
-                                            uncheckedTrackColor = colorResource(id = R.color.gray_light1).copy(
-                                                alpha = 0.3f
-                                            ),
-                                        )
-                                    )
-                                }
+                                AutoSyncSetter(
+                                    viewModelRef,
+                                    appSettings,
+                                    dataStorageDetails,
+                                    dataStorageRegistrationViewModel,
+                                    isServiceRunning,
+                                    applicationContext
+                                )
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
-                                        text = "Network for synchronisation",
-                                        fontSize = 16.sp,
-//                                        modifier = Modifier.weight(1f)
+                                        text = stringResource(id = R.string.network_for_synchronisation),
+                                        fontSize = 16.sp
                                     )
-
                                     IconButton(onClick = { navController.navigate(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) }) {
                                         Icon(
                                             imageVector = Icons.Outlined.Settings,
-                                            contentDescription = "Settings",
+                                            contentDescription = stringResource(id = R.string.settings),
                                             tint = colorResource(id = R.color.gray_light4)
                                         )
                                     }
                                 }
-
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(start = 20.dp)
-                                ) {
-                                    Column {
-
-
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "Network name (SSID): ",
-                                                fontSize = 12.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-
-                                            Text(
-                                                text = dataStorageDetails?.networkSSID ?: "Not Set",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Light,
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(colorResource(id = R.color.gray_light1))
-                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(3.dp))
-
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "Server address",
-                                                fontSize = 12.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-
-                                            Text(
-                                                text = dataStorageDetails?.ipAddress ?: "No Ip",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Light,
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(colorResource(id = R.color.gray_light1))
-                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(3.dp))
-
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "Server port",
-                                                fontSize = 12.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-
-                                            Text(
-                                                text = dataStorageDetails?.port ?: "No Port",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Light,
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(colorResource(id = R.color.gray_light1))
-                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                                            )
-                                        }
-
-                                        Spacer(modifier = Modifier.height(3.dp))
-
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Text(
-                                                text = "Association Token Used",
-                                                fontSize = 12.sp,
-                                                modifier = Modifier.weight(1f)
-                                            )
-
-                                            Text(
-                                                text = dataStorageDetails?.associationTokenUsedDuringRegistration
-                                                    ?: "No Token",
-                                                fontSize = 12.sp,
-                                                fontWeight = FontWeight.Light,
-                                                modifier = Modifier
-                                                    .clip(RoundedCornerShape(10.dp))
-                                                    .background(colorResource(id = R.color.gray_light1))
-                                                    .padding(horizontal = 10.dp, vertical = 5.dp),
-                                            )
-                                        }
-                                    }
-                                }
+                                DataStorageDetailsSection(dataStorageDetails)
                             }
                         }
                     }
@@ -382,6 +217,12 @@ fun MainScreen(
                         onGoToAppSettingsClick = { openAppSettings() })
                 }
         }
-        BottomActionBar(viewModelRef, navController, applicationContext, appSettings, dataStorageDetails)
+        BottomActionBar(
+            viewModelRef,
+            navController,
+            applicationContext,
+            appSettings,
+            dataStorageDetails
+        )
     }
 }

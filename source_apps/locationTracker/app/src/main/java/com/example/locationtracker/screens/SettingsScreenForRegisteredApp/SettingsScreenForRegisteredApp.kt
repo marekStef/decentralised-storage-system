@@ -1,6 +1,5 @@
 package com.example.locationtracker.screens.SettingsScreenForRegisteredApp
 
-import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -30,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -68,7 +67,8 @@ fun SettingsScreenForRegisteredApp(
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
-    val isServerReachable = dataStorageRegistrationViewModel.serverReachabilityStatus.observeAsState()
+    val isServerReachable =
+        dataStorageRegistrationViewModel.serverReachabilityStatus.observeAsState()
     val isLoadingDataStorageServerReachability =
         dataStorageRegistrationViewModel.isLoadingDataStorageServerReachability.observeAsState()
 
@@ -87,7 +87,7 @@ fun SettingsScreenForRegisteredApp(
                 .background(Brush.verticalGradient(colors = gradientColors)),
         ) {
             Text(
-                text = "Settings",
+                text = stringResource(id = R.string.settings),
                 modifier = Modifier
                     .padding(13.dp)
                     .fillMaxWidth(),
@@ -107,7 +107,7 @@ fun SettingsScreenForRegisteredApp(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Data Storage Location",
+                        text = stringResource(id = R.string.data_storage_location),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -124,18 +124,26 @@ fun SettingsScreenForRegisteredApp(
 
                     CustomTextField(
                         value = dataStorageDetails?.ipAddress ?: "-",
-                        onValueChange = { newValue -> dataStorageRegistrationViewModel.updateDataStorageIpAddress(newValue)},
+                        onValueChange = { newValue ->
+                            dataStorageRegistrationViewModel.updateDataStorageIpAddress(
+                                newValue
+                            )
+                        },
                         label = "IP Address",
                     )
 
                     CustomTextField(
                         value = dataStorageDetails?.port ?: "-",
-                        onValueChange = { newValue -> dataStorageRegistrationViewModel.updateDataStoragePort(newValue)},
+                        onValueChange = { newValue ->
+                            dataStorageRegistrationViewModel.updateDataStoragePort(
+                                newValue
+                            )
+                        },
                         label = "Port",
                         keyboardType = KeyboardType.Number
                     )
 
-                    CustomDefaultButton("Check whether ip and port are correct") {
+                    CustomDefaultButton(stringResource(id = R.string.check_whether_ip_and_port_are_correct)) {
                         dataStorageRegistrationViewModel.checkDataStorageServerReachability()
                     }
 
@@ -144,9 +152,12 @@ fun SettingsScreenForRegisteredApp(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         when {
                             isLoadingDataStorageServerReachability.value == true -> CircularProgressIndicator()
-                            isServerReachable.value == ServerReachabilityEnum.REACHABLE -> Text("Server is reachable")
+                            isServerReachable.value == ServerReachabilityEnum.REACHABLE -> Text(
+                                stringResource(id = R.string.server_is_reachable)
+                            )
+
                             isServerReachable.value == ServerReachabilityEnum.NOT_REACHABLE -> Text(
-                                "Server is not reachable"
+                                stringResource(id = R.string.server_not_reachable)
                             )
 
                             else -> Text("You need to check server reachability")
@@ -154,14 +165,14 @@ fun SettingsScreenForRegisteredApp(
                         if (isServerReachable.value == ServerReachabilityEnum.REACHABLE) {
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "Server is reachable",
+                                contentDescription = stringResource(id = R.string.server_is_reachable),
                                 tint = colorResource(id = R.color.green3),
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "Server is reachable",
+                                contentDescription = stringResource(id = R.string.server_not_reachable),
                                 tint = Color.Red,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -171,7 +182,7 @@ fun SettingsScreenForRegisteredApp(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "Wifi SSID Setting",
+                        text = stringResource(id = R.string.wifi_ssid_setting),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -187,15 +198,19 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start
+                    ) {
                         Text(
-                            text = "Network name (SSID): ",
+                            text = stringResource(id = R.string.network_name_with_colon),
                             fontSize = 15.sp,
 //                            modifier = Modifier.weight(1f)
                         )
 
                         Text(
-                            text = dataStorageDetails?.networkSSID ?: "Not Set",
+                            text = dataStorageDetails?.networkSSID
+                                ?: stringResource(id = R.string.not_set),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Light,
                             modifier = Modifier
@@ -207,19 +222,22 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    CustomDefaultButton("Set This Network") {
+                    CustomDefaultButton(stringResource(id = R.string.set_this_network)) {
                         var ssid = getCurrentSsid(applicationContext)
                         dataStorageRegistrationViewModel.setDataStorageNetworkSSID(ssid)
                         if (ssid == null) {
                             viewModel.updateAppSettingsAutoSync(false)
-                            viewModel.showAlertDialogWithOkButton("AutoSync Turned Off", "No network ssid has been found - Auto Sync is off")
+                            viewModel.showAlertDialogWithOkButton(
+                                "AutoSync Turned Off",
+                                "No network ssid has been found - Auto Sync is off"
+                            )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "App Resetting",
+                        text = stringResource(id = R.string.app_resetting),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -236,7 +254,7 @@ fun SettingsScreenForRegisteredApp(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "Resets the app to its initial state. You need to connect this app to a dataStorage again.",
+                        text = stringResource(id = R.string.resets_the_app_to_its_initial_state_message),
                         fontSize = 15.sp,
                     )
 

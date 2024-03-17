@@ -1,7 +1,6 @@
 package com.example.locationtracker
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -30,7 +29,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.locationtracker.constants.LocationTrackerServiceBroadcastParameters
 import com.example.locationtracker.constants.ScreensNames
-
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.constants.Workers
 import com.example.locationtracker.data.DatabaseManager

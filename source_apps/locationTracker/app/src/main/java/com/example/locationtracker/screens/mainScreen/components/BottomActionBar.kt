@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,11 +46,6 @@ fun BottomActionBar(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-//            Box(modifier = Modifier.fillMaxWidth()
-//                .wrapContentSize()
-//                .padding(12.dp)
-//
-//            ) {
         Row() {
             SynchronisationComponent(viewModelRef)
         }
@@ -61,11 +57,6 @@ fun BottomActionBar(
 
             Button(
                 modifier = Modifier
-//                        .shadow(
-//                            elevation = 15.dp,
-//                            spotColor = Color.LightGray,
-//                            shape = RoundedCornerShape(40.dp)
-//                        )
                     .padding(0.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.gray_light2),
@@ -73,7 +64,7 @@ fun BottomActionBar(
                 ),
                 onClick = { navController.navigate(ScreensNames.LOG_SCREEN) }) {
                 Text(
-                    "Show Data",
+                    stringResource(id = R.string.show_data),
                     style = TextStyle(
                         fontSize = 11.sp
                     )
@@ -119,11 +110,6 @@ fun ServiceControlButton(
 
     Button(
         modifier = Modifier
-//            .shadow(
-//                elevation = 15.dp,
-//                spotColor = Color.LightGray,
-//                shape = RoundedCornerShape(40.dp)
-//            )
             .padding(0.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.gray_light2),
@@ -138,7 +124,7 @@ fun ServiceControlButton(
             )
         }) {
         Text(
-            if (isServiceRunning) "Stop Service" else "Start Service",
+            if (isServiceRunning) stringResource(id = R.string.stop_service) else stringResource(id = R.string.start_service),
             style = TextStyle(
                 fontSize = 11.sp
             )

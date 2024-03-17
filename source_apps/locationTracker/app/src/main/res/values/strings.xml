@@ -1,3 +1,92 @@
 <resources>
     <string name="app_name">LocationTracker</string>
+
+    <string name="active_hours">Active Hours</string>
+
+<!--    Auto Sync Setter -->
+    <string name="auto_sync">Auto Sync</string>
+    <string name="app_will_sync_every_24_hours">App will try to sync locations once per 24 hours</string>
+    <string name="cannot_set_autosync_title">Cannot Set AutoSync</string>
+    <string name="autosync_cannot_be_turned_on_ssid_missing">Autosync cannot be turned on - you need to specify network SSID in the settings first</string>
+
+<!--    Bottom Action Bar -->
+    <string name="show_data">Show Data</string>
+    <string name="stop_service">Stop Service</string>
+    <string name="start_service">Start Service</string>
+
+<!--    Data Storage Details Section -->
+    <string name="network_name_with_colon">Network name (SSID): </string>
+    <string name="not_set">Not Set</string>
+    <string name="no_ip">No IP</string>
+    <string name="no_port">No Port</string>
+    <string name="no_token">No Token</string>
+    <string name="association_token_used">Association Token Used</string>
+
+<!--    Synchronisation Component -->
+    <string name="syncing">Syncing</string>
+    <string name="sync_now">Sync Now</string>
+
+<!--    Sync Status Card -->
+    <string name="location">Location</string>
+    <string name="last_synchronisation">Last Synchronization</string>
+    <string name="sync_message">Sync Message</string>
+    <string name="number_of_events_not_synchronised">"Number of events not synchronised"</string>
+    <string name="oldest_event_not_synchronised">Oldest event not synchronised</string>
+    <string name="number_of_events_synchronised">Number of events synchronised</string>
+    <string name="logger">Logger</string>
+
+<!--    Time Setter-->
+    <string name="set_time">Set Time</string>
+
+<!--    Main Screen -->
+    <string name="view_models_not_available">ViewModels not available</string>
+    <string name="settings">Settings</string>
+    <string name="network_for_synchronisation">Network for synchronisation</string>
+
+<!--    Profiles and permissions screen -->
+    <string name="profiles_and_permissions">Profiles And Permissions</string>
+    <string name="profiles_registration">Profiles registration</string>
+    <string name="profile_being_registered">Profile being registered</string>
+    <string name="register_needed_profiles">Register needed profiles</string>
+    <string name="profile_has_been_created">Profile has been created</string>
+    <string name="you_need_to_register_profiles">You need to register profiles</string>
+    <string name="profiles_created">Profiles created</string>
+    <string name="profiles_not_created">Profiles not created</string>
+    <string name="permissions_request">Permissions Request</string>
+    <string name="ask_for_permissions">Ask for permissions</string>
+    <string name="permissions_sending_failed">Permissions sending failed</string>
+    <string name="permission_request_sent_and_needs_to_be_approved">Permission request has been sent. \n Needs to be approved in the admin centre.</string>
+    <string name="need_to_ask_for_data_storage_permissions">You need to ask for data storage permissions</string>
+    <string name="welcome_to_new_app">Welcome to you new app</string>
+    <string name="app_prepared_for_cooperation_with_data_storage_server">Your app is prepared for its cooperation with DataStorage Server</string>
+    <string name="proceed_to_the_app">Proceed to the app</string>
+
+<!--    Registration Screen -->
+    <string name="registration">Registration</string>
+    <string name="data_storage_finding">Data Storage Finding</string>
+    <string name="ip_address">IP Address</string>
+    <string name="port">Port</string>
+    <string name="check_whether_ip_and_port_are_correct">Check whether ip and port are correct</string>
+    <string name="server_not_reachable">Server is not reachable</string>
+    <string name="you_need_to_check_server_reachability">You need to check server reachability</string>
+    <string name="server_is_reachable">Server is reachable</string>
+    <string name="association_with_data_storage">Association With Data Storage</string>
+    <string name="enter_data_storage_association_token">Enter Data Storage Association Token</string>
+    <string name="data_storage_token">Data Storage Token</string>
+    <string name="associate_this_app_with_data_storage">Associate this app with the Data Storage</string>
+    <string name="app_has_been_associated">App has been associated</string>
+    <string name="app_has_not_been_associated">App could not have been associated</string>
+    <string name="you_need_to_associate_this_app">You need to associate this app</string>
+    <string name="proceed_to_requesting_permissions_and_profiles">Proceed to requesting permissions and profiles</string>
+    <string name="you_need_to_pass_previous_conditions_first">You need to pass previous conditions first.</string>
+    <string name="only_then_you_will_be_able_to_proceed">Only then you will be able to proceed.</string>
+
+<!--    Settings Screen For Registered App-->
+    <string name="data_storage_location">Data Storage Location</string>
+    <string name="wifi_ssid_setting">Wifi SSID Setting</string>
+    <string name="set_this_network">Set This Networkg</string>
+    <string name="app_resetting">App Resetting</string>
+    <string name="resets_the_app_to_its_initial_state_message">Resets the app to its initial state. You need to connect this app to a dataStorage again.</string>
+
+
 </resources>

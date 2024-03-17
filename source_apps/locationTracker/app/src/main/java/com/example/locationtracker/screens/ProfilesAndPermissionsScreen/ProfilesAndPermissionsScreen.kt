@@ -1,6 +1,5 @@
 package com.example.locationtracker.screens.ProfilesAndPermissionsScreen
 
-import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,8 +15,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -30,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,14 +36,10 @@ import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 import com.example.locationtracker.constants.ScreensNames
-import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
-import com.example.locationtracker.utils.loadJsonSchemaFromRes
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
-import com.example.locationtracker.viewModel.MainViewModel
 import com.example.locationtracker.viewModel.PermissionsStatusEnum
 import com.example.locationtracker.viewModel.ProfileRegistrationStatusEnum
-import com.example.locationtracker.viewModel.ServerReachabilityEnum
 import java.lang.ref.WeakReference
 
 @Composable
@@ -62,11 +56,15 @@ fun ProfilesAndPermissionsScreen(
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
-    val isRegisteringLocationProfile = dataStorageRegistrationViewModel.isRegisteringLocationProfile.observeAsState()
-    val appProfileRegistrationStatus = dataStorageRegistrationViewModel.appProfileRegistrationStatus.observeAsState()
+    val isRegisteringLocationProfile =
+        dataStorageRegistrationViewModel.isRegisteringLocationProfile.observeAsState()
+    val appProfileRegistrationStatus =
+        dataStorageRegistrationViewModel.appProfileRegistrationStatus.observeAsState()
 
-    val isAskingForPermissions = dataStorageRegistrationViewModel.isAskingForPermissions.observeAsState()
-    val askingForPermissionsStatus = dataStorageRegistrationViewModel.askingForPermissionsStatus.observeAsState()
+    val isAskingForPermissions =
+        dataStorageRegistrationViewModel.isAskingForPermissions.observeAsState()
+    val askingForPermissionsStatus =
+        dataStorageRegistrationViewModel.askingForPermissionsStatus.observeAsState()
 
     Column(
         modifier = Modifier
@@ -81,7 +79,7 @@ fun ProfilesAndPermissionsScreen(
                 .background(Brush.verticalGradient(colors = gradientColors)),
         ) {
             Text(
-                text = "Profiles and Permissions",
+                text = stringResource(id = R.string.profiles_and_permissions),
                 modifier = Modifier
                     .padding(13.dp)
                     .fillMaxWidth(),
@@ -100,7 +98,7 @@ fun ProfilesAndPermissionsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Profiles registration",
+                        text = stringResource(id = R.string.profiles_registration),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -116,7 +114,7 @@ fun ProfilesAndPermissionsScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "Profile being registered",
+                        text = stringResource(id = R.string.profile_being_registered),
                         fontSize = 15.sp,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,16 +134,22 @@ fun ProfilesAndPermissionsScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     CustomDefaultButton(
-                        text = "Register needed profiles"
+                        text = stringResource(id = R.string.register_needed_profiles)
                     ) {
 
                         dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer() { isSuccess, message ->
                             if (isSuccess) {
                                 Log.d("Registering profile", "Success: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Success", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                    "Success",
+                                    message
+                                )
                             } else {
                                 Log.e("Registering profile", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                    "Error",
+                                    message
+                                )
                             }
                         }
                     }
@@ -153,23 +157,27 @@ fun ProfilesAndPermissionsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         when {
                             isRegisteringLocationProfile.value == true -> CircularProgressIndicator()
-                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED -> Text("Profile creation failed")
-                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATED -> Text(
-                                "Profile has been created"
+                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATION_FAILED -> Text(
+                                "Profile creation failed"
                             )
-                            else -> Text("You need to register profiles")
+
+                            appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATED -> Text(
+                                stringResource(id = R.string.profile_has_been_created)
+                            )
+
+                            else -> Text(stringResource(id = R.string.you_need_to_register_profiles))
                         }
                         if (appProfileRegistrationStatus.value == ProfileRegistrationStatusEnum.PROFILE_CREATED) {
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "Profiles created",
+                                contentDescription = stringResource(id = R.string.profiles_created),
                                 tint = colorResource(id = R.color.green3),
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "Profiles not created",
+                                contentDescription = stringResource(id = R.string.profiles_not_created),
                                 tint = Color.Red,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -179,7 +187,7 @@ fun ProfilesAndPermissionsScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Text(
-                        text = "Permissions Request",
+                        text = stringResource(id = R.string.permissions_request),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -196,10 +204,13 @@ fun ProfilesAndPermissionsScreen(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     CustomDefaultButton(
-                        text = "Ask for permissions"
+                        text = stringResource(id = R.string.ask_for_permissions)
                     ) {
                         if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
-                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", "You need to register profiles first")
+                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                "Error",
+                                "You need to register profiles first"
+                            )
                             return@CustomDefaultButton
                         }
 
@@ -212,7 +223,10 @@ fun ProfilesAndPermissionsScreen(
                                 )
                             } else {
                                 Log.e("Creating permission request", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                    "Error",
+                                    message
+                                )
                             }
                         }
                     }
@@ -220,23 +234,27 @@ fun ProfilesAndPermissionsScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         when {
                             isAskingForPermissions.value == true -> CircularProgressIndicator()
-                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED -> Text("Permissions sending failed")
-                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT -> Text(
-                                "Permission request has been sent. \nNeeds to be approved in the admin centre."
+                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED -> Text(
+                                stringResource(id = R.string.permissions_sending_failed)
                             )
-                            else -> Text("You need to ask for data storage permissions")
+
+                            askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT -> Text(
+                                stringResource(id = R.string.permission_request_sent_and_needs_to_be_approved)
+                            )
+
+                            else -> Text(stringResource(id = R.string.need_to_ask_for_data_storage_permissions))
                         }
                         if (askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT) {
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "Profiles created",
+                                contentDescription = stringResource(id = R.string.profiles_created),
                                 tint = colorResource(id = R.color.green3),
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "Profiles not created",
+                                contentDescription = stringResource(id = R.string.profiles_not_created),
                                 tint = Color.Red,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -247,7 +265,7 @@ fun ProfilesAndPermissionsScreen(
 
                     if (askingForPermissionsStatus.value == PermissionsStatusEnum.PERMISSION_REQUEST_SENT) {
                         Text(
-                            text = "Welcome to you new app",
+                            text = stringResource(id = R.string.welcome_to_new_app),
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
@@ -264,7 +282,7 @@ fun ProfilesAndPermissionsScreen(
 
 
                         Text(
-                            text = "Your app is prepared for its cooperation with DataStorage Server",
+                            text = stringResource(id = R.string.app_prepared_for_cooperation_with_data_storage_server),
                             fontSize = 15.sp,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -275,7 +293,7 @@ fun ProfilesAndPermissionsScreen(
 
 
                         CustomDefaultButton(
-                            "Proceed to the app",
+                            stringResource(id = R.string.proceed_to_the_app),
                             backgroundColor = colorResource(id = R.color.green3),
                             textColor = Color.White
                         ) {
@@ -286,7 +304,10 @@ fun ProfilesAndPermissionsScreen(
                                     inclusive = true
                                 }
                             }
-                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
+                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                "Welcome",
+                                "Your app has been successfully set!"
+                            )
                         }
                     }
 
@@ -302,7 +323,10 @@ fun ProfilesAndPermissionsScreen(
                                 inclusive = true
                             }
                         }
-                        dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Welcome", "Your app has been successfully set!")
+                        dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                            "Welcome",
+                            "Your app has been successfully set!"
+                        )
                     }
                 }
             }

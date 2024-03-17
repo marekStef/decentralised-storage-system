@@ -1,6 +1,5 @@
 package com.example.locationtracker.screens.registrationScreen
 
-import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -22,8 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cancel
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -36,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -65,12 +63,15 @@ fun RegistrationScreen(
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState()
 
-    val isServerReachable = dataStorageRegistrationViewModel.serverReachabilityStatus.observeAsState()
+    val isServerReachable =
+        dataStorageRegistrationViewModel.serverReachabilityStatus.observeAsState()
     val isLoadingDataStorageServerReachability =
         dataStorageRegistrationViewModel.isLoadingDataStorageServerReachability.observeAsState()
 
-    val isAssociatingAppWithStorage = dataStorageRegistrationViewModel.isAssociatingAppWithStorage.observeAsState()
-    val appAssociatedWithDataStorageStatus = dataStorageRegistrationViewModel.appAssociatedWithDataStorageStatus.observeAsState()
+    val isAssociatingAppWithStorage =
+        dataStorageRegistrationViewModel.isAssociatingAppWithStorage.observeAsState()
+    val appAssociatedWithDataStorageStatus =
+        dataStorageRegistrationViewModel.appAssociatedWithDataStorageStatus.observeAsState()
 
     Column(
         modifier = Modifier
@@ -86,7 +87,7 @@ fun RegistrationScreen(
                 .background(Brush.verticalGradient(colors = gradientColors)),
         ) {
             Text(
-                text = "Registration",
+                text = stringResource(id = R.string.registration),
                 modifier = Modifier
                     .padding(13.dp)
                     .fillMaxWidth(),
@@ -97,12 +98,6 @@ fun RegistrationScreen(
             )
         }
 
-//        Row (modifier = Modifier.fillMaxSize()){
-//            Text("Registration Screen")
-//            Button(onClick = { }) {
-//                Text("Register")
-//            }
-//        }
         LazyColumn(contentPadding = PaddingValues(10.dp)) {
 
             item {
@@ -112,7 +107,7 @@ fun RegistrationScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Data Storage Finding",
+                        text = stringResource(id = R.string.data_storage_finding),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -129,18 +124,26 @@ fun RegistrationScreen(
 
                     CustomTextField(
                         value = dataStorageDetails?.ipAddress ?: "-",
-                        onValueChange = { newIp -> dataStorageRegistrationViewModel.updateDataStorageIpAddress(newIp) },
-                        label = "IP Address",
+                        onValueChange = { newIp ->
+                            dataStorageRegistrationViewModel.updateDataStorageIpAddress(
+                                newIp
+                            )
+                        },
+                        label = stringResource(id = R.string.ip_address),
                     )
 
                     CustomTextField(
                         value = dataStorageDetails?.port ?: "-",
-                        onValueChange = { newPort -> dataStorageRegistrationViewModel.updateDataStoragePort(newPort) },
-                        label = "Port",
+                        onValueChange = { newPort ->
+                            dataStorageRegistrationViewModel.updateDataStoragePort(
+                                newPort
+                            )
+                        },
+                        label = stringResource(id = R.string.port),
                         keyboardType = KeyboardType.Number
                     )
 
-                    CustomDefaultButton("Check whether ip and port are correct") {
+                    CustomDefaultButton(stringResource(id = R.string.check_whether_ip_and_port_are_correct)) {
                         dataStorageRegistrationViewModel.checkDataStorageServerReachability()
                     }
 
@@ -149,24 +152,27 @@ fun RegistrationScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         when {
                             isLoadingDataStorageServerReachability.value == true -> CircularProgressIndicator()
-                            isServerReachable.value == ServerReachabilityEnum.REACHABLE -> Text("Server is reachable")
-                            isServerReachable.value == ServerReachabilityEnum.NOT_REACHABLE -> Text(
-                                "Server is not reachable"
+                            isServerReachable.value == ServerReachabilityEnum.REACHABLE -> Text(
+                                stringResource(id = R.string.server_is_reachable)
                             )
 
-                            else -> Text("You need to check server reachability")
+                            isServerReachable.value == ServerReachabilityEnum.NOT_REACHABLE -> Text(
+                                stringResource(id = R.string.server_not_reachable)
+                            )
+
+                            else -> Text(stringResource(id = R.string.you_need_to_check_server_reachability))
                         }
                         if (isServerReachable.value == ServerReachabilityEnum.REACHABLE) {
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "Server is reachable",
+                                contentDescription = stringResource(id = R.string.server_is_reachable),
                                 tint = colorResource(id = R.color.green3),
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "Server is reachable",
+                                contentDescription = stringResource(id = R.string.server_is_reachable),
                                 tint = Color.Red,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -176,7 +182,7 @@ fun RegistrationScreen(
                     Spacer(modifier = Modifier.height(30.dp))
 
                     Text(
-                        text = "Association With Data Storage",
+                        text = stringResource(id = R.string.association_with_data_storage),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -192,8 +198,12 @@ fun RegistrationScreen(
 
                     TextField(
                         value = dataStorageDetails?.associationTokenUsedDuringRegistration ?: "-",
-                        onValueChange = { dataStorageRegistrationViewModel.updateDataStorageAssociationToken(it) },
-                        label = { Text("Enter Data Storage Association Token") },
+                        onValueChange = {
+                            dataStorageRegistrationViewModel.updateDataStorageAssociationToken(
+                                it
+                            )
+                        },
+                        label = { Text(stringResource(id = R.string.enter_data_storage_association_token)) },
                         singleLine = true,
                         textStyle = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
                         modifier = Modifier
@@ -217,11 +227,14 @@ fun RegistrationScreen(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         readOnly = isServerReachable.value != ServerReachabilityEnum.REACHABLE,
                         leadingIcon = {
-                            Icon(Icons.Filled.Lock, contentDescription = "Data Storage Token")
+                            Icon(
+                                Icons.Filled.Lock,
+                                contentDescription = stringResource(id = R.string.data_storage_token)
+                            )
                         }
                     )
 
-                    CustomDefaultButton("Associate this app with the Data Storage") {
+                    CustomDefaultButton(stringResource(id = R.string.associate_this_app_with_data_storage)) {
                         dataStorageRegistrationViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
                             if (isSuccess) {
                                 // Handle success
@@ -229,31 +242,41 @@ fun RegistrationScreen(
                             } else {
                                 // Handle failure
                                 Log.e("AssociateApp", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton("Error", message)
+                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                    "Error",
+                                    message
+                                )
                             }
                         }
                     }
 
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 20.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 20.dp)
+                    ) {
                         when {
                             isAssociatingAppWithStorage.value == true -> CircularProgressIndicator()
-                            appAssociatedWithDataStorageStatus.value == AssociationWithDataStorageStatusEnum.ASSOCIATED -> Text("App has been associated")
-                            appAssociatedWithDataStorageStatus.value == AssociationWithDataStorageStatusEnum.ASSOCIATION_FAILED -> Text(
-                                "App could not have been associated"
+                            appAssociatedWithDataStorageStatus.value == AssociationWithDataStorageStatusEnum.ASSOCIATED -> Text(
+                                stringResource(id = R.string.app_has_been_associated)
                             )
-                            else -> Text("You need to associate this app")
+
+                            appAssociatedWithDataStorageStatus.value == AssociationWithDataStorageStatusEnum.ASSOCIATION_FAILED -> Text(
+                                stringResource(id = R.string.app_has_not_been_associated)
+                            )
+
+                            else -> Text(stringResource(id = R.string.you_need_to_associate_this_app))
                         }
                         if (appAssociatedWithDataStorageStatus.value == AssociationWithDataStorageStatusEnum.ASSOCIATED) {
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
-                                contentDescription = "App has been associated",
+                                contentDescription = stringResource(id = R.string.app_has_been_associated),
                                 tint = colorResource(id = R.color.green3),
                                 modifier = Modifier.padding(start = 4.dp)
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Filled.Cancel,
-                                contentDescription = "App could not have been associated",
+                                contentDescription = stringResource(id = R.string.app_has_not_been_associated),
                                 tint = Color.Red,
                                 modifier = Modifier.padding(start = 4.dp)
                             )
@@ -261,7 +284,7 @@ fun RegistrationScreen(
                     }
 
                     Text(
-                        text = "Profiles and Permissions",
+                        text = stringResource(id = R.string.profiles_and_permissions),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
@@ -275,17 +298,21 @@ fun RegistrationScreen(
                     )
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    if (canUserProceedToProfilesAndPermissions(isServerReachable, appAssociatedWithDataStorageStatus)) {
+                    if (canUserProceedToProfilesAndPermissions(
+                            isServerReachable,
+                            appAssociatedWithDataStorageStatus
+                        )
+                    ) {
                         CustomDefaultButton(
-                            "Proceed to requesting permissions and profiles",
+                            stringResource(id = R.string.proceed_to_requesting_permissions_and_profiles),
                             backgroundColor = colorResource(id = R.color.green3),
                             textColor = Color.White
                         ) {
                             navController.navigate("profilesAndPermissions")
                         }
                     } else {
-                        Text(text = "You need to pass previous conditions first.")
-                        Text(text = "Only then you will be able to proceed.")
+                        Text(text = stringResource(id = R.string.you_need_to_pass_previous_conditions_first))
+                        Text(text = stringResource(id = R.string.only_then_you_will_be_able_to_proceed))
                     }
 
                     CustomDefaultButton(

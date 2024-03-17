@@ -16,11 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.locationtracker.constants.ScreensNames
-import com.example.locationtracker.data.DatabaseManager
-import com.example.locationtracker.data.PreferencesManager
-import com.example.locationtracker.data.database.DatabaseClient
-import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 

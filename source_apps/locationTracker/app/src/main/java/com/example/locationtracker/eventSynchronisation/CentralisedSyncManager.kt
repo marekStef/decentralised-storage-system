@@ -3,14 +3,8 @@ package com.example.locationtracker.eventSynchronisation
 import android.app.Application
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.example.locationtracker.workManagers.SynchronisationWorker
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import java.util.Date
-import java.util.UUID
 
 enum class EventsSyncingStatus {
     NOT_SYNCED_YET,
