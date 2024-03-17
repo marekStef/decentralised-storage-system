@@ -63,7 +63,7 @@ object Notifications {
 
 object DataStorageRelated {
     const val UNIQUE_APP_NAME = "locationTracker.com"
-    const val UNIQUE_LOCATION_PROFILE_NAME = "${UNIQUE_APP_NAME}/profiles/location_profilea"
+    const val UNIQUE_LOCATION_PROFILE_NAME = "${UNIQUE_APP_NAME}/profiles/location_profile"
 }
 
 object ScreensNames {

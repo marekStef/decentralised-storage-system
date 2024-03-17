@@ -47,6 +47,17 @@ fun PermissionDialog(
                         }
                         .padding(16.dp)
                 )
+                Text(
+                    text = "Already Granted It",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            onOkClick()
+                        }
+                        .padding(16.dp)
+                )
             }
         },
         title = {
@@ -68,9 +79,9 @@ interface PermissionTextProvider {
 class FineLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         if (isPermanentlyDeclined) {
-            return "It seems you permanently declined fine location permission. " + "You can go to the app settings to grant it"
+            return "You need to grant FINE location."
         } else {
-            return "This app needs access to your fine location"
+            return "You need to grant FINE location"
         }
     }
 }
@@ -78,9 +89,9 @@ class FineLocationPermissionTextProvider: PermissionTextProvider {
 class CoarseLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         if (isPermanentlyDeclined) {
-            return "It seems you permanently coarse location permission. " + "You can go to the app settings to grant it"
+            return "You need to grant COARSE location permission."
         } else {
-            return "This app needs access to your coarse location"
+            return "You need to grant COARSE location permission."
         }
     }
 }
@@ -88,9 +99,9 @@ class CoarseLocationPermissionTextProvider: PermissionTextProvider {
 class BackgroundLocationPermissionTextProvider: PermissionTextProvider {
     override fun getDescription(isPermanentlyDeclined: Boolean): String {
         if (isPermanentlyDeclined) {
-            return "It seems you permanently declined audio permission. " + "You can go to the app settings to grant it"
+            return "You need to grant BACKGROUND LOCATION."
         } else {
-            return "This app needs to access the location in the background"
+            return "You need to grant BACKGROUND LOCATION."
         }
     }
 }

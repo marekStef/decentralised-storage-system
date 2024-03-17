@@ -113,6 +113,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val requestBatteryOptimisationPermission = {
+
         Log.d("TAG", "aaaaaaare optimisations turned offff?  ${isAppExemptFromBatteryOptimizations(this)}");
         requestDisableBatteryOptimization(this)
     }

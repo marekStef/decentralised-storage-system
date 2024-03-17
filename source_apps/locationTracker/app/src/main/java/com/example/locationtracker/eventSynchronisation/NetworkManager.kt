@@ -105,7 +105,6 @@ suspend fun registerNewProfileToDataStorage(
     ip: String,
     port: String,
     jwtTokenForPermissionRequestsAndProfiles: String,
-    profileName: String,
     schema: String
 ): Result<String> = withContext(Dispatchers.IO) {
     val url: String = "http://${ip}:${port}/app/api/register_new_profile"
@@ -118,15 +117,14 @@ suspend fun registerNewProfileToDataStorage(
         put("profile", "core:profile-registration_v1")
     }
 
-    val schemaJson = JSONObject(schema) // convert the schema string to a JSONObject (this has been added as api had been changed)
+    val payload = JSONObject(schema) // convert the schema string to a JSONObject (this has been added as api had been changed)
 
     val client = OkHttpClient()
     val mediaType = "application/json; charset=utf-8".toMediaType()
     val jsonObject = JSONObject().apply {
         put("jwtTokenForPermissionRequestsAndProfiles", jwtTokenForPermissionRequestsAndProfiles)
-        put("name", profileName)
         put("metadata", metadata)
-        put("schema", schemaJson)
+        put("payload", payload)
     }
     val requestBody = jsonObject.toString().toRequestBody(mediaType)
 

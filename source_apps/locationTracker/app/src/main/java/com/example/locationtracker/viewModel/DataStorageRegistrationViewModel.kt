@@ -180,7 +180,7 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
                 return@launch
             }
 
-            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, UNIQUE_LOCATION_PROFILE_NAME, jsonSchema)
+            val result = registerNewProfileToDataStorage(ip, port, tokenForPermissionsAndProfiles, jsonSchema)
             _isRegisteringLocationProfile.value = false
 
             result.onSuccess { data ->
@@ -239,13 +239,13 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
     }
 
     fun showAlertDialogWithOkButton(title: String, message: String) {
-        AlertDialog.Builder(application)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+//        AlertDialog.Builder(application)
+//            .setTitle(title)
+//            .setMessage(message)
+//            .setPositiveButton("OK") { dialog, _ ->
+//                dialog.dismiss()
+//            }
+//            .show()
     }
 
 }

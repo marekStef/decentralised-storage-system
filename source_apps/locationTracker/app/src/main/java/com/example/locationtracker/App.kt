@@ -15,7 +15,7 @@ class App: Application() {
         val channelForLocationTrackerService = NotificationChannel(
             Notifications.NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE,
             Notifications.NOTIFICATION_CHANNEL_NAME_FOR_LOCATION_TRACKER_SERVICE,
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = Notifications.NOTIFICATION_CHANNEL_DESCRIPTION_FOR_IMPORTANT_THINGS
         }
