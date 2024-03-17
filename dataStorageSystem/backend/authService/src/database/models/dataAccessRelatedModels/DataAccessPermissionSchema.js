@@ -28,6 +28,10 @@ const DataAccessPermissionSchema = new mongoose.Schema({
   expirationDate: {
     type: Date,
     default: null
+  },
+  accessToken: {
+    type: String,
+    default: null
   }
 });
 

@@ -238,6 +238,8 @@ const request_new_permissions = async (req, res) => {
         };
         const newGeneratedAccessJwtToken = generateJwtToken(tokenPayload)
 
+        newDataAccesToken.accessToken = newGeneratedAccessJwtToken;
+        await newDataAccesToken.save();
 
         res.status(httpStatusCodes.CREATED).json({
             message: applicationResponseMessages.success.PERMISSIONS_REQUESTED_SUCCESS,

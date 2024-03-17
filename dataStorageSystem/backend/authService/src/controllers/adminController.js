@@ -179,6 +179,23 @@ const getUnapprovedPermissionsRequests = async (req, res) => {
     }
 };
 
+const getAllPermissionsForGivenApp = async (req, res) => {
+    const { appHolderId } = req.params;
+
+    try {
+        const permissions = await DataAccessPermissionSchema.find({ app: appHolderId })
+            .populate('app');
+
+        res.status(httpStatusCodes.OK).json({
+            status: 'success',
+            permissions
+        });
+    } catch (error) {
+        console.error('Error fetching permissions for the app:', error);
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
+    }
+};
+
 const approvePermissionRequest = async (req, res) => {
     const { permissionId } = req.body; // Extracting the permission ID from the request body
 
@@ -263,6 +280,7 @@ module.exports = {
     createNewAppConnection,
     generateOneTimeTokenForAssociatingRealAppWithAppConnection,
     getUnapprovedPermissionsRequests,
+    getAllPermissionsForGivenApp,
     approvePermissionRequest,
     revokeApprovedPermission
 };

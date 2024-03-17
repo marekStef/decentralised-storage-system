@@ -13,6 +13,8 @@ router.post('/generate_one_time_association_token', adminController.generateOneT
 
 router.get('/permissions/get_unapproved_permissions_requests', adminController.getUnapprovedPermissionsRequests);
 
+router.get('/permissions/get_unapproved_permissions_requests/:appHolderId', adminController.getAllPermissionsForGivenApp);
+
 router.put('/permissions/approve_permission_request', adminController.approvePermissionRequest);
 
 router.put('/permissions/revoke_permission', adminController.revokeApprovedPermission);
