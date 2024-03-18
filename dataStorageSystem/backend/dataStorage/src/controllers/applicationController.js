@@ -148,7 +148,17 @@ const getFilteredEvents = async (req, res) => {
 	}
 };
 
+const modifyGivenEvent = async (req, res) => {
+
+}
+
+const deleteGivenEvent = async (req, res) => {
+
+}
+
 module.exports = {
 	uploadNewEvents: uploadNewEvents_VersionWithoutTransactions,
-	getFilteredEvents
+	getFilteredEvents,
+    modifyGivenEvent,
+    deleteGivenEvent
 }

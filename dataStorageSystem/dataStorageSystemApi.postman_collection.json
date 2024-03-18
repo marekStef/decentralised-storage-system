@@ -42,7 +42,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/65c8de38f80d9b0baafafbe1",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/65f75e5a1db2c68e0b0534c8",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -50,7 +50,7 @@
 										"admin",
 										"api",
 										"apps",
-										"65c8de38f80d9b0baafafbe1"
+										"65f75e5a1db2c68e0b0534c8"
 									]
 								}
 							},
@@ -152,6 +152,27 @@
 							"response": []
 						},
 						{
+							"name": "get_unapproved_permissions_requests_for_given_app6.5",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests/65f75e5a1db2c68e0b0534c8",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"admin",
+										"api",
+										"permissions",
+										"get_unapproved_permissions_requests",
+										"65f75e5a1db2c68e0b0534c8"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "approve_permission_request_7",
 							"request": {
 								"method": "PUT",
@@ -224,7 +245,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"viewTemplateId\": \"65f0ad801e769997641425c7\",\r\n    \"configuration\": {}\r\n}",
+											"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"viewTemplateId\": \"65f1a4870043a11cecd523cc\",\r\n    \"configuration\": {}\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -252,7 +273,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\r\n    \"viewAccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWV3SW5zdGFuY2VJZCI6IjY1ZjBiMWQ3NGEzYzQwMWQzZGFlOTk1MyIsImFwcElkIjoiNjVlOWVjZDFkZTQ3NmVlN2I0YTI3MWM3IiwiYXV0aFNlcnZpY2VWaWV3QWNjZXNzSWQiOiI2NWYwYjFkN2E3M2EwYjZhYzRiZDBhOTgiLCJpYXQiOjE3MTAyNzI5ODMsImV4cCI6MTExNzc1NTI5ODN9.QIwMeKBVCnLR1X4oCSv70n6pcdGiG4_vvmKOdK8aqLs\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"new\"\r\n    }\r\n}",
+											"raw": "{\r\n    \"viewAccessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2aWV3SW5zdGFuY2VJZCI6IjY1ZjFhNDhmMDA0M2ExMWNlY2Q1MjNkMyIsImFwcElkIjoiNjVlOWVjZDFkZTQ3NmVlN2I0YTI3MWM3IiwiYXV0aFNlcnZpY2VWaWV3QWNjZXNzSWQiOiI2NWYxYTQ4ZjRlNzg1MWIxZTc1NTQ1YzkiLCJpYXQiOjE3MTAzMzUxMTksImV4cCI6MTExNzc2MTUxMTl9.C4jjSN0DwWdJUnLWU3IOQxMtZUKk56W-OWd-fOjmsc0\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"new\"\r\n    }\r\n}",
 											"options": {
 												"raw": {
 													"language": "json"
@@ -512,7 +533,7 @@
 								},
 								{
 									"key": "profiles",
-									"value": "[{\"profile\": \"app1.com/profile1\", \"read\": true, \"create\": true, \"modify\": false, \"delete\": false}, {\"profile\": \"app2.com/profile2\", \"read\": true, \"create\": true, \"modify\": true, \"delete\": true}]",
+									"value": "[{\"profile\": \"CalendarPro.com_CalendarEventProfile\", \"read\": true, \"create\": true, \"modify\": false, \"delete\": false}, {\"profile\": \"app2.com/profile2\", \"read\": true, \"create\": true, \"modify\": true, \"delete\": true}]",
 									"type": "text"
 								},
 								{
