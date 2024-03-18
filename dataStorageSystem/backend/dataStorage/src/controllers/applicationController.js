@@ -9,18 +9,20 @@ const EventSchema = require('../database/models/eventRelatedModels/EventSchema')
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const eventsRelated = require('../constants/forApiResponses/eventsRelated');
 
-// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
-// validates the event agains profile schema
-// saves the event into db
-const saveNewEvent = async (session, event) => {
-    console.log(event);
-    // Validate event against Profile schema
-    if (!event.metadata || !event.metadata.profile === undefined || !event.metadata.source === undefined) {
+const checkRequiredDataInEvent = event => {
+    if (!event.metadata || event.metadata.profile === undefined || event.metadata.source === undefined) {
         throw {
             statusCode: httpStatusCodes.BAD_REQUEST,
             message: 'Event does not contain correct metadata',
         };
     }
+}
+
+// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
+// validates the event agains profile schema
+// saves the event into db
+const saveNewEvent = async (session, event) => {
+    checkRequiredDataInEvent(event);
 
     try {
         const newEvent = new EventSchema(event);
@@ -107,6 +109,7 @@ const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
         res.status(err.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR).json({
             message: err.message || 'An error occurred',
         });
+        console.log('-----------------------');
         console.log(err);
     }
 };
@@ -149,11 +152,55 @@ const getFilteredEvents = async (req, res) => {
 };
 
 const modifyGivenEvent = async (req, res) => {
+    const { eventId } = req.params;
+    const { modifiedEvent } = req.body;
 
+    try {
+        checkRequiredDataInEvent(modifiedEvent);
+    }
+    catch (err) {
+        return res.status(err.statusCode).json({ message: err.message });
+    }
+    
+    try {
+        const event = await EventSchema.findById(eventId);
+        
+        if (!event) {
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Event not found.' });
+        }
+        
+        const updatedEvent = await EventSchema.findByIdAndUpdate(eventId, { $set: modifiedEvent }, { new: true });
+        
+        res.status(httpStatusCodes.OK).json({ message: 'Event updated successfully.', event: updatedEvent });
+    } catch (error) {
+        if (error.kind === 'ObjectId' && error.name === 'CastError') {
+            // if the eventId is not a valid mongodb ObjectId
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Invalid eventId.' });
+        }
+
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while updating the event.', error: error.message });
+    }
 }
 
 const deleteGivenEvent = async (req, res) => {
-
+    const { eventId } = req.params;
+    
+    try {
+        const deletedEvent = await EventSchema.findByIdAndDelete(eventId);
+        
+        // no event found
+        if (!deletedEvent) {
+            return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'Event not found.' });
+        }
+        
+        res.status(httpStatusCodes.OK).json({ message: 'Event deleted successfully.' });
+    } catch (error) {
+        if (error.kind === 'ObjectId' && error.name === 'CastError') {
+            // if the eventId is not a valid mongodb ObjectId
+            return res.status(400).json({ message: 'Invalid event ID format.' });
+        }
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the event.', error: error.message });
+    }
 }
 
 module.exports = {

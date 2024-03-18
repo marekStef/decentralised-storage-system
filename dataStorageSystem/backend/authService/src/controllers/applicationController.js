@@ -337,9 +337,9 @@ const sendEventsToDataStorage = async (res, events) => {
             events: events
         });
 
-        if (response.status === 201) {
+        if (response.status === httpStatusCodes.CREATED) {
             console.log('Event uploaded successfully:', response.data);
-            return res.status(201).json({ message: response.data.message, events: response.data.events });
+            return res.status(httpStatusCodes.CREATED).json({ message: response.data.message, events: response.data.events });
         } else {
             // Other status codes except for 500
             console.error('Unexpected response status:', response.status);
@@ -348,13 +348,31 @@ const sendEventsToDataStorage = async (res, events) => {
     } catch (error) {
         console.error('Error uploading new event:', error);
 
-        if (error.response && error.response.status === 500) {
+        if (error.response && error.response.status === httpStatusCodes.INTERNAL_SERVER_ERROR) {
             return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error at the data storage service.' });
         } else {
             // network issue
             return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
         }
     }
+}
+
+const decodeAccessToken = accessToken => {
+    try {
+        return decodeJwtToken(accessToken);
+    } catch (error) {
+        return null;
+    }
+}
+
+const getDataAcessPermission = async dataAccessPermissionId => {
+    const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
+    // console.log("-------", dataAccessPermissionId)
+    if (!dataAccessPermission || !dataAccessPermission.isActive) {
+        return null;
+    }
+
+    return dataAccessPermission;
 }
 
 const uploadNewEvents = async (req, res) => {
@@ -366,19 +384,17 @@ const uploadNewEvents = async (req, res) => {
     }
 
     // Decode JWT accessToken
-    let decodedToken;
-    try {
-        decodedToken = decodeJwtToken(accessToken);
-    } catch (error) {
+    let decodedToken = decodeAccessToken(accessToken);
+    if (decodedToken == null) {
         return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
     }
 
     const { dataAccessPermissionId } = decodedToken;
 
     // Validate DataAccessToken
-    const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
-    // console.log("-------", dataAccessPermissionId)
-    if (!dataAccessPermission || !dataAccessPermission.isActive) {
+    const dataAccessPermission = await getDataAcessPermission(dataAccessPermissionId);
+
+    if (dataAccessPermission == null) {
         return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
     }
 
@@ -388,7 +404,7 @@ const uploadNewEvents = async (req, res) => {
         return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.NO_CREATE_PERMISSION_FOR_EVENT_CREATION });
     }
 
-    let sourceAppName = dataAccessPermission.app.nameDefinedByApp
+    let sourceAppName = dataAccessPermission.app.nameDefinedByUser
 
     // add the events
 
@@ -409,6 +425,101 @@ const uploadNewEvents = async (req, res) => {
         return errResponse;
     }
 };
+
+const modifyEvent = async (req, res) => {
+    const { eventId, modifiedEvent, accessToken } = req.body;
+
+    if (!eventId || !modifiedEvent || !accessToken) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'eventId, modifiedEvent and accessToken are required in the request' });
+    }
+
+    let decodedToken = decodeAccessToken(accessToken);
+    if (decodedToken == null) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
+    }
+
+    const dataAccessPermission = await getDataAcessPermission(decodedToken.dataAccessPermissionId);
+
+    if (dataAccessPermission == null) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+    }
+
+    const hasModifyPermission = dataAccessPermission.permission.profile == modifiedEvent.metadata?.profile && dataAccessPermission.permission.modify == true;
+    if (!hasModifyPermission) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.NO_MODIFY_PERMISSION_FOR_EVENT_CREATION });
+    }
+
+    let sourceAppName = dataAccessPermission.app.nameDefinedByUser
+    modifiedEvent.metadata.source = sourceAppName;
+
+    try {
+        const response = await axios.put(`${process.env.DATA_STORAGE_URL}/app/api/events/${eventId}`, {
+            modifiedEvent
+        });
+
+        if (response.status === httpStatusCodes.OK) {
+            console.log('Event modified successfully:', response.data);
+            return res.status(httpStatusCodes.OK).json({ message: response.data.message, event: response.data.event });
+        } else {
+            // Other status codes except for 500
+            console.error('Unexpected response status:', response.status);
+            throw new Error('Unexpected response status: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Error modifying event:', error.response.data);
+        if (error.response && error.response.data != null && error.response.data.message != null) {
+            return res.status(error.response.status).json({ message: error.response.data.message });
+        } else {
+            // network issue
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
+        }
+    }
+}
+
+const deleteEvent = async (req, res) => {
+    const { eventId, accessToken } = req.body;
+
+    if (!eventId || !accessToken) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'eventId and accessToken are required in the request' });
+    }
+
+    let decodedToken = decodeAccessToken(accessToken);
+    if (decodedToken == null) {
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.INVALID_OR_EXPIRED_ACCESS_TOKEN });
+    }
+
+    const dataAccessPermission = await getDataAcessPermission(decodedToken.dataAccessPermissionId);
+
+    if (dataAccessPermission == null) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+    }
+
+    const hasDeletePermission = dataAccessPermission.permission.delete == true; // possible improvement of security would be to fetch the event first from dataStorage and check its profile but I assume the id is too difficult to guess
+    if (!hasDeletePermission) {
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.NO_DELETE_PERMISSION_FOR_EVENT_CREATION });
+    }
+
+    try {
+        const response = await axios.delete(`${process.env.DATA_STORAGE_URL}/app/api/events/${eventId}`);
+
+        if (response.status === httpStatusCodes.OK) {
+            console.log('Event deleted successfully:', response.data);
+            return res.status(httpStatusCodes.OK).json({ message: response.data.message });
+        } else {
+            // Other status codes except for 500
+            console.error('Unexpected response status:', response.status);
+            throw new Error('Unexpected response status: ' + response.status);
+        }
+    } catch (error) {
+        console.error('Error modifying event:', error.response.data);
+        if (error.response && error.response.data != null && error.response.data.message != null) {
+            return res.status(error.response.status).json({ message: error.response.data.message });
+        } else {
+            // network issue
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
+        }
+    }
+}
 
 const getAllEventsOfGivenProfile = async (req, res) => {
     const { accessToken } = req.query;
@@ -613,6 +724,8 @@ module.exports = {
     request_new_permissions,
     isAccessTokenForGivenPermissionRequestActive,
     uploadNewEvents,
+    modifyEvent,
+    deleteEvent,
     getAllEventsOfGivenProfile,
     registerNewViewInstance,
     runViewInstace

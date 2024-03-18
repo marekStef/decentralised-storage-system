@@ -13,6 +13,10 @@ router.post('/request_new_permissions', applicationController.request_new_permis
 
 router.post('/upload_new_events', applicationController.uploadNewEvents);
 
+router.put('/modify_event', applicationController.modifyEvent);
+
+router.delete('/delete_event', applicationController.deleteEvent);
+
 router.get('/get_all_events_for_given_access_token', applicationController.getAllEventsOfGivenProfile);
 
 router.post('/register_new_view_instance', applicationController.registerNewViewInstance);

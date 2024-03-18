@@ -4,8 +4,7 @@ const EventSchema = new mongoose.Schema({
   metadata: {
     identifier: {
       type: String,
-      required: true,
-      unique: true
+      // unique: true
     },
     createdDate: {
       type: Date,
