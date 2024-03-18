@@ -35,6 +35,8 @@ interface NewEventDialogMaterialParams {
     handleClose: () => void,
     newEventDialogData: Event | null,
     createNewEventHandler: (newEvent: Event) => Promise<void>,
+    modifyEventHandler: (newEvent: Event) => void,
+    deleteEventHandler: (newEvent: Event) => void,
     isCreatingNewEvent: boolean,
     mode: NewEventDialogOpenMode
 }
@@ -66,7 +68,11 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     }
 
     const editExistingEventHandler = () => {
-        alert('todo')
+        if (params.newEventDialogData?.metadata == null) return;
+        const editedEvent: Event = new Event(params.newEventDialogData.id, new EventPayload(startTime, endTime, title, description, color), params.newEventDialogData.metadata);
+        console.log(params.newEventDialogData);
+        console.log(editedEvent);
+        params.modifyEventHandler(editedEvent)
     }
 
     const handleSubmit = () => {

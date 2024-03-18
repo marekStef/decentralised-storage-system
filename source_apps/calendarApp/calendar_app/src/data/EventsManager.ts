@@ -29,10 +29,10 @@ export class EventMetadata {
     source: string | null;
     acceptedDate: Date | null;
 
-    constructor(identifier: string | null = null, createdDate: Date | null = new Date(), source: string | null = null, acceptedDate: Date | null = null) {
+    constructor(identifier: string | null = null, createdDate: Date | null = new Date(), profile: string | null = null, source: string | null = null, acceptedDate: Date | null = null) {
         this.identifier = identifier;
         this.createdDate = createdDate;
-        this.profile = appConstants.calendarEventProfileName;
+        this.profile = profile || appConstants.calendarEventProfileName;
         this.source = source;
         this.acceptedDate = acceptedDate;
     }
@@ -62,7 +62,6 @@ export class Event {
     }
 
     getEventInFormForSending(): object {
-        console.log('---------', this)
         return {
             payload: this.payload,
             metadata: { 
@@ -79,10 +78,11 @@ export class Event {
             event._id, 
             new EventPayload(new Date(event.payload.startTime), new Date(event.payload.endTime), event.payload.title, event.payload.description, event.payload.color), 
             new EventMetadata(
-                event.identifier,
-                new Date(event.createdDate),
-                event.profile,
-                new Date(event.acceptedDate),
+                event.metadata.identifier,
+                new Date(event.metadata.createdDate),
+                event.metadata.profile || appConstants.calendarEventProfileName,
+                event.metadata.source,
+                new Date(event.metadata.acceptedDate),
             )
         )
     }

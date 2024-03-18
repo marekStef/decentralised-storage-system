@@ -6,6 +6,7 @@ import React, { useState } from "react";
 
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 
 const getEventHeight = (calendarHeight: number, durationInMinutes: number) => {
@@ -20,6 +21,7 @@ interface EventPopoverParams {
     anchorEl: any,
     handlePopoverClose: () => void,
     handleEdit: () => void,
+    deleteEventHandler: (newEvent: Event) => void,
 }
 
 const EventPopover: React.FC<EventPopoverParams> = ({
@@ -28,7 +30,15 @@ const EventPopover: React.FC<EventPopoverParams> = ({
     anchorEl,
     handlePopoverClose,
     handleEdit,
+    deleteEventHandler
 }) => {
+    const [deleteAlertShown, setDeleteAlertShown] = useState<boolean>(false);
+
+    const close = () => {
+        setDeleteAlertShown(false);
+        handlePopoverClose();
+    }
+
     return (
         <Popover
             id={open ? 'mouse-over-popover' : undefined}
@@ -50,14 +60,14 @@ const EventPopover: React.FC<EventPopoverParams> = ({
                 vertical: 'top',
                 horizontal: 'right',
             }}
-            onClose={handlePopoverClose}
+            onClose={close}
             disableRestoreFocus
         >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6" component="h2">
                     {event.payload.title}
                 </Typography>
-                <IconButton onClick={handlePopoverClose}>
+                <IconButton onClick={close}>
                     <CloseIcon />
                 </IconButton>
             </div>
@@ -66,14 +76,30 @@ const EventPopover: React.FC<EventPopoverParams> = ({
                 <br />
                 {event.payload.description}
             </Typography>
-            <Button
-                startIcon={<EditIcon />}
-                onClick={handleEdit}
-                variant="outlined"
-                sx={{ mt: 2, alignSelf: 'flex-start' }}
-            >
-                Edit
-            </Button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignSelf: 'flex-start' }}>
+                <Button
+                    startIcon={<EditIcon />}
+                    onClick={handleEdit}
+                    variant="outlined"
+                >
+                    Edit
+                </Button>
+                <Button
+                    startIcon={<DeleteIcon sx={{ color: 'red' }} />}
+                    onClick={() => {
+                        if (!deleteAlertShown) {
+                            setDeleteAlertShown(true);
+                        } else {
+                            deleteEventHandler(event);
+                            setDeleteAlertShown(false);
+                        }
+                    }}
+                    variant="outlined"
+                    sx={{ color: 'red', borderColor: 'red' }}
+                >
+                    {deleteAlertShown ? 'Really?' : 'Delete'}
+                </Button>
+            </div>
         </Popover>
     );
 };
@@ -85,6 +111,7 @@ interface EventUIParams {
     width: number,
     calendarHeight: number,
     openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void,
+    deleteEventHandler: (newEvent: Event) => void,
 }
 
 const EventUI: React.FC<EventUIParams> = (params) => {
@@ -137,17 +164,18 @@ const EventUI: React.FC<EventUIParams> = (params) => {
                 onMouseLeave={() => setShouldEventBeOnTop(false)}
             >
                 <strong title={params.event.payload.title}>
-                    {params.event.payload.title} 
-                    
+                    {params.event.payload.title}
+
                 </strong>
                 <p>{format(params.event.payload.startTime, 'HH:mm')} - {format(params.event.payload.endTime, 'HH:mm')}</p>
             </div>
-            <EventPopover 
-                event={params.event} 
-                open={open} 
-                anchorEl={anchorEl} 
+            <EventPopover
+                event={params.event}
+                open={open}
+                anchorEl={anchorEl}
                 handlePopoverClose={handlePopoverClose}
                 handleEdit={handleEventEdit}
+                deleteEventHandler={params.deleteEventHandler}
             />
         </>
     );

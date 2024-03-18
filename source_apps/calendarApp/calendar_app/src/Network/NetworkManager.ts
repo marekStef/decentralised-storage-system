@@ -38,10 +38,11 @@ class NetworkManager {
     }
 
     // POST request
-    private async post(url: string, data: any) {
+
+    private async generalRequest(method: string, url: string, data: any) {
         return new Promise((res, rej) => {
             fetch(`${persistenceManager.getServerLocation()}${url}`, {
-                method: 'POST',
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -50,6 +51,18 @@ class NetworkManager {
             .then(response => response.json().then(body => response.ok ? res({...body, status: response.status}) : rej({...body, status: response.status})))
             .catch(error => rej(error));
         });
+    }
+    
+    private async post(url: string, data: any) {
+        return this.generalRequest('POST', url, data);
+    }
+
+    private async put(url: string, data: any) {
+        return this.generalRequest('PUT', url, data);
+    }
+
+    private async delete(url: string, data: any) {
+        return this.generalRequest('DELETE', url, data);
     }
 
     public async checkServerPresence(): Promise<boolean> {
@@ -207,8 +220,6 @@ class NetworkManager {
                 ]
             }
 
-            console.log(event.getEventInFormForSending())
-
             this.post(networkRoutes.UPLOAD_NEW_EVENTS_ROUTE, data)
                 .then(response => {
                     console.log('Events uploaded successfully', response);
@@ -244,6 +255,47 @@ class NetworkManager {
                 rej(`Error getting calendar events: ${error.message ?? 'Server not reachable probably'}`);
             }
         }) 
+    }
+
+    public modifyEvent(event: Event): Promise<any> {
+        return new Promise(async (res, rej) => {
+            const accessToken = persistenceManager.getAccessTokenForEvents();
+            if (accessToken == null)
+                rej("Your app does not have token saved for modification of the event");
+            
+            try {
+                const response = await this.put(networkRoutes.MODIFY_GIVEN_EVENT, {
+                    accessToken,
+                    eventId: event.id,
+                    modifiedEvent: event.getEventInFormForSending()
+                });
+                // console.log(response);
+                res(response);
+            } catch (error) {
+                console.error('Error modifying calendar event:', error);
+                rej(`Error modifying calendar event: ${error.message ?? 'Server not reachable probably'}`);
+            }
+        })
+    }
+
+    public deleteEvent(event: Event): Promise<any> {
+        return new Promise(async (res, rej) => {
+            const accessToken = persistenceManager.getAccessTokenForEvents();
+            if (accessToken == null)
+                rej("Your app does not have token saved for deletion of the event");
+            
+            try {
+                const response = await this.delete(networkRoutes.DELETE_GIVEN_EVENT, {
+                    accessToken,
+                    eventId: event.id,
+                });
+                // console.log(response);
+                res(response);
+            } catch (error) {
+                console.error('Error deleting calendar event:', error);
+                rej(`Error deleting calendar event: ${error.message ?? 'Server not reachable probably'}`);
+            }
+        })
     }
 
 }

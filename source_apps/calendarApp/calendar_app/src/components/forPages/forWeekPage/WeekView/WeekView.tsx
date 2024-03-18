@@ -28,8 +28,9 @@ interface WeekViewParams {
     calendarHeaderHeightInPixels: number,
     selectedWeek: SelectedWeek,
     openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void,
+    deleteEventHandler: (newEvent: Event) => void,
     isLoadingEvents: boolean,
-    events: Events
+    events: Events,
 }
 
 const WeekView: React.FC<WeekViewParams> = (params) => {
@@ -392,6 +393,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                         calendarHeight={calendarHeight}
                                         openNewEventDialogHandler={params.openNewEventDialogHandler}
                                         event={event}
+                                        deleteEventHandler={params.deleteEventHandler}
                                     />
                                 ))}
                             </div>

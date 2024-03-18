@@ -50,6 +50,24 @@ const WeekPage = () => {
         setEventDialogMode(dialogMode);
     }
 
+    const closeEventDialogHandler = () => {
+        setNewEventDialogData(null);
+    }
+
+    const getAllEventsForSelectedWeek = (selectedWeek: SelectedWeek) => {
+        eventsManager.getEventsForSelectedWeek(selectedWeek)
+            .then((events: Events) => {
+                setEvents(events)
+                setIsLoadingEvents(false)
+            })
+            .catch(errMessage => {
+                showError(errMessage);
+            })
+            .finally(() => {
+                setIsLoadingEvents(false);
+            })
+    }
+
     const createNewEventHandler = (newEvent: Event): Promise<void> => {
         return new Promise<void>((res, rej) => {
             if (isCreatingNewEvent) return;
@@ -81,23 +99,38 @@ const WeekPage = () => {
         })
     }
 
+    const modifyEventHandler = (event: Event) => {
+        networkManager.modifyEvent(event)
+            .then(res => {
+                showSuccess(res.message);
+                closeEventDialogHandler();
+                getAllEventsForSelectedWeek(selectedWeek);
+            })
+            .catch(err => {
+                showSuccess('Unable to update event');
+                console.log(err);
+            })
+    }
+
+    const deleteEventHandler = (event: Event) => {
+        networkManager.deleteEvent(event)
+        .then(res => {
+            showSuccess(res.message);
+            getAllEventsForSelectedWeek(selectedWeek);
+        })
+        .catch(err => {
+            showSuccess('Unable to delete event');
+            console.log(err);
+        })
+    }
+
     useEffect(() => {
         console.log("Loading for: ", selectedWeek.startOfWeek)
 
         setEvents(new Events())
         setIsLoadingEvents(true);
         
-        eventsManager.getEventsForSelectedWeek(selectedWeek)
-            .then((events: Events) => {
-                setEvents(events)
-                setIsLoadingEvents(false)
-            })
-            .catch(errMessage => {
-                showError(errMessage);
-            })
-            .finally(() => {
-                setIsLoadingEvents(false);
-            })
+        getAllEventsForSelectedWeek(selectedWeek);
     }, [selectedWeek])
 
     useEffect(() => {
@@ -130,6 +163,8 @@ const WeekPage = () => {
                 handleClose={() => setNewEventDialogData(null)} 
                 newEventDialogData={newEventDialogData}
                 createNewEventHandler={createNewEventHandler}
+                modifyEventHandler={modifyEventHandler}
+                deleteEventHandler={deleteEventHandler}
                 isCreatingNewEvent={isCreatingNewEvent}
                 mode={eventDialogMode}
             />
@@ -177,6 +212,7 @@ const WeekPage = () => {
                 openNewEventDialogHandler={openNewEventDialogHandler}
                 isLoadingEvents={isLoadingEvents}
                 events={events}
+                deleteEventHandler={deleteEventHandler}
             />
             </div>
     )
