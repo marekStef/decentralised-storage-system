@@ -53,12 +53,12 @@
 @media (min-width: 1025px) {
     /* big landscape tablets, laptops, and desktops */
     .modal {
-        width: 60vw;
+        width: 70vw;
     }
 }
 @media (min-width: 1281px) {
     /* hi-res laptops and desktops */
     .modal {
-        width: 55vw;
+        width: 60vw;
     }
 }
