@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 suspend fun isDataStorageServerReachable(ipAddress: String, port: String): Boolean = withContext(
     Dispatchers.IO
 ) {
-    Log.d("NETWORK", "http://$ipAddress:$port/status_info/checks/check_data_storage_presence")
+    Log.d("NETWORK", "http://$ipAddress:$port/status_info/checks/check_auth_service_presence")
 
 
     val client = OkHttpClient.Builder()
@@ -30,7 +30,7 @@ suspend fun isDataStorageServerReachable(ipAddress: String, port: String): Boole
         .build()
 
     val request = Request.Builder()
-        .url("http://$ipAddress:$port/status_info/checks/check_data_storage_presence")
+        .url("http://$ipAddress:$port/status_info/checks/check_auth_service_presence")
         .build()
 
     try {

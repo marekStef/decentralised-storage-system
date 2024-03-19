@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
+
 const adminController = require("../../controllers/adminController");
 
 router.get('/apps', adminController.getAllApps);
+
 router.get('/apps/:appHolderId', adminController.getAppHolderById);
 
 router.post('/register_new_app', adminController.createNewAppConnection);

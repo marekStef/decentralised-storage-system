@@ -1,12 +1,11 @@
-const dataViewStoreRoutes = require("./routes/DataViewStore/dataViewStoreRoutes");
+// const dataViewStoreRoutes = require("./routes/DataViewStore/dataViewStoreRoutes");
 
 // Admin Only
-const applicationRoutes = require("./routes/Application/applicationRoutes");
+const eventsRoutes = require("./routes/Application/eventsRoutes");
 const statusInfoRoutes = require("./routes/StatusInfo/statusInfoRoutes")
 
 module.exports = function(app) {
     // app.use('/api/dataviewstore', dataViewStoreRoutes);
-    app.use('/app/api', applicationRoutes);
+    app.use('/app/api', eventsRoutes);
     app.use('/status_info', statusInfoRoutes)
-
 };

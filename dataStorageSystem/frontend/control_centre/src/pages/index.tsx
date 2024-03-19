@@ -57,7 +57,7 @@ const AppsPage = () => {
             </div>
             <div className="flex-grow overflow-auto p-4">
                 <div className="items-start flex">
-                  <h1 className="text-slate-700 text-3xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Data Storage</h1>
+                  <h1 className="text-slate-700 text-3xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Panel</h1>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {apps.map((app) => (

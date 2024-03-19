@@ -3,6 +3,6 @@ const router = express.Router();
 
 const statusInfoController = require("../../controllers/statusInfoController")
 
-router.get('/checks/check_data_storage_presence', statusInfoController.returnDataStoragePresence);
+router.get('/checks/check_auth_service_presence', statusInfoController.returnAuthServicePresence);
 
 module.exports = router;
