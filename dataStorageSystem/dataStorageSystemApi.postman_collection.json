@@ -110,7 +110,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"65ef40c3334155fc82606913\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"65f85d8f72d3cb5a148a96f6\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -157,7 +157,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests/65f75e5a1db2c68e0b0534c8",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests/65f85d8f72d3cb5a148a96f6",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -166,7 +166,7 @@
 										"api",
 										"permissions",
 										"get_unapproved_permissions_requests",
-										"65f75e5a1db2c68e0b0534c8"
+										"65f85d8f72d3cb5a148a96f6"
 									]
 								}
 							},
@@ -303,7 +303,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"65ef40cb334155fc82606917\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"65f85d9672d3cb5a148a96fb\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -331,7 +331,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZWY0MGMzMzM0MTU1ZmM4MjYwNjkxMyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDE3ODUxNSwiZXhwIjoxMTE3NzQ1ODUxNX0.o1JBlVqQi8YTKT-jNw0Ap0qJfRsN7tSyGLPFKGeBtJY\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1Zjg1ZDhmNzJkM2NiNWExNDhhOTZmNiIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDc3NTcwOSwiZXhwIjoxMTE3ODA1NTcwOX0.EKgX4SevCgdCUq3QbpWbSahb47sbJL9o9hGGtfQIY10\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -359,7 +359,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1Zjg1ZDhmNzJkM2NiNWExNDhhOTZmNiIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDc3NTcwOSwiZXhwIjoxMTE3ODA1NTcwOX0.EKgX4SevCgdCUq3QbpWbSahb47sbJL9o9hGGtfQIY10\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -381,13 +381,13 @@
 							"response": []
 						},
 						{
-							"name": "upload_new_events_8",
+							"name": "upload_new_events_8.1",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"CalendarPro.com_CalendarEventProfile\",\r\n    \"events\": [\r\n        {\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"ahoj.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"ahoj.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -403,6 +403,62 @@
 										"app",
 										"api",
 										"upload_new_events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "modify_event_8.2",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI\",\r\n    \"eventId\": \"65f8682db9d71eb79545adbf\",\r\n    \"modifiedEvent\": {\r\n            \"metadata\": {\r\n                \"profile\": \"ahoj.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.0880433333,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/modify_event",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"modify_event"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete_event_8.3",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI\",\r\n    \"eventId\": \"65f8682db9d71eb79545adbf\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/app/api/delete_event",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"app",
+										"api",
+										"delete_event"
 									]
 								}
 							},
@@ -426,7 +482,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlZjQxZTMzMzQxNTVmYzgyNjA2OTJkIiwiYXBwSWQiOiI2NWU5ZWNkMWRlNDc2ZWU3YjRhMjcxYzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHAxLmNvbS9wcm9maWxlMSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5IjpmYWxzZSwiZGVsZXRlIjpmYWxzZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xMVQxNzozOTo0Ny44OTBaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwMTc4Nzg3LCJleHAiOjExMTc3NDU4Nzg3fQ.Obux7rEu2T7lWaEX_19b6gYEV8RmnDWOY3Qe8StK6tM",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -438,7 +494,7 @@
 									"query": [
 										{
 											"key": "accessToken",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlZjQxZTMzMzQxNTVmYzgyNjA2OTJkIiwiYXBwSWQiOiI2NWU5ZWNkMWRlNDc2ZWU3YjRhMjcxYzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHAxLmNvbS9wcm9maWxlMSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5IjpmYWxzZSwiZGVsZXRlIjpmYWxzZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xMVQxNzozOTo0Ny44OTBaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwMTc4Nzg3LCJleHAiOjExMTc3NDU4Nzg3fQ.Obux7rEu2T7lWaEX_19b6gYEV8RmnDWOY3Qe8StK6tM"
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI"
 										},
 										{
 											"key": "",
@@ -489,7 +545,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"metadataMustContain\": {\r\n        \"profile\": \"CalendarPro.com_CalendarEventProfile\"\r\n    }\r\n}",
+							"raw": "{\r\n    \"metadataMustContain\": {\r\n        // \"profile\": \"CalendarPro.com_CalendarEventProfile\"\r\n        \"profile\": \"Some profile\"\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -505,6 +561,83 @@
 								"app",
 								"api",
 								"get_filtered_events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "uploadNewEvents",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"source\": \"some source\",\r\n                \"profile\": \"Some profile\"\r\n            },\r\n            \"payload\": {\r\n                \"message\": \"Some random event\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DATA_STORAGE_URL}}/app/api/upload_new_events",
+							"host": [
+								"{{DATA_STORAGE_URL}}"
+							],
+							"path": [
+								"app",
+								"api",
+								"upload_new_events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "modifyEvent",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"modifiedEvent\": {\r\n        \"metadata\": {\r\n            \"source\": \"some source\",\r\n            \"profile\": \"Some profile\"\r\n        },\r\n        \"payload\": {\r\n            \"message\": \"Some random eventssss\"\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f864e385ebebd23f31af22",
+							"host": [
+								"{{DATA_STORAGE_URL}}"
+							],
+							"path": [
+								"app",
+								"api",
+								"events",
+								"65f864e385ebebd23f31af22"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteEvent",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f8559097d5ee7d51e0aff3",
+							"host": [
+								"{{DATA_STORAGE_URL}}"
+							],
+							"path": [
+								"app",
+								"api",
+								"events",
+								"65f8559097d5ee7d51e0aff3"
 							]
 						}
 					},

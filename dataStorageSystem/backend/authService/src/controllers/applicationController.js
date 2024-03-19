@@ -19,6 +19,8 @@ const DataStorage = require('../externalComponents/DataStorage')
 
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const {validateJsonSchema, isValidJSON} = require('./helpers/jsonSchemaValidation');
+const { compareObjects } = require('./helpers/hashing');
+const authServiceSpecificCodes = require('../constants/authServiceSpecificCodes');
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
@@ -122,11 +124,25 @@ const register_new_profile = async (req, res) => {
     // checking profile uniquness - such profile cannot exist
     try {
         const {code, body} = await DataStorage.getProfileFromDataStorage(payload.profile_name)
-        if (body.count != 0)
-            return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PROFILE_NAME_MUST_BE_UNIQUE);
+        if (body.count != 0) {
+            const existingProfileEvent = body.data[0];
+
+            // console.log(body.data[0].payload, '-----', payload)
+            // there is already some profile registered under the same unique name
+            // try to compute hashes of the payloads and if they match return CREATED http status code
+            if (compareObjects(existingProfileEvent.payload, payload)) {
+                return res.status(httpStatusCodes.CREATED).json({
+                    message: applicationResponseMessages.success.NEW_PROFILE_REGISTERED,
+                    code: authServiceSpecificCodes.profileCodes.ALREADY_EXISING_WITH_SAME_SCHEMA
+                });
+            } else {
+                // profiles do not match - unable to do anything now
+                return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.PROFILE_NAME_MUST_BE_UNIQUE);
+            }
+        }
     }
     catch ({code, message}) {
-        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, message)
     } 
 
     metadata = {
