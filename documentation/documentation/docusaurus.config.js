@@ -10,7 +10,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 const config = {
   title: 'Decentralised Data Storage',
   tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/image-data-storage.png',
 
   // Set the production url of your site here
   url: 'https://your-docusaurus-site.example.com',
@@ -66,22 +66,28 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: 'DecentralisedPro',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/image-data-storage.png',
         },
         items: [
+          // {
+          //   type: 'docsVersionDropdown',
+          // },
           {
-            type: 'docsVersionDropdown',
+            type: 'docSidebar',
+            sidebarId: 'mainSystemSidebar',
+            position: 'left',
+            label: 'Walkthrough',
           },
           {
             type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            sidebarId: 'demoAppsSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: 'Demo Apps',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          // {to: '/blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/facebook/docusaurus',
             label: 'GitHub',

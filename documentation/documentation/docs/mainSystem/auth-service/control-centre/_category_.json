@@ -1,0 +1,8 @@
+{
+  "label": "ControlCentre",
+  "position": 4,
+  "link": {
+    "type": "generated-index",
+    "description": "Frontend component"
+  }
+}
