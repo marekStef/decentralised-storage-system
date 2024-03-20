@@ -67,11 +67,14 @@ This component is the only component accessible to apps. All other components of
 
 `views related`
 
-```js title="views related"
-router.post('/register_new_view_instance', applicationController.registerNewViewInstance);
+- **/app/api/registerNewViewInstance** *(POST)*
+- **/app/api/runViewInstance** *(POST)*
 
-router.post('/run_view_instance', applicationController.runViewInstace);
-```
+<!-- ```js title="views related"
+router.post('/registerNewViewInstance', applicationController.registerNewViewInstance);
+
+router.post('/runViewInstance', applicationController.runViewInstace);
+``` -->
 
 :::caution
 

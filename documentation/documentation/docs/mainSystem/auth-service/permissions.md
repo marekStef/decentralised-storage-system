@@ -34,7 +34,9 @@ There are multiple possible responses:
 ```js title="response 201 (created)"
 {
     "message": "Permissions requested successfully",
+    // highlight-start
     "generatedAccessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWZiM2UxYjI3YjQxNjE0NTk0Mjc3IiwiYXBwSWQiOiI2NWZhZTA5NDdhOTBiNGE1MjYzYTQ5ODAiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjBUMTU6MDU6MzQuNDE3WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMDk0NzEzNCwiZXhwIjoxMTE3ODIyNzEzNH0.30tA0SPYMcYMdVg15Mqll6bcFOnE41u9rRGcF5kIY5M"
+    // highlight-end
 }
 ```
 
@@ -86,7 +88,9 @@ The response is the following:
     "data": {
         "permissions": [
             {
+                // highlight-start
                 "_id": "65faf9c8f9b73ae41344361f",
+                // highlight-end
                 "app": {
                     "_id": "65f85d8f72d3cb5a148a96f6",
                     "nameDefinedByUser": "My New App",
@@ -113,7 +117,9 @@ The response is the following:
                 "__v": 0
             },
             {
+                // highlight-start
                 "_id": "65fafb2f1b27b4161459426f",
+                // highlight-end
                 "app": {
                     "_id": "65f85d8f72d3cb5a148a96f6",
                     "nameDefinedByUser": "My New App",
@@ -160,7 +166,9 @@ For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d
     "status": "success",
     "permissions": [
         {
+            // highlight-start
             "_id": "65f85e6e72d3cb5a148a971f",
+            // highlight-end
             "app": {
                 "_id": "65f85d8f72d3cb5a148a96f6",
                 "nameDefinedByUser": "My New App",
@@ -187,7 +195,9 @@ For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d
             "__v": 0
         },
         {
+            // highlight-start
             "_id": "65faf9c8f9b73ae41344361f",
+            // highlight-end
             "app": {
                 "_id": "65f85d8f72d3cb5a148a96f6",
                 "nameDefinedByUser": "My New App",
