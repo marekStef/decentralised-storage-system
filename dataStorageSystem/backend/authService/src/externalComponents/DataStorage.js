@@ -4,7 +4,7 @@ class DataStorage {
     sendEventsToDataStorage(events) {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/upload_new_events`, {
+                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/uploadNewEvents`, {
                     events: events
                 });
 

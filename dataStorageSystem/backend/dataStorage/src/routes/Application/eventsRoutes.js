@@ -3,7 +3,7 @@ const router = express.Router();
 
 const eventsController = require("../../controllers/eventsController");
 
-router.post('/upload_new_events', eventsController.uploadNewEvents);
+router.post('/uploadNewEvents', eventsController.uploadNewEvents);
 
 router.post('/get_filtered_events', eventsController.getFilteredEvents);
 

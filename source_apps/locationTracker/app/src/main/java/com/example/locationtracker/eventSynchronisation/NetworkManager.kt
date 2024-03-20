@@ -107,7 +107,7 @@ suspend fun registerNewProfileToDataStorage(
     jwtTokenForPermissionRequestsAndProfiles: String,
     schema: String
 ): Result<String> = withContext(Dispatchers.IO) {
-    val url: String = "http://${ip}:${port}/app/api/register_new_profile"
+    val url: String = "http://${ip}:${port}/app/api/registerNewProfile"
     Log.d("NETWORK", url)
 
     val currentTimestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
@@ -168,7 +168,7 @@ suspend fun sendPermissionRequestToServer(
     port: String,
     jwtTokenForPermissionRequestsAndProfiles: String
 ): Result<String> = withContext(Dispatchers.IO) {
-    val url: String = "http://${ip}:${port}/app/api/request_new_permissions"
+    val url: String = "http://${ip}:${port}/app/api/requestNewPermission"
     val client = OkHttpClient()
     val mediaType = "application/json; charset=utf-8".toMediaType()
     val permissionRequest = JSONObject().apply {

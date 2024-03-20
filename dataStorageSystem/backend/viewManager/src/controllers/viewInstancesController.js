@@ -60,7 +60,7 @@ const createNewViewInstance = async (req, res) => {
         console.log(permissionsRequest);
 
         try {
-            const response = await axios.post(`${process.env.AUTH_SERVICE_URI}/app/api/request_new_permissions`, permissionsRequest);
+            const response = await axios.post(`${process.env.AUTH_SERVICE_URI}/app/api/requestNewPermission`, permissionsRequest);
 
             if (response.status === httpStatusCodes.CREATED) {
                 accessTokensToProfiles[profileItem.profile] = response.data.generatedAccessToken;

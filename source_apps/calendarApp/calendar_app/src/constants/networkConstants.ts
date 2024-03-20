@@ -1,16 +1,16 @@
 export const networkRoutes = {
     SERVER_REACHABILITY_ROUTE: '/status_info/checks/check_auth_service_presence',
-    ASSOCIATE_WITH_DATA_STORAGE_ROUTE: '/app/api/associate_with_storage_app_holder',
-    REGISTER_NEW_PROFILE_ROUTE: '/app/api/register_new_profile',
+    ASSOCIATE_WITH_DATA_STORAGE_ROUTE: '/app/api/associateWithStorageAppHolder',
+    REGISTER_NEW_PROFILE_ROUTE: '/app/api/registerNewProfile',
     
-    REQUEST_PERMISSIONS_ROUTE: '/app/api/request_new_permissions',
+    REQUEST_PERMISSIONS_ROUTE: '/app/api/requestNewPermission',
     CHECK_ACCESS_TOKEN_FOR_REQUESTED_PERMISSION: '/app/api/checkAccessTokenStatus',
 
-    UPLOAD_NEW_EVENTS_ROUTE: '/app/api/upload_new_events',
-    GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN: '/app/api/get_all_events_for_given_access_token',
+    UPLOAD_NEW_EVENTS_ROUTE: '/app/api/uploadNewEvents',
+    GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN: '/app/api/getAllEventsForGivenAccessToken',
 
-    MODIFY_GIVEN_EVENT: '/app/api/modify_event',
-    DELETE_GIVEN_EVENT: '/app/api/delete_event',
+    MODIFY_GIVEN_EVENT: '/app/api/modifyEvent',
+    DELETE_GIVEN_EVENT: '/app/api/deleteEvent',
 }
 
 export const networkStatusCodes = {

@@ -102,7 +102,7 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
 
         viewModelScope.launch {
             _isAssociatingAppWithStorage.value = true
-            val url: String = "http://${_dataStorageDetails.value?.ipAddress}:${_dataStorageDetails.value?.port}/app/api/associate_with_storage_app_holder"
+            val url: String = "http://${_dataStorageDetails.value?.ipAddress}:${_dataStorageDetails.value?.port}/app/api/associateWithStorageAppHolder"
             val associationToken: String =
                 _dataStorageDetails.value?.associationTokenUsedDuringRegistration ?: ""
 

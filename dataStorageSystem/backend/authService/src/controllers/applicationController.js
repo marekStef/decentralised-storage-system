@@ -205,7 +205,7 @@ const registerNewProfile = async (req, res) => {
     });
 };
 
-const requestNewPermissions = async (req, res) => {
+const requestNewPermission = async (req, res) => {
     const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest } = req.body;
 
     if (!jwtTokenForPermissionRequestsAndProfiles)
@@ -349,7 +349,7 @@ const transformEvents = (profileNeededToBePresentInAllEvents, events, sourceAppN
 // sends events to dataStorage component
 const sendEventsToDataStorage = async (res, events) => {
     try {
-        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/upload_new_events`, {
+        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/uploadNewEvents`, {
             events: events
         });
 
@@ -737,7 +737,7 @@ const runViewInstace = async (req, res) => {
 module.exports = {
     associateAppWithStorageAppHolder,
     registerNewProfile,
-    requestNewPermissions,
+    requestNewPermission,
     isAccessTokenForGivenPermissionRequestActive,
     uploadNewEvents,
     modifyEvent,
