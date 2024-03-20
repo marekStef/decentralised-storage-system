@@ -8,18 +8,19 @@ import settingsIcon from "../../../public/images/setting.png";
 import QRCodeComponent from "./components/QrCode";
 import NewAppCreation from "./components/NewAppCreation";
 
+import ViewTemplatesModule from "./components/ViewTemplatesModule";
+
 type SettingsModalProps = {
     isOpen: boolean;
     onClose: () => void;
 };
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const [selected, setSelected] = useState<string>("new_app");
+    const [selected, setSelected] = useState<string>("viewTemplates");
 
 
     const buttonClass = (buttonId: string) =>
-        `text-left py-2 px-2 font-semibold rounded-lg mx-4 my-2 text-3xs text-white flex items-center ${
-            buttonId === selected ? "bg-gray-600" : "text-gray-700"
+        `text-left py-2 px-2 font-semibold rounded-lg mx-4 my-2 text-3xs text-white flex items-center ${buttonId === selected ? "bg-gray-600" : "text-gray-700"
         }`;
 
     useEffect(() => {
@@ -43,16 +44,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <header className="modal-header m-4">
-                    <h1 className="text-xl text-gray-400">Control Centre</h1>
-                    <button onClick={onClose} className="close-button">
-                        <p className="text-gray-400 text-3xl">&times;</p>
-                    </button>
-                </header>
-
-                <div className="flex w-full">
+                <div className="flex w-full h-full">
                     <div className="basis-1/4 ">
                         <div className="flex flex-col w-full">
+
+                            <button onClick={onClose} className="flex" >
+                                <div className="text-gray-400 text-4xl px-4 pb-2">&times;</div>
+                            </button>
+
                             <button
                                 className={buttonClass("new_app")}
                                 onClick={() => setSelected("new_app")}
@@ -65,15 +64,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                 New App
                             </button>
                             <button
-                                className={buttonClass("permissions")}
-                                onClick={() => setSelected("permissions")}
+                                className={buttonClass("viewTemplates")}
+                                onClick={() => setSelected("viewTemplates")}
                             >
                                 <Image
                                     src={permissionRequestsIcon}
                                     alt="My Icon"
                                     className="w-5 mr-2"
                                 />
-                                Permissions
+                                Templates
                             </button>
                             <button
                                 className={buttonClass("settings")}
@@ -88,23 +87,23 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             </button>
                         </div>
                     </div>
-                    <div className="w-full h-full mr-4 mt-2">
-                        {(() => {
-                            switch (selected) {
-                                case "new_app":
-                                    return <NewAppCreation />;
-                                case "permissions":
-                                    return <p>Permissions (todo)</p>;
-                                case "settings":
-                                    return <p>Settings (todo)</p>;
-                                default:
-                                    return (
-                                        <p>
-                                            Select a button to display content
-                                        </p>
-                                    );
-                            }
-                        })()}
+                    <div className="w-full mt-2 overflow-auto p-4">
+                            {(() => {
+                                switch (selected) {
+                                    case "new_app":
+                                        return <NewAppCreation />;
+                                    case "viewTemplates":
+                                        return <ViewTemplatesModule />
+                                    case "settings":
+                                        return <p>Settings (todo)</p>;
+                                    default:
+                                        return (
+                                            <p>
+                                                Select a button to display content
+                                            </p>
+                                        );
+                                }
+                            })()}
                     </div>
                 </div>
             </div>

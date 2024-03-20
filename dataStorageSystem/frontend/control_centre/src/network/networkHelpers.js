@@ -95,3 +95,39 @@ export function grantPermission(permissionId) {
             });
     })
 }
+
+// views 
+
+export function getAllViewTemplates() {
+    return new Promise((res, rej) => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_VIEW_MANAGER_ADDRESS}/viewTemplates/templates`)
+            .then((result) => {
+                console.log(result);
+                res(result.data.viewTemplates)
+                // if (result.status != 200)
+                //     return rej('Permission request could not be granted');
+                // res('Permission was granted');
+            })
+            .catch((err) => {
+                rej("Could not fetch view templates from view manager component");
+                console.log(err);
+                // rej(err.response.data.message);
+            });
+    })
+}
+
+export function getSpecificViewTemplate(templateId) {
+    return new Promise((res, rej) => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_VIEW_MANAGER_ADDRESS}/viewTemplates/templates/${templateId}`)
+            .then((result) => {
+                console.log(result.data);
+                res(result.data)
+            })
+            .catch((err) => {
+                rej("Could not fetch view template from view manager component");
+                console.log(err);
+            });
+    })
+}
