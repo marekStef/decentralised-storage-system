@@ -7,30 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "general",
-			"item": [
-				{
-					"name": "check_presence",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{AUTH_SERVER_URL}}/status_info/checks/check_data_storage_presence",
-							"host": [
-								"{{AUTH_SERVER_URL}}"
-							],
-							"path": [
-								"status_info",
-								"checks",
-								"check_data_storage_presence"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "authService",
 			"item": [
 				{
@@ -82,7 +58,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nameDefinedByUser\": \"My New App\"\r\n}",
+									"raw": "{\r\n    \"nameDefinedByUser\": \"My New Application\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -90,14 +66,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/register_new_app",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/registerNewApp",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"admin",
 										"api",
-										"register_new_app"
+										"registerNewApp"
 									]
 								}
 							},
@@ -110,7 +86,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"65f85d8f72d3cb5a148a96f6\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"65fae0947a90b4a5263a4981\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -118,14 +94,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/generate_one_time_association_token",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/generateOneTimeAssociationToken",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"admin",
 										"api",
-										"generate_one_time_association_token"
+										"generateOneTimeAssociationToken"
 									]
 								}
 							},
@@ -137,7 +113,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getUnapprovedPermissionsRequests",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -145,7 +121,7 @@
 										"admin",
 										"api",
 										"permissions",
-										"get_unapproved_permissions_requests"
+										"getUnapprovedPermissionsRequests"
 									]
 								}
 							},
@@ -157,7 +133,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/get_unapproved_permissions_requests/65f85d8f72d3cb5a148a96f6",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d8f72d3cb5a148a96f6",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -165,7 +141,7 @@
 										"admin",
 										"api",
 										"permissions",
-										"get_unapproved_permissions_requests",
+										"getUnapprovedPermissionsRequests",
 										"65f85d8f72d3cb5a148a96f6"
 									]
 								}
@@ -179,7 +155,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"permissionId\": \"65ec875616c7c86638272a48\"\r\n}",
+									"raw": "{\r\n    \"permissionId\": \"65fafb3e1b27b41614594277\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -187,7 +163,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/approve_permission_request",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/approvePermissionRequest",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -195,7 +171,7 @@
 										"admin",
 										"api",
 										"permissions",
-										"approve_permission_request"
+										"approvePermissionRequest"
 									]
 								}
 							},
@@ -216,7 +192,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/revoke_permission",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/revokePermission",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -224,7 +200,7 @@
 										"admin",
 										"api",
 										"permissions",
-										"revoke_permission"
+										"revokePermission"
 									]
 								}
 							},
@@ -303,7 +279,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"65f85d9672d3cb5a148a96fb\",\r\n    \"nameDefinedByApp\": \"ahoj.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"65fae1747a90b4a5263a498\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -311,14 +287,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/associate_with_storage_app_holder",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/associateWithStorageAppHolder",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"associate_with_storage_app_holder"
+										"associateWithStorageAppHolder"
 									]
 								}
 							},
@@ -331,7 +307,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1Zjg1ZDhmNzJkM2NiNWExNDhhOTZmNiIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDc3NTcwOSwiZXhwIjoxMTE3ODA1NTcwOX0.EKgX4SevCgdCUq3QbpWbSahb47sbJL9o9hGGtfQIY10\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"ahoj.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZmFlMDk0N2E5MGI0YTUyNjNhNDk4MCIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIiwibmFtZURlZmluZWRCeUFwcCI6ImFwcGxpY2F0aW9uLmNvbSIsImlhdCI6MTcxMDk0MDcxMywiZXhwIjoxMTE3ODIyMDcxM30.3zHTC0_igQKfzjF8uZadJLkmd4qRXY_hePdPj0\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"application.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -339,14 +315,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/register_new_profile",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/registerNewProfile",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"register_new_profile"
+										"registerNewProfile"
 									]
 								}
 							},
@@ -359,7 +335,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1Zjg1ZDhmNzJkM2NiNWExNDhhOTZmNiIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcxMDc3NTcwOSwiZXhwIjoxMTE3ODA1NTcwOX0.EKgX4SevCgdCUq3QbpWbSahb47sbJL9o9hGGtfQIY10\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"ahoj.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZmFlMDk0N2E5MGI0YTUyNjNhNDk4MCIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIiwibmFtZURlZmluZWRCeUFwcCI6ImFwcGxpY2F0aW9uLmNvbSIsImlhdCI6MTcxMDk0MDcxMywiZXhwIjoxMTE3ODIyMDcxM30.3zHTC0_igQKfzjF8uZadJLkmd4qRXY_hePd_M6pmPj0\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"application.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -367,14 +343,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/request_new_permissions",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/requestNewPermission",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"request_new_permissions"
+										"requestNewPermission"
 									]
 								}
 							},
@@ -387,7 +363,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"ahoj.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"ahoj.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWZiM2UxYjI3YjQxNjE0NTk0Mjc3IiwiYXBwSWQiOiI2NWZhZTA5NDdhOTBiNGE1MjYzYTQ5ODAiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjBUMTU6MDU6MzQuNDE3WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMDk0NzEzNCwiZXhwIjoxMTE3ODIyNzEzNH0.30tA0SPYMcYMdVg15Mqll6bcFOnE41u9rRGcF5kIY5M\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"application.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -395,14 +371,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/upload_new_events",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/uploadNewEvents",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"upload_new_events"
+										"uploadNewEvents"
 									]
 								}
 							},
@@ -423,14 +399,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/modify_event",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/modifyEvent",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"modify_event"
+										"modifyEvent"
 									]
 								}
 							},
@@ -451,14 +427,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/delete_event",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/deleteEvent",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"delete_event"
+										"deleteEvent"
 									]
 								}
 							},
@@ -482,7 +458,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWZiM2UxYjI3YjQxNjE0NTk0Mjc3IiwiYXBwSWQiOiI2NWZhZTA5NDdhOTBiNGE1MjYzYTQ5ODAiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjBUMTU6MDU6MzQuNDE3WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMDk0NzEzNCwiZXhwIjoxMTE3ODIyNzEzNH0.30tA0SPYMcYMdVg15Mqll6bcFOnE41u9rRGcF5kIY5M",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -493,13 +469,13 @@
 									],
 									"query": [
 										{
-											"key": "accessToken",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI"
-										},
-										{
 											"key": "",
 											"value": "",
 											"disabled": true
+										},
+										{
+											"key": "accessToken",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWZiM2UxYjI3YjQxNjE0NTk0Mjc3IiwiYXBwSWQiOiI2NWZhZTA5NDdhOTBiNGE1MjYzYTQ5ODAiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjBUMTU6MDU6MzQuNDE3WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMDk0NzEzNCwiZXhwIjoxMTE3ODIyNzEzNH0.30tA0SPYMcYMdVg15Mqll6bcFOnE41u9rRGcF5kIY5M"
 										}
 									]
 								}
@@ -512,20 +488,44 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/get_all_events_for_given_access_token?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/getAllEventsForGivenAccessToken?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
 									"path": [
 										"app",
 										"api",
-										"get_all_events_for_given_access_token"
+										"getAllEventsForGivenAccessToken"
 									],
 									"query": [
 										{
 											"key": "accessToken",
 											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVlYTBjOTFmYjJlYTBiYWJjODM3YzBhIiwiYXBwSWQiOiI2NWVhMGM4MGZiMmVhMGJhYmM4MzdiZmYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJDYWxlbmRhclByby5jb21fQ2FsZW5kYXJFdmVudFByb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTA3VDE4OjUwOjU3Ljc2N1oiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MDk4Mzc0NTcsImV4cCI6MTExNzcxMTc0NTd9.VJcyPeAuawxudKto4VCygQjP4RRCHako12yBSbrGEjQ"
 										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "statusInfo",
+					"item": [
+						{
+							"name": "check_presence",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{AUTH_SERVER_URL}}/status_info/checks/check_auth_service_presence",
+									"host": [
+										"{{AUTH_SERVER_URL}}"
+									],
+									"path": [
+										"status_info",
+										"checks",
+										"check_auth_service_presence"
 									]
 								}
 							},
@@ -573,7 +573,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"source\": \"some source\",\r\n                \"profile\": \"Some profile\"\r\n            },\r\n            \"payload\": {\r\n                \"message\": \"Some random event\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"source\": \"some source\"\r\n            },\r\n            \"payload\": {\r\n                \"message\": \"Some random event\"\r\n            }\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -581,14 +581,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{DATA_STORAGE_URL}}/app/api/upload_new_events",
+							"raw": "{{DATA_STORAGE_URL}}/app/api/uploadNewEvents",
 							"host": [
 								"{{DATA_STORAGE_URL}}"
 							],
 							"path": [
 								"app",
 								"api",
-								"upload_new_events"
+								"uploadNewEvents"
 							]
 						}
 					},
@@ -601,7 +601,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"modifiedEvent\": {\r\n        \"metadata\": {\r\n            \"source\": \"some source\",\r\n            \"profile\": \"Some profile\"\r\n        },\r\n        \"payload\": {\r\n            \"message\": \"Some random eventssss\"\r\n        }\r\n    }\r\n}",
+							"raw": "{\r\n    \"modifiedEvent\": {\r\n        \"metadata\": {\r\n            \"source\": \"some source\",\r\n            \"profile\": \"Some profile\"\r\n        },\r\n        \"payload\": {\r\n            \"message\": \"Modified text\"\r\n        }\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -609,7 +609,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f864e385ebebd23f31af22",
+							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f9f9e27ace27615f794be0",
 							"host": [
 								"{{DATA_STORAGE_URL}}"
 							],
@@ -617,7 +617,7 @@
 								"app",
 								"api",
 								"events",
-								"65f864e385ebebd23f31af22"
+								"65f9f9e27ace27615f794be0"
 							]
 						}
 					},
@@ -629,7 +629,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f8559097d5ee7d51e0aff3",
+							"raw": "{{DATA_STORAGE_URL}}/app/api/events/65f9f8117ace27615f794bd3",
 							"host": [
 								"{{DATA_STORAGE_URL}}"
 							],
@@ -637,7 +637,7 @@
 								"app",
 								"api",
 								"events",
-								"65f8559097d5ee7d51e0aff3"
+								"65f9f8117ace27615f794bd3"
 							]
 						}
 					},

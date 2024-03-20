@@ -74,6 +74,8 @@ Or when the id does not exist and was not created:
 
 ### Associating app with the App Holder using `appHolderId` *(application part)*
 
+You need to hit this endpoint **/app/api/associateWithStorageAppHolder** *(POST)* with the following body:
+
 ```js
 {
     "associationTokenId": "65fae1747a90b4a5263a4984",

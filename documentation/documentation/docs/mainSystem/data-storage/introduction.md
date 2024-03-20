@@ -11,7 +11,7 @@ Any component having access to this component can do anything with the data. The
 It allows these operations as of now:
 
 ```js title="EventsRoutes.js"
-router.post('/upload_new_events', eventsController.uploadNewEvents);
+router.post('/uploadNewEvents', eventsController.uploadNewEvents);
 
 router.post('/get_filtered_events', eventsController.getFilteredEvents);
 
@@ -20,7 +20,7 @@ router.put('/events/:eventId', eventsController.modifyGivenEvent);
 router.delete('/events/:eventId', eventsController.deleteGivenEvent);
 ```
 
-### /upload_new_events (POST)
+### /uploadNewEvents (POST)
 
 ```js title="Example body in the request"
 {

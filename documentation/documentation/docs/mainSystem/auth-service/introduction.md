@@ -18,7 +18,7 @@ This component is the only component accessible to apps. All other components of
 - **/admin/api/generateOneTimeAssociationToken** *(POST)*
 
 #### Permissions
-- **/admin/api/permissions/getUnapprovedPermissionsRequests** *(GET)*
+- **/admin/api/permissions/getUnapprovedPermissionsRequests?pageIndex=2&limit=100** *(GET)*
 - **/admin/api/permissions/getUnapprovedPermissionsRequests /:appHolderId** *(GET)*
 - **/admin/api/permissions/approvePermissionRequest** *(PUT)*
 - **/admin/api/permissions/revokePermission** *(PUT)*
@@ -29,27 +29,43 @@ This component is the only component accessible to apps. All other components of
 
 ### Endpoints meant to be used by applications themselves
 
-```js title="association, registration, permissions"
-const applicationController = require("../../controllers/applicationController");
+`association, registration, permissions`
 
-router.post('/associate_with_storage_app_holder', applicationController.associateAppWithStorageAppHolder);
+- **/app/api/associateWithStorageAppHolder** *(POST)*
+- **/app/api/registerNewProfile** *(POST)*
+- **/app/api/requestNewPermission** *(POST)*
+- **/app/api/checkAccessTokenStatus?accessToken=[token]** *(GET)*
 
-router.post('/register_new_profile', applicationController.registerNewProfile);
+<!-- ```js title="association, registration, permissions"
+// const applicationController = require("../../controllers/applicationController");
 
-router.get('/checkAccessTokenStatus', applicationController.isAccessTokenForGivenPermissionRequestActive);
+// router.post('/associateWithStorageAppHolder', applicationController.associateAppWithStorageAppHolder);
 
-router.post('/request_new_permissions', applicationController.requestNewPermissions);
-```
+// router.post('/registerNewProfile', applicationController.registerNewProfile);
 
-```js title="events related"
-router.post('/upload_new_events', applicationController.uploadNewEvents);
+// router.get('/checkAccessTokenStatus', applicationController.isAccessTokenForGivenPermissionRequestActive);
 
-router.put('/modify_event', applicationController.modifyEvent);
+// router.post('/requestNewPermission', applicationController.requestNewPermission);
+``` -->
 
-router.delete('/delete_event', applicationController.deleteEvent);
+`events related`
 
-router.get('/get_all_events_for_given_access_token', applicationController.getAllEventsOfGivenProfile);
-```
+- **/app/api/uploadNewEvents** *(POST)*
+- **/app/api/modifyEvent** *(PUT)*
+- **/app/api/deleteEvent** *(DELETE)*
+- **/app/api/getAllEventsForGivenAccessToken** *(GET)*
+
+<!-- ```js title="events related"
+// router.post('/uploadNewEvents', applicationController.uploadNewEvents);
+
+// router.put('/modifyEvent', applicationController.modifyEvent);
+
+// router.delete('/deleteEvent', applicationController.deleteEvent);
+
+// router.get('/getAllEventsForGivenAccessToken', applicationController.getAllEventsOfGivenProfile);
+``` -->
+
+`views related`
 
 ```js title="views related"
 router.post('/register_new_view_instance', applicationController.registerNewViewInstance);
