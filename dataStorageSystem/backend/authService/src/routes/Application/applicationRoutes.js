@@ -3,13 +3,13 @@ const router = express.Router();
 
 const applicationController = require("../../controllers/applicationController");
 
-router.post('/associate_with_storage_app_holder', applicationController.associate_app_with_storage_app_holder);
+router.post('/associateWithStorageAppHolder', applicationController.associateAppWithStorageAppHolder);
 
-router.post('/register_new_profile', applicationController.register_new_profile);
+router.post('/register_new_profile', applicationController.registerNewProfile);
 
 router.get('/checkAccessTokenStatus', applicationController.isAccessTokenForGivenPermissionRequestActive);
 
-router.post('/request_new_permissions', applicationController.request_new_permissions);
+router.post('/request_new_permissions', applicationController.requestNewPermissions);
 
 router.post('/upload_new_events', applicationController.uploadNewEvents);
 

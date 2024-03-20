@@ -18,8 +18,8 @@ COPY . .
 
 # RUN if [ "$DELETE_AND_INITIALISE" = "true" ] ; then npm run delete_database > /usr/src/app/delete_db.log 2>&1 ; fi
 
-# Port 3005 available to the world outside this container
-EXPOSE 3005
+# Port 3001 available to the world outside this container
+EXPOSE 3001
 
 CMD [ "npm", "start" ]
 

@@ -24,7 +24,7 @@ services:
       args:
         - DELETE_AND_INITIALISE=true
     ports:
-      - "3005:3005"
+      - "3001:3001"
     depends_on:
       - mongo1
   auth_service:

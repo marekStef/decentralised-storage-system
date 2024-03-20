@@ -24,7 +24,7 @@ const authServiceSpecificCodes = require('../constants/authServiceSpecificCodes'
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
-const associate_app_with_storage_app_holder = async (req, res) => {
+const associateAppWithStorageAppHolder = async (req, res) => {
     const {associationTokenId, nameDefinedByApp} = req.body;
 
     if (!associationTokenId || !nameDefinedByApp)
@@ -54,7 +54,7 @@ const associate_app_with_storage_app_holder = async (req, res) => {
         const token = await OneTimeAssociationToken.findById(associationTokenId).populate('app');
 
         if (!token) // check whether the token actually exists
-            return generateBadResponse(res, httpStatusCodes.NOT_FOUND, applicationResponseMessages.error.INVALID_ASSOCIATION_TOKEN);
+            return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.INVALID_ASSOCIATION_TOKEN);
 
         // Check if the app holder in the storage system exists and hasn't been associated yet
         const appHolder = token.app;
@@ -106,7 +106,7 @@ const associate_app_with_storage_app_holder = async (req, res) => {
     }
 };
 
-const register_new_profile = async (req, res) => {
+const registerNewProfile = async (req, res) => {
     let {jwtTokenForPermissionRequestsAndProfiles, metadata, payload} = req.body;
     if (!jwtTokenForPermissionRequestsAndProfiles|| !metadata || !payload || payload.profile_name == undefined || payload.json_schema == undefined)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.MISSING_REQUIRED_FIELDS);
@@ -205,7 +205,7 @@ const register_new_profile = async (req, res) => {
     });
 };
 
-const request_new_permissions = async (req, res) => {
+const requestNewPermissions = async (req, res) => {
     const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest } = req.body;
 
     if (!jwtTokenForPermissionRequestsAndProfiles)
@@ -735,9 +735,9 @@ const runViewInstace = async (req, res) => {
 }
 
 module.exports = {
-    associate_app_with_storage_app_holder,
-    register_new_profile,
-    request_new_permissions,
+    associateAppWithStorageAppHolder,
+    registerNewProfile,
+    requestNewPermissions,
     isAccessTokenForGivenPermissionRequestActive,
     uploadNewEvents,
     modifyEvent,

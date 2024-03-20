@@ -11,8 +11,8 @@ Pri dockeri je potrebne se ujistit, ze v `.env` mame odkomentovane spravne veci:
 # MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting
 MONGO_DB_URI=mongodb://mongo1:27017/accessDb # for docker
 
-# DATA_STORAGE_URL=http://localhost:3005 # for manual starting
-DATA_STORAGE_URL=http://data_storage:3005 # for dockerr
+# DATA_STORAGE_URL=http://localhost:3001 # for manual starting
+DATA_STORAGE_URL=http://data_storage:3001 # for dockerr
 ```
 
 Pro spusteni je vsechno dulezite napsane [zde](../README.md).
@@ -53,8 +53,8 @@ Potrebujeme odkomentovat a zakomentovat nasledovne v `.env` souboru:
 MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting
 # MONGO_DB_URI=mongodb://mongo1:27017/accessDb # for docker
 
-DATA_STORAGE_URL=http://localhost:3005 # for manual starting
-# DATA_STORAGE_URL=http://data_storage:3005 # for docker
+DATA_STORAGE_URL=http://localhost:3001 # for manual starting
+# DATA_STORAGE_URL=http://data_storage:3001 # for docker
 ```
 
 V `.env` souboru je podstatni klic `DATA_STORAGE_URL`. V pripade, ze se menil port v projektu `dataStorage`, je nutno tuhle zmenu reflektovat i zde v `.env` (vice informaci v README komponenty `dataStorage` [zde](../dataStorage/README.md)).

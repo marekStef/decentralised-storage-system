@@ -7,7 +7,7 @@ const registerCodeRegistrationRoutes = require('./src/routes/codeRegistrationRou
 const registerCodeExecutionRoutes = require('./src/routes/codeExecutionRoutes');
 
 const app = express();
-const port = 10002;
+const port = 3003;
 
 const UPLOADS_TEMPORARY_DIRECTORY = './temp_uploads';
 const MAXIMUM_UPLOAD_LIMIT_PER_FILE = 1024 * 1024 * 5; // 5 MB

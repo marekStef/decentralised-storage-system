@@ -49,7 +49,7 @@ MONGO_DB_URI=mongodb://localhost:27017/dataStorage # for manual starting
 # MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
 ```
 
-V `.env` souboru je jeste podstatni klic `DATA_STORAGE_SERVER_PORT=3005`. V pripade, ze tento projekt nejde spustit pod portem `3005`, je nutno ho zamenit. 
+V `.env` souboru je jeste podstatni klic `DATA_STORAGE_SERVER_PORT=3001`. V pripade, ze tento projekt nejde spustit pod portem `3001`, je nutno ho zamenit. 
 
 V pripade, ze je nutno ho zamenit, tak je potrebna dodatocna zmena - a to zmenit tuhle hodnotu v `.env` komponenty `authService`, ktera s touto komponentou primo komunikuje.
 

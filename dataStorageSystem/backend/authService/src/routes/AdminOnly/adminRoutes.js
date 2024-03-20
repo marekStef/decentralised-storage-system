@@ -7,18 +7,18 @@ router.get('/apps', adminController.getAllApps);
 
 router.get('/apps/:appHolderId', adminController.getAppHolderById);
 
-router.post('/register_new_app', adminController.createNewAppConnection);
+router.post('/registerNewApp', adminController.createNewAppConnection);
 
-router.post('/generate_one_time_association_token', adminController.generateOneTimeTokenForAssociatingRealAppWithAppConnection);
+router.post('/generateOneTimeAssociationToken', adminController.generateOneTimeTokenForAssociatingRealAppWithAppConnection);
 
 // ----- PERMISSIONS
 
-router.get('/permissions/get_unapproved_permissions_requests', adminController.getUnapprovedPermissionsRequests);
+router.get('/permissions/getUnapprovedPermissionsRequests', adminController.getUnapprovedPermissionsRequests);
 
-router.get('/permissions/get_unapproved_permissions_requests/:appHolderId', adminController.getAllPermissionsForGivenApp);
+router.get('/permissions/getUnapprovedPermissionsRequests/:appHolderId', adminController.getAllPermissionsForGivenApp);
 
-router.put('/permissions/approve_permission_request', adminController.approvePermissionRequest);
+router.put('/permissions/approvePermissionRequest', adminController.approvePermissionRequest);
 
-router.put('/permissions/revoke_permission', adminController.revokeApprovedPermission);
+router.put('/permissions/revokePermission', adminController.revokeApprovedPermission);
 
 module.exports = router;

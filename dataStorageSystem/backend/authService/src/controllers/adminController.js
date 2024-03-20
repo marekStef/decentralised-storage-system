@@ -126,7 +126,7 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
         // there should not be existing token - only one token for association can be generated
         if (existingToken) {
             // return it
-            res.status(httpStatusCodes.CREATED).json({
+            return res.status(httpStatusCodes.CREATED).json({
                 message: adminResponseMessages.success.ONE_TIME_ASSOCIATION_TOKEN_CREATED,
                 tokenId: existingToken._id
             });

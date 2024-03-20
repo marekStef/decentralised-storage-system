@@ -142,7 +142,7 @@ const NewAppCreation = () => {
                         </li>
                     </ol>
                     <div className="w-1/3 self-center mx-auto mb-4">
-                        <QRCodeComponent value={`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/app/api/associate_with_storage_app_holder/${associationId}`} />
+                        <QRCodeComponent value={`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/app/api/associateWithStorageAppHolder/${associationId}`} />
 
                         <button
                             onClick={checkAssociationStatus}
