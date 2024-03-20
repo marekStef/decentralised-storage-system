@@ -21,4 +21,8 @@ router.put('/permissions/approvePermissionRequest', adminController.approvePermi
 
 router.put('/permissions/revokePermission', adminController.revokeApprovedPermission);
 
+// views acccesses
+
+router.get('/views', adminController.getAllViewsAccesses)
+
 module.exports = router;

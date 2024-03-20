@@ -56,6 +56,34 @@ const uploadNewSourceCode = (req, res) => {
     }
 }
 
+const getSourceCode = (req, res) => {
+    const { sourceCodeId } = req.params;
+    const sourceCodeDirectory = path.join(getDirectoryForSourceCodes(), sourceCodeId);
+
+    if (!fs.existsSync(sourceCodeDirectory)) {
+        return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'Source code not found.' });
+    }
+
+    try {
+        const filesInDirectory = fs.readdirSync(sourceCodeDirectory);
+        const sourceCode = filesInDirectory.map(fileName => {
+            const filePath = path.join(sourceCodeDirectory, fileName);
+            const fileContents = fs.readFileSync(filePath, { encoding: 'utf-8' });
+            return {
+                name: fileName,
+                language: 'javascript',
+                code: fileContents
+            };
+        });
+
+        return res.status(httpStatusCodes.OK).json({ sourceCode });
+    } catch (error) {
+        console.error('Failed to read source code files:', error);
+        return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong while retrieving the source code' });
+    }
+};
+
 module.exports = {
-    uploadNewSourceCode
+    uploadNewSourceCode,
+    getSourceCode
 }

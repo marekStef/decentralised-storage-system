@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const {v4: uuidv4} = require("uuid");
@@ -12,6 +13,9 @@ const registerViewInstancesRoutes = require('./src/routes/viewInstancesRoutes');
 
 const app = express();
 app.use(express.json());
+
+app.use(cors({})); // to allow cross origin requests
+
 
 const port = 10000;
 
@@ -43,8 +47,8 @@ const uploadMulterMiddleware = multer({
 });
 
 
-app.use('/', registerTemplatesRoutes(uploadMulterMiddleware))
-app.use('/', registerViewInstancesRoutes());
+app.use('/viewTemplates', registerTemplatesRoutes(uploadMulterMiddleware))
+app.use('/viewInstances', registerViewInstancesRoutes());
 
 const server = app.listen(process.env.VIEW_MANAGER_PORT, () => {
     console.log(`ViewManager listening at http://localhost:${process.env.VIEW_MANAGER_PORT}`);

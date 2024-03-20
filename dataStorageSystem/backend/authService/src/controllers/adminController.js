@@ -4,12 +4,14 @@ const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
 const generalResponseMessages = require('../constants/forApiResponses/general');
 const mongoDbCodes = require('../constants/mongoDbCodes');
-const {generateBadResponse} = require('./helpers/generalHelpers');
+const { generateBadResponse } = require('./helpers/generalHelpers');
 
 const ApplicationSchema = require('../database/models/applicationRelatedModels/ApplicationSchema')
 const OneTimeAssociationToken = require('../database/models/applicationRelatedModels/OneTimeAssociationTokenForApplication');
 const DataAccessPermissionSchema = require('../database/models/dataAccessRelatedModels/DataAccessPermissionSchema');
-const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED} = require('../constants/pagination');
+const ViewAccessSchema = require('../database/models/viewsRelatedModels/ViewAccessSchema');
+
+const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED } = require('../constants/pagination');
 
 const getAllApps = async (req, res) => {
     const BASE = 10;
@@ -73,7 +75,7 @@ const createNewAppConnection = async (req, res) => {
     try {
         console.log(nameDefinedByUser);
         const newApplication = new ApplicationSchema({ nameDefinedByUser });
-        
+
         const savedApplication = await newApplication.save();
 
         res.status(httpStatusCodes.CREATED).json({
@@ -274,7 +276,17 @@ const revokeApprovedPermission = async (req, res) => {
     }
 };
 
-module.exports = { 
+const getAllViewsAccesses = async (req, res) => {
+    try {
+        const viewAccesses = await ViewAccessSchema.find({});
+
+        res.status(httpStatusCodes.OK).json(viewAccesses);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
+module.exports = {
     getAllApps,
     getAppHolderById,
     createNewAppConnection,
@@ -282,5 +294,6 @@ module.exports = {
     getUnapprovedPermissionsRequests,
     getAllPermissionsForGivenApp,
     approvePermissionRequest,
-    revokeApprovedPermission
+    revokeApprovedPermission,
+    getAllViewsAccesses
 };

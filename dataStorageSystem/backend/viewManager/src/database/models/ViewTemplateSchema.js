@@ -10,6 +10,11 @@ const ViewTemplateMetadataSchema = new mongoose.Schema({
 }, {_id: false}); // _id is set to false so that Mongoose does not create an _id for the nested object
 
 const ViewTemplateSchema = new mongoose.Schema({
+	templateName: {
+		type: String,
+		required: true,
+		unique: true
+	},
 	sourceCodeId: { // id for the uploaded code. this is because the uploaded code will be saved directly in the services so the view manager needs to know which code to call
 		type: String,
 		required: true

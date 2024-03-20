@@ -19,9 +19,11 @@ router.delete('/deleteEvent', applicationController.deleteEvent);
 
 router.get('/getAllEventsForGivenAccessToken', applicationController.getAllEventsOfGivenProfile);
 
-router.post('/registerNewViewInstance', applicationController.registerNewViewInstance);
+// views
 
-router.post('/runViewInstance', applicationController.runViewInstace);
+router.post('/views/registerNewViewInstance', applicationController.registerNewViewInstance);
+
+router.post('/views/runViewInstance', applicationController.runViewInstace);
 
 
 module.exports = router;

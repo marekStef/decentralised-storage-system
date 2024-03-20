@@ -638,7 +638,7 @@ const registerNewViewInstance = async (req, res) => {
     let responseFromViewManager = null;
 
     try {
-        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/createNewViewInstance`, {
+        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/viewInstances/createNewViewInstance`, {
             viewTemplateId,
             jwtTokenForPermissionRequestsAndProfiles,
             configuration
@@ -711,7 +711,7 @@ const runViewInstace = async (req, res) => {
 
     let responseFromViewManager = null;
     try {
-        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/runViewInstance`, {
+        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/viewInstances/runViewInstance`, {
             viewInstanceId,
             clientCustomData,
         });
@@ -733,6 +733,8 @@ const runViewInstace = async (req, res) => {
         }
     }
 }
+
+
 
 module.exports = {
     associateAppWithStorageAppHolder,
