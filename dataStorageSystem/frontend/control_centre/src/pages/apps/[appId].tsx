@@ -4,23 +4,7 @@ import '../../app/globals.css'
 
 import { getAppInfo, getPermissionsForApp, grantPermission } from '../../network/networkHelpers';
 import { showError, showSuccess } from '@/helpers/alerts';
-
-const CopyToClipboardText = ({ value, className }) => {
-    const copyToClipboard = async () => {
-      try {
-        await navigator.clipboard.writeText(value);
-        showSuccess('Copied to clipboard!');
-      } catch (err) {
-        showError('Failed to copy:' + err)
-      }
-    };
-  
-    return (
-      <div className={`bg-gray-50 ${className || ''}`}>
-          <code className="bg-gray-100 hover:text-gray-500 text-gray-900 py-2 px-4 rounded break-words w-full cursor-pointer" onClick={copyToClipboard}>{value}</code>
-      </div>
-    );
-  };
+import CopyToClipboardText from '@/components/copyToClipboard/CopyToClipboardText';
 
 function AppPage() {
     const router = useRouter();

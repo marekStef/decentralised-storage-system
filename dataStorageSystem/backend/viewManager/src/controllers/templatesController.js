@@ -5,6 +5,7 @@ const axios = require('axios');
 
 const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
+const ViewInstance = require('../database/models/ViewInstanceSchema');
 const {isAllowedRuntime} = require('../constants/viewsRelated');
 
 const cleanFiles = files => {
@@ -117,10 +118,17 @@ const getTemplate = async (req, res) => {
 
         const executionServerEndpoint = `${process.env.JAVASCRIPT_EXECUTION_SERVICE_URI}/sourceCodes/${template.sourceCodeId}`;
         const response = await axios.get(executionServerEndpoint);
-        
         const sourceCode = response.data.sourceCode;
 
-        return res.status(httpStatusCodes.OK).json({ template, sourceCode });
+        const viewInstances = await ViewInstance.find({ viewTemplate: template._id });
+        const isInUse = viewInstances.length > 0;
+
+        return res.status(httpStatusCodes.OK).json({ 
+            template, 
+            sourceCode,
+            viewInstances,
+            isInUse
+         });
     } catch (error) {
         console.error('Error fetching template or source code:', error);
         if (error.response && error.response.status) {
@@ -130,6 +138,7 @@ const getTemplate = async (req, res) => {
         }
     }
 };
+
 module.exports = {
     createNewViewTemplate,
     deleteViewTemplate,
