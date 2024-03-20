@@ -10,19 +10,38 @@ This component is the only component accessible to apps. All other components of
 
 `Auth Service` has extensive set of endpoints divided based on their intended use.
 
+### Endpoints meant to be used from admin control panel
+
+- **/admin/api/apps** *(GET)*
+- **/admin/api/apps/:appHolderId** *(GET)*
+- **/admin/api/registerNewApp** *(POST)*
+- **/admin/api/generateOneTimeAssociationToken** *(POST)*
+
+#### Permissions
+- **/admin/api/permissions/getUnapprovedPermissionsRequests** *(GET)*
+- **/admin/api/permissions/getUnapprovedPermissionsRequests /:appHolderId** *(GET)*
+- **/admin/api/permissions/approvePermissionRequest** *(PUT)*
+- **/admin/api/permissions/revokePermission** *(PUT)*
+
+```js title="endpoints for admin"
+```
+
+
 ### Endpoints meant to be used by applications themselves
 
-```js title="endpoints for applications"
+```js title="association, registration, permissions"
 const applicationController = require("../../controllers/applicationController");
 
-router.post('/associate_with_storage_app_holder', applicationController.associate_app_with_storage_app_holder);
+router.post('/associate_with_storage_app_holder', applicationController.associateAppWithStorageAppHolder);
 
-router.post('/register_new_profile', applicationController.register_new_profile);
+router.post('/register_new_profile', applicationController.registerNewProfile);
 
 router.get('/checkAccessTokenStatus', applicationController.isAccessTokenForGivenPermissionRequestActive);
 
-router.post('/request_new_permissions', applicationController.request_new_permissions);
+router.post('/request_new_permissions', applicationController.requestNewPermissions);
+```
 
+```js title="events related"
 router.post('/upload_new_events', applicationController.uploadNewEvents);
 
 router.put('/modify_event', applicationController.modifyEvent);
@@ -30,35 +49,19 @@ router.put('/modify_event', applicationController.modifyEvent);
 router.delete('/delete_event', applicationController.deleteEvent);
 
 router.get('/get_all_events_for_given_access_token', applicationController.getAllEventsOfGivenProfile);
+```
 
+```js title="views related"
 router.post('/register_new_view_instance', applicationController.registerNewViewInstance);
 
 router.post('/run_view_instance', applicationController.runViewInstace);
 ```
 
-### Endpoints meant to be used from admin control panel
+:::caution
 
-```js title="endpoints for admin"
-const adminController = require("../../controllers/adminController");
+Registering a new `View Template` needs to be done manually through `View Manager API`.
 
-router.get('/apps', adminController.getAllApps);
-
-router.get('/apps/:appHolderId', adminController.getAppHolderById);
-
-router.post('/register_new_app', adminController.createNewAppConnection);
-
-router.post('/generate_one_time_association_token', adminController.generateOneTimeTokenForAssociatingRealAppWithAppConnection);
-
-// ----- PERMISSIONS
-
-router.get('/permissions/get_unapproved_permissions_requests', adminController.getUnapprovedPermissionsRequests);
-
-router.get('/permissions/get_unapproved_permissions_requests/:appHolderId', adminController.getAllPermissionsForGivenApp);
-
-router.put('/permissions/approve_permission_request', adminController.approvePermissionRequest);
-
-router.put('/permissions/revoke_permission', adminController.revokeApprovedPermission);
-```
+:::
 
 ### Status info routes
 
