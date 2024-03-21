@@ -13,6 +13,31 @@
 					"name": "adminApi",
 					"item": [
 						{
+							"name": "views",
+							"item": [
+								{
+									"name": "get_all_view_accesses",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{AUTH_SERVER_URL}}/admin/api/views/",
+											"host": [
+												"{{AUTH_SERVER_URL}}"
+											],
+											"path": [
+												"admin",
+												"api",
+												"views",
+												""
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
 							"name": "get_one_app_-1",
 							"request": {
 								"method": "GET",
@@ -229,14 +254,15 @@
 											}
 										},
 										"url": {
-											"raw": "{{AUTH_SERVER_URL}}/app/api/register_new_view_instance",
+											"raw": "{{AUTH_SERVER_URL}}/app/api/views/registerNewViewInstance",
 											"host": [
 												"{{AUTH_SERVER_URL}}"
 											],
 											"path": [
 												"app",
 												"api",
-												"register_new_view_instance"
+												"views",
+												"registerNewViewInstance"
 											]
 										}
 									},
@@ -257,14 +283,15 @@
 											}
 										},
 										"url": {
-											"raw": "{{AUTH_SERVER_URL}}/app/api/run_view_instance",
+											"raw": "{{AUTH_SERVER_URL}}/app/api/views/runViewInstance",
 											"host": [
 												"{{AUTH_SERVER_URL}}"
 											],
 											"path": [
 												"app",
 												"api",
-												"run_view_instance"
+												"views",
+												"runViewInstance"
 											]
 										}
 									},
@@ -649,120 +676,176 @@
 			"name": "viewManager",
 			"item": [
 				{
-					"name": "createNewViewTemplate",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files",
-									"type": "file",
-									"src": [
-										"/C:/Users/stefanec/Desktop/bakalarka_/2_managementsystem/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/main.js",
-										"/C:/Users/stefanec/Desktop/bakalarka_/2_managementsystem/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/second.js"
+					"name": "viewTemplates",
+					"item": [
+						{
+							"name": "createNewViewTemplate",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "files",
+											"type": "file",
+											"src": [
+												"/C:/Users/marek/Desktop/bakalarka/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/main.js",
+												"/C:/Users/marek/Desktop/bakalarka/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/second.js"
+											]
+										},
+										{
+											"key": "profiles",
+											"value": "[{\"profile\": \"CalendarPro.com_CalendarEventProfile\", \"read\": true, \"create\": true, \"modify\": false, \"delete\": false}, {\"profile\": \"app2.com/profile2\", \"read\": true, \"create\": true, \"modify\": true, \"delete\": true}]",
+											"type": "text"
+										},
+										{
+											"key": "runtime",
+											"value": "python",
+											"type": "text"
+										},
+										{
+											"key": "configuration",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "templateName",
+											"value": "First Demo Templatess",
+											"type": "text"
+										}
 									]
 								},
-								{
-									"key": "profiles",
-									"value": "[{\"profile\": \"CalendarPro.com_CalendarEventProfile\", \"read\": true, \"create\": true, \"modify\": false, \"delete\": false}, {\"profile\": \"app2.com/profile2\", \"read\": true, \"create\": true, \"modify\": true, \"delete\": true}]",
-									"type": "text"
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/createNewViewTemplate",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewTemplates",
+										"createNewViewTemplate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteViewTemplate",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/1",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewTemplates",
+										"deleteViewTemplate",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getAllViewTemplates",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewTemplates",
+										"templates"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "getTemplate",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates/65fb4e1c54ae8e1876e56164",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewTemplates",
+										"templates",
+										"65fb4e1c54ae8e1876e56164"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "viewInstances",
+					"item": [
+						{
+							"name": "createNewViewInstance",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"viewTemplateId\": \"65f0ad801e769997641425c7\",\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"configuration\": {\r\n        \"from\":\"23.12.2020\",\r\n        \"to\":\"24.12.2026\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
 								},
-								{
-									"key": "runtime",
-									"value": "python",
-									"type": "text"
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewInstances/createNewViewInstance",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewInstances",
+										"createNewViewInstance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "runViewInstance",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"viewInstanceId\": \"65f05d82feeb9705a1b95937\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"this is from client data\"\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
 								},
-								{
-									"key": "configuration",
-									"value": "",
-									"type": "text",
-									"disabled": true
+								"url": {
+									"raw": "{{VIEW_MANAGER_URL}}/viewInstances/runViewInstance",
+									"host": [
+										"{{VIEW_MANAGER_URL}}"
+									],
+									"path": [
+										"viewInstances",
+										"runViewInstance"
+									]
 								}
-							]
-						},
-						"url": {
-							"raw": "{{VIEW_MANAGER_URL}}/createNewViewTemplate",
-							"host": [
-								"{{VIEW_MANAGER_URL}}"
-							],
-							"path": [
-								"createNewViewTemplate"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "deleteViewTemplate",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{VIEW_MANAGER_URL}}/deleteViewTemplate/1",
-							"host": [
-								"{{VIEW_MANAGER_URL}}"
-							],
-							"path": [
-								"deleteViewTemplate",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "createNewViewInstance",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"viewTemplateId\": \"65f0ad801e769997641425c7\",\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZTllY2QxZGU0NzZlZTdiNGEyNzFjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcCIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhaG9qLmNvbSIsImlhdCI6MTcwOTgyOTM0NCwiZXhwIjoxMTE3NzEwOTM0NH0.i-laNiFOuY-u8U_AEi3wkq2Qhuj22gSLkgEfLx4UFhA\",\r\n    \"configuration\": {\r\n        \"from\":\"23.12.2020\",\r\n        \"to\":\"24.12.2026\"\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{VIEW_MANAGER_URL}}/createNewViewInstance",
-							"host": [
-								"{{VIEW_MANAGER_URL}}"
-							],
-							"path": [
-								"createNewViewInstance"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "runViewInstance",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"viewInstanceId\": \"65f05d82feeb9705a1b95937\",\r\n    \"clientCustomData\": {\r\n        \"from\": \"this is from client data\"\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{VIEW_MANAGER_URL}}/runViewInstance",
-							"host": [
-								"{{VIEW_MANAGER_URL}}"
-							],
-							"path": [
-								"runViewInstance"
-							]
-						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
@@ -770,61 +853,108 @@
 			"name": "jsExecutionService",
 			"item": [
 				{
-					"name": "uploadNewSourceCode",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files",
-									"type": "file",
-									"src": [
-										"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49",
-										"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d"
+					"name": "codeRegistration",
+					"item": [
+						{
+							"name": "uploadNewSourceCode",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "filess",
+											"type": "file",
+											"src": [
+												"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49",
+												"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d"
+											],
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
+									"host": [
+										"{{JS_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"uploadNewSourceCode"
 									]
 								}
-							]
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{JS_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
-							"host": [
-								"{{JS_EXECUTION_SERVICE_URL}}"
-							],
-							"path": [
-								"uploadNewSourceCode"
-							]
+						{
+							"name": "getSourceCode",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/3cd89158-9968-44cc-94c6-629c68f551dd",
+									"host": [
+										"{{JS_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"sourceCodes",
+										"3cd89158-9968-44cc-94c6-629c68f551dd"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteSourceCode",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/3cd89158-9968-44cc-94c6-629c68f551dd",
+									"host": [
+										"{{JS_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"sourceCodes",
+										"3cd89158-9968-44cc-94c6-629c68f551dd"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "executeSourceCode",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"parametersForMainEntry\": [{\"marek\": \"hey\"}]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+					"name": "codeExecution",
+					"item": [
+						{
+							"name": "executeSourceCode",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"parametersForMainEntry\": {\"marek\": \"hey\"}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/executeSourceCode/6598ac89-fa10-41b0-b71f-76cd1eb88369",
+									"host": [
+										"{{JS_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"executeSourceCode",
+										"6598ac89-fa10-41b0-b71f-76cd1eb88369"
+									]
 								}
-							}
-						},
-						"url": {
-							"raw": "{{JS_EXECUTION_SERVICE_URL}}/executeSourceCode/6598ac89-fa10-41b0-b71f-76cd1eb88369",
-							"host": [
-								"{{JS_EXECUTION_SERVICE_URL}}"
-							],
-							"path": [
-								"executeSourceCode",
-								"6598ac89-fa10-41b0-b71f-76cd1eb88369"
-							]
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		},
