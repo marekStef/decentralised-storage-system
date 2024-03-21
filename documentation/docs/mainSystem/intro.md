@@ -123,7 +123,7 @@ These components communicate on their own private network created by a docker an
 
 ## Demo Apps
 
-Each demo app is thoroughly described in the module [Apps](./category/apps)
+Each demo app is thoroughly described in the module [Apps](../demoApps/intro)
 
 ### Location Tracker
 `Android app (kotlin, java)`

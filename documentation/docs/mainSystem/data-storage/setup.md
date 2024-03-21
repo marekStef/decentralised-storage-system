@@ -21,7 +21,7 @@ Pri dockeri je potrebne se ujistit, ze v `.env` mame odkomentovane spravne veci:
 MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
 ```
 
-Pro spusteni je vsechno dulezite napsane [zde](../README.md).
+<!-- Pro spusteni je vsechno dulezite napsane [zde](). -->
 
 V pripade, ze chceme manualne dropnout databazi vytvorenou `dataStorage` komponentou, je potrebne nejprve najit dany kontejner:
 
@@ -51,7 +51,7 @@ Database dropped: true
 
 ### Setup a Spusteni Bez Dockeru
 
-Predpokladame, ze uzivatel jiz v ruce drzi url od `MongoDb` databaze. Tu je nutne vlozit do `.env` souboru (ktery se nachazi [zde](./.env)) jaho hodnotu pro klic `MONGO_DB_URI`.
+<!-- Predpokladame, ze uzivatel jiz v ruce drzi url od `MongoDb` databaze. Tu je nutne vlozit do `.env` souboru (ktery se nachazi [zde]()) jaho hodnotu pro klic `MONGO_DB_URI`. -->
 
 Potrebujeme odkomentovat a zakomentovat nasledovne v `.env` souboru:
 
@@ -81,7 +81,7 @@ Pro vyresetovani celej databazi je mozne pouzit skript, ktery se spusti nasledov
 npm run delete_database
 ```
 
-Je **dulezite** poznamenat, ze pro spravne fungovani systemu je ted nutno provest inicializaci `authStorage` pomoci skriptu v danem `authStorage` projektu (vice informaci o tom, co je potrebne udelat [zde](../authService/README.md#inicializace)).
+<!-- Je **dulezite** poznamenat, ze pro spravne fungovani systemu je ted nutno provest inicializaci `authStorage` pomoci skriptu v danem `authStorage` projektu (vice informaci o tom, co je potrebne udelat [zde]()). -->
 
 ##### Spusteni
 
