@@ -14,7 +14,7 @@ Therefore, it's called `View Access` in `Auth Service`.
 
 ## Registering New View Instance
 
-- **/app/api/registerNewViewInstance** *(POST)*
+- **    
 
 ```js title=""
 ```
