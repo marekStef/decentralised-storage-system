@@ -1,0 +1,16 @@
+image: node:latest
+
+pages:
+    cache:
+        paths:
+            - documentation/node_modules
+    script:
+        - cd documentation
+        - npm install 
+        - npm run build
+        - mv build ../public
+    artifacts:
+        paths:
+            - public
+    only:
+        - master
