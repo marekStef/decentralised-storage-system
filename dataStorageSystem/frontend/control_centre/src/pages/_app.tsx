@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import '../css/globals.css'
+
 function MyApp({ Component, pageProps }) {
     const [isAppPrepared, setIsAppPrepared] = useState(false);
 

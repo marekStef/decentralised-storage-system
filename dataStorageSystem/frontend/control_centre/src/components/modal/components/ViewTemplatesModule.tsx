@@ -41,36 +41,45 @@ const ViewTemplatesModule = () => {
             })
     }, []);
 
-    if (loading) return <div>Loading...</div>;
-
     return (
         <div className="space-y-4 ">
-            {templates.map((template) => (
-                
-                <div key={template._id} className="p-4 shadow-lg rounded-lg bg-gray-900 hover:shadow-2xl">
-                    <Link href={`/viewTemplates/${template._id}`}>
-                        <h2 className="text-lg font-semibold">{template.templateName} <span className="text-sm text-gray-500">{new Date(template.createdDate).toLocaleString()}</span></h2>
-                        <p className="text-md text-gray-300">
-                            <b>Source Code ID: </b>{template.sourceCodeId}</p>
-                        <p className="text-md text-gray-300"><b>Runtime: </b>{template.metadata.runtime}</p>
-                            <h3 className="text-md text-gray-300"><b>Profiles: </b></h3>
-                            <ul className='list-disc ml-6'>
-                                {template.profiles.map((profile) => (
-                                    <li key={profile._id} className="text-sm">
-                                        <p>{profile.profile}</p>
-                                        {/* <p>Read: {profile.read ? 'Yes' : 'No'}</p>
+            <h1 className='text-lg text-center text-gray-400'>Existing Templates</h1>
+            <hr className="h-px mt-1 mb-6 bg-gray-200 border-0 dark:bg-gray-600" />
+
+            {loading ? (
+                <div className='text-gray-700'>Loading...</div>
+            ) : (
+                <>
+                    {templates.map((template) => (
+
+                        <div key={template._id} className="p-4 shadow-lg rounded-lg bg-gray-900 hover:shadow-2xl">
+                            <Link href={`/viewTemplates/${template._id}`}>
+                                <h2 className="text-lg font-semibold">{template.templateName} <span className="text-sm text-gray-500">{new Date(template.createdDate).toLocaleString()}</span></h2>
+                                <p className="text-md text-gray-300">
+                                    <b>Source Code ID: </b>{template.sourceCodeId}</p>
+                                <p className="text-md text-gray-300"><b>Runtime: </b>{template.metadata.runtime}</p>
+                                <h3 className="text-md text-gray-300"><b>Profiles: </b></h3>
+                                <ul className='list-disc ml-6'>
+                                    {template.profiles.map((profile) => (
+                                        <li key={profile._id} className="text-sm">
+                                            <p>{profile.profile}</p>
+                                            {/* <p>Read: {profile.read ? 'Yes' : 'No'}</p>
                                         <p>Create: {profile.create ? 'Yes' : 'No'}</p>
                                         <p>Modify: {profile.modify ? 'Yes' : 'No'}</p>
                                         <p>Delete: {profile.delete ? 'Yes' : 'No'}</p> */}
-                                    </li>
-                                ))}
-                            </ul>
-                            
-                    </Link>
-                    
-                    
-                </div>
-            ))}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            </Link>
+
+
+                        </div>
+                    ))}
+                </>
+
+            )}
+
         </div>
     );
 };

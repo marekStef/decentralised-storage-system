@@ -81,6 +81,9 @@ const NewAppCreation = () => {
 
     return (
         <div className="w-full h-full overflow-auto">
+            <h1 className='text-lg text-center text-gray-400'>New App Setup</h1>
+            <hr className="h-px mt-1 mb-6 bg-gray-200 border-0 dark:bg-gray-600" />
+
             {!associationId ? (
                 <div className="flex flex-col space-y-4 max-w-xs mx-auto items-center">
                     <input

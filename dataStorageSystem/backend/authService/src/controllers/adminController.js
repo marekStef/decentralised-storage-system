@@ -279,7 +279,6 @@ const revokeApprovedPermission = async (req, res) => {
 const getAllViewsAccesses = async (req, res) => {
     try {
         const viewAccesses = await ViewAccessSchema.find({});
-
         res.status(httpStatusCodes.OK).json(viewAccesses);
     } catch (error) {
         res.status(500).send(error.message);
@@ -295,5 +294,5 @@ module.exports = {
     getAllPermissionsForGivenApp,
     approvePermissionRequest,
     revokeApprovedPermission,
-    getAllViewsAccesses
+    getAllViewsAccesses,
 };

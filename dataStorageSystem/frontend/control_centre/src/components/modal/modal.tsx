@@ -9,6 +9,7 @@ import QRCodeComponent from "./components/QrCode";
 import NewAppCreation from "./components/NewAppCreation";
 
 import ViewTemplatesModule from "./components/ViewTemplatesModule";
+import MultipartForm from "./components/NewViewTemplateModule";
 
 type SettingsModalProps = {
     isOpen: boolean;
@@ -16,11 +17,11 @@ type SettingsModalProps = {
 };
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const [selected, setSelected] = useState<string>("viewTemplates");
+    const [selected, setSelected] = useState<string>("newTemplate");
 
 
     const buttonClass = (buttonId: string) =>
-        `text-left py-2 px-2 font-semibold rounded-lg mx-4 my-2 text-3xs text-white flex items-center ${buttonId === selected ? "bg-gray-600" : "text-gray-700"
+        `text-left py-2 px-2 font-semibold rounded-lg mx-4 mr-0 my-2 text-3xs text-white flex items-center ${buttonId === selected ? "bg-gray-600" : "text-gray-700"
         }`;
 
     useEffect(() => {
@@ -45,7 +46,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
                 <div className="flex w-full h-full">
-                    <div className="basis-1/4 ">
+                    <div className="basis-2/6">
                         <div className="flex flex-col w-full">
 
                             <button onClick={onClose} className="flex" >
@@ -62,6 +63,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                     className="w-5 mr-2"
                                 />
                                 New App
+                            </button>
+                            <button
+                                className={buttonClass("newTemplate")}
+                                onClick={() => setSelected("newTemplate")}
+                            >
+                                <Image
+                                    src={permissionRequestsIcon}
+                                    alt="My Icon"
+                                    className="w-5 mr-2"
+                                />
+                                New Template
                             </button>
                             <button
                                 className={buttonClass("viewTemplates")}
@@ -88,22 +100,29 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         </div>
                     </div>
                     <div className="w-full mt-2 overflow-auto p-4">
-                            {(() => {
-                                switch (selected) {
-                                    case "new_app":
-                                        return <NewAppCreation />;
-                                    case "viewTemplates":
-                                        return <ViewTemplatesModule />
-                                    case "settings":
-                                        return <p>Settings (todo)</p>;
-                                    default:
-                                        return (
-                                            <p>
-                                                Select a button to display content
-                                            </p>
-                                        );
-                                }
-                            })()}
+                        {(() => {
+                            switch (selected) {
+                                case "new_app":
+                                    return <NewAppCreation />;
+                                case "newTemplate":
+                                    return <MultipartForm />
+                                case "viewTemplates":
+                                    return <ViewTemplatesModule />
+                                case "settings":
+                                    return (
+                                        <>
+                                            <h1 className='text-lg text-center text-gray-400'>Settings (todo)</h1>
+                                            <hr className="h-px mt-1 mb-6 bg-gray-200 border-0 dark:bg-gray-600" />
+                                        </>
+                                    )
+                                default:
+                                    return (
+                                        <p>
+                                            Select a button to display content
+                                        </p>
+                                    );
+                            }
+                        })()}
                     </div>
                 </div>
             </div>

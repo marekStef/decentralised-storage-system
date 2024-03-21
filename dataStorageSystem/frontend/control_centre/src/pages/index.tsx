@@ -23,7 +23,8 @@ const AppsPage = () => {
             .then((res) => {
                 const newApps = res.data.data;
                 setApps((prevApps) => [...prevApps, ...newApps]);
-                setHasMore(newApps.length > 0);
+                // setHasMore(newApps.length > 0);
+                setHasMore(res.data.currentPage < res.data.totalPages - 1);
                 setLoading(false);
             })
             .catch((error) => {
