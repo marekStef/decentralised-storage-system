@@ -83,7 +83,12 @@ const getSourceCode = (req, res) => {
     }
 };
 
+const deleteSourceCode = (req, res) => {
+    return res.status(500).json({message: 'not implemented'});
+}
+
 module.exports = {
     uploadNewSourceCode,
-    getSourceCode
+    getSourceCode,
+    deleteSourceCode
 }

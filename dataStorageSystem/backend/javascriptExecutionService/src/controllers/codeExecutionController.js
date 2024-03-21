@@ -57,9 +57,9 @@ const executeSourceCode = async (req, res) => {
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'No source code id specified' });
     }
 
-    // Check if parametersForMainEntry is of type array
-    if (!Array.isArray(parametersForMainEntry)) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'parametersForMainEntry must be of type array' });
+    // Check if parametersForMainEntry is of type object
+    if (typeof parametersForMainEntry !== 'object' || parametersForMainEntry === null) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'parametersForMainEntry must be of type object' });
     }
 
     const pathToSourceCode = getPathToGivenSourceCodeId(sourceCodeId);
@@ -86,7 +86,7 @@ const executeSourceCode = async (req, res) => {
 
     try {
         console.log('Executing code with parameters:', req.body);
-        const result = await dynamicModule(...parametersForMainEntry);
+        const result = await dynamicModule(parametersForMainEntry);
         res.status(httpStatusCodes.OK).json({message: 'Code execution result', result });
     }
     catch (err) {
