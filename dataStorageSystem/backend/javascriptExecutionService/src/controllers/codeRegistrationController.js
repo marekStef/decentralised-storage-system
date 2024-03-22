@@ -84,7 +84,21 @@ const getSourceCode = (req, res) => {
 };
 
 const deleteSourceCode = (req, res) => {
-    return res.status(500).json({message: 'not implemented'});
+    const { sourceCodeId } = req.params;
+    
+    const sourceCodeDirectory = path.join(getDirectoryForSourceCodes(), sourceCodeId);
+
+    if (!fs.existsSync(sourceCodeDirectory)) {
+        return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'Source code not found.' });
+    }
+
+    try {
+        fs.rmdirSync(sourceCodeDirectory, { recursive: true });
+        return res.status(httpStatusCodes.OK).json({ message: 'Source code deleted successfully.' });
+    } catch (error) {
+        console.error('Failed to delete source code:', error);
+        return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during the deletion process.' });
+    }
 }
 
 module.exports = {
