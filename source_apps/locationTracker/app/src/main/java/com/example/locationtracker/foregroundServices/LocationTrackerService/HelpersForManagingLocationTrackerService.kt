@@ -30,8 +30,7 @@ fun stopLocationGatheringServiceIfRunning(
         null
     )
 
-    showAlertDialogWithOkButton(
-        applicationContext,
+    viewModel.showAlertDialogWithOkButton(
         "Location Tracker Service",
         "Location Tracking Service has been stopped."
     )

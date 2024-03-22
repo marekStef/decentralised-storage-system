@@ -270,10 +270,6 @@ class LocationTrackerService : Service() {
             if (isActiveTimeNow()) {
                 logLocation()
             }
-            // regardless of the active time, check whether the location data should be synced
-            if (!wasDataSyncedInTheLast24Hours() && isPhoneConnectedToTheCorrectNetwork()) {
-                startSynchronisation()
-            }
             else {
                 updateNotification(
                     applicationContext,
@@ -283,6 +279,12 @@ class LocationTrackerService : Service() {
                     "Currently not active. Active hours: ${locationGatheringStartTime} - ${locationGatheringEndTime}"
                 )
             }
+
+            // regardless of the active time, check whether the location data should be synced
+            if (!wasDataSyncedInTheLast24Hours() && isPhoneConnectedToTheCorrectNetwork()) {
+                startSynchronisation()
+            }
+
             // Post the Runnable again with a delay
             handler.postDelayed(this, 5000)
         }
