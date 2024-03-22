@@ -157,7 +157,8 @@ class NetworkManager {
 
         const data = {
             jwtTokenForPermissionRequestsAndProfiles,
-            permissionsRequest: appConstants.permissonsObjectForCalendarEventPermissionRequest
+            permissionsRequest: appConstants.permissonsObjectForCalendarEventPermissionRequest,
+            optionalMessage: "This permission will allow this app to create, modify and see events"
         };
     
         return new Promise((res, rej) => {

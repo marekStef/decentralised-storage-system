@@ -23,9 +23,12 @@ The app needs to hit this endpoint: **/app/api/requestNewPermission** *(POST)* w
         "create": true,
         "modify": true,
         "delete": true
-    }
+    },
+    "optionalMessage": "This is optional message for the permission from the app"
 }
 ```
+
+Optional message can be left out. This is just an opportunity for the app to state its reason behind this permission request.
 
 There are multiple possible responses:
 
@@ -100,6 +103,7 @@ The response is the following:
                     "__v": 0,
                     "nameDefinedByApp": "ahoj.com"
                 },
+                "optionalMessage": "This is optional message for the permission from the app",
                 "permission": {
                     "profile": "ahoj.com/first_profile",
                     "read": true,
@@ -129,6 +133,7 @@ The response is the following:
                     "__v": 0,
                     "nameDefinedByApp": "ahoj.com"
                 },
+                "optionalMessage": "This is optional message for the permission from the app",
                 "permission": {
                     "profile": "application.com/first_profile",
                     "read": true,
@@ -192,6 +197,7 @@ For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d
             "revokedDate": null,
             "expirationDate": null,
             "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmODVlNmU3MmQzY2I1YTE0OGE5NzFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0xOFQxNTozMTo1OC4xMTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwNzc1OTE4LCJleHAiOjExMTc4MDU1OTE4fQ.YxSUEYNCVRRRT-h7bmKrEULWyXgimd8W9-zFSLINknI",
+            "optionalMessage": "This is optional message for the permission from the app",
             "__v": 0
         },
         {
@@ -221,6 +227,7 @@ For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d
             "revokedDate": null,
             "expirationDate": null,
             "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWY5YzhmOWI3M2FlNDEzNDQzNjFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0yMFQxNDo1OToyMC42OTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwOTQ2NzYwLCJleHAiOjExMTc4MjI2NzYwfQ.yHg2A8plYpxhusRTqTFXwmhNj3sz0722mB5pRJCKyqY",
+            "optionalMessage": "This is optional message for the permission from the app",
             "__v": 0
         }
     ]
@@ -264,6 +271,7 @@ And there are multiple responses types:
         "revokedDate": null,
         "expirationDate": null,
         "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjVmYWY5YzhmOWI3M2FlNDEzNDQzNjFmIiwiYXBwSWQiOiI2NWY4NWQ4ZjcyZDNjYjVhMTQ4YTk2ZjYiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhaG9qLmNvbS9maXJzdF9wcm9maWxlIiwicmVhZCI6dHJ1ZSwiY3JlYXRlIjp0cnVlLCJtb2RpZnkiOnRydWUsImRlbGV0ZSI6dHJ1ZX0sImNyZWF0ZWREYXRlIjoiMjAyNC0wMy0yMFQxNDo1OToyMC42OTVaIiwiYXBwcm92ZWREYXRlIjpudWxsLCJleHBpcmF0aW9uRGF0ZSI6bnVsbCwiaWF0IjoxNzEwOTQ2NzYwLCJleHAiOjExMTc4MjI2NzYwfQ.yHg2A8plYpxhusRTqTFXwmhNj3sz0722mB5pRJCKyqY",
+        "optionalMessage": "This is optional message for the permission from the app",
         "__v": 0
     }
 }

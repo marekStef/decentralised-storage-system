@@ -208,7 +208,7 @@ const registerNewProfile = async (req, res) => {
 };
 
 const requestNewPermission = async (req, res) => {
-    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest } = req.body;
+    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest, optionalMessage } = req.body;
 
     if (!jwtTokenForPermissionRequestsAndProfiles)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JWT_TOKEN_REQUIRED);
@@ -241,6 +241,7 @@ const requestNewPermission = async (req, res) => {
                 delete: permissionsRequest.delete || false
             },
             createdDate: new Date(),
+            optionalMessage: optionalMessage || "-"
         });
 
         await newDataAccesToken.save();

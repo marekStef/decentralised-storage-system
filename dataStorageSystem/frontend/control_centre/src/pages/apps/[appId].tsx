@@ -151,7 +151,15 @@ function AppPage() {
                                             {permission.approvedDate ? new Date(permission.approvedDate).toLocaleString() : 'N/A'}
                                         </dd>
                                     </div>
+
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                        <dt className="text-sm font-medium text-gray-500">Optional Message</dt>
+                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {permission.optionalMessage || "-"}
+                                        </dd>
+                                    </div>
+
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Active</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             {permission.isActive ? 'Yes' : 'No'}
@@ -164,13 +172,13 @@ function AppPage() {
                                                 </button>
                                             )}</dd>
                                     </div>
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Expiration Date</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             {permission.expirationDate ? new Date(permission.expirationDate).toLocaleString() : 'N/A'}
                                         </dd>
                                     </div>
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Access Token</dt>
                                         {/* <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">{permission.accessToken}</dd> */}
                                         <CopyToClipboardText value={permission.accessToken} className="sm:col-span-2 text-sm" />

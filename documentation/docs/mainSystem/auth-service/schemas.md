@@ -76,6 +76,9 @@ That's why `/generateOneTimeAssociationToken` endpoint needs to be hit to obtain
 #### DataAccessPermissionSchema
 
 ```js title="DataAccessPermissionSchema.js"
+const mongoose = require('mongoose');
+const EventPermissionSchema = require('./EventPermissionSchema')
+
 const DataAccessPermissionSchema = new mongoose.Schema({
   app: {
     type: mongoose.Schema.Types.ObjectId,
@@ -91,6 +94,10 @@ const DataAccessPermissionSchema = new mongoose.Schema({
   approvedDate: {
     type: Date,
     default: null
+  },
+  optionalMessage: {
+    type: String,
+    default: "-",
   },
   isActive: { // whether the token is still good to use ( can be revoked from the admin user interface )
     type: Boolean,
@@ -109,6 +116,11 @@ const DataAccessPermissionSchema = new mongoose.Schema({
     default: null
   }
 });
+
+const TokenSchema = mongoose.model('Token', DataAccessPermissionSchema);
+
+module.exports = TokenSchema;
+
 ```
 
 :::caution
