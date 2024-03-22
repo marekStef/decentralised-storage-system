@@ -22,6 +22,8 @@ const {validateJsonSchema, isValidJSON} = require('./helpers/jsonSchemaValidatio
 const { compareObjects } = require('./helpers/hashing');
 const authServiceSpecificCodes = require('../constants/authServiceSpecificCodes');
 
+const { generateTokenForViewAccess, decodeTokenForViewAccess } = require('./helpers/viewAccessHelpers');
+
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
 const associateAppWithStorageAppHolder = async (req, res) => {
@@ -603,18 +605,6 @@ const checkWhetherAppWithGivenIdExists = async (appId) => {
     }
 }
 
-const generateTokenForViewAccess = (viewInstanceId, appId, authServiceViewAccessId) => {
-    return generateJwtToken({
-        viewInstanceId,
-        appId,
-        authServiceViewAccessId
-    })
-}
-
-const decodeTokenForViewAccess = (token) => {
-    return decodeJwtToken(token);
-}
-
 const registerNewViewInstance = async (req, res) => {
     const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
@@ -669,7 +659,12 @@ const registerNewViewInstance = async (req, res) => {
         });
     
         await viewAccess.save();
-        return res.status(httpStatusCodes.CREATED).json({ viewAccessToken: generateTokenForViewAccess(viewInstanceId, appId, viewAccess._id), message: 'New View Instance registered successfully.' });
+
+        const viewAccessToken = generateTokenForViewAccess(viewInstanceId, appId, viewAccess._id);
+
+        await ViewAccessSchema.findByIdAndUpdate(viewAccess._id, { $set: { viewAccessToken } });
+
+        return res.status(httpStatusCodes.CREATED).json({ viewAccessToken, message: 'New View Instance registered successfully.' });
     }
     catch (err) {
         console.log(err);
@@ -733,8 +728,6 @@ const runViewInstace = async (req, res) => {
         }
     }
 }
-
-
 
 module.exports = {
     associateAppWithStorageAppHolder,

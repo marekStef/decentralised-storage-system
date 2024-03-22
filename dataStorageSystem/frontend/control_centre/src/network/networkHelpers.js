@@ -61,7 +61,7 @@ export function getPermissionsForApp(appHolderId) {
     return new Promise((res, rej) => {
         axios
             .get(
-                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/getUnapprovedPermissionsRequests/${appHolderId}`
+                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/getPermissionsRequestsForGivenApp/${appHolderId}`
             )
             .then((result) => {
                 if (result.data)
@@ -97,6 +97,21 @@ export function grantPermission(permissionId) {
 }
 
 // views 
+
+export function getViewAccessesForGivenApp(appHolderId) {
+    return new Promise((res, rej) => {
+        axios
+            .get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps/${appHolderId}/views`)
+            .then((result) => {
+                console.log(result);
+                res(result.data.viewAccesses);
+            })
+            .catch((err) => {
+                rej("Could not fetch view accesses from auth service");
+                console.log(err);
+            });
+    })
+}
 
 export function getAllViewTemplates() {
     return new Promise((res, rej) => {

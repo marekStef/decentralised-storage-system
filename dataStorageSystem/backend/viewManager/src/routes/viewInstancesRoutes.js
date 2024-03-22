@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { createNewViewInstance, runViewInstance } = require('../controllers/viewInstancesController');
+const { createNewViewInstance, runViewInstance, getViewInstanceDetails } = require('../controllers/viewInstancesController');
 
 const registerRoutes = () => {
-    router.post('/createNewViewInstance', createNewViewInstance);
-    router.post('/runViewInstance', runViewInstance);
+    router.post('/viewInstances/createNewViewInstance', createNewViewInstance);
+
+    router.post('/viewInstances/runViewInstance', runViewInstance);
+    
+    router.get('/viewInstances/:viewInstanceId', getViewInstanceDetails);
 
     return router;
 }

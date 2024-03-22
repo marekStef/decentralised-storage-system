@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
@@ -12,6 +13,8 @@ const DataAccessPermissionSchema = require('../database/models/dataAccessRelated
 const ViewAccessSchema = require('../database/models/viewsRelatedModels/ViewAccessSchema');
 
 const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED } = require('../constants/pagination');
+
+const { generateTokenForViewAccess, decodeTokenForViewAccess } = require('./helpers/viewAccessHelpers');
 
 const getAllApps = async (req, res) => {
     const BASE = 10;
@@ -285,6 +288,40 @@ const getAllViewsAccesses = async (req, res) => {
     }
 };
 
+const getAllViewsAccessesForGivenApp = async (req, res) => {
+    const { appHolderId } = req.params;
+
+    try {
+        let viewAccesses = await ViewAccessSchema.find({ app: appHolderId });
+
+        const viewAccessPromises = viewAccesses.map(async viewAccess => {
+            const responseFromViewManager = await axios.get(`${process.env.VIEW_MANAGER_URL}/viewInstances/${viewAccess.viewInstanceId}`);
+
+            if (responseFromViewManager.status !== httpStatusCodes.OK) {
+                throw new Error(`Unexpected response status: ${responseFromViewManager.status}`); // to break out of the Promise.all
+            }
+
+            const viewAccessToken = generateTokenForViewAccess(viewAccess.viewInstanceId, appHolderId, viewAccess._id)
+
+            return {
+                viewAccessId: viewAccess._id.toString(),
+                viewAccessToken,
+                viewInstanceId: viewAccess.viewInstanceId,
+                createdDate: viewAccess.createdDate,
+                viewInstance: responseFromViewManager.data
+            };
+        });
+
+
+        const enhancedViewAccesses = await Promise.all(viewAccessPromises); // waiting for all promises to be resolved
+
+        res.status(httpStatusCodes.OK).json({ viewAccesses: enhancedViewAccesses });
+    } catch (error) {
+        console.error('Error fetching view accesses:', error.message);
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+    }
+}
+
 module.exports = {
     getAllApps,
     getAppHolderById,
@@ -295,4 +332,5 @@ module.exports = {
     approvePermissionRequest,
     revokeApprovedPermission,
     getAllViewsAccesses,
+    getAllViewsAccessesForGivenApp
 };

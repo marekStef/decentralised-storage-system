@@ -48,7 +48,7 @@ const uploadMulterMiddleware = multer({
 
 
 app.use('/viewTemplates', registerTemplatesRoutes(uploadMulterMiddleware))
-app.use('/viewInstances', registerViewInstancesRoutes());
+app.use('/', registerViewInstancesRoutes());
 
 const server = app.listen(process.env.VIEW_MANAGER_PORT, () => {
     console.log(`ViewManager listening at http://localhost:${process.env.VIEW_MANAGER_PORT}`);

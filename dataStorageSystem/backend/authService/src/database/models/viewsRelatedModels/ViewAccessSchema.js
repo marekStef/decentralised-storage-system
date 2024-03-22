@@ -9,6 +9,9 @@ const ViewAccessSchema = new mongoose.Schema({
   viewInstanceId: {
     type: String
   },
+  viewAccessToken: {
+    type: String
+  },
   createdDate: {
     type: Date,
     required: true,

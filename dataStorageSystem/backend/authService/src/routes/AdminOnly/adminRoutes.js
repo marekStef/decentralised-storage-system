@@ -15,7 +15,7 @@ router.post('/generateOneTimeAssociationToken', adminController.generateOneTimeT
 
 router.get('/permissions/getUnapprovedPermissionsRequests', adminController.getUnapprovedPermissionsRequests);
 
-router.get('/permissions/getUnapprovedPermissionsRequests/:appHolderId', adminController.getAllPermissionsForGivenApp);
+router.get('/permissions/getPermissionsRequestsForGivenApp/:appHolderId', adminController.getAllPermissionsForGivenApp);
 
 router.put('/permissions/approvePermissionRequest', adminController.approvePermissionRequest);
 
@@ -23,6 +23,8 @@ router.put('/permissions/revokePermission', adminController.revokeApprovedPermis
 
 // views acccesses
 
-router.get('/views', adminController.getAllViewsAccesses)
+router.get('/views', adminController.getAllViewsAccesses);
+
+router.get('/apps/:appHolderId/views', adminController.getAllViewsAccessesForGivenApp);
 
 module.exports = router;

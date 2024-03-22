@@ -182,7 +182,21 @@ const runViewInstance = async (req, res) => {
     }
 }
 
+const getViewInstanceDetails = async (req, res) => {
+    const { viewInstanceId } = req.params;
+
+    try {
+        let viewInstance = await ViewInstance.findById(viewInstanceId)
+            .populate('viewTemplate')
+            .exec();
+
+        res.status(httpStatusCodes.OK).json(viewInstance);
+    } catch (error) {
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
+    }
+}
 module.exports = {
     createNewViewInstance,
-    runViewInstance
+    runViewInstance,
+    getViewInstanceDetails
 }
