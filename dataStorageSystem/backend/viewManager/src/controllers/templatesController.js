@@ -72,7 +72,7 @@ const createNewViewTemplate = async (req, res) => {
 
             await newViewTemplate.save(); // Save the new record to the database
 
-            res.status(httpStatusCodes.CREATED).send({sourceCodeId: sourceCodeId, viewTemplateId: newViewTemplate._id });
+            res.status(httpStatusCodes.CREATED).send({sourceCodeId: sourceCodeId, viewTemplateId: newViewTemplate._id, message: 'View Template was created' });
         } else {
             // If something went wrong, forward the response message
             res.status(response.status).send({message: response.data.message});
@@ -96,7 +96,7 @@ const deleteViewTemplate = (req, res) => {
 
 const getAllTemplates = async (req, res) => {
     try {
-        const viewTemplates = await ViewTemplate.find({});
+        const viewTemplates = await ViewTemplate.find({}).sort({createdDate: -1}); //sort in descending order
 
         res.status(httpStatusCodes.OK).json({viewTemplates});
     } catch (error) {

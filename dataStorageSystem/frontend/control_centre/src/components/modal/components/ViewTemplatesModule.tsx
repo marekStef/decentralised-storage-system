@@ -43,12 +43,10 @@ const ViewTemplatesModule = () => {
 
     return (
         <div className="space-y-4 ">
-            <h1 className='text-lg text-center text-gray-400'>Existing Templates</h1>
-            <hr className="h-px mt-1 mb-6 bg-gray-200 border-0 dark:bg-gray-600" />
+            <h1 className='text-lg text-center text-gray-500'>Existing Templates</h1>
+            <hr className="h-px my-6 bg-gray-700 border-0 w-full" />
 
-            {loading ? (
-                <div className='text-gray-700'>Loading...</div>
-            ) : (
+            {!loading && (
                 <>
                     {templates.map((template) => (
 
