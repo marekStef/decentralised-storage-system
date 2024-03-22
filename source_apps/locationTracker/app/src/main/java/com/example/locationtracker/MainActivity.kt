@@ -1,6 +1,7 @@
 package com.example.locationtracker
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -55,6 +56,17 @@ class MainActivity : ComponentActivity() {
     private lateinit var dataStorageRegistrationViewModel: DataStorageRegistrationViewModel
 
     private lateinit var createDocumentLauncher: ActivityResultLauncher<String>
+
+    // The showDialog function is now moved to MainActivity
+    private fun showAlertDialogWithOkButton(title: String, message: String) {
+        AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("OK") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     private val viewModelFactory = object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -132,6 +144,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun registerNotificationObservers() {
+        mainViewModel.alertDialogRequest.observe(this) { dialogInfo ->
+            dialogInfo?.let {
+                showAlertDialogWithOkButton(it.first, it.second)
+                mainViewModel.resetShowAlertDialog()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestPostNotificationsPermission(this)
@@ -145,6 +166,7 @@ class MainActivity : ComponentActivity() {
         requestBatteryOptimisationPermission()
 
         registerReceivers()
+        registerNotificationObservers()
 
         initCreateDocumentLauncher()
 

@@ -1,6 +1,5 @@
 package com.example.locationtracker.viewModel
 
-import android.app.AlertDialog
 import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
@@ -202,14 +201,20 @@ class MainViewModel(private val application: Application, private val dbManager:
         navController.navigate(ScreensNames.REGISTRATION_SCREEN)
     }
 
+    private val _alertDialogRequest = MutableLiveData<Pair<String, String>?>(null)
+    val alertDialogRequest: LiveData<Pair<String, String>?> = _alertDialogRequest
+
+    fun requestShowAlertDialog(title: String, message: String) {
+        _alertDialogRequest.value = Pair(title, message)
+    }
+
+    fun resetShowAlertDialog() {
+        _alertDialogRequest.value = null
+    }
+
+
     fun showAlertDialogWithOkButton(title: String, message: String) {
-        AlertDialog.Builder(application)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        requestShowAlertDialog(title, message)
     }
 
     val syncManager = CentralizedSyncManager.getInstance(application)
