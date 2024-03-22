@@ -8,7 +8,6 @@ const ApplicationSchema = new mongoose.Schema({
   },
   nameDefinedByApp: { // this is the main name which will be referenced in profiles and events
     type: String,
-    unique: true,
     trim: true,
     index: true,
     sparse: true // so that there can be multiple itemss with nameDefinedByApp set to null

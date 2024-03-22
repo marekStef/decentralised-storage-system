@@ -198,6 +198,67 @@ class NetworkManager {
         }) 
     }
 
+    public async createNewViewInstance(viewTemplateId: string): Promise<any> {
+        const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles();
+
+        return new Promise(async (res, rej) => {
+            if (jwtTokenForPermissionRequestsAndProfiles == null)
+                return rej({ message: "Your app does not have token saved for this operation" });
+
+            const data = {
+                jwtTokenForPermissionRequestsAndProfiles,
+                viewTemplateId,
+                configuration: {} // nothing in configuration at the moment
+            };
+
+            this.post(networkRoutes.CREATE_NEW_VIEW_INSTANCE, data)
+                .then(response => {
+                    if (response.status === networkStatusCodes.CREATED) {
+                        console.log('Success:', response);
+                        // res({viewInstanceToken: response.viewInstanceToken, message: response.message });
+                        res(response)
+                    } else {
+                        console.error('Failure:', response);
+                        rej({ message: response.message || 'something went wrong'} );
+                    }
+                })
+                .catch(error => {
+                    console.error('error:', error);
+                    rej({messae: error.message || 'Network error during new profile creation'});
+                });
+        })
+    }
+
+    public async executeViewInstance(clientCustomData = {}): Promise<any> {
+        const viewInstanceToken = persistenceManager.getViewInstanceToken();
+
+        return new Promise(async (res, rej) => {
+            if (viewInstanceToken == null)
+                return rej({ message: "Your app does not have token saved for executing remote view instance" });
+
+            const data = {
+                viewAccessToken: viewInstanceToken,
+                clientCustomData,
+            };
+
+            this.post(networkRoutes.RUN_VIEW_INSTANCE, data)
+                .then(response => {
+                    if (response.status === networkStatusCodes.OK) {
+                        console.log('Success:', response);
+                        // res({viewInstanceToken: response.viewInstanceToken, message: response.message });
+                        res(response)
+                    } else {
+                        console.error('Failure:', response);
+                        rej({ message: response.message || 'View Instance was not run'} );
+                    }
+                })
+                .catch(error => {
+                    console.error('error:', error);
+                    rej({messae: error.message || 'Network error during view instance execution'});
+                });
+        })
+    }
+
     public async createNewEvent(event: Event): Promise<any> {
         console.log('creating new event');
         return new Promise(async (res, rej) => {

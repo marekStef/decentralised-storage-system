@@ -68,10 +68,10 @@ const associateAppWithStorageAppHolder = async (req, res) => {
         }
 
         // Before updating appHolder, check if nameDefinedByApp is already in use
-        const existingAppWithSameName = await ApplicationSchema.findOne({nameDefinedByApp});
-        if (existingAppWithSameName && existingAppWithSameName._id.toString() !== appHolder._id.toString()) {
-            return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
-        }
+        // const existingAppWithSameName = await ApplicationSchema.findOne({nameDefinedByApp});
+        // if (existingAppWithSameName && existingAppWithSameName._id.toString() !== appHolder._id.toString()) {
+        //     return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
+        // }
 
         // jwtTokenForPermissionRequestsAndProfiles
         const jwtPayload = {
@@ -97,9 +97,9 @@ const associateAppWithStorageAppHolder = async (req, res) => {
         });
 
     } catch (error) {
-        if (error.code === mongoDbCodes.DUPLICATE_ERROR) {
-            return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
-        }
+        // if (error.code === mongoDbCodes.DUPLICATE_ERROR) {
+        //     return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
+        // }
 
         console.error('Error associating app with storage app holder:', error);
         generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
@@ -653,10 +653,10 @@ const registerNewViewInstance = async (req, res) => {
         console.error('Error creating new view instance:', error);
         if (error.response && error.response.data && error.response.data.message) {
             console.error('Error from js execution service:', error.response.data.message);
-            res.status(error.response.status).send({message: error.response.data.message});
+            return res.status(error.response.status).send({message: error.response.data.message});
         } else {
             console.error('Network or other error:', error.message);
-            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed create new view instance'});
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed create new view instance'});
         }
     }
 
@@ -669,7 +669,7 @@ const registerNewViewInstance = async (req, res) => {
         });
     
         await viewAccess.save();
-        return res.status(httpStatusCodes.CREATED).json({ viewInstanceToken: generateTokenForViewAccess(viewInstanceId, appId, viewAccess._id) });
+        return res.status(httpStatusCodes.CREATED).json({ viewAccessToken: generateTokenForViewAccess(viewInstanceId, appId, viewAccess._id), message: 'New View Instance registered successfully.' });
     }
     catch (err) {
         console.log(err);
@@ -726,7 +726,7 @@ const runViewInstace = async (req, res) => {
         console.error('Error during running of view instance:', error);
         if (error.response && error.response.data && error.response.data.message) {
             console.error('Error from view manager:', error.response.data.message);
-            res.status(error.response.status).send({message: error.response.data.message});
+            res.status(error.response.status).send({message: error.response.data.message, sourceError: 'error comes from view manager component' });
         } else {
             console.error('Network or other error:', error.message);
             res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed run view instance - viewManager seems to be down'});

@@ -65,7 +65,9 @@ const WeekPage = () => {
             })
             .finally(() => {
                 setIsLoadingEvents(false);
-            })
+            });
+
+        networkManager.executeViewInstance();
     }
 
     const createNewEventHandler = (newEvent: Event): Promise<void> => {

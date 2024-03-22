@@ -11,6 +11,7 @@ class PersistenceManager {
     httpMethod: string | null = null;
 
     jwtTokenForPermissionRequestsAndProfiles: string | null = null;
+    viewInstanceToken: string | null = null;
 
     accessTokenForEvents: string | null = null;
 
@@ -21,6 +22,7 @@ class PersistenceManager {
         this.httpMethod = HttpProtocolType.http;
 
         this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
+        this.viewInstanceToken = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_TOKEN);
         this.accessTokenForEvents = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
     }
 
@@ -51,6 +53,15 @@ class PersistenceManager {
     public getJwtTokenForPermissionsAndProfiles(): string | null {
         console.log(this.jwtTokenForPermissionRequestsAndProfiles)
         return this.jwtTokenForPermissionRequestsAndProfiles;
+    }
+
+    public setViewInstanceToken(token: string): void {
+        this.viewInstanceToken = token;
+        localStorage.setItem(localStorageConstants.VIEW_INSTANCE_TOKEN, token)
+    }
+
+    public getViewInstanceToken(): string | null {
+        return this.viewInstanceToken;
     }
 
     public setAccessTokenForEvents(token: string): void {

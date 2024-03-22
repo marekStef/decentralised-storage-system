@@ -95,8 +95,8 @@ const createNewViewInstance = async (req, res) => {
     }
 };
 
-const prepareDataForExecutionService = (accessTokensToProfiles, configuration, clientCustomData) => {
-    return [accessTokensToProfiles, configuration, clientCustomData]
+const prepareDataForExecutionService = (accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint) => {
+    return { accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint }
 }
 
 const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {
@@ -173,7 +173,7 @@ const runViewInstance = async (req, res) => {
             res,
             runtime, 
             sourceCodeId, 
-            prepareDataForExecutionService(viewInstance.accessTokensToProfiles, viewInstance.configuration, clientCustomData)
+            prepareDataForExecutionService(viewInstance.accessTokensToProfiles, viewInstance.configuration, clientCustomData, authServiceEndpoint = process.env.AUTH_SERVICE_URI)
         );
     }
     catch (err) {
