@@ -231,14 +231,14 @@ class NetworkManager {
     }
 
     public async executeViewInstance(clientCustomData = {}): Promise<any> {
-        const viewInstanceToken = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
+        const viewInstanceAccessTokenForCalendarEventsFetching = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
 
         return new Promise(async (res, rej) => {
-            if (viewInstanceToken == null)
+            if (viewInstanceAccessTokenForCalendarEventsFetching == null)
                 return rej({ message: "Your app does not have token saved for executing remote view instance" });
 
             const data = {
-                viewAccessToken: viewInstanceToken,
+                viewAccessToken: viewInstanceAccessTokenForCalendarEventsFetching,
                 clientCustomData,
             };
 
@@ -246,7 +246,7 @@ class NetworkManager {
                 .then(response => {
                     if (response.status === networkStatusCodes.OK) {
                         // console.log('Success:', response);
-                        // res({viewInstanceToken: response.viewInstanceToken, message: response.message });
+                        // res({viewInstanceToken: response.viewInstanceAccessTokenForCalendarEventsFetching, message: response.message });
                         res(response.result);
                     } else {
                         console.error('Failure:', response);

@@ -11,7 +11,7 @@ class PersistenceManager {
     httpMethod: string | null = null;
 
     jwtTokenForPermissionRequestsAndProfiles: string | null = null;
-    viewInstanceToken: string | null = null;
+    viewInstanceAccessTokenForCalendarEventsFetching: string | null = null;
 
     accessTokenForEvents: string | null = null;
 
@@ -24,7 +24,7 @@ class PersistenceManager {
         this.httpMethod = HttpProtocolType.http;
 
         this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
-        this.viewInstanceToken = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_TOKEN);
+        this.viewInstanceAccessTokenForCalendarEventsFetching = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_TOKEN);
         this.accessTokenForEvents = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
 
         const isViewInstanceUsedForCalendarFetchingStr = localStorage.getItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING);
@@ -61,12 +61,12 @@ class PersistenceManager {
     }
 
     public setViewInstanceAccessTokenForCalendarEventsFetching(token: string): void {
-        this.viewInstanceToken = token;
+        this.viewInstanceAccessTokenForCalendarEventsFetching = token;
         localStorage.setItem(localStorageConstants.VIEW_INSTANCE_TOKEN, token)
     }
 
     public getViewInstanceAccessTokenForCalendarEventsFetching(): string | null {
-        return this.viewInstanceToken;
+        return this.viewInstanceAccessTokenForCalendarEventsFetching;
     }
 
     public setAccessTokenForEvents(token: string): void {
@@ -93,7 +93,7 @@ class PersistenceManager {
             && this.port != null 
             && this.httpMethod != null 
             && this.jwtTokenForPermissionRequestsAndProfiles != null 
-            && this.viewInstanceToken != null
+            && this.viewInstanceAccessTokenForCalendarEventsFetching != null
             && this.accessTokenForEvents != null;
         return areAllValuesSet;
     }
