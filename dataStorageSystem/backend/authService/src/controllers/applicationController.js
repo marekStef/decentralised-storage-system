@@ -572,7 +572,8 @@ const getAllEventsOfGivenProfile = async (req, res) => {
     try {
         const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/get_filtered_events`, {
             metadataMustContain: {
-                profile: dataAccessPermission.permission.profile
+                profile: dataAccessPermission.permission.profile,
+                source: dataAccessPermission.app.nameDefinedByUser
             }
         });
 
