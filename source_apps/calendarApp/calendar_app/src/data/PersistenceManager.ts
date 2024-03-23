@@ -60,12 +60,12 @@ class PersistenceManager {
         return this.jwtTokenForPermissionRequestsAndProfiles;
     }
 
-    public setViewInstanceToken(token: string): void {
+    public setViewInstanceAccessTokenForCalendarEventsFetching(token: string): void {
         this.viewInstanceToken = token;
         localStorage.setItem(localStorageConstants.VIEW_INSTANCE_TOKEN, token)
     }
 
-    public getViewInstanceToken(): string | null {
+    public getViewInstanceAccessTokenForCalendarEventsFetching(): string | null {
         return this.viewInstanceToken;
     }
 

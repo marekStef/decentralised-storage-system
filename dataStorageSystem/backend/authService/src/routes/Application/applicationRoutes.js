@@ -21,7 +21,7 @@ router.get('/getAllEventsForGivenAccessToken', applicationController.getAllEvent
 
 // views
 
-router.post('/views/registerNewViewInstance', applicationController.registerNewViewInstance);
+router.post('/views/registerNewViewInstanceAccess', applicationController.registerNewViewInstanceAccess);
 
 router.post('/views/runViewInstance', applicationController.runViewInstace);
 

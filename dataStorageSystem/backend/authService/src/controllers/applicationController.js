@@ -606,11 +606,11 @@ const checkWhetherAppWithGivenIdExists = async (appId) => {
     }
 }
 
-const registerNewViewInstance = async (req, res) => {
-    const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
+const registerNewViewInstanceAccess = async (req, res) => {
+    const { viewAccessName, viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
-    if (!viewTemplateId | !jwtTokenForPermissionRequestsAndProfiles || !configuration) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewTemplateId, jwtTokenForPermissionRequestsAndProfiles and configuration are required' });
+    if (!viewTemplateId | !jwtTokenForPermissionRequestsAndProfiles || !configuration || !viewAccessName) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, viewAccessName and configuration are required' });
     }
 
     let decodedToken;
@@ -655,6 +655,7 @@ const registerNewViewInstance = async (req, res) => {
 
     try {
         const viewAccess = new ViewAccessSchema({
+            viewAccessName,
             app: appId,
             viewInstanceId,
         });
@@ -739,6 +740,6 @@ module.exports = {
     modifyEvent,
     deleteEvent,
     getAllEventsOfGivenProfile,
-    registerNewViewInstance,
+    registerNewViewInstanceAccess,
     runViewInstace
 }

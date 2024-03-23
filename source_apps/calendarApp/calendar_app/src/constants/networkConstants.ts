@@ -2,7 +2,7 @@ export const networkRoutes = {
     SERVER_REACHABILITY_ROUTE: '/status_info/checks/check_auth_service_presence',
     ASSOCIATE_WITH_DATA_STORAGE_ROUTE: '/app/api/associateWithStorageAppHolder',
     REGISTER_NEW_PROFILE_ROUTE: '/app/api/registerNewProfile',
-    CREATE_NEW_VIEW_INSTANCE: '/app/api/views/registerNewViewInstance',
+    CREATE_NEW_VIEW_INSTANCE: '/app/api/views/registerNewViewInstanceAccess',
     RUN_VIEW_INSTANCE: '/app/api/views/runViewInstance',
     
     REQUEST_PERMISSIONS_ROUTE: '/app/api/requestNewPermission',

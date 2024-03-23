@@ -6,6 +6,10 @@ const ViewAccessSchema = new mongoose.Schema({
     ref: 'Application',
     required: true
   },
+  viewAccessName: {
+    type: String,
+    required: true,
+  },
   viewInstanceId: {
     type: String
   },

@@ -206,6 +206,7 @@ class NetworkManager {
                 return rej({ message: "Your app does not have token saved for this operation" });
 
             const data = {
+                viewAccessName: appConstants.viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek,
                 jwtTokenForPermissionRequestsAndProfiles,
                 viewTemplateId,
                 configuration: {} // nothing in configuration at the moment
@@ -230,7 +231,7 @@ class NetworkManager {
     }
 
     public async executeViewInstance(clientCustomData = {}): Promise<any> {
-        const viewInstanceToken = persistenceManager.getViewInstanceToken();
+        const viewInstanceToken = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
 
         return new Promise(async (res, rej) => {
             if (viewInstanceToken == null)

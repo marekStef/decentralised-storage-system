@@ -305,6 +305,7 @@ const getAllViewsAccessesForGivenApp = async (req, res) => {
 
             return {
                 viewAccessId: viewAccess._id.toString(),
+                viewAccessName: viewAccess.viewAccessName,
                 viewAccessToken,
                 viewInstanceId: viewAccess.viewInstanceId,
                 createdDate: viewAccess.createdDate,

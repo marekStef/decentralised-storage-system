@@ -150,7 +150,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
         return eventsWithPosition;
     };
 
-    const slotWidth = Math.floor((calendarWidth - calendarLeftColumnHoursWidthInPixels - scrollbarWidth) / 7)
+    const slotWidth = Math.floor((calendarWidth - calendarLeftColumnHoursWidthInPixels - scrollbarWidth) / 7);
 
     return (
         <div

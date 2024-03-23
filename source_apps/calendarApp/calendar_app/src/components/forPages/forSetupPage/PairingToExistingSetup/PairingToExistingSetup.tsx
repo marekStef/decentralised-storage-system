@@ -15,17 +15,20 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 
 import persistenceManager from '@/data/PersistenceManager';
+import appConstants from '@/constants/appConstants';
 
 const PairingToExistingSetup = () => {
     const Router = useRouter();
 
-    const [jwtTokenForPermissionRequestsAndProfiles, setJwtTokenForPermissionRequestsAndProfiles] = useState('')
-    const [accessTokenToProfile, setAccessTokenToProfile] = useState('')
+    const [jwtTokenForPermissionRequestsAndProfiles, setJwtTokenForPermissionRequestsAndProfiles] = useState<string>('')
+    const [accessTokenToProfile, setAccessTokenToProfile] = useState<string>('')
+    const [viewInstanceAccessTokenForCalendarEventsFetching, setViewInstanceAccesstokenForcalendarEventsFetching] = useState<string>('');
 
 
     const saveTokens = () => {
         persistenceManager.setJwtTokenForPermissionsAndProfiles(jwtTokenForPermissionRequestsAndProfiles);
         persistenceManager.setAccessTokenForEvents(accessTokenToProfile);
+        persistenceManager.setViewInstanceAccessTokenForCalendarEventsFetching(viewInstanceAccessTokenForCalendarEventsFetching);
         Router.replace('/')
     }
 
@@ -53,6 +56,18 @@ const PairingToExistingSetup = () => {
                         value={accessTokenToProfile}
                         onChange={event => setAccessTokenToProfile(event.target.value)}
                         helperText="You can get this token from the DataStorage system"
+                    />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextField
+                        fullWidth
+                        label={"View Instance Access Token (named: " + appConstants.viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek + ")"}
+                        type="text"
+                        variant="outlined"
+                        value={viewInstanceAccessTokenForCalendarEventsFetching}
+                        onChange={event => setViewInstanceAccesstokenForcalendarEventsFetching(event.target.value)}
+                        helperText="This token should be found near the existing app holder data"
                     />
                 </Grid>
 

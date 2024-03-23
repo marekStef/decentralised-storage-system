@@ -85,8 +85,12 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
     const startYRef = useRef(startY);
     const currentYRef = useRef(currentY);
     const selectedStartTimeRef = useRef(selectedStartTime);
+    const selectedWeekRef = useRef(params.selectedWeek);
 
-    
+    useEffect(() => {
+        selectedWeekRef.current = params.selectedWeek;
+        console.log('change in week', params.selectedWeek.convertSelectedWeekToSimpleISODatesObject());
+    }, [params.selectedWeek]);
 
     const [durationTime, setDurationTime] = useState(0);
 
@@ -102,6 +106,10 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
         }
     };
 
+    const getCurrentSelectedWeek = () => {
+        return params.selectedWeek;
+    }
+
     const openNewEventDialogHandler = useCallback(() => {
         // console.log(`current: ${currentYRef.current}, start: ${startYRef.current}`)
         // console.log(selectedStartTimeRef.current)
@@ -109,9 +117,12 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
         if (duration > 0 && duration < timeConstants.NUMBER_OF_MINUTES_IN_DAY) {
             // console.log(duration)
             // console.log(selectedStartTimeRef.current.dayIndex)
-            const selectedDayDate: Date = params.selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(selectedStartTimeRef.current.dayIndex);
+            const currentSelectedWeek = selectedWeekRef.current;
+
+            const selectedDayDate: Date = currentSelectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(selectedStartTimeRef.current.dayIndex);
+            console.log('alsdfjalkfdjaskdf', currentSelectedWeek.convertSelectedWeekToSimpleISODatesObject());
             const startTime: Date = setTime(selectedDayDate, selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute)
-            // console.log(startTime)
+            console.log(Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)))
             params.openNewEventDialogHandler(
                 Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)),
                 NewEventDialogOpenMode.NEW_EVENT

@@ -7,6 +7,7 @@ const permissonsObjectForCalendarEventPermissionRequest = {
     modify: true,
     delete: true,
 };
+const viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek = 'View Instance Access Name For Calendar Events Fetching Based On Selected Week';
 
 export default {
     appName,
@@ -14,4 +15,6 @@ export default {
     permissonsObjectForCalendarEventPermissionRequest,
 
     DATA_STORAGE_ROOT_PROFILE: "core:profile-registration_v1",
+
+    viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek
 };
