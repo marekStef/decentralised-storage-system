@@ -1,33 +1,77 @@
-const { getResponseMessage } = require('./helpers');
+const { get, isDateWithinInterval } = require('./helpers');
 
-const helloWorld = async (parametersObject) => {
-    const { accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint } = parametersObject;
+const CHECK_ACCESS_TOKEN_STATUS = '/app/api/checkAccessTokenStatus';
+const GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN = '/app/api/getAllEventsForGivenAccessToken';
 
-    const tokenForCalendarEvents = accessTokensToProfiles["CalendarPro.com_CalendarEventProfile"];
-
+const isAccessTokenActive = (endpoint, accessToken) => {
     return new Promise((res, rej) => {
-        fetch(`${authServiceEndpoint}/app/api/checkAccessTokenStatus?accessToken=${tokenForCalendarEvents}`)
-            .then(response => response.json())
+        get(`${endpoint}${CHECK_ACCESS_TOKEN_STATUS}?accessToken=${accessToken}`)
             .then(response => {
-                console.log(response);
-                setTimeout(() => {
-                    res({
-                        message: 'this is object from view',
-                        helloMessage: getResponseMessage(),
-                        accessTokensToProfiles,
-                        configuration,
-                        clientCustomData,
-                        isAccessTokenForCalendarEventsActive: response
-                    });
-                }, 1000);
+                res(response.isActive);
             })
-            .catch(err => {
-                res({
-                    message: 'could not load fake json data from net',
-                    err: JSON.stringify(err)
-                })
+            .catch(errResponse => {
+                rej(false);
             })
     })
 }
 
-module.exports = helloWorld;
+const getAllCalendarEvents = (endpoint, tokenForCalendarEvents) => {
+    return new Promise(async (res, rej) => {
+        try {
+            const response = await get(`${endpoint}${GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN}`, {
+                accessToken: tokenForCalendarEvents
+            });
+
+            res({
+                ...response,
+            });
+        } catch (error) {
+            console.error('Error getting calendar events:', error);
+            rej(`Error getting calendar events: ${error.message ?? 'Server not reachable probably'}`);
+        }
+    }) 
+}
+
+const mainFunction = (parametersObject) => {
+    return new Promise(async (res, rej) => {
+
+        const { accessTokensToProfiles, configuration, clientCustomData, dataEndpoint } = parametersObject;
+
+        const tokenForCalendarEvents = accessTokensToProfiles["CalendarPro.com_CalendarEventProfile"];
+
+        const isAccessTokenActivated = await isAccessTokenActive(dataEndpoint, tokenForCalendarEvents);
+
+        // return res({isAccessTokenActivated, tokenForCalendarEvents, dataEndpoint, a: `${dataEndpoint}/app/api/checkAccessTokenStatus?accessToken=${tokenForCalendarEvents}`})
+
+        if (!isAccessTokenActivated) {
+            return res({
+                code: 400,
+                message: 'Access Token is not active!'
+            })
+        }
+
+        getAllCalendarEvents(dataEndpoint, tokenForCalendarEvents)
+            .then(response => {
+                const intervalStartTime = clientCustomData.selectedWeek.startOfWeek;
+                const intervalEndTime = clientCustomData.selectedWeek.endOfWeek;
+
+                const filteredEvents = response.events.filter(event => isDateWithinInterval(event.payload.startTime, intervalStartTime, intervalEndTime));
+
+                res({
+                    code: 200,
+                    message: 'Events loaded successfully',
+                    response,
+                    clientCustomData,
+                    filteredEvents
+                })
+            })
+            .catch(err => {
+                res({
+                    code: 500,
+                    message: 'Something went wrong when requesting events'
+                })
+            });
+    })
+}
+
+module.exports = mainFunction;

@@ -31,7 +31,6 @@ function withSetupValidation<P extends React.JSX.IntrinsicAttributes>(
       }
 
       if (setupComplete) {
-        console.log("here")
         Router.replace(redirectToIfSetup);
         return;
       }

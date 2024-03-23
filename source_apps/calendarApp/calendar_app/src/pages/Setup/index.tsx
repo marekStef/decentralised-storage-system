@@ -75,7 +75,7 @@ const SetupPage = () => {
         <Container maxWidth="sm">
 
             <Box sx={{ my: 4 }}>
-                <Grid container spacing={2} sx={{my: 4}}>
+                <Grid container spacing={2} sx={{ my: 4 }}>
                     <Typography variant="h4" gutterBottom paddingBottom={3} margin={0}>
                         Server Setup
                     </Typography>
@@ -175,8 +175,6 @@ const SetupPage = () => {
                         )}
                     </>
                 )}
-
-
 
 
             </Box>

@@ -85,7 +85,6 @@ class NetworkManager {
 
             this.post(networkRoutes.ASSOCIATE_WITH_DATA_STORAGE_ROUTE, data)
                 .then(body => {
-                    console.log('here?')
                     console.log(body.status)
                     console.log(body)
                     res(body.jwtTokenForPermissionRequestsAndProfiles);
@@ -245,9 +244,9 @@ class NetworkManager {
             this.post(networkRoutes.RUN_VIEW_INSTANCE, data)
                 .then(response => {
                     if (response.status === networkStatusCodes.OK) {
-                        console.log('Success:', response);
+                        // console.log('Success:', response);
                         // res({viewInstanceToken: response.viewInstanceToken, message: response.message });
-                        res(response)
+                        res(response.result);
                     } else {
                         console.error('Failure:', response);
                         rej({ message: response.message || 'View Instance was not run'} );

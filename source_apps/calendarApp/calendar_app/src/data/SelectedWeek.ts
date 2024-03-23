@@ -65,6 +65,13 @@ class SelectedWeek {
       // console.log(result)
       return result;
     };
+
+    convertSelectedWeekToSimpleISODatesObject(): object {
+        return {
+          startOfWeek: this.startOfWeek,
+          endOfWeek: this.endOfWeek
+        }
+    }
 }
 
 export default SelectedWeek;

@@ -142,19 +142,9 @@ class EventsManager {
         return new Promise<Events>((res, rej) => {
             networkManager.getAllCalendarEvents()
                 .then((eventsData) => {
-                    console.log(eventsData);
-                    const events = new Events()
-                    for (let i = 0; i < 7; ++i) {
-                        events.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
-                    }
-                    for (let j = 0;  j < eventsData.events.length; ++j) {
-                        const current = eventsData.events[j];
-    
-                        if (selectedWeek.isGivenDateInThisWeek(current.payload.startTime))
-                            events.events[current.getDayOfThisEvent().toISOString()].push(current)
-                    }
-                    console.log('here?');
-                    res(events)
+                    console.log('******', eventsData);
+                    
+                    res(eventsData);
                 })
                 .catch(err => {
                     console.log(err);

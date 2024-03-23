@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
 import WeekView from '../../components/forPages/forWeekPage/WeekView/WeekView'
 import LeftPanel from '../../components/forPages/forWeekPage/LeftPanel/LeftPanel';
@@ -11,6 +11,7 @@ import CalendarSettings from '@/components/CalendarSettings/CalendarSettings';
 import { SelectedMonth } from '@/data/SelectedMonth';
 import withSetupValidation from '@/higherOrderComponents/withSetupValidation';
 import { showError, showSuccess } from '@/components/AlertProvider/AlertProvider';
+import persistenceManager from "@/data/PersistenceManager";
 
 import networkManager from '@/Network/NetworkManager';
 import { isSameWeek } from 'date-fns';
@@ -54,10 +55,25 @@ const WeekPage = () => {
         setNewEventDialogData(null);
     }
 
-    const getAllEventsForSelectedWeek = (selectedWeek: SelectedWeek) => {
+    const displayEvents = (eventsData): Events => {
+        const eventsResult = new Events()
+        for (let i = 0; i < 7; ++i) {
+            eventsResult.events[selectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(i).toISOString()] = []
+        }
+        for (let j = 0; j < eventsData.length; ++j) {
+            const current = eventsData[j];
+
+            if (selectedWeek.isGivenDateInThisWeek(current.payload.startTime))
+                eventsResult.events[current.getDayOfThisEvent().toISOString()].push(current)
+        }
+        return eventsResult;
+    }
+
+    const getAllEventsUsingStandardAccessToken = (selectedWeek: SelectedWeek) => {
+        console.log('fetching using access token to profile');
         eventsManager.getEventsForSelectedWeek(selectedWeek)
-            .then((events: Events) => {
-                setEvents(events)
+            .then((eventsData: Events) => {
+                setEvents(displayEvents(eventsData.events));
                 setIsLoadingEvents(false)
             })
             .catch(errMessage => {
@@ -66,8 +82,35 @@ const WeekPage = () => {
             .finally(() => {
                 setIsLoadingEvents(false);
             });
+    }
 
-        networkManager.executeViewInstance();
+    const getSpecificEventsUsingCalendarViewInstance = (selectedWeek: SelectedWeek) => {
+        console.log('fetching using view instance');
+        networkManager.executeViewInstance({ selectedWeek: selectedWeek.convertSelectedWeekToSimpleISODatesObject() })
+            .then(result => {
+                if (result.code != 200) {
+                    return showError(result.message);
+                }
+
+                console.log(result);
+                const eventsResponse = result.filteredEvents.map(event => Event.convertEventReceivedFromServerToThisEvent(event))
+                setEvents(displayEvents(eventsResponse))
+                setIsLoadingEvents(false)
+            })
+            .catch(err => {
+                showError('Something went wrong exeucting view instance for getting events');
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoadingEvents(false);
+            })
+    }
+
+    const getAllEventsForSelectedWeek = (selectedWeek: SelectedWeek) => {
+        if (persistenceManager.getIsViewInstanceUsedForCalendarFetching())
+            getSpecificEventsUsingCalendarViewInstance(selectedWeek);      
+        else
+        getAllEventsUsingStandardAccessToken(selectedWeek);  
     }
 
     const createNewEventHandler = (newEvent: Event): Promise<void> => {
@@ -75,7 +118,7 @@ const WeekPage = () => {
             if (isCreatingNewEvent) return;
 
             setIsCreatingNewEvent(true);
-    
+
             networkManager.createNewEvent(newEvent)
                 .then((response => {
                     console.log(response);
@@ -116,14 +159,14 @@ const WeekPage = () => {
 
     const deleteEventHandler = (event: Event) => {
         networkManager.deleteEvent(event)
-        .then(res => {
-            showSuccess(res.message);
-            getAllEventsForSelectedWeek(selectedWeek);
-        })
-        .catch(err => {
-            showSuccess('Unable to delete event');
-            console.log(err);
-        })
+            .then(res => {
+                showSuccess(res.message);
+                getAllEventsForSelectedWeek(selectedWeek);
+            })
+            .catch(err => {
+                showSuccess('Unable to delete event');
+                console.log(err);
+            })
     }
 
     useEffect(() => {
@@ -131,7 +174,7 @@ const WeekPage = () => {
 
         setEvents(new Events())
         setIsLoadingEvents(true);
-        
+
         getAllEventsForSelectedWeek(selectedWeek);
     }, [selectedWeek])
 
@@ -161,8 +204,8 @@ const WeekPage = () => {
         >
             {/* <NewEventDialog data={newEventDialogData} onClose={() => setNewEventDialogData(null)}/> */}
 
-            <NewEventDialogMaterial 
-                handleClose={() => setNewEventDialogData(null)} 
+            <NewEventDialogMaterial
+                handleClose={() => setNewEventDialogData(null)}
                 newEventDialogData={newEventDialogData}
                 createNewEventHandler={createNewEventHandler}
                 modifyEventHandler={modifyEventHandler}
@@ -170,7 +213,7 @@ const WeekPage = () => {
                 isCreatingNewEvent={isCreatingNewEvent}
                 mode={eventDialogMode}
             />
-            <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)}/>
+            <CalendarSettings open={openedSettings} handleClose={() => setOpenedSettings(false)} />
 
             <div
                 style={{
@@ -181,27 +224,27 @@ const WeekPage = () => {
                     zIndex: 2,
                 }}
             >
-                <TopPanel 
-                    selectedWeek={selectedWeek} 
-                    setSelectedWeek={setSelectedWeekHandler} 
-                    openSettings={() => setOpenedSettings(true)} 
+                <TopPanel
+                    selectedWeek={selectedWeek}
+                    setSelectedWeek={setSelectedWeekHandler}
+                    openSettings={() => setOpenedSettings(true)}
                 />
             </div>
 
             <div style={{
-                    height: `${( 1 - calendarViewTopOffsetPercentage) * 100}vh`,
-                    position: "absolute",
-                    top: `${calendarViewTopOffsetPercentage * 100}vh`,
-                    width: `${(calendarViewLeftOffsetPercentage) * 100}vw`,
-                    zIndex: 2,
-                }}>
-                    <LeftPanel 
-                        calendarHeaderHeightInPixels={calendarHeaderHeightInPixels}
-                        selectedWeek={selectedWeek}
-                        selectedMonth={selectedMonth}
-                        setSelectedWeek={setSelectedWeekHandler} 
-                        setSelectedMonth={setSelectedMonth}
-                    />
+                height: `${(1 - calendarViewTopOffsetPercentage) * 100}vh`,
+                position: "absolute",
+                top: `${calendarViewTopOffsetPercentage * 100}vh`,
+                width: `${(calendarViewLeftOffsetPercentage) * 100}vw`,
+                zIndex: 2,
+            }}>
+                <LeftPanel
+                    calendarHeaderHeightInPixels={calendarHeaderHeightInPixels}
+                    selectedWeek={selectedWeek}
+                    selectedMonth={selectedMonth}
+                    setSelectedWeek={setSelectedWeekHandler}
+                    setSelectedMonth={setSelectedMonth}
+                />
             </div>
             <WeekView
                 screenHeight={screenHeight}
@@ -216,7 +259,7 @@ const WeekPage = () => {
                 events={events}
                 deleteEventHandler={deleteEventHandler}
             />
-            </div>
+        </div>
     )
 }
 

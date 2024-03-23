@@ -15,20 +15,25 @@ class PersistenceManager {
 
     accessTokenForEvents: string | null = null;
 
+    isViewInstanceUsedForCalendarFetching: boolean = false;
+
     public loadDataFromLocalStorage() {
-        this.ip = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS);
+        this.ip = localStorage.getItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
         this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT);
-        this.httpMethod = localStorage.getItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS);
+        this.httpMethod = localStorage.getItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
         this.httpMethod = HttpProtocolType.http;
 
         this.jwtTokenForPermissionRequestsAndProfiles = localStorage.getItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
         this.viewInstanceToken = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_TOKEN);
         this.accessTokenForEvents = localStorage.getItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
+
+        const isViewInstanceUsedForCalendarFetchingStr = localStorage.getItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING);
+        this.isViewInstanceUsedForCalendarFetching = isViewInstanceUsedForCalendarFetchingStr === 'true';
     }
 
     public setServerIPAddress(ip: string) {
         this.ip = ip;
-        localStorage.setItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS, ip)
+        localStorage.setItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS, ip)
     }
 
     public setServerPort(port: string) {
@@ -73,11 +78,22 @@ class PersistenceManager {
         return this.accessTokenForEvents;
     }
 
+    public setIsViewInstanceUsedForCalendarFetching(isUsed: boolean): void {
+        localStorage.setItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING, String(isUsed));
+        this.isViewInstanceUsedForCalendarFetching = isUsed;
+    }
+
+    public getIsViewInstanceUsedForCalendarFetching(): boolean {
+        return this.isViewInstanceUsedForCalendarFetching;
+        
+    }
+
     public areAllValuesSet(): boolean {
         const areAllValuesSet = this.ip != null 
             && this.port != null 
             && this.httpMethod != null 
             && this.jwtTokenForPermissionRequestsAndProfiles != null 
+            && this.viewInstanceToken != null
             && this.accessTokenForEvents != null;
         return areAllValuesSet;
     }
@@ -89,11 +105,13 @@ class PersistenceManager {
         this.jwtTokenForPermissionRequestsAndProfiles = null;
         this.accessTokenForEvents = null;
 
-        localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION)
-        localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES)
-        localStorage.removeItem(localStorageConstants.DATA_STORAGE_REQUEST_METHOD_TYPE)
-        localStorage.removeItem(localStorageConstants.DATA_STORAGE_PORT)
-        localStorage.removeItem(localStorageConstants.DATA_SOTRAGE_IP_ADDRESS)
+        localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
+        localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
+        localStorage.removeItem(localStorageConstants.DATA_STORAGE_REQUEST_METHOD_TYPE);
+        localStorage.removeItem(localStorageConstants.DATA_STORAGE_PORT);
+        localStorage.removeItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
+        localStorage.removeItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING);
+
     }
 }
 

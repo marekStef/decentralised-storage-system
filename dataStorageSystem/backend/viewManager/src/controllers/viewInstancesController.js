@@ -97,7 +97,7 @@ const createNewViewInstance = async (req, res) => {
 };
 
 const prepareDataForExecutionService = (accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint) => {
-    return { accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint }
+    return { accessTokensToProfiles, configuration, clientCustomData, dataEndpoint: authServiceEndpoint }
 }
 
 const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {

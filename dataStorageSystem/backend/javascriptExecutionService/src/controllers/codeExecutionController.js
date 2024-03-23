@@ -86,12 +86,13 @@ const executeSourceCode = async (req, res) => {
 
     try {
         console.log('Executing code with parameters:', req.body);
+        console.log('here');
         const result = await dynamicModule(parametersForMainEntry);
         res.status(httpStatusCodes.OK).json({message: 'Code execution result', result });
     }
     catch (err) {
-        console.log(err.message);
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: `Problem loading a module (${err.message})` });
+        console.log(err);
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: `Problem loading a module (${err})` });
     }
 }
 

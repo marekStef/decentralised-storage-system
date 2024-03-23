@@ -106,12 +106,11 @@ const InitialSetup = () => {
 
         networkManager.createNewViewInstance(viewTemplateId)
             .then(response => {
-                persistenceManager.setViewInstanceToken(response.viewInstanceToken);
+                persistenceManager.setViewInstanceToken(response.viewAccessToken);
                 console.log('heeeere');
                 console.log(response);
                 showSuccess(response.message);
                 setViewInstanceSendingStatus(PossibleResultsWithServer.SUCCESS);
-                Router.replace('/');
             })
             .catch(errResponse => {
                 setViewInstanceSendingStatus(PossibleResultsWithServer.FAILED);
@@ -325,6 +324,16 @@ const InitialSetup = () => {
                         </>
                     )}
                 </Grid>
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    onClick={() => Router.replace('/')}
+                    disabled={viewInstanceSendingStatus != PossibleResultsWithServer.SUCCESS}
+                >
+                    Proceed
+                </Button>
             </Grid>
         </Container>
     )
