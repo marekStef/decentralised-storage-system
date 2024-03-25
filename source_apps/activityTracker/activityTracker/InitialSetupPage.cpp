@@ -32,22 +32,13 @@ void InitialSetupPage::setupUI() {
 
     wxStaticBoxSizer* dataStorageTokens = new wxStaticBoxSizer(wxVERTICAL, this, "Data Storage Tokens");
     dataStorageTokens->Add(new wxStaticText(this, wxID_ANY, "Association Token:"), 0, wxALL, 5);
-    serverAddressInputField = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-    dataStorageTokens->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+    dataStorageJwtAssociationTokenInputField = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    dataStorageTokens->Add(dataStorageJwtAssociationTokenInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
     sizer->Add(dataStorageTokens, 0, wxEXPAND | wxALL, 10);
 
     wxButton* saveButton = new wxButton(this, wxID_ANY, "Associate the app, create needed profiles and ask for permissions");
     sizer->Add(saveButton, 0, wxALIGN_CENTER | wxALL, 10);
-    saveButton->Bind(wxEVT_BUTTON, &InitialSetupPage::OnSaveButtonClick, this);
-
-    wxStaticBoxSizer* directorySizer = new wxStaticBoxSizer(wxVERTICAL, this, "Directory Selection");
-    wxButton* selectDirButton = new wxButton(this, wxID_ANY, "Select Directory");
-    directorySizer->Add(selectDirButton, 0, wxALIGN_CENTER | wxALL, 5);
-    selectDirButton->Bind(wxEVT_BUTTON, &InitialSetupPage::OnSelectDirectoryClick, this);
-
-    directoryDisplay = new wxStaticText(this, wxID_ANY, "No directory selected");
-    directorySizer->Add(directoryDisplay, 0, wxALIGN_CENTER | wxALL, 5);
-    sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
+    saveButton->Bind(wxEVT_BUTTON, &InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick, this);
 
     wxButton* alertButton = new wxButton(this, wxID_ANY, "Start Alert Timer");
     sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
@@ -61,31 +52,30 @@ void InitialSetupPage::setupUI() {
 }
 
 
-void InitialSetupPage::OnSaveButtonClick(wxCommandEvent& event) {
-    wxString text = serverAddressInputField->GetValue();
-    configManager.SetTextValue(text);
-    configManager.SetDirectory(defaultDirectory);
+void InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick(wxCommandEvent& event) {
+    wxString serverAddress = serverAddressInputField->GetValue();
+    wxString serverPort = serverPortInputField->GetValue();
+    wxString dataStorageJwtAssociationToken = dataStorageJwtAssociationTokenInputField->GetValue();
+
+    configManager.SetServerAddress(serverAddress);
+    configManager.SetServerPort(serverPort);
+    configManager.SetDataStorageJwtAssociationToken(dataStorageJwtAssociationToken);
+
     configManager.SaveConfig();
-
-    serverAddressInputField->SetValue("");
-}
-
-void InitialSetupPage::OnSelectDirectoryClick(wxCommandEvent& event) {
-    wxDirDialog dirDialog(this, "Choose a directory", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-
-    if (dirDialog.ShowModal() == wxID_OK) {
-        defaultDirectory = dirDialog.GetPath();
-        directoryDisplay->SetLabel(defaultDirectory);
-        configManager.SetDirectory(defaultDirectory);
-        configManager.SaveConfig();
-    }
+    DisableAllInputs();
 }
 
 void InitialSetupPage::LoadConfig() {
-    serverAddressInputField->SetValue(configManager.GetTextValue());
-    directoryDisplay->SetLabel(configManager.GetDirectory());
+    serverAddressInputField->SetValue(configManager.GetServerAddress());
+    serverPortInputField->SetValue(configManager.GetServerPort());
+    dataStorageJwtAssociationTokenInputField->SetValue(configManager.GetDataStorageJwtAssociationToken());
 }
 
+void InitialSetupPage::DisableAllInputs() {
+    serverAddressInputField->Enable(false);
+    serverPortInputField->Enable(false);
+    dataStorageJwtAssociationTokenInputField->Enable(false);
+}
 
 void InitialSetupPage::OnAlertButtonClick(wxCommandEvent& event) {
     startPeriodicDataGathering();

@@ -1,7 +1,8 @@
 #include "ConfigManager.hpp"
 
+
 ConfigManager::ConfigManager()
-    : configPath("config.ini"), config(new wxFileConfig(wxEmptyString, wxEmptyString, configPath, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)) {
+    : config(new wxFileConfig(wxEmptyString, wxEmptyString, CONFIG_FILE_PATH, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)) {
     LoadConfig();
 }
 
@@ -10,28 +11,36 @@ ConfigManager::~ConfigManager() {
 }
 
 void ConfigManager::LoadConfig() {
-    config->Read("Text", &textValue, "");
-    config->Read("Directory", &directory, "");
+    config->Read(SERVER_ADDRESS_CONFIG_KEY, &serverAddress, "");
+    config->Read(SERVER_PORT_CONFIG_KEY, &serverPort, "");
+    config->Read(DATA_STORAGE_ASSOCIATION_TOKEN_CONFIG_KEY, &dataStorageJwtAssociationToken, "");
+    config->Read(DATA_STORAGE_TOKEN_FOR_PROFILES_AND_PERMISSIONS_CONFIG_KEY, &dataStorageTokenForProfilesCreationAndPermissionsRequests, "");
+
+    config->Read(DIRECTORY_FOR_DATA_CONFIG_KEY, &directoryForData, "");
 }
 
 void ConfigManager::SaveConfig() {
-    config->Write("Text", textValue);
-    config->Write("Directory", directory);
+    config->Write(SERVER_ADDRESS_CONFIG_KEY, serverAddress);
+    config->Write(SERVER_PORT_CONFIG_KEY, serverPort);
+    config->Write(DATA_STORAGE_ASSOCIATION_TOKEN_CONFIG_KEY, dataStorageJwtAssociationToken);
+    config->Write(DATA_STORAGE_TOKEN_FOR_PROFILES_AND_PERMISSIONS_CONFIG_KEY, dataStorageTokenForProfilesCreationAndPermissionsRequests);
+
+    config->Write(DIRECTORY_FOR_DATA_CONFIG_KEY, directoryForData);
+
     config->Flush();
 }
 
-wxString ConfigManager::GetTextValue() const {
-    return textValue;
-}
+wxString ConfigManager::GetServerAddress() const { return serverAddress; }
+void ConfigManager::SetServerAddress(const wxString& value) { serverAddress = value; }
 
-void ConfigManager::SetTextValue(const wxString& value) {
-    textValue = value;
-}
+wxString ConfigManager::GetServerPort() const { return serverPort; }
+void ConfigManager::SetServerPort(const wxString& value) { serverPort = value; }
 
-wxString ConfigManager::GetDirectory() const {
-    return directory;
-}
+wxString ConfigManager::GetDataStorageJwtAssociationToken() const { return dataStorageJwtAssociationToken; }
+void ConfigManager::SetDataStorageJwtAssociationToken(const wxString& value) { dataStorageJwtAssociationToken = value; }
 
-void ConfigManager::SetDirectory(const wxString& directory) {
-    this->directory = directory;
-}
+wxString ConfigManager::GetDataStorageTokenForProfilesAndPermissionsRequests() const { return dataStorageTokenForProfilesCreationAndPermissionsRequests; }
+void ConfigManager::SetDataStorageTokenForProfilesAndPermissionsRequests(const wxString& value) { dataStorageTokenForProfilesCreationAndPermissionsRequests = value; }
+
+wxString ConfigManager::GetDirectory() const { return directoryForData; }
+void ConfigManager::SetDirectory(const wxString& directoryForData) { this->directoryForData = directoryForData; }

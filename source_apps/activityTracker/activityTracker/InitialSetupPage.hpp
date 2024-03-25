@@ -14,16 +14,15 @@ private:
 
     void setupUI();
 
-
     wxTextCtrl* serverAddressInputField;
     wxTextCtrl* serverPortInputField;
+    wxTextCtrl* dataStorageJwtAssociationTokenInputField;
+    wxTextCtrl* dataStorageJwtTokenForProfilesAndPermissionsRequests;
 
-    wxStaticText* directoryDisplay;
-    wxString defaultDirectory;
-
-    void OnSaveButtonClick(wxCommandEvent& event);
-    void OnSelectDirectoryClick(wxCommandEvent& event);
+    void AssociateAppCreateProfilesAndAskForPermissionsButtonClick(wxCommandEvent& event);
     void LoadConfig();
+
+    void DisableAllInputs();
 
     wxStaticText* lastRunTimeDisplay;
 

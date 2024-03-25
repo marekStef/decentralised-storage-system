@@ -22,6 +22,12 @@
     <Filter Include="Source Files\Pages">
       <UniqueIdentifier>{23f2619a-bd14-4fdd-9994-8cf57eb681c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\WindowsSpecificHelpers">
+      <UniqueIdentifier>{6e5ec330-f061-428b-b71a-56770ab760ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\WindowsSpecificHelpers">
+      <UniqueIdentifier>{babe4991-65f2-4212-85d1-e7fc51538e08}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -30,7 +36,7 @@
     <ClCompile Include="MainFrame.hpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainFrame.cpp">
+    <ClCompile Include="MainFrame1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConfigManager.cpp">
@@ -47,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="SettingsPage.cpp">
       <Filter>Source Files\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="automaticStartupHelpers.cpp">
+      <Filter>Source Files\WindowsSpecificHelpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="SettingsPage.hpp">
       <Filter>Header Files\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="automaticStartupHelpers.hpp">
+      <Filter>Header Files\WindowsSpecificHelpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

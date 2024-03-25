@@ -11,6 +11,12 @@ public:
     SettingsPage(wxNotebook* parent, ConfigManager& configManager);
 private:
     ConfigManager& configManager;
+    void loadConfig();
+
+    void OnSelectDirectoryClick(wxCommandEvent& event);
+    void OnAutomaticAppStartupButtonClick(wxCommandEvent& event);
+    wxStaticText* directoryDisplay;
+    wxString defaultDirectory;
 
     void setupUI();
 };

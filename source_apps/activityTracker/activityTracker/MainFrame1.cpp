@@ -1,10 +1,19 @@
 #include "MainFrame.hpp"
+#include "ConfigManager.hpp"
+
 #include "constants.hpp"
 #include "InitialSetupPage.hpp"
 #include "ExistingSetupPage.hpp"
 #include "SettingsPage.hpp"
 #include "MainPage.hpp"
 
+#include <wx/wx.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
+#include <wx/filedlg.h>
+#include <wx/fileconf.h>
+#include <wx/taskbar.h>
+#include "wx/notebook.h"
 #include <wx/scrolwin.h>
 
 // Event table for handling window events
@@ -14,6 +23,8 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_Restore, MainFrame::OnRestore) // Handles the menu event for restoring the window from the tray - not working at this moment
     EVT_MENU(ID_Exit, MainFrame::OnExit) // Handles the menu event for exiting the application.
 END_EVENT_TABLE()
+
+
 
 MainFrame::MainFrame(const wxString& title, ConfigManager& configManager)
     : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
@@ -62,6 +73,7 @@ void MainFrame::OnClose(wxCloseEvent& event) {
         // Veto the close event, which stops the window from closing and keeps
         // the application running in the background.
         event.Veto();
+        MessageBox(NULL, L"App is running and UI can be opened from Tray.", L"Info", MB_OK);
     }
     else {
         // If the event cannot be vetoed, it means the application is being asked to close
@@ -73,9 +85,10 @@ void MainFrame::OnClose(wxCloseEvent& event) {
 
 void MainFrame::OnIconize(wxIconizeEvent& event) {
     // When the window is iconized (minimized), hide it to not show in the taskbar
-    if (event.IsIconized()) {
+   /* if (event.IsIconized()) {
         Hide();
-    }
+    }*/
+    
 }
 
 void MainFrame::OnRestore(wxCommandEvent& event) {

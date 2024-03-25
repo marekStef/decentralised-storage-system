@@ -127,16 +127,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="automaticStartupHelpers.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
     <ClCompile Include="ExistingSetupPage.cpp" />
     <ClCompile Include="InitialSetupPage.cpp" />
     <ClCompile Include="MainApp.cpp" />
-    <ClCompile Include="MainFrame.cpp" />
+    <ClCompile Include="MainFrame1.cpp" />
     <ClCompile Include="MainFrame.hpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="SettingsPage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="automaticStartupHelpers.hpp" />
     <ClInclude Include="ConfigManager.hpp" />
     <ClInclude Include="constants.hpp" />
     <ClInclude Include="ExistingSetupPage.hpp" />
