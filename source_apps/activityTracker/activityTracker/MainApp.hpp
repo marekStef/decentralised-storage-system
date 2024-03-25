@@ -3,6 +3,7 @@
 
 #include "MainFrame.hpp"
 #include "ConfigManager.hpp"
+
 #include <wx/wx.h>
 
 class MyApp : public wxApp {
@@ -19,6 +20,7 @@ bool MyApp::OnInit() {
 
     MainFrame* frame = new MainFrame("Activity Tracker", configManager);
     frame->Show(true);
+
     return true;
 }
 

@@ -1,42 +1,93 @@
 #include "MainFrame.hpp"
 #include "constants.hpp"
 
-MainFrame::MainFrame(const wxString& title, ConfigManager& man)
-    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), timer(new wxTimer(this)), configManager(man) {
 
-    SetBackgroundColour(*wxWHITE);
 
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+// Event table for handling window events
+BEGIN_EVENT_TABLE(MainFrame, wxFrame)
+    EVT_CLOSE(MainFrame::OnClose) // Handles the close event of the window.
+    EVT_ICONIZE(MainFrame::OnIconize) // Handles the iconize event (when the window is minimized )
+    EVT_MENU(ID_Restore, MainFrame::OnRestore) // Handles the menu event for restoring the window from the tray - not working at this moment
+    EVT_MENU(ID_Exit, MainFrame::OnExit) // Handles the menu event for exiting the application.
+END_EVENT_TABLE()
 
-    inputField = new wxTextCtrl(this, wxID_ANY);
-    sizer->Add(inputField, 0, wxEXPAND | wxALL, 5);
+MainFrame::MainFrame(const wxString& title, ConfigManager& configManager)
+    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), timer(new wxTimer(this)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
 
-    wxButton* saveButton = new wxButton(this, wxID_ANY, "Save");
-    sizer->Add(saveButton, 0, wxALL, 5);
-    saveButton->Bind(wxEVT_BUTTON, &MainFrame::OnSaveButtonClick, this);
+    SetIcon(wxIcon("Icon.ico", wxBITMAP_TYPE_ICO));
+    taskBarIcon->Bind(wxEVT_TASKBAR_LEFT_UP, &MainFrame::OnTaskBarIconClick, this);
 
-    wxButton* selectDirButton = new wxButton(this, wxID_ANY, "Select Directory");
-    sizer->Add(selectDirButton, 0, wxALL, 5);
-    selectDirButton->Bind(wxEVT_BUTTON, &MainFrame::OnSelectDirectoryClick, this);
-
-    directoryDisplay = new wxStaticText(this, wxID_ANY, "No directory selected");
-    sizer->Add(directoryDisplay, 0, wxALL, 5);
-
-    wxButton* alertButton = new wxButton(this, wxID_ANY, "Start Alert Timer");
-    sizer->Add(alertButton, 0, wxALL, 5);
-    alertButton->Bind(wxEVT_BUTTON, &MainFrame::OnAlertButtonClick, this);
-
-    lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last run: Never");
-    sizer->Add(lastRunTimeDisplay, 0, wxALL, 5);
-
-    SetSizer(sizer);
-    Layout();
+    setupUI();
 
     LoadConfig();
 
     // bind timer event
     this->Bind(wxEVT_TIMER, [this](wxTimerEvent& event) { this->PeriodicDataGatheringFunction(); }, timer->GetId());
 }
+void MainFrame::setupUI() {
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    SetTransparent(245);
+
+    notebook = new wxNotebook(this, wxID_ANY);
+
+    wxPanel* setupPage = new wxPanel(notebook, wxID_ANY);
+    PageSetup(setupPage);
+
+    wxPanel* mainPage = new wxPanel(notebook, wxID_ANY);
+    PageMain(mainPage);
+
+    notebook->AddPage(setupPage, "Setup", true); // true to make it the selected tab
+    notebook->AddPage(mainPage, "Main");
+
+    mainSizer->Add(notebook, 1, wxEXPAND, 0);
+
+    this->SetSizer(mainSizer);
+    Layout();
+
+}
+void MainFrame::PageSetup(wxPanel* parent) {
+    parent->SetBackgroundColour(wxColour(255, 255, 255));
+    parent->SetTransparent(245);
+
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+    sizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Text:"), 0, wxALL, 5);
+
+    inputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    sizer->Add(inputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+
+    wxButton* saveButton = new wxButton(parent, wxID_ANY, "Save");
+    sizer->Add(saveButton, 0, wxALIGN_CENTER | wxALL, 10);
+    saveButton->Bind(wxEVT_BUTTON, &MainFrame::OnSaveButtonClick, this);
+
+    wxStaticBoxSizer* directorySizer = new wxStaticBoxSizer(wxVERTICAL, parent, "Directory Selection");
+    wxButton* selectDirButton = new wxButton(parent, wxID_ANY, "Select Directory");
+    directorySizer->Add(selectDirButton, 0, wxALIGN_CENTER | wxALL, 5);
+    selectDirButton->Bind(wxEVT_BUTTON, &MainFrame::OnSelectDirectoryClick, this);
+
+    directoryDisplay = new wxStaticText(parent, wxID_ANY, "No directory selected");
+    directorySizer->Add(directoryDisplay, 0, wxALIGN_CENTER | wxALL, 5);
+    sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
+
+    wxButton* alertButton = new wxButton(parent, wxID_ANY, "Start Alert Timer");
+    sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
+    alertButton->Bind(wxEVT_BUTTON, &MainFrame::OnAlertButtonClick, this);
+
+    lastRunTimeDisplay = new wxStaticText(parent, wxID_ANY, "Last run: Never");
+    sizer->Add(lastRunTimeDisplay, 0, wxALIGN_CENTER | wxALL, 5);
+
+    wxButton* exitAppButton = new wxButton(parent, wxID_ANY, wxT("Exit App"));
+    sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
+    exitAppButton->Bind(wxEVT_BUTTON, &MainFrame::OnExit, this);
+     
+    parent->SetSizer(sizer); // set the sizer for parent to arrange its children
+    parent->Layout(); // This ensures the layout is recalculated
+}
+
+void MainFrame::PageMain(wxPanel* parent) {
+
+}
+
 
 void MainFrame::OnSaveButtonClick(wxCommandEvent& event) {
     wxString text = inputField->GetValue();
@@ -80,4 +131,49 @@ void MainFrame::PeriodicDataGatheringFunction() { // wxTimerEvent& event
 void MainFrame::startPeriodicDataGathering() {
     PeriodicDataGatheringFunction();
     timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
+}
+
+void MainFrame::OnClose(wxCloseEvent& event) {
+    // Check if the close event can be vetoed. This is true for events that are not a result of a system shutdown.
+    if (event.CanVeto()) {
+        // Hide the window instead of closing it. This is part of minimizing to the system tray instead of exiting the application.
+        Hide();
+
+        // Attempt to set the taskbar icon to indicate the application is still running.
+        if (!taskBarIcon->SetIcon(wxIcon("Icon.ico", wxBITMAP_TYPE_ICO), "Activity Tracker Running")) {
+            // If setting the taskbar icon fails 
+            wxMessageBox("Could not set the taskbar icon.");
+        }
+
+        // Veto the close event, which stops the window from closing and keeps
+        // the application running in the background.
+        event.Veto();
+    }
+    else {
+        // If the event cannot be vetoed, it means the application is being asked to close
+        // by the system (e.g., system shutdown). In this case, proceed with destroying
+        // the window to allow the application to close gracefully.
+        Destroy(); // we can't veto
+    }
+}
+
+void MainFrame::OnIconize(wxIconizeEvent& event) {
+    // When the window is iconized (minimized), hide it to not show in the taskbar
+    if (event.IsIconized()) {
+        Hide();
+    }
+}
+
+void MainFrame::OnRestore(wxCommandEvent& event) {
+    Show(true);
+    taskBarIcon->RemoveIcon();
+}
+
+void MainFrame::OnTaskBarIconClick(wxTaskBarIconEvent& event) {
+    Show(true); // Make the MainFrame window visible
+    // taskBarIcon->RemoveIcon();
+}
+
+void MainFrame::OnExit(wxCommandEvent& event) {
+    Close(true);
 }
