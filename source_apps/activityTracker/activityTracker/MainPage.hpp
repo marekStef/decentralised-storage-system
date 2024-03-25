@@ -14,6 +14,8 @@ private:
 
     void setupUI();
 
+    void OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event);
+
     void CloseApplication(wxCommandEvent& event);
 };
 

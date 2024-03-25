@@ -15,6 +15,8 @@ private:
 
     void OnSelectDirectoryClick(wxCommandEvent& event);
     void OnAutomaticAppStartupButtonClick(wxCommandEvent& event);
+    void OnResetAppConfigButtonClick(wxCommandEvent& event);
+
     wxStaticText* directoryDisplay;
     wxString defaultDirectory;
 

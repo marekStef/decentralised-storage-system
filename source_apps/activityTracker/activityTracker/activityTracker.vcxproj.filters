@@ -28,6 +28,12 @@
     <Filter Include="Source Files\WindowsSpecificHelpers">
       <UniqueIdentifier>{babe4991-65f2-4212-85d1-e7fc51538e08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\activityTracking">
+      <UniqueIdentifier>{c46d2316-bed2-4c1b-b7fc-99bab07d2457}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\activityTracking">
+      <UniqueIdentifier>{ac261248-db8f-4a35-9f45-e9a6c5ac6809}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -57,6 +63,9 @@
     <ClCompile Include="automaticStartupHelpers.cpp">
       <Filter>Source Files\WindowsSpecificHelpers</Filter>
     </ClCompile>
+    <ClCompile Include="WindowsAppsInfoManager.cpp">
+      <Filter>Source Files\activityTracking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -82,6 +91,12 @@
     </ClInclude>
     <ClInclude Include="automaticStartupHelpers.hpp">
       <Filter>Header Files\WindowsSpecificHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAppsInfoManager.hpp">
+      <Filter>Header Files\activityTracking</Filter>
+    </ClInclude>
+    <ClInclude Include="generalHelpers.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

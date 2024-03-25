@@ -30,6 +30,16 @@ void ConfigManager::SaveConfig() {
     config->Flush();
 }
 
+void ConfigManager::ResetConfig() {
+    serverAddress = wxEmptyString;
+    serverPort = wxEmptyString;
+    dataStorageJwtAssociationToken = wxEmptyString;
+    dataStorageTokenForProfilesCreationAndPermissionsRequests = wxEmptyString;
+    directoryForData = wxEmptyString;
+
+    SaveConfig();
+}
+
 wxString ConfigManager::GetServerAddress() const { return serverAddress; }
 void ConfigManager::SetServerAddress(const wxString& value) { serverAddress = value; }
 
@@ -44,3 +54,11 @@ void ConfigManager::SetDataStorageTokenForProfilesAndPermissionsRequests(const w
 
 wxString ConfigManager::GetDirectory() const { return directoryForData; }
 void ConfigManager::SetDirectory(const wxString& directoryForData) { this->directoryForData = directoryForData; }
+
+wxString ConfigManager::GetDirectoryForAppsInfo() const {
+    wxFileName dir(GetDirectory(), "");
+    if (dir == "") return "";
+
+    dir.AppendDir("apps");
+    return dir.GetFullPath();
+}

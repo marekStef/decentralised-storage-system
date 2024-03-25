@@ -20,6 +20,7 @@ public:
 
     void LoadConfig();
     void SaveConfig();
+    void ResetConfig();
 
     wxString GetServerAddress() const;
     void SetServerAddress(const wxString& value);
@@ -35,6 +36,8 @@ public:
 
     wxString GetDirectory() const;
     void SetDirectory(const wxString& directoryForData);
+
+    wxString GetDirectoryForAppsInfo() const;
 
 private:
     wxString serverAddress;

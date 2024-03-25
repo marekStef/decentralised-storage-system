@@ -24,10 +24,16 @@ void SettingsPage::setupUI() {
     sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
 
     wxStaticBoxSizer* automaticStartupSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Automatic Startup");
-    wxButton* loginButton = new wxButton(this, 1111, IsAppInStartupList() ? "Remove From Auto Startup" : "Add Auto Startup");
-    automaticStartupSizer->Add(loginButton, 0, wxALL, 5);
-    loginButton->Bind(wxEVT_BUTTON, &SettingsPage::OnAutomaticAppStartupButtonClick, this);
+    wxButton* autoStartupButton = new wxButton(this, 1111, IsAppInStartupList() ? "Remove From Auto Startup" : "Add Auto Startup");
+    automaticStartupSizer->Add(autoStartupButton, 0, wxALL, 5);
+    autoStartupButton->Bind(wxEVT_BUTTON, &SettingsPage::OnAutomaticAppStartupButtonClick, this);
     sizer->Add(automaticStartupSizer, 0, wxEXPAND | wxALL, 10);
+
+    wxStaticBoxSizer* appResettingSizer = new wxStaticBoxSizer(wxVERTICAL, this, "App Resetting");
+    wxButton* resetAppButton = new wxButton(this, wxID_ANY, "");
+    appResettingSizer->Add(resetAppButton, 0, wxALL, 5);
+    resetAppButton->Bind(wxEVT_BUTTON, &SettingsPage::OnResetAppConfigButtonClick, this);
+    sizer->Add(appResettingSizer, 0, wxEXPAND | wxALL, 10);
 
     this->SetSizer(sizer); // set the sizer for this to arrange its children
     this->Layout(); // This ensures the layout is recalculated
@@ -46,7 +52,6 @@ void SettingsPage::OnSelectDirectoryClick(wxCommandEvent& event) {
 
 void SettingsPage::OnAutomaticAppStartupButtonClick(wxCommandEvent& event) {
     wxButton* button = dynamic_cast<wxButton*>(event.GetEventObject());
-    
 
     bool isAppAmongStartupApps = IsAppInStartupList();
 
@@ -68,6 +73,11 @@ void SettingsPage::OnAutomaticAppStartupButtonClick(wxCommandEvent& event) {
 
     button->Refresh();
     button->Update();
+}
+
+void SettingsPage::OnResetAppConfigButtonClick(wxCommandEvent& event) {
+    configManager.ResetConfig();
+    loadConfig();
 }
 
 
