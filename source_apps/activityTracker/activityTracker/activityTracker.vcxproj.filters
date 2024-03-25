@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Pages">
+      <UniqueIdentifier>{77e4731b-3f49-41dd-bcf5-112c9a79e889}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Constants">
+      <UniqueIdentifier>{08611579-4285-4ed7-aea3-8a4e040da3b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pages">
+      <UniqueIdentifier>{23f2619a-bd14-4fdd-9994-8cf57eb681c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -27,6 +36,9 @@
     <ClCompile Include="ConfigManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="InitialSetupPage.cpp">
+      <Filter>Source Files\Pages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -35,8 +47,11 @@
     <ClInclude Include="ConfigManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InitialSetupPage.hpp">
+      <Filter>Header Files\Pages</Filter>
+    </ClInclude>
     <ClInclude Include="constants.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Constants</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

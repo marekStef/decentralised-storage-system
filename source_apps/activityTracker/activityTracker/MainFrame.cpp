@@ -1,7 +1,7 @@
 #include "MainFrame.hpp"
 #include "constants.hpp"
 
-
+#include <wx/scrolwin.h>
 
 // Event table for handling window events
 BEGIN_EVENT_TABLE(MainFrame, wxFrame)
@@ -30,13 +30,17 @@ void MainFrame::setupUI() {
 
     notebook = new wxNotebook(this, wxID_ANY);
 
-    wxPanel* setupPage = new wxPanel(notebook, wxID_ANY);
-    PageSetup(setupPage);
+    wxScrolledWindow* initialSetupPage = new wxScrolledWindow(notebook, wxID_ANY);
+    InitialPageSetup(initialSetupPage);
 
-    wxPanel* mainPage = new wxPanel(notebook, wxID_ANY);
+    wxScrolledWindow* existingSetupPage = new wxScrolledWindow(notebook, wxID_ANY);
+    ExistingPageSetup(existingSetupPage);
+
+    wxScrolledWindow* mainPage = new wxScrolledWindow(notebook, wxID_ANY);
     PageMain(mainPage);
 
-    notebook->AddPage(setupPage, "Setup", true); // true to make it the selected tab
+    notebook->AddPage(initialSetupPage, "Initial DataStorage Setup", true); // true to make it the selected tab
+    notebook->AddPage(existingSetupPage, "Existing DataStorage Setup"); // true to make it the selected tab
     notebook->AddPage(mainPage, "Main");
 
     mainSizer->Add(notebook, 1, wxEXPAND, 0);
@@ -45,18 +49,31 @@ void MainFrame::setupUI() {
     Layout();
 
 }
-void MainFrame::PageSetup(wxPanel* parent) {
+void MainFrame::InitialPageSetup(wxScrolledWindow* parent) {
+    parent->SetScrollbars(20, 20, 50, 50);
     parent->SetBackgroundColour(wxColour(255, 255, 255));
     parent->SetTransparent(245);
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    sizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Text:"), 0, wxALL, 5);
+    wxStaticBoxSizer* serverSettingSizer = new wxStaticBoxSizer(wxVERTICAL, parent, "Server setting");
 
-    inputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-    sizer->Add(inputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+    serverSettingSizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Server Address:"), 0, wxALL, 5);
+    serverAddressInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    serverSettingSizer->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
-    wxButton* saveButton = new wxButton(parent, wxID_ANY, "Save");
+    serverSettingSizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Server Port:"), 0, wxALL, 5);
+    serverPortInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    serverSettingSizer->Add(serverPortInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+    sizer->Add(serverSettingSizer, 0, wxEXPAND | wxALL, 10);
+
+    wxStaticBoxSizer* dataStorageTokens = new wxStaticBoxSizer(wxVERTICAL, parent, "Data Storage Tokens");
+    dataStorageTokens->Add(new wxStaticText(parent, wxID_ANY, "Association Token:"), 0, wxALL, 5);
+    serverAddressInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
+    dataStorageTokens->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+    sizer->Add(dataStorageTokens, 0, wxEXPAND | wxALL, 10);
+
+    wxButton* saveButton = new wxButton(parent, wxID_ANY, "Associate the app, create needed profiles and ask for permissions");
     sizer->Add(saveButton, 0, wxALIGN_CENTER | wxALL, 10);
     saveButton->Bind(wxEVT_BUTTON, &MainFrame::OnSaveButtonClick, this);
 
@@ -79,23 +96,27 @@ void MainFrame::PageSetup(wxPanel* parent) {
     wxButton* exitAppButton = new wxButton(parent, wxID_ANY, wxT("Exit App"));
     sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
     exitAppButton->Bind(wxEVT_BUTTON, &MainFrame::OnExit, this);
-     
+
     parent->SetSizer(sizer); // set the sizer for parent to arrange its children
     parent->Layout(); // This ensures the layout is recalculated
 }
 
-void MainFrame::PageMain(wxPanel* parent) {
+void MainFrame::ExistingPageSetup(wxScrolledWindow* parent) {
+
+}
+
+void MainFrame::PageMain(wxScrolledWindow* parent) {
 
 }
 
 
 void MainFrame::OnSaveButtonClick(wxCommandEvent& event) {
-    wxString text = inputField->GetValue();
+    wxString text = serverAddressInputField->GetValue();
     configManager.SetTextValue(text);
     configManager.SetDirectory(defaultDirectory);
     configManager.SaveConfig();
 
-    inputField->SetValue("");
+    serverAddressInputField->SetValue("");
 }
 
 void MainFrame::OnSelectDirectoryClick(wxCommandEvent& event) {
@@ -110,7 +131,7 @@ void MainFrame::OnSelectDirectoryClick(wxCommandEvent& event) {
 }
 
 void MainFrame::LoadConfig() {
-    inputField->SetValue(configManager.GetTextValue());
+    serverAddressInputField->SetValue(configManager.GetTextValue());
     directoryDisplay->SetLabel(configManager.GetDirectory());
 }
 

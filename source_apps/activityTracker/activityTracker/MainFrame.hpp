@@ -17,8 +17,9 @@ public:
 
 private:
     void setupUI();
-    void PageSetup(wxPanel* parent);
-    void PageMain(wxPanel* parent);
+    void InitialPageSetup(wxScrolledWindow* parent);
+    void ExistingPageSetup(wxScrolledWindow* parent);
+    void PageMain(wxScrolledWindow* parent);
 
     void OnSaveButtonClick(wxCommandEvent& event);
     void OnSelectDirectoryClick(wxCommandEvent& event);
@@ -31,7 +32,9 @@ private:
 
     ConfigManager& configManager;
 
-    wxTextCtrl* inputField;
+    wxTextCtrl* serverAddressInputField;
+    wxTextCtrl* serverPortInputField;
+
     wxStaticText* directoryDisplay;
     wxString defaultDirectory;
 

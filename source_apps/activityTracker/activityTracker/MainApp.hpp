@@ -25,4 +25,3 @@ bool MyApp::OnInit() {
 }
 
 #endif // !_MAIN_APP_HPP
-

@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConfigManager.cpp" />
+    <ClCompile Include="InitialSetupPage.cpp" />
     <ClCompile Include="MainApp.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MainFrame.hpp" />
@@ -135,6 +136,7 @@
   <ItemGroup>
     <ClInclude Include="ConfigManager.hpp" />
     <ClInclude Include="constants.hpp" />
+    <ClInclude Include="InitialSetupPage.hpp" />
     <ClInclude Include="MainApp.hpp" />
   </ItemGroup>
   <ItemGroup>
