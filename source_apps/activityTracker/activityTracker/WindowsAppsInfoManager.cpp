@@ -11,6 +11,7 @@
 #include <filesystem>
 
 #include "WindowsAppsInfoManager.hpp"
+#include "WindowInfo.hpp"
 
 void saveWindowsInfoToFile(const std::string& file_path) {
     std::filesystem::path fs_path(file_path);

@@ -30,7 +30,7 @@ void SettingsPage::setupUI() {
     sizer->Add(automaticStartupSizer, 0, wxEXPAND | wxALL, 10);
 
     wxStaticBoxSizer* appResettingSizer = new wxStaticBoxSizer(wxVERTICAL, this, "App Resetting");
-    wxButton* resetAppButton = new wxButton(this, wxID_ANY, "");
+    wxButton* resetAppButton = new wxButton(this, wxID_ANY, "Reset The Whole App");
     appResettingSizer->Add(resetAppButton, 0, wxALL, 5);
     resetAppButton->Bind(wxEVT_BUTTON, &SettingsPage::OnResetAppConfigButtonClick, this);
     sizer->Add(appResettingSizer, 0, wxEXPAND | wxALL, 10);

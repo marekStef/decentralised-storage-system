@@ -4,6 +4,10 @@
 #include "WindowsAppsInfoManager.hpp"
 #include "generalHelpers.hpp"
 
+#include "windowsAppsInfoNetworkHelpers.hpp"
+#include "JsonHelpers.hpp"
+#include "nlohmann/json.hpp"
+
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
     setupUI();
 }
@@ -30,17 +34,21 @@ void MainPage::setupUI() {
 
 void MainPage::OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event) {
     auto appsInfoDir = configManager.GetDirectoryForAppsInfo();
-
     if (appsInfoDir.length() == 0) {
         wxMessageBox("You need to set default directory first in the settings", "Alert", wxOK | wxICON_INFORMATION);
         return;
     }
-
-    wxString fileName = getCurrentTimeInIso() + ".txt";
-
+    wxString fileName = getCurrentTimeInIso() + ".json";
     wxFileName filePath(appsInfoDir, fileName);
     
-    saveWindowsInfoToFile(filePath.GetFullPath().ToStdString());
+    //saveWindowsInfoToFile(filePath.GetFullPath().ToStdString());
+
+    auto windows_manager = WindowsAppsInfoManager();
+    auto windowsInfo = windows_manager.get_windows_info();
+
+    json jsonResult = serializeWindowsInfoToJson(windowsInfo);
+    saveJsonToFile(jsonResult, filePath.GetFullPath().ToStdString());
+
     wxMessageBox("Finished exporting to" + filePath.GetFullPath(), "Alert", wxOK | wxICON_INFORMATION);
 }
 

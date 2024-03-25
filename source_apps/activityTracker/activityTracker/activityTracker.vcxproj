@@ -149,10 +149,13 @@
     <ClInclude Include="ExistingSetupPage.hpp" />
     <ClInclude Include="generalHelpers.hpp" />
     <ClInclude Include="InitialSetupPage.hpp" />
+    <ClInclude Include="JsonHelpers.hpp" />
     <ClInclude Include="MainApp.hpp" />
     <ClInclude Include="MainPage.hpp" />
     <ClInclude Include="SettingsPage.hpp" />
+    <ClInclude Include="WindowInfo.hpp" />
     <ClInclude Include="WindowsAppsInfoManager.hpp" />
+    <ClInclude Include="windowsAppsInfoNetworkHelpers.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon.ico" />

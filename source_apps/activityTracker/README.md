@@ -30,10 +30,37 @@ In `vcpkg` we need to install `curl`:
 C:\dev\vcpkg>.\vcpkg.exe install curl
 ```
 
-And also `wxwidgets`:
+Also `wxwidgets`:
 
 ```bash
 C:\dev\vcpkg>.\vcpkg install wxwidgets
+```
+
+And also `nlohmann-json`:
+
+```bash
+C:\dev\vcpkg>.\vcpkg install nlohmann-json
+```
+
+Result should be the following: 
+
+```bash
+Elapsed time to handle nlohmann-json:x64-windows: 12 s
+nlohmann-json:x64-windows package ABI: 95633b8655b89381dba0bc50317522a9802d5e0f98e0491768eaca4ef432660e
+Total install time: 12 s
+The package nlohmann-json provides CMake targets:
+
+    find_package(nlohmann_json CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE nlohmann_json::nlohmann_json)
+
+The package nlohmann-json can be configured to not provide implicit conversions via a custom triplet file:
+
+    set(nlohmann-json_IMPLICIT_CONVERSIONS OFF)
+
+For more information, see the docs here:
+
+    https://json.nlohmann.me/api/macros/json_use_implicit_conversions/
+
 ```
 
 Now we are able to use run the project.

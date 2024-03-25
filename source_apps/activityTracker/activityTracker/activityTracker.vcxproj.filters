@@ -34,6 +34,18 @@
     <Filter Include="Source Files\activityTracking">
       <UniqueIdentifier>{ac261248-db8f-4a35-9f45-e9a6c5ac6809}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Network">
+      <UniqueIdentifier>{c877e70b-3708-441e-8d98-40cf7c6069f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\activityTracking\WindowsAppsInfo">
+      <UniqueIdentifier>{a7a0c1d9-1d04-4f59-929d-9fccdb8c98c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\activityTracking\WindowsAppsInfo">
+      <UniqueIdentifier>{4de6f273-1a7a-4edb-9a50-52d46109cdfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Network\JSON">
+      <UniqueIdentifier>{71641930-8c1c-4e74-84a2-2e0428460455}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -64,7 +76,7 @@
       <Filter>Source Files\WindowsSpecificHelpers</Filter>
     </ClCompile>
     <ClCompile Include="WindowsAppsInfoManager.cpp">
-      <Filter>Source Files\activityTracking</Filter>
+      <Filter>Source Files\activityTracking\WindowsAppsInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,11 +104,20 @@
     <ClInclude Include="automaticStartupHelpers.hpp">
       <Filter>Header Files\WindowsSpecificHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="WindowsAppsInfoManager.hpp">
-      <Filter>Header Files\activityTracking</Filter>
-    </ClInclude>
     <ClInclude Include="generalHelpers.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAppsInfoManager.hpp">
+      <Filter>Header Files\activityTracking\WindowsAppsInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowInfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="windowsAppsInfoNetworkHelpers.hpp">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonHelpers.hpp">
+      <Filter>Header Files\Network\JSON</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
