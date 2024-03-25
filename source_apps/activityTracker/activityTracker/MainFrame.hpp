@@ -17,30 +17,8 @@ public:
 
 private:
     void setupUI();
-    void InitialPageSetup(wxScrolledWindow* parent);
-    void ExistingPageSetup(wxScrolledWindow* parent);
-    void PageMain(wxScrolledWindow* parent);
-
-    void OnSaveButtonClick(wxCommandEvent& event);
-    void OnSelectDirectoryClick(wxCommandEvent& event);
-    void LoadConfig();
-
-    void OnAlertButtonClick(wxCommandEvent& event);
-    void PeriodicDataGatheringFunction();
-
-    void startPeriodicDataGathering();
 
     ConfigManager& configManager;
-
-    wxTextCtrl* serverAddressInputField;
-    wxTextCtrl* serverPortInputField;
-
-    wxStaticText* directoryDisplay;
-    wxString defaultDirectory;
-
-    wxStaticText* lastRunTimeDisplay;
-
-    wxTimer* timer; // Timer to trigger the periodic execution function
 
     // task bar related [start]
 

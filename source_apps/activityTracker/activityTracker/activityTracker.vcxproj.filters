@@ -39,6 +39,15 @@
     <ClCompile Include="InitialSetupPage.cpp">
       <Filter>Source Files\Pages</Filter>
     </ClCompile>
+    <ClCompile Include="ExistingSetupPage.cpp">
+      <Filter>Source Files\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPage.cpp">
+      <Filter>Source Files\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsPage.cpp">
+      <Filter>Source Files\Pages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -52,6 +61,15 @@
     </ClInclude>
     <ClInclude Include="constants.hpp">
       <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="ExistingSetupPage.hpp">
+      <Filter>Header Files\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPage.hpp">
+      <Filter>Header Files\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsPage.hpp">
+      <Filter>Header Files\Pages</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,9 @@
 #include "MainFrame.hpp"
 #include "constants.hpp"
+#include "InitialSetupPage.hpp"
+#include "ExistingSetupPage.hpp"
+#include "SettingsPage.hpp"
+#include "MainPage.hpp"
 
 #include <wx/scrolwin.h>
 
@@ -12,146 +16,35 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(const wxString& title, ConfigManager& configManager)
-    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), timer(new wxTimer(this)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
+    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
 
     SetIcon(wxIcon("Icon.ico", wxBITMAP_TYPE_ICO));
     taskBarIcon->Bind(wxEVT_TASKBAR_LEFT_UP, &MainFrame::OnTaskBarIconClick, this);
 
     setupUI();
-
-    LoadConfig();
-
-    // bind timer event
-    this->Bind(wxEVT_TIMER, [this](wxTimerEvent& event) { this->PeriodicDataGatheringFunction(); }, timer->GetId());
 }
+
 void MainFrame::setupUI() {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetTransparent(245);
 
     notebook = new wxNotebook(this, wxID_ANY);
 
-    wxScrolledWindow* initialSetupPage = new wxScrolledWindow(notebook, wxID_ANY);
-    InitialPageSetup(initialSetupPage);
-
-    wxScrolledWindow* existingSetupPage = new wxScrolledWindow(notebook, wxID_ANY);
-    ExistingPageSetup(existingSetupPage);
-
-    wxScrolledWindow* mainPage = new wxScrolledWindow(notebook, wxID_ANY);
-    PageMain(mainPage);
+    auto initialSetupPage = new InitialSetupPage(notebook, configManager);
+    auto existingSetupPage = new ExistingSetupPage(notebook, configManager);
+    auto mainPage = new MainPage(notebook, configManager);
+    auto settingsPage = new SettingsPage(notebook, configManager);
 
     notebook->AddPage(initialSetupPage, "Initial DataStorage Setup", true); // true to make it the selected tab
-    notebook->AddPage(existingSetupPage, "Existing DataStorage Setup"); // true to make it the selected tab
-    notebook->AddPage(mainPage, "Main");
+    notebook->AddPage(existingSetupPage, "Existing DataStorage Setup");
+    notebook->AddPage(settingsPage, "Settings");
+    notebook->AddPage(mainPage, "Home");
 
     mainSizer->Add(notebook, 1, wxEXPAND, 0);
 
     this->SetSizer(mainSizer);
     Layout();
 
-}
-void MainFrame::InitialPageSetup(wxScrolledWindow* parent) {
-    parent->SetScrollbars(20, 20, 50, 50);
-    parent->SetBackgroundColour(wxColour(255, 255, 255));
-    parent->SetTransparent(245);
-
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-
-    wxStaticBoxSizer* serverSettingSizer = new wxStaticBoxSizer(wxVERTICAL, parent, "Server setting");
-
-    serverSettingSizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Server Address:"), 0, wxALL, 5);
-    serverAddressInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-    serverSettingSizer->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
-
-    serverSettingSizer->Add(new wxStaticText(parent, wxID_ANY, "Enter Server Port:"), 0, wxALL, 5);
-    serverPortInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-    serverSettingSizer->Add(serverPortInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
-    sizer->Add(serverSettingSizer, 0, wxEXPAND | wxALL, 10);
-
-    wxStaticBoxSizer* dataStorageTokens = new wxStaticBoxSizer(wxVERTICAL, parent, "Data Storage Tokens");
-    dataStorageTokens->Add(new wxStaticText(parent, wxID_ANY, "Association Token:"), 0, wxALL, 5);
-    serverAddressInputField = new wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
-    dataStorageTokens->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
-    sizer->Add(dataStorageTokens, 0, wxEXPAND | wxALL, 10);
-
-    wxButton* saveButton = new wxButton(parent, wxID_ANY, "Associate the app, create needed profiles and ask for permissions");
-    sizer->Add(saveButton, 0, wxALIGN_CENTER | wxALL, 10);
-    saveButton->Bind(wxEVT_BUTTON, &MainFrame::OnSaveButtonClick, this);
-
-    wxStaticBoxSizer* directorySizer = new wxStaticBoxSizer(wxVERTICAL, parent, "Directory Selection");
-    wxButton* selectDirButton = new wxButton(parent, wxID_ANY, "Select Directory");
-    directorySizer->Add(selectDirButton, 0, wxALIGN_CENTER | wxALL, 5);
-    selectDirButton->Bind(wxEVT_BUTTON, &MainFrame::OnSelectDirectoryClick, this);
-
-    directoryDisplay = new wxStaticText(parent, wxID_ANY, "No directory selected");
-    directorySizer->Add(directoryDisplay, 0, wxALIGN_CENTER | wxALL, 5);
-    sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
-
-    wxButton* alertButton = new wxButton(parent, wxID_ANY, "Start Alert Timer");
-    sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
-    alertButton->Bind(wxEVT_BUTTON, &MainFrame::OnAlertButtonClick, this);
-
-    lastRunTimeDisplay = new wxStaticText(parent, wxID_ANY, "Last run: Never");
-    sizer->Add(lastRunTimeDisplay, 0, wxALIGN_CENTER | wxALL, 5);
-
-    wxButton* exitAppButton = new wxButton(parent, wxID_ANY, wxT("Exit App"));
-    sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
-    exitAppButton->Bind(wxEVT_BUTTON, &MainFrame::OnExit, this);
-
-    parent->SetSizer(sizer); // set the sizer for parent to arrange its children
-    parent->Layout(); // This ensures the layout is recalculated
-}
-
-void MainFrame::ExistingPageSetup(wxScrolledWindow* parent) {
-
-}
-
-void MainFrame::PageMain(wxScrolledWindow* parent) {
-
-}
-
-
-void MainFrame::OnSaveButtonClick(wxCommandEvent& event) {
-    wxString text = serverAddressInputField->GetValue();
-    configManager.SetTextValue(text);
-    configManager.SetDirectory(defaultDirectory);
-    configManager.SaveConfig();
-
-    serverAddressInputField->SetValue("");
-}
-
-void MainFrame::OnSelectDirectoryClick(wxCommandEvent& event) {
-    wxDirDialog dirDialog(this, "Choose a directory", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
-
-    if (dirDialog.ShowModal() == wxID_OK) {
-        defaultDirectory = dirDialog.GetPath();
-        directoryDisplay->SetLabel(defaultDirectory);
-        configManager.SetDirectory(defaultDirectory);
-        configManager.SaveConfig();
-    }
-}
-
-void MainFrame::LoadConfig() {
-    serverAddressInputField->SetValue(configManager.GetTextValue());
-    directoryDisplay->SetLabel(configManager.GetDirectory());
-}
-
-void MainFrame::OnAlertButtonClick(wxCommandEvent& event) {
-    startPeriodicDataGathering();
-}
-
-
-void MainFrame::PeriodicDataGatheringFunction() { // wxTimerEvent& event
-    wxDateTime currentTime = wxDateTime::Now();
-    wxString timeString = currentTime.Format("%Y-%m-%d %H:%M:%S");
-
-    lastRunTimeDisplay->SetLabel(wxString::Format("Last run: %s", timeString));
-
-    wxMessageBox("Time to check!", "Alert", wxOK | wxICON_INFORMATION);
-}
-
-void MainFrame::startPeriodicDataGathering() {
-    PeriodicDataGatheringFunction();
-    timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
 }
 
 void MainFrame::OnClose(wxCloseEvent& event) {

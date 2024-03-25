@@ -128,16 +128,22 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConfigManager.cpp" />
+    <ClCompile Include="ExistingSetupPage.cpp" />
     <ClCompile Include="InitialSetupPage.cpp" />
     <ClCompile Include="MainApp.cpp" />
     <ClCompile Include="MainFrame.cpp" />
     <ClCompile Include="MainFrame.hpp" />
+    <ClCompile Include="MainPage.cpp" />
+    <ClCompile Include="SettingsPage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigManager.hpp" />
     <ClInclude Include="constants.hpp" />
+    <ClInclude Include="ExistingSetupPage.hpp" />
     <ClInclude Include="InitialSetupPage.hpp" />
     <ClInclude Include="MainApp.hpp" />
+    <ClInclude Include="MainPage.hpp" />
+    <ClInclude Include="SettingsPage.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon.ico" />
