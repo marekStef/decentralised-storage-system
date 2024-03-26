@@ -64,3 +64,21 @@ For more information, see the docs here:
 ```
 
 Now we are able to use run the project.
+
+--- 
+
+IMPORTANT:
+
+### Browser Tabs Info Is Not Gathered
+
+Enumerating browser tabs directly from standalone C++ code presents significant challenges due to the architecture of web browsers and the security models they employ. It is not straightforwardly achievable to obtain this data through conventional means like those used for enumerating top-level windows with the Windows API.
+
+1. Process and Window Management
+Modern operating systems and their graphical subsystems, such as those in Windows OS, distinguish between processes and the windows they create. Tools and APIs are provided to enumerate these windows, obtain window titles, and perform other related tasks. However, this model primarily applies to top-level windows — that is, windows that are directly managed by the operating system's window manager.
+
+Web browsers, on the other hand, often manage tabs internally within a single process and window. Each tab does not correspond to a separate top-level window in the traditional sense but rather is an internal construct of the browser application itself. This design allows browsers to efficiently manage resources, such as sharing processes for rendering or JavaScript execution across multiple tabs, and implement features like tab isolation and recovery from crashes within a single tab.
+
+2. Security and Privacy Concerns
+Web browsers are designed with strong security and privacy considerations, especially given their role in accessing and managing sensitive user data across the internet. Allowing external applications to enumerate and access information about open tabs could pose significant privacy risks and potentially expose users to malicious activities. As a result, browsers are designed to sandbox such information, restricting access to it from outside the browser process.
+
+Also discusses [here](https://stackoverflow.com/questions/40608529/enumwindow-to-catch-tab-process-google-chrome-c)
