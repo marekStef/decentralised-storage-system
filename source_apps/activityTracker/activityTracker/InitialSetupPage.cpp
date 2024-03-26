@@ -2,6 +2,7 @@
 #include "constants.hpp"
 #include "JsonHelpers.hpp"
 #include "nlohmann/json.hpp"
+#include "windowsAppsInfoNetworkHelpers.hpp"
 
 const wxColour PageMainBackgroundColour = wxColour(255, 255, 255);
 
@@ -38,9 +39,17 @@ void InitialSetupPage::setupUI() {
     dataStorageTokens->Add(dataStorageJwtAssociationTokenInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
     sizer->Add(dataStorageTokens, 0, wxEXPAND | wxALL, 10);
 
-    wxButton* saveButton = new wxButton(this, wxID_ANY, "Associate the app, create needed profiles and ask for permissions");
-    sizer->Add(saveButton, 0, wxALIGN_CENTER | wxALL, 10);
-    saveButton->Bind(wxEVT_BUTTON, &InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick, this);
+    wxButton* checkAuthServicePresenceButton = new wxButton(this, wxID_ANY, "Check Auth Service Presence");
+    sizer->Add(checkAuthServicePresenceButton, 0, wxALIGN_CENTER | wxALL, 10);
+    checkAuthServicePresenceButton->Bind(wxEVT_BUTTON, &InitialSetupPage::CheckAuthServicePresence, this);
+
+    wxButton* associateAppButton = new wxButton(this, wxID_ANY, "Associate the app");
+    sizer->Add(associateAppButton, 0, wxALIGN_CENTER | wxALL, 10);
+    associateAppButton->Bind(wxEVT_BUTTON, &InitialSetupPage::CheckAuthServicePresence, this);
+
+    wxButton* createProfilesAndAskForPermissionsButton = new wxButton(this, wxID_ANY, "Create Profiles And Ask For Permissions");
+    sizer->Add(createProfilesAndAskForPermissionsButton, 0, wxALIGN_CENTER | wxALL, 10);
+    createProfilesAndAskForPermissionsButton->Bind(wxEVT_BUTTON, &InitialSetupPage::CheckAuthServicePresence, this);
 
     wxButton* alertButton = new wxButton(this, wxID_ANY, "Start Alert Timer");
     sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
@@ -54,7 +63,7 @@ void InitialSetupPage::setupUI() {
 }
 
 
-void InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick(wxCommandEvent& event) {
+void InitialSetupPage::CheckAuthServicePresence(wxCommandEvent& event) {
     wxString serverAddress = serverAddressInputField->GetValue();
     wxString serverPort = serverPortInputField->GetValue();
     wxString dataStorageJwtAssociationToken = dataStorageJwtAssociationTokenInputField->GetValue();
@@ -63,17 +72,22 @@ void InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick
     configManager.SetServerPort(serverPort);
     configManager.SetDataStorageJwtAssociationToken(dataStorageJwtAssociationToken);
 
-    try {
+    /*try {
         json jsonProfileSchema = loadActivityTrackingEventProfileSchema();
         wxMessageBox(configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json TESTING - SAVED IT THERE", "Alert", wxOK | wxICON_INFORMATION);
         saveJsonToFile(jsonProfileSchema, configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json");
     }
     catch (const std::exception& e) {
         wxMessageBox(e.what(), "Alert", wxOK | wxICON_INFORMATION);
+    }*/
+
+    if (CheckAuthServicePresenceCurl(serverAddress.ToStdString(), serverPort.ToStdString())) {
+        configManager.SaveConfig();
+        DisableServerLocationInputs();
     }
-   
-    configManager.SaveConfig();
-    DisableAllInputs();
+    else {
+        wxMessageBox("Server is not reachable", "Alert", wxOK | wxICON_INFORMATION);
+    }
 }
 
 void InitialSetupPage::LoadConfig() {
@@ -82,10 +96,9 @@ void InitialSetupPage::LoadConfig() {
     dataStorageJwtAssociationTokenInputField->SetValue(configManager.GetDataStorageJwtAssociationToken());
 }
 
-void InitialSetupPage::DisableAllInputs() {
+void InitialSetupPage::DisableServerLocationInputs() {
     serverAddressInputField->Enable(false);
     serverPortInputField->Enable(false);
-    dataStorageJwtAssociationTokenInputField->Enable(false);
 }
 
 void InitialSetupPage::OnAlertButtonClick(wxCommandEvent& event) {

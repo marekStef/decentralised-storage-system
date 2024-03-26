@@ -141,6 +141,7 @@
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="SettingsPage.cpp" />
     <ClCompile Include="WindowsAppsInfoManager.cpp" />
+    <ClCompile Include="windowsAppsInfoNetworkHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="automaticStartupHelpers.hpp" />

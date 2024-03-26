@@ -19,10 +19,10 @@ private:
     wxTextCtrl* dataStorageJwtAssociationTokenInputField;
     wxTextCtrl* dataStorageJwtTokenForProfilesAndPermissionsRequests;
 
-    void AssociateAppCreateProfilesAndAskForPermissionsButtonClick(wxCommandEvent& event);
+    void CheckAuthServicePresence(wxCommandEvent& event);
     void LoadConfig();
 
-    void DisableAllInputs();
+    void DisableServerLocationInputs();
 
     wxStaticText* lastRunTimeDisplay;
 

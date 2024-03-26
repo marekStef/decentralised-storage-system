@@ -49,6 +49,9 @@
     <Filter Include="resources">
       <UniqueIdentifier>{29bfe6e2-f95b-44c8-b746-35bafb3a2796}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Network">
+      <UniqueIdentifier>{fdbcf431-2385-40c0-9b3d-e930edc3d00c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -80,6 +83,9 @@
     </ClCompile>
     <ClCompile Include="WindowsAppsInfoManager.cpp">
       <Filter>Source Files\activityTracking\WindowsAppsInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="windowsAppsInfoNetworkHelpers.cpp">
+      <Filter>Source Files\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
