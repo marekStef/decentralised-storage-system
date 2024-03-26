@@ -186,10 +186,16 @@ const runViewInstance = async (req, res) => {
 const getViewInstanceDetails = async (req, res) => {
     const { viewInstanceId } = req.params;
 
+    if (!mongoose.Types.ObjectId.isValid(viewInstanceId))
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'viewInstanceId is not a correct id' });
+
     try {
         let viewInstance = await ViewInstance.findById(viewInstanceId)
             .populate('viewTemplate')
             .exec();
+        if (!viewInstance) {
+            return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'View Instance not found' });
+        }
 
         res.status(httpStatusCodes.OK).json(viewInstance);
     } catch (error) {

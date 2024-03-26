@@ -247,3 +247,4 @@ Or if something goes wrong, 400 along with message is returned.
 }
 ```
 
+Congrats! You have your new `View Template` created now and you can move on to `View Instances`.
