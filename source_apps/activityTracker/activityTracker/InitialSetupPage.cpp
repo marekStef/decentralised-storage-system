@@ -1,5 +1,7 @@
 #include "InitialSetupPage.hpp"
 #include "constants.hpp"
+#include "JsonHelpers.hpp"
+#include "nlohmann/json.hpp"
 
 const wxColour PageMainBackgroundColour = wxColour(255, 255, 255);
 
@@ -61,6 +63,15 @@ void InitialSetupPage::AssociateAppCreateProfilesAndAskForPermissionsButtonClick
     configManager.SetServerPort(serverPort);
     configManager.SetDataStorageJwtAssociationToken(dataStorageJwtAssociationToken);
 
+    try {
+        json jsonProfileSchema = loadActivityTrackingEventProfileSchema();
+        wxMessageBox(configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json TESTING - SAVED IT THERE", "Alert", wxOK | wxICON_INFORMATION);
+        saveJsonToFile(jsonProfileSchema, configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json");
+    }
+    catch (const std::exception& e) {
+        wxMessageBox(e.what(), "Alert", wxOK | wxICON_INFORMATION);
+    }
+   
     configManager.SaveConfig();
     DisableAllInputs();
 }

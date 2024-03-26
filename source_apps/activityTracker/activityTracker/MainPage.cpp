@@ -47,6 +47,7 @@ void MainPage::OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event) {
     auto windowsInfo = windows_manager.get_windows_info();
 
     json jsonResult = serializeWindowsInfoToJson(windowsInfo);
+
     saveJsonToFile(jsonResult, filePath.GetFullPath().ToStdString());
 
     wxMessageBox("Finished exporting to" + filePath.GetFullPath(), "Alert", wxOK | wxICON_INFORMATION);

@@ -1,0 +1,70 @@
+{
+  "title": "WindowsActivityTrackingEvent",
+  "type": "object",
+  "properties": {
+    "processId": {
+      "type": "string",
+      "description": "Unique identifier for the windows process."
+    },
+    "title": {
+      "type": "string",
+      "description": "Name of the running process"
+    },
+    "exeName": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The end time of the event."
+    },
+    "memoryUsageInBytes": {
+      "type": "string",
+      "description": "Amount of memory process takes in bytes."
+    },
+    "isMinimised": {
+      "type": "boolean",
+      "description": "Whether the app is minimised in the taskbar or on desktop."
+    },
+    "moduleName": {
+      "type": "string",
+      "description": "Name of the module (oftentimes it's the exe name without the path)."
+    },
+    "dimensions": {
+      "type": "object",
+      "properties": {
+        "top": {
+          "type": "number"
+        },
+        "left": {
+          "type": "number"
+        },
+        "right": {
+          "type": "number"
+        },
+        "bottom": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "top",
+        "left",
+        "right",
+        "bottom"
+      ]
+    },
+    "gatheredAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this info was gathered - in ISO."
+    }
+  },
+  "required": [
+    "processId",
+    "title",
+    "exeName",
+    "memoryUsageInBytes",
+    "isMinimised",
+    "moduleName",
+    "dimensions",
+    "gatheredAt"
+  ],
+  "additionalProperties": false
+}

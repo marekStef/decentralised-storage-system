@@ -13,6 +13,11 @@ private:
     ConfigManager& configManager;
 
     void setupUI();
+
+    wxTextCtrl* jwtTokenForProfilesAndPermissionsRequestsInputField;
+    wxTextCtrl* accessTokenForActivityTrackingEventsInputField;
+
+    void SaveExistingConfigurationButtonClickHandler(wxCommandEvent& event);
 };
 
 #endif // EXISTING_SETUP_PAGE_HPP
