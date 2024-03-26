@@ -26,7 +26,7 @@ Your code won't work if you use `import` instead of `require` as the code is bei
 
 ### One Main File Requirement
 
-As mentioned [before](#importing-of-other-files) you can import multipel files **but exactly one of them must be called `main.js`**.
+As mentioned [before](#importing-of-other-files) you can import multiple files **but exactly one of them must be called `main.js`**.
 
 If none of the files will be called `main.js`, `Javascript Execution Service` won't accept such source code.
 

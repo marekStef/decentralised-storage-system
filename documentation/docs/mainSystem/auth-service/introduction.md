@@ -23,10 +23,6 @@ This component is the only component accessible to apps. All other components of
 - **/admin/api/permissions/approvePermissionRequest** *(PUT)*
 - **/admin/api/permissions/revokePermission** *(PUT)*
 
-```js title="endpoints for admin"
-```
-
-
 ### Endpoints meant to be used by applications themselves
 
 `association, registration, permissions`
@@ -84,8 +80,4 @@ Registering a new `View Template` needs to be done manually through `View Manage
 
 ### Status info routes
 
-```js title="status info routes"
-const statusInfoController = require("../../controllers/statusInfoController")
-
-router.get('/checks/check_auth_service_presence', statusInfoController.returnAuthServicePresence);
-```
+- **/status_info/checks/check_auth_service_presence** *(GET)*
