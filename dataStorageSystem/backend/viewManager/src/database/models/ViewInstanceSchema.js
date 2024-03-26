@@ -6,11 +6,6 @@ const ViewInstanceSchema = new mongoose.Schema({
         ref: 'ViewTemplate',
         required: true
     },
-    // identifier: {
-    //     type: String,
-    //     required: true,
-    //     unique: true
-    // },
     createdDate: {
         type: Date,
         default: Date.now

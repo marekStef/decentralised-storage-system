@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const FormData = require('form-data');
 const axios = require('axios');
+const mongoose = require('mongoose');
 
 const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
@@ -17,7 +18,7 @@ const cleanFiles = files => {
 // this is a multipart data request (due to those files being uploaded) - so the things in the body are only texts! They need to be parsed individually
 const createNewViewTemplate = async (req, res) => {
     const files = req.files;
-    let { profiles, runtime, templateName } = req.body;
+    let {profiles, runtime, templateName} = req.body;
 
     console.log(profiles);
 
@@ -26,11 +27,11 @@ const createNewViewTemplate = async (req, res) => {
     }
     catch (e) {
         console.log(e);
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Profiles is not a correct json array' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'Profiles is not a correct json array'});
     }
 
     if (!profiles || !runtime || !templateName) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'profiles, runtime and templateName must be present' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'profiles, runtime and templateName must be present'});
     }
 
     if (!isAllowedRuntime(runtime)) {
@@ -40,9 +41,9 @@ const createNewViewTemplate = async (req, res) => {
         })
     }
 
-    const existingTemplate = await ViewTemplate.findOne({ templateName: templateName });
+    const existingTemplate = await ViewTemplate.findOne({templateName: templateName});
     if (existingTemplate) {
-        return res.status(httpStatusCodes.CONFLICT).json({ message: 'Template name must be unique' });
+        return res.status(httpStatusCodes.CONFLICT).json({message: 'Template name must be unique'});
     }
 
     const formData = new FormData();
@@ -65,14 +66,14 @@ const createNewViewTemplate = async (req, res) => {
 
             const newViewTemplate = new ViewTemplate({
                 sourceCodeId: sourceCodeId,
-                metadata: { runtime: 'javascript' },
+                metadata: {runtime: 'javascript'},
                 profiles: profiles,
                 templateName
             });
 
             await newViewTemplate.save(); // Save the new record to the database
 
-            res.status(httpStatusCodes.CREATED).send({sourceCodeId: sourceCodeId, viewTemplateId: newViewTemplate._id, message: 'View Template was created' });
+            res.status(httpStatusCodes.CREATED).send({sourceCodeId: sourceCodeId, viewTemplateId: newViewTemplate._id, message: 'View Template was created'});
         } else {
             // If something went wrong, forward the response message
             res.status(response.status).send({message: response.data.message});
@@ -83,15 +84,9 @@ const createNewViewTemplate = async (req, res) => {
             res.status(error.response.status).send({message: error.response.data.message});
         } else {
             console.error('Network or other error:', error.message);
-            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed to register source code.'});
+            res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({message: 'Failed to register source code.'});
         }
     }
-}
-
-const deleteViewTemplate = (req, res) => {
-    const {templateId} = req.params;
-
-    res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'not implemented yet', id: templateId });
 }
 
 const getAllTemplates = async (req, res) => {
@@ -104,44 +99,119 @@ const getAllTemplates = async (req, res) => {
     }
 };
 
+const getDetailedTemplateInformation = templateId => {
+    return new Promise(async (res, rej) => {
+        try {
+            const template = await ViewTemplate.findById(templateId);
+            if (!template) {
+                return rej({
+                    code: httpStatusCodes.NOT_FOUND,
+                    message: 'Template not found'
+                })
+            }
+
+            const executionServerEndpoint = `${process.env.JAVASCRIPT_EXECUTION_SERVICE_URI}/sourceCodes/${template.sourceCodeId}`;
+            const response = await axios.get(executionServerEndpoint);
+            const sourceCode = response.data.sourceCode;
+
+            const viewInstances = await ViewInstance.find({viewTemplate: template._id});
+            const isInUse = viewInstances.length > 0;
+
+            res({
+                template,
+                sourceCode,
+                viewInstances,
+                isInUse
+            })
+
+        } catch (error) {
+            console.error('Error fetching template or source code:', error);
+            if (error.response && error.response.status) {
+                rej({
+                    code: error.response.status,
+                    message: error.message
+                })
+            } else {
+                rej({
+                    code: httpStatusCodes.INTERNAL_SERVER_ERROR,
+                    message: 'Something went wrong'
+                })
+            }
+        }
+    });
+}
+
 const getTemplate = async (req, res) => {
-    const { templateId } = req.params;
+    const {templateId} = req.params;
     if (!templateId) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'templateId must be present' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'templateId must be present'});
     }
 
-    try {
-        const template = await ViewTemplate.findById(templateId);
-        if (!template) {
-            return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'Template not found' });
-        }
-
-        const executionServerEndpoint = `${process.env.JAVASCRIPT_EXECUTION_SERVICE_URI}/sourceCodes/${template.sourceCodeId}`;
-        const response = await axios.get(executionServerEndpoint);
-        const sourceCode = response.data.sourceCode;
-
-        const viewInstances = await ViewInstance.find({ viewTemplate: template._id });
-        const isInUse = viewInstances.length > 0;
-
-        return res.status(httpStatusCodes.OK).json({ 
-            template, 
-            sourceCode,
-            viewInstances,
-            isInUse
-         });
-    } catch (error) {
-        console.error('Error fetching template or source code:', error);
-        if (error.response && error.response.status) {
-            return res.status(error.response.status).json({ message: error.message });
-        } else {
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong' });
-        }
-    }
+    getDetailedTemplateInformation(templateId)
+        .then(templateDetails => {
+            res.status(httpStatusCodes.OK).json(templateDetails);
+        })
+        .catch(error => {
+            res.status(error.code).json({message: error.message});
+        })
 };
+
+const deleteTemplateViewBasedOnId = templateId => {
+    return new Promise(async (res, rej) => {
+        try {
+            const deletedTemplate = await ViewTemplate.findByIdAndDelete(templateId);
+            if (!deletedTemplate) {
+                rej({
+                    code: httpStatusCodes.NOT_FOUND,
+                    message: 'ViewTemplate not found.'
+                });
+            } else {
+                res({
+                    code: httpStatusCodes.OK,
+                    message: 'ViewTemplate successfully deleted.'
+                })
+            }
+        } catch (error) {
+            console.error('Error deleting ViewTemplate:', error);
+            rej({
+                code: httpStatusCodes.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error.'
+            });
+        }
+    })
+}
+
+const deleteViewTemplate = (req, res) => {
+    const {templateId} = req.params;
+    if (!templateId) {
+        return res.status(httpStatusCodes.BAD_REQUEST).json({message: 'templateId must be present'});
+    }
+    if (!mongoose.Types.ObjectId.isValid(templateId)) {
+        return res.status(httpStatusCodes.BAD_REQUEST).send({message: 'Invalid ID format.'});
+    }
+
+    getDetailedTemplateInformation(templateId)
+        .then(templateDetails => {
+            if (templateDetails.isInUse) {
+                res.status(httpStatusCodes.BAD_REQUEST).json({message: 'View Template is in use and cannot be deleted'})
+            } else {
+                deleteTemplateViewBasedOnId(templateId)
+                    .then((result) => {
+                        res.status(result.code).json({message: result.message});
+                    })
+                    .catch(errResult => {
+                        res.status(errResult.code).json({message: errResult.message});
+                    })
+            }
+        })
+        .catch(error => {
+            res.status(error.code).json({message: 'View Template could not be deleted: ' + error.message});
+        })
+}
 
 module.exports = {
     createNewViewTemplate,
-    deleteViewTemplate,
     getAllTemplates,
-    getTemplate
+    getTemplate,
+    deleteViewTemplate
 }

@@ -4,7 +4,8 @@
   "description": "Main application for datastorage",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exitcrash index.js",
+    "start": "node index.js",
+    "dev": "nodemon --exitcrash index.js",
     "initialise_service": "node scripts/initialisation/initialise.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

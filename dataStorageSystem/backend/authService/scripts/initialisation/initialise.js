@@ -22,35 +22,22 @@ const sendEventsToDataStorage = async (events) => {
                 throw new Error('Unexpected response status: ' + code);
             }
         })
-        .catch(({code, message}) => {
+        .catch((err) => {
             console.log("!!! look at the problem in dataStorage")
-            console.log(message)
+            console.log(err)
         })
-
-    // try {
-    //     const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/uploadNewEvents`, {
-    //         events: events
-    //     });
-
-        
-    // } catch (error) {
-    //     // console.error('Error uploading new event:', error);
-
-    //     if (error.response && error.response.status === 500) {
-    //         console.log(error.response.data.message)
-    //     } else {
-    //         // network issue
-    //         console.log("network", error)
-    //     }
-    // }
 }
 
 // Define the JSON schema for the profile
 const create_app_core_profile_for_definining_other_profiles = async () => {
-    const {code, body} = await DataStorage.getProfileFromDataStorage(process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME)
-    if (body.count != 0) {
-        console.log('profiles are already created in the storage');
-        return;
+    try {
+        const {code, body} = await DataStorage.getProfileFromDataStorage(process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME)
+        if (body.count != 0) {
+            console.log('profiles are already created in the storage');
+            return;
+        }
+    } catch (err) {
+        console.log(err);
     }
 
     // Create the profile
@@ -68,7 +55,11 @@ const create_app_core_profile_for_definining_other_profiles = async () => {
         }
     };
 
-    sendEventsToDataStorage([profileData])
+    try {
+        await sendEventsToDataStorage([profileData])
+    } catch (err) {
+        console.log(err);
+    }
 
     // ProfileSchema.create(profileData)
     //     .then(() => {
