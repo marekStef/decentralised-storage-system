@@ -5,6 +5,7 @@
 #include "WindowInfo.hpp"
 
 #include "windowsAppsInfoNetworkHelpers.hpp"
+#include "constants.hpp"
 
 using json = nlohmann::json;
 
@@ -64,47 +65,4 @@ void sendJsonToServer(const std::string& json_data, const std::string& url) {
 		curl_slist_free_all(headers);
 		curl_easy_cleanup(curl);
 	}
-}
-
-
-size_t CurlWrite_Callback(void* contents, size_t size, size_t nmemb, std::string* userp) {
-    userp->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
-
-bool CheckAuthServicePresenceCurl(const std::string& serverAddress, const std::string& serverPort) {
-    CURL* curl;
-    CURLcode res;
-    std::string readBuffer;
-    std::string url = "http://" + serverAddress + ":" + serverPort + "/status_info/checks/check_auth_service_presence";
-
-    curl = curl_easy_init();
-    if (curl) {
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_Callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-
-        if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << '\n';
-            return false;
-        }
-
-        try {
-            auto json = nlohmann::json::parse(readBuffer);
-            if (json["status"] == "OK") {
-                return true;
-            }
-            else {
-                std::cerr << "Error: Status not OK" << '\n';
-                return false;
-            }
-        }
-        catch (nlohmann::json::parse_error& e) {
-            std::cerr << "JSON parse error: " << e.what() << '\n';
-            return false;
-        }
-    }
-    return false;
 }

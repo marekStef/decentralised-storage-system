@@ -87,6 +87,9 @@
     <ClCompile Include="windowsAppsInfoNetworkHelpers.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="dataStorageSetupNetworkHelpers.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -127,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="JsonHelpers.hpp">
       <Filter>Header Files\Network\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="dataStorageSetupNetworkHelpers.hpp">
+      <Filter>Header Files\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

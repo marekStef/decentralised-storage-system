@@ -1,5 +1,7 @@
 #include <wx/filename.h>
 
+#include "constants.hpp"
+
 #include "MainPage.hpp"
 #include "WindowsAppsInfoManager.hpp"
 #include "generalHelpers.hpp"
@@ -8,8 +10,11 @@
 #include "JsonHelpers.hpp"
 #include "nlohmann/json.hpp"
 
-MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
+MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)) {
     setupUI();
+
+    // bind timer event
+    this->Bind(wxEVT_TIMER, [this](wxTimerEvent& event) { this->PeriodicDataGatheringFunction(); }, timer->GetId());
 }
 
 void MainPage::setupUI() {
@@ -23,6 +28,13 @@ void MainPage::setupUI() {
     wxButton* fetchAllAppsButton = new wxButton(this, wxID_ANY, wxT("Fetch All Apps Info"));
     sizer->Add(fetchAllAppsButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
     fetchAllAppsButton->Bind(wxEVT_BUTTON, &MainPage::OnFetchAllWindowsAppsInfoButtonClick, this);
+
+    wxButton* alertButton = new wxButton(this, wxID_ANY, "Start Alert Timer");
+    sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
+    alertButton->Bind(wxEVT_BUTTON, &MainPage::OnAlertButtonClick, this);
+
+    lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last run: Never");
+    sizer->Add(lastRunTimeDisplay, 0, wxALIGN_CENTER | wxALL, 5);
 
     wxButton* exitAppButton = new wxButton(this, wxID_ANY, wxT("EXIT APP"));
     sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
@@ -62,4 +74,22 @@ void MainPage::CloseApplication(wxCommandEvent& event) {
             grandParent->Close(true);
         }
     }
+}
+
+void MainPage::OnAlertButtonClick(wxCommandEvent& event) {
+    startPeriodicDataGathering();
+}
+
+void MainPage::PeriodicDataGatheringFunction() { // wxTimerEvent& event
+    wxDateTime currentTime = wxDateTime::Now();
+    wxString timeString = currentTime.Format("%Y-%m-%d %H:%M:%S");
+
+    lastRunTimeDisplay->SetLabel(wxString::Format("Last run: %s", timeString));
+
+    wxMessageBox("Time to check!", "Alert", wxOK | wxICON_INFORMATION);
+}
+
+void MainPage::startPeriodicDataGathering() {
+    PeriodicDataGatheringFunction();
+    timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
 }

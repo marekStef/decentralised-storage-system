@@ -20,17 +20,20 @@ private:
     wxTextCtrl* dataStorageJwtTokenForProfilesAndPermissionsRequests;
 
     void CheckAuthServicePresence(wxCommandEvent& event);
+    void AssociateTheAppWithDataStorageButtonClick(wxCommandEvent& event);
+    void CreateProfilesAndAskForPermissionsButtonClick(wxCommandEvent& event);
+    void SaveSetupAndProceedButtonClick(wxCommandEvent& event);
+
     void LoadConfig();
 
+    bool isServerReachable = false;
+    bool isAppAssociated = false;
+    bool areProfilesCreatedAndPermissionsAsked = false;
+
     void DisableServerLocationInputs();
+    void DisableAssociationTokenInput();
 
-    wxStaticText* lastRunTimeDisplay;
 
-    wxTimer* timer; // Timer to trigger the periodic execution function
-
-    void OnAlertButtonClick(wxCommandEvent& event);
-    void PeriodicDataGatheringFunction();
-    void startPeriodicDataGathering();
 };
 
 #endif // INITIAL_SETUP_PAGE_HPP

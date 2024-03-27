@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="automaticStartupHelpers.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
+    <ClCompile Include="dataStorageSetupNetworkHelpers.cpp" />
     <ClCompile Include="ExistingSetupPage.cpp" />
     <ClCompile Include="InitialSetupPage.cpp" />
     <ClCompile Include="MainApp.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="automaticStartupHelpers.hpp" />
     <ClInclude Include="ConfigManager.hpp" />
     <ClInclude Include="constants.hpp" />
+    <ClInclude Include="dataStorageSetupNetworkHelpers.hpp" />
     <ClInclude Include="ExistingSetupPage.hpp" />
     <ClInclude Include="generalHelpers.hpp" />
     <ClInclude Include="InitialSetupPage.hpp" />
