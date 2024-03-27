@@ -29,9 +29,9 @@ void MainPage::setupUI() {
     sizer->Add(fetchAllAppsButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
     fetchAllAppsButton->Bind(wxEVT_BUTTON, &MainPage::OnFetchAllWindowsAppsInfoButtonClick, this);
 
-    wxButton* alertButton = new wxButton(this, wxID_ANY, "Start Alert Timer");
-    sizer->Add(alertButton, 0, wxALIGN_CENTER | wxALL, 10);
-    alertButton->Bind(wxEVT_BUTTON, &MainPage::OnAlertButtonClick, this);
+    wxButton* openedWindowsAppsGatheringButton = new wxButton(this, wxID_ANY, "Start Windows Apps Info Gathering");
+    sizer->Add(openedWindowsAppsGatheringButton, 0, wxALIGN_CENTER | wxALL, 10);
+    openedWindowsAppsGatheringButton->Bind(wxEVT_BUTTON, &MainPage::StartOpenedWindowsAppsGatheringButtonClick, this);
 
     lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last run: Never");
     sizer->Add(lastRunTimeDisplay, 0, wxALIGN_CENTER | wxALL, 5);
@@ -76,7 +76,11 @@ void MainPage::CloseApplication(wxCommandEvent& event) {
     }
 }
 
-void MainPage::OnAlertButtonClick(wxCommandEvent& event) {
+void MainPage::StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event) {
+    if (!configManager.IsAppProperlySetUp()) {
+        wxMessageBox("Your app is not properly set up. Either set it up or reset it", "Alert", wxOK | wxICON_INFORMATION);
+        return;
+    }
     startPeriodicDataGathering();
 }
 

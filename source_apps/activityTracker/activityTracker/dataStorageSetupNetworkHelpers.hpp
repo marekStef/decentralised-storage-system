@@ -10,5 +10,20 @@ bool CheckAuthServicePresenceCurl(const std::string& serverAddress, const std::s
 
 std::string AssociateWithStorageAppHolder(const std::string& serverAddress, const std::string& serverPort, const std::string& associationTokenId);
 
+bool RegisterNewProfile(
+	const std::string& serverAddress, 
+	const std::string& serverPort, 
+	const std::string& jwtTokenForPermissionRequestsAndProfiles, 
+	const nlohmann::json& jsonSchema,
+	std::string& responseMessage
+);
+
+bool RequestNewPermission(
+	const std::string& serverAddress,
+	const std::string& serverPort,
+	const std::string& jwtTokenForPermissionRequestsAndProfiles,
+	std::string& responseMessage,
+	std::string& generatedAccessToken
+);
 
 #endif // !_DATA_STORAGE_SETUP_HELPERS_HPP_

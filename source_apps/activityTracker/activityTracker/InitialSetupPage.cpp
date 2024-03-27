@@ -116,16 +116,52 @@ void InitialSetupPage::CreateProfilesAndAskForPermissionsButtonClick(wxCommandEv
         return;
     }
 
-    areProfilesCreatedAndPermissionsAsked = true;
-
-    /*try {
+    try {
         json jsonProfileSchema = loadActivityTrackingEventProfileSchema();
-        wxMessageBox(configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json TESTING - SAVED IT THERE", "Alert", wxOK | wxICON_INFORMATION);
-        saveJsonToFile(jsonProfileSchema, configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json");
+
+        std::string responseMessage = "";
+        bool wasProfileRegistered = RegisterNewProfile(
+            configManager.GetServerAddress().ToStdString(),
+            configManager.GetServerPort().ToStdString(),
+            configManager.GetDataStorageTokenForProfilesAndPermissionsRequests().ToStdString(),
+            jsonProfileSchema,
+            responseMessage
+        );
+
+        wxMessageBox("Creating new profile: " + responseMessage, "Alert", wxOK | wxICON_INFORMATION);
+        if (!wasProfileRegistered) {
+            return;
+        }
+        /*wxMessageBox(configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json TESTING - SAVED IT THERE", "Alert", wxOK | wxICON_INFORMATION);
+        saveJsonToFile(jsonProfileSchema, configManager.GetDirectory().ToStdString() + "\\testingjson\\json.json");*/
     }
     catch (const std::exception& e) {
         wxMessageBox(e.what(), "Alert", wxOK | wxICON_INFORMATION);
-    }*/
+    }
+
+    // profile is successfully registered at this moment, create WRITE permission for it now
+    std::string responseMessage = "";
+    std::string generatedAccessToken = "aaaa";
+    bool wasPermissionRequestedSuccessfully = RequestNewPermission(
+        configManager.GetServerAddress().ToStdString(),
+        configManager.GetServerPort().ToStdString(),
+        configManager.GetDataStorageTokenForProfilesAndPermissionsRequests().ToStdString(),
+        responseMessage,
+        generatedAccessToken
+    );
+    if (!wasPermissionRequestedSuccessfully) {
+        wxMessageBox("Problem requesting a permission: " + responseMessage, "Alert", wxOK | wxICON_INFORMATION);
+        return;
+    }
+
+    
+    wxMessageBox(generatedAccessToken, "Alert", wxOK | wxICON_INFORMATION);
+    configManager.SetActivityTrackerEventAccessToken(generatedAccessToken);
+    configManager.SaveConfig();
+
+    wxMessageBox("Profile created and Permission requested", "Alert", wxOK | wxICON_INFORMATION);
+
+    areProfilesCreatedAndPermissionsAsked = true;
 }
 
 void InitialSetupPage::SaveSetupAndProceedButtonClick(wxCommandEvent& event) {

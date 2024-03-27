@@ -22,7 +22,7 @@ private:
 
     wxTimer* timer; // Timer to trigger the periodic execution function
 
-    void OnAlertButtonClick(wxCommandEvent& event);
+    void StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event);
     void PeriodicDataGatheringFunction();
     void startPeriodicDataGathering();
 };

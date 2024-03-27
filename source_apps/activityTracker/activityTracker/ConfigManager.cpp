@@ -15,6 +15,7 @@ void ConfigManager::LoadConfig() {
     config->Read(SERVER_PORT_CONFIG_KEY, &serverPort, "");
     config->Read(DATA_STORAGE_ASSOCIATION_TOKEN_CONFIG_KEY, &dataStorageJwtAssociationToken, "");
     config->Read(DATA_STORAGE_TOKEN_FOR_PROFILES_AND_PERMISSIONS_CONFIG_KEY, &dataStorageTokenForProfilesCreationAndPermissionsRequests, "");
+    config->Read(ACTIVITY_TRACKER_EVENT_ACCESS_TOKEN_KEY_, &acitivyTrackerEventAccessToken_, "");
 
     config->Read(DIRECTORY_FOR_DATA_CONFIG_KEY, &directoryForData, "");
 }
@@ -24,6 +25,7 @@ void ConfigManager::SaveConfig() {
     config->Write(SERVER_PORT_CONFIG_KEY, serverPort);
     config->Write(DATA_STORAGE_ASSOCIATION_TOKEN_CONFIG_KEY, dataStorageJwtAssociationToken);
     config->Write(DATA_STORAGE_TOKEN_FOR_PROFILES_AND_PERMISSIONS_CONFIG_KEY, dataStorageTokenForProfilesCreationAndPermissionsRequests);
+    config->Write(ACTIVITY_TRACKER_EVENT_ACCESS_TOKEN_KEY_, acitivyTrackerEventAccessToken_);
 
     config->Write(DIRECTORY_FOR_DATA_CONFIG_KEY, directoryForData);
 
@@ -51,6 +53,19 @@ void ConfigManager::SetDataStorageJwtAssociationToken(const wxString& value) { d
 
 wxString ConfigManager::GetDataStorageTokenForProfilesAndPermissionsRequests() const { return dataStorageTokenForProfilesCreationAndPermissionsRequests; }
 void ConfigManager::SetDataStorageTokenForProfilesAndPermissionsRequests(const wxString& value) { dataStorageTokenForProfilesCreationAndPermissionsRequests = value; }
+
+wxString ConfigManager::GetActivityTrackerEventAccessToken() const { return acitivyTrackerEventAccessToken_; }
+void ConfigManager::SetActivityTrackerEventAccessToken(const wxString& value) {
+    acitivyTrackerEventAccessToken_ = value;
+}
+
+bool ConfigManager::IsAppProperlySetUp() {
+    return !serverAddress.IsEmpty() 
+        && !serverPort.IsEmpty() 
+        && !dataStorageJwtAssociationToken.IsEmpty() 
+        && !dataStorageTokenForProfilesCreationAndPermissionsRequests.IsEmpty() 
+        && !acitivyTrackerEventAccessToken_.IsEmpty();
+}
 
 wxString ConfigManager::GetDirectory() const { return directoryForData; }
 void ConfigManager::SetDirectory(const wxString& directoryForData) { this->directoryForData = directoryForData; }
