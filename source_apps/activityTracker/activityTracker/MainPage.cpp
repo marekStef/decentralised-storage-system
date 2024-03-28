@@ -10,6 +10,8 @@
 #include "JsonHelpers.hpp"
 #include "nlohmann/json.hpp"
 
+#include "timeHelpers.hpp"
+
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)) {
     setupUI();
 
@@ -23,18 +25,19 @@ void MainPage::setupUI() {
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-    sizer->Add(new wxStaticText(this, wxID_ANY, "Main Page"), 0, wxALL, 5);
-
-    wxButton* fetchAllAppsButton = new wxButton(this, wxID_ANY, wxT("Fetch All Apps Info"));
-    sizer->Add(fetchAllAppsButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
-    fetchAllAppsButton->Bind(wxEVT_BUTTON, &MainPage::OnFetchAllWindowsAppsInfoButtonClick, this);
-
+    wxStaticBoxSizer* windowsOpenedAppsSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Windows opened apps info gathering");
     wxButton* openedWindowsAppsGatheringButton = new wxButton(this, wxID_ANY, "Start Windows Apps Info Gathering");
-    sizer->Add(openedWindowsAppsGatheringButton, 0, wxALIGN_CENTER | wxALL, 10);
+    windowsOpenedAppsSizer->Add(openedWindowsAppsGatheringButton, 0, wxALIGN_CENTER | wxALL, 10);
     openedWindowsAppsGatheringButton->Bind(wxEVT_BUTTON, &MainPage::StartOpenedWindowsAppsGatheringButtonClick, this);
 
-    lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last run: Never");
-    sizer->Add(lastRunTimeDisplay, 0, wxALIGN_CENTER | wxALL, 5);
+    wxButton* fetchAllAppsButton = new wxButton(this, wxID_ANY, wxT("Fetch All Apps Info Now Manually"));
+    windowsOpenedAppsSizer->Add(fetchAllAppsButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
+    fetchAllAppsButton->Bind(wxEVT_BUTTON, &MainPage::OnFetchAllWindowsAppsInfoButtonClick, this);
+
+    lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last gathering time: Never Since The App's Start");
+    windowsOpenedAppsSizer->Add(lastRunTimeDisplay, 0, wxALL, 5);
+
+    sizer->Add(windowsOpenedAppsSizer, 0, wxEXPAND | wxALL, 10);
 
     wxButton* exitAppButton = new wxButton(this, wxID_ANY, wxT("EXIT APP"));
     sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
@@ -44,25 +47,21 @@ void MainPage::setupUI() {
     this->Layout(); // This ensures the layout is recalculated
 }
 
+void saveAllCurrentlyOpenedWindowsInfo(const wxString& appsInfoDir) {
+    wxString fileName = getCurrentTimeInIso() + ".json";
+    wxFileName filePath(appsInfoDir, fileName);
+    saveCurrentWindowsInfoToFile(filePath.GetFullPath().ToStdString(), GetCurrentISODate());
+    wxMessageBox("Finished exporting to" + filePath.GetFullPath().ToStdString(), "Alert", wxOK | wxICON_INFORMATION);
+}
+
 void MainPage::OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event) {
     auto appsInfoDir = configManager.GetDirectoryForAppsInfo();
     if (appsInfoDir.length() == 0) {
         wxMessageBox("You need to set default directory first in the settings", "Alert", wxOK | wxICON_INFORMATION);
         return;
     }
-    wxString fileName = getCurrentTimeInIso() + ".json";
-    wxFileName filePath(appsInfoDir, fileName);
     
-    //saveWindowsInfoToFile(filePath.GetFullPath().ToStdString());
-
-    auto windows_manager = WindowsAppsInfoManager();
-    auto windowsInfo = windows_manager.get_windows_info();
-
-    json jsonResult = serializeWindowsInfoToJson(windowsInfo);
-
-    saveJsonToFile(jsonResult, filePath.GetFullPath().ToStdString());
-
-    wxMessageBox("Finished exporting to" + filePath.GetFullPath(), "Alert", wxOK | wxICON_INFORMATION);
+    saveAllCurrentlyOpenedWindowsInfo(appsInfoDir);
 }
 
 void MainPage::CloseApplication(wxCommandEvent& event) {
@@ -81,16 +80,33 @@ void MainPage::StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event)
         wxMessageBox("Your app is not properly set up. Either set it up or reset it", "Alert", wxOK | wxICON_INFORMATION);
         return;
     }
+
+    if (configManager.GetDirectoryForAppsInfo().IsEmpty()) {
+        wxMessageBox("You need to set directory where data for this app will be saved first in the settings", "Alert", wxOK | wxICON_INFORMATION);
+        return;
+    }
+
     startPeriodicDataGathering();
 }
 
 void MainPage::PeriodicDataGatheringFunction() { // wxTimerEvent& event
+    auto appsInfoDir = configManager.GetDirectoryForAppsInfo();
+    if (appsInfoDir.length() == 0) {
+        return;
+    }
+
+    saveAllCurrentlyOpenedWindowsInfo(appsInfoDir);
+
+    tryToSendUnsynchronisedEventsFilesToDataStorageServer(
+        configManager.GetServerAddress().ToStdString(),
+        configManager.GetServerPort().ToStdString(),
+        configManager.GetActivityTrackerEventAccessToken().ToStdString(),
+        appsInfoDir.ToStdString()
+    );
+
     wxDateTime currentTime = wxDateTime::Now();
     wxString timeString = currentTime.Format("%Y-%m-%d %H:%M:%S");
-
     lastRunTimeDisplay->SetLabel(wxString::Format("Last run: %s", timeString));
-
-    wxMessageBox("Time to check!", "Alert", wxOK | wxICON_INFORMATION);
 }
 
 void MainPage::startPeriodicDataGathering() {

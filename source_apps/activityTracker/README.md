@@ -36,7 +36,7 @@ Also `wxwidgets`:
 C:\dev\vcpkg>.\vcpkg install wxwidgets
 ```
 
-And also `nlohmann-json`:
+Also `nlohmann-json`:
 
 ```bash
 C:\dev\vcpkg>.\vcpkg install nlohmann-json

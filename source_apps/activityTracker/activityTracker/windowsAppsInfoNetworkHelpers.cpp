@@ -1,15 +1,18 @@
+#include <filesystem>
 #include <curl/curl.h>
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <string>
 #include "WindowInfo.hpp"
-
+#include "WindowsAppsInfoManager.hpp"
 #include "windowsAppsInfoNetworkHelpers.hpp"
 #include "constants.hpp"
+#include "JsonHelpers.hpp"
+#include "dataStorageSetupNetworkHelpers.hpp"
 
 using json = nlohmann::json;
 
-json serializeWindowInfoToJson(const WindowInfo& window_info) {
+json serializeWindowInfoToJson(const WindowInfo& window_info, const std::string& createdDateInISO) {
 	// Converting wide strings to regular strings
 	// This utility function is for conversion std::wstring to std::string
 	auto wstring_to_string = [](const std::wstring& wstr) -> std::string {
@@ -35,34 +38,87 @@ json serializeWindowInfoToJson(const WindowInfo& window_info) {
 				{ "right", window_info.dimensions.right },
 				{ "bottom", window_info.dimensions.bottom },
 			}}
+		}},
+		{"metadata", {
+			{"createdDate", createdDateInISO},
+			{"profile", activityTrackerEventProfileName}
 		}}
 	};
 }
 
-json serializeWindowsInfoToJson(const std::vector<WindowInfo>& windows_info) {
+json serializeWindowsInfoToJson(const std::vector<WindowInfo>& windows_info, const std::string& createdDateInISO) {
 	json j;
 	for (const auto& window_info : windows_info) {
-		j.push_back(serializeWindowInfoToJson(window_info));
+		j.push_back(serializeWindowInfoToJson(window_info, createdDateInISO));
 	}
 	return j;
 }
 
-// todo: this is not used at the moment
-void sendJsonToServer(const std::string& json_data, const std::string& url) {
-	CURL* curl = curl_easy_init();
-	if (curl) {
-		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, json_data.c_str());
+void saveCurrentWindowsInfoToFile(const std::string& filePath, const std::string& createdDateInISO) {
+	auto windows_manager = WindowsAppsInfoManager();
+	auto windowsInfo = windows_manager.get_windows_info();
 
-		struct curl_slist* headers = NULL;
-		headers = curl_slist_append(headers, "Content-Type: application/json");
-		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+	json jsonResult = serializeWindowsInfoToJson(windowsInfo, createdDateInISO);
 
-		// Performing POST request
-		CURLcode res = curl_easy_perform(curl);
+	saveJsonToFile(jsonResult, filePath);
+}
 
-		// cleanup
-		curl_slist_free_all(headers);
-		curl_easy_cleanup(curl);
+std::string ReadFileContent(const std::string& filePath) {
+	std::ifstream fileStream(filePath);
+	if (!fileStream.is_open()) {
+		std::cerr << "Failed to open file: " << filePath << '\n';
+		return "";
+	}
+	return { std::istreambuf_iterator<char>(fileStream), std::istreambuf_iterator<char>() };
+}
+
+bool sendUnsynchronisedEventFileToDataStorageServer(
+	const std::string& serverAddress, 
+	const std::string& serverPort,
+	const std::string& accessTokenForActivityTrackerEvents,
+	const std::string& activityTrackerEventJsonFilePath
+) {
+	std::string fileContent = ReadFileContent(activityTrackerEventJsonFilePath);
+	if (fileContent.empty()) {
+		std::cerr << "Failed to read file or file is empty: " << activityTrackerEventJsonFilePath << '\n';
+		return false;
+	}
+
+	nlohmann::json postBody = {
+		{"accessToken", accessTokenForActivityTrackerEvents},
+		{"profileCommonForAllEventsBeingUploaded", activityTrackerEventProfileName},
+		{"events", nlohmann::json::parse(fileContent)}
+	};
+
+	std::string responseMessage;
+	if (PostDataToServer(serverAddress, serverPort, "/app/api/uploadNewEvents", postBody, responseMessage)) {
+		std::filesystem::remove(activityTrackerEventJsonFilePath);
+		return true;
+	}
+	else {
+		std::cerr << "Failed to upload data for file: " << activityTrackerEventJsonFilePath << ". Error: " << responseMessage << '\n';
+		return false;
+	}
+}
+
+void tryToSendUnsynchronisedEventsFilesToDataStorageServer(
+	const std::string& serverAddress,
+	const std::string& serverPort,
+	const std::string& accessTokenForActivityTrackerEvents, 
+	const std::string& appsInfoDir
+) {
+	namespace fs = std::filesystem;
+
+	for (const auto& entry : fs::directory_iterator(appsInfoDir)) {
+		if (entry.is_regular_file() && entry.path().extension() == ".json") {
+			std::string filePath = entry.path().string();
+
+			sendUnsynchronisedEventFileToDataStorageServer(
+				serverAddress,
+				serverPort,
+				accessTokenForActivityTrackerEvents,
+				filePath
+			);
+		}
 	}
 }

@@ -12,6 +12,13 @@ json serializeWindowInfoToJson(const WindowInfo& window_info);
 
 json serializeWindowsInfoToJson(const std::vector<WindowInfo>& windows_info);
 
-void sendJsonToServer(const std::string& json_data, const std::string& url);
+void saveCurrentWindowsInfoToFile(const std::string& filePath, const std::string& createdDateInISO);
+
+void tryToSendUnsynchronisedEventsFilesToDataStorageServer(
+	const std::string& serverAddress,
+	const std::string& serverPort,
+	const std::string& accessTokenForActivityTrackerEvents,
+	const std::string& appsInfoDir
+);
 
 #endif // !_NETWORK_HELPERS_HPP_

@@ -11,8 +11,12 @@
 #include <sstream>
 #include <ctime>
 
+#include "timeHelpers.hpp"
+
+
 const int HTTP_RESPONSE_CODE_OK = 200;
 const int HTTP_RESPONSE_CODE_CREATED = 201;
+const int HTTP_RESPONSE_CODE_FORBIDDEN = 403;
 
 size_t CurlWrite_Callback(void* contents, size_t size, size_t nmemb, std::string* userp) {
     userp->append((char*)contents, size * nmemb);
@@ -108,23 +112,6 @@ std::string AssociateWithStorageAppHolder(const std::string& serverAddress, cons
         }
     }
     return jwtToken;
-}
-
-// ISO 8601 date
-std::string GetCurrentISODate() {
-    auto now = std::chrono::system_clock::now();
-    auto timeT = std::chrono::system_clock::to_time_t(now);
-    auto millisec_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-    auto millisec_part = millisec_since_epoch % 1000;
-
-    std::tm bt;
-    gmtime_s(&bt, &timeT);
-
-    std::ostringstream oss;
-    oss << std::put_time(&bt, "%Y-%m-%dT%H:%M:%S");
-    oss << '.' << std::setfill('0') << std::setw(3) << millisec_part << "Z";
-
-    return oss.str();
 }
 
 bool RegisterNewProfile(
@@ -293,6 +280,70 @@ bool RequestNewPermission(
             }*/
             return false;
         }
+    }
+    responseMessage = "Failed to initialize CURL.";
+    return false;
+}
+
+bool PostDataToServer(
+    const std::string& serverAddress,
+    const std::string& serverPort,
+    const std::string& apiEndpoint,
+    const nlohmann::json& postData,
+    std::string& responseMessage
+) {
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+    std::string url = "http://" + serverAddress + ":" + serverPort + apiEndpoint;
+
+    std::string postDataStr = postData.dump();
+
+    curl = curl_easy_init();
+    if (curl) {
+        struct curl_slist* headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postDataStr.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWrite_Callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+        res = curl_easy_perform(curl);
+        long httpResponseCode = 0;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &httpResponseCode);
+
+        curl_easy_cleanup(curl);
+        curl_slist_free_all(headers);
+
+        if (res != CURLE_OK) {
+            std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << '\n';
+            responseMessage = "CURL Error: " + std::string(curl_easy_strerror(res));
+            return false;
+        }
+        else if (httpResponseCode == HTTP_RESPONSE_CODE_FORBIDDEN) {
+            responseMessage = "Access Token Is Not Active";
+            return false;
+        }
+        else if (httpResponseCode == HTTP_RESPONSE_CODE_CREATED) {
+            responseMessage = "Success";
+            return true;
+        }
+
+
+        std::cerr << "HTTP Error: Server responded with status code " << httpResponseCode << '\n';
+        responseMessage = "HTTP Error: Status " + std::to_string(httpResponseCode);
+        return false;
+        //try {
+        //    //auto jsonResponse = nlohmann::json::parse(readBuffer);
+        //    return true;
+        //}
+        //catch (nlohmann::json::exception& e) {
+        //    std::cerr << "JSON parse error: " << e.what() << '\n';
+        //    responseMessage = "JSON parse error: " + std::string(e.what());
+        //    return false;
+        //}
     }
     responseMessage = "Failed to initialize CURL.";
     return false;

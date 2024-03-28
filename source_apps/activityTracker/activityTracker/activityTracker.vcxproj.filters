@@ -52,6 +52,9 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{fdbcf431-2385-40c0-9b3d-e930edc3d00c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\generalHelpers">
+      <UniqueIdentifier>{dde375c5-1c50-4e01-b2e0-791207772ee1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -89,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="dataStorageSetupNetworkHelpers.cpp">
       <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="timeHelpers.hpp">
+      <Filter>Header Files\generalHelpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

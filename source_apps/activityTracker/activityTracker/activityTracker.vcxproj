@@ -141,6 +141,7 @@
     <ClCompile Include="MainFrame.hpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="SettingsPage.cpp" />
+    <ClCompile Include="timeHelpers.hpp" />
     <ClCompile Include="WindowsAppsInfoManager.cpp" />
     <ClCompile Include="windowsAppsInfoNetworkHelpers.cpp" />
   </ItemGroup>

@@ -26,4 +26,12 @@ bool RequestNewPermission(
 	std::string& generatedAccessToken
 );
 
+bool PostDataToServer(
+	const std::string& serverAddress,
+	const std::string& serverPort,
+	const std::string& apiEndpoint,
+	const nlohmann::json& postData,
+	std::string& responseMessage
+);
+
 #endif // !_DATA_STORAGE_SETUP_HELPERS_HPP_
