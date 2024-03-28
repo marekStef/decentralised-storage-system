@@ -91,14 +91,7 @@ bool sendUnsynchronisedEventFileToDataStorageServer(
 	};
 
 	std::string responseMessage;
-	if (PostDataToServer(serverAddress, serverPort, "/app/api/uploadNewEvents", postBody, responseMessage)) {
-		std::filesystem::remove(activityTrackerEventJsonFilePath);
-		return true;
-	}
-	else {
-		std::cerr << "Failed to upload data for file: " << activityTrackerEventJsonFilePath << ". Error: " << responseMessage << '\n';
-		return false;
-	}
+	return PostDataToServer(serverAddress, serverPort, "/app/api/uploadNewEvents", postBody, responseMessage);
 }
 
 void tryToSendUnsynchronisedEventsFilesToDataStorageServer(
@@ -109,16 +102,26 @@ void tryToSendUnsynchronisedEventsFilesToDataStorageServer(
 ) {
 	namespace fs = std::filesystem;
 
+	fs::path targetDir = fs::path(appsInfoDir) / "syncedEvents";
+	fs::create_directories(targetDir);
+
 	for (const auto& entry : fs::directory_iterator(appsInfoDir)) {
 		if (entry.is_regular_file() && entry.path().extension() == ".json") {
 			std::string filePath = entry.path().string();
 
-			sendUnsynchronisedEventFileToDataStorageServer(
+			if (sendUnsynchronisedEventFileToDataStorageServer(
 				serverAddress,
 				serverPort,
 				accessTokenForActivityTrackerEvents,
 				filePath
-			);
+			)) {
+				fs::path targetPath = targetDir / entry.path().filename();
+				fs::rename(filePath, targetPath);
+				//std::filesystem::remove(filePath);
+			}
+			else {
+				std::cerr << "Failed to upload data for file: " << ". Error: " << '\n';
+			}
 		}
 	}
 }
