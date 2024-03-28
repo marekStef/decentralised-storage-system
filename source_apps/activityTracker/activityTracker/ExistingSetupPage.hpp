@@ -14,10 +14,17 @@ private:
 
     void setupUI();
 
+    bool isServerReachable = false;
+
+    wxTextCtrl* serverAddressInputField;
+    wxTextCtrl* serverPortInputField;
     wxTextCtrl* jwtTokenForProfilesAndPermissionsRequestsInputField;
     wxTextCtrl* accessTokenForActivityTrackingEventsInputField;
 
     void SaveExistingConfigurationButtonClickHandler(wxCommandEvent& event);
+    void CheckAuthServicePresence(wxCommandEvent& event);
+
+    void DisableServerLocationInputs();
 };
 
 #endif // EXISTING_SETUP_PAGE_HPP
