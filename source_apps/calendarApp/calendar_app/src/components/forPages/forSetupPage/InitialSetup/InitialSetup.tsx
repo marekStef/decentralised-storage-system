@@ -104,7 +104,7 @@ const InitialSetup = () => {
     const createNewViewInstance = () => {
         if (viewInstanceSendingStatus == PossibleResultsWithServer.IS_LOADING || viewInstanceSendingStatus == PossibleResultsWithServer.SUCCESS) return;
 
-        networkManager.createNewViewInstance(viewTemplateId)
+        networkManager.createNewViewInstance(viewTemplateId, appConstants.viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek)
             .then(response => {
                 persistenceManager.setViewInstanceAccessTokenForCalendarEventsFetching(response.viewAccessToken);
                 console.log('heeeere');

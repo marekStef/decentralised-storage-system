@@ -198,7 +198,7 @@ class NetworkManager {
         }) 
     }
 
-    public async createNewViewInstance(viewTemplateId: string): Promise<any> {
+    public async createNewViewInstance(viewTemplateId: string, viewAccessOptionalName: string = ""): Promise<any> {
         const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles();
 
         return new Promise(async (res, rej) => {
@@ -206,7 +206,7 @@ class NetworkManager {
                 return rej({ message: "Your app does not have token saved for this operation" });
 
             const data = {
-                viewAccessName: appConstants.viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek,
+                viewAccessName: viewAccessOptionalName,
                 jwtTokenForPermissionRequestsAndProfiles,
                 viewTemplateId,
                 configuration: {} // nothing in configuration at the moment
@@ -230,15 +230,11 @@ class NetworkManager {
         })
     }
 
-    public async executeViewInstance(clientCustomData = {}): Promise<any> {
-        const viewInstanceAccessTokenForCalendarEventsFetching = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
-
+    public async executeViewInstance(viewInstanceAccessToken: string, clientCustomData = {}): Promise<any> {
         return new Promise(async (res, rej) => {
-            if (viewInstanceAccessTokenForCalendarEventsFetching == null)
-                return rej({ message: "Your app does not have token saved for executing remote view instance" });
 
             const data = {
-                viewAccessToken: viewInstanceAccessTokenForCalendarEventsFetching,
+                viewAccessToken: viewInstanceAccessToken,
                 clientCustomData,
             };
 
@@ -246,7 +242,7 @@ class NetworkManager {
                 .then(response => {
                     if (response.status === networkStatusCodes.OK) {
                         // console.log('Success:', response);
-                        // res({viewInstanceToken: response.viewInstanceAccessTokenForCalendarEventsFetching, message: response.message });
+                        // res({viewInstanceToken: response.viewInstanceAccessToken, message: response.message });
                         res(response.result);
                     } else {
                         console.error('Failure:', response);

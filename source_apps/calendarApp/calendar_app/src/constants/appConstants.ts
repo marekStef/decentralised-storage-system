@@ -9,9 +9,12 @@ const permissonsObjectForCalendarEventPermissionRequest = {
 };
 const viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek = 'View Instance Access Name For Calendar Events Fetching Based On Selected Week';
 
+const windowsOpenedAppsActivityTrackerEventName = 'activityTracker.com/activityTrackerEvent';
+
 export default {
     appName,
     calendarEventProfileName,
+    windowsOpenedAppsActivityTrackerEventName,
     permissonsObjectForCalendarEventPermissionRequest,
 
     DATA_STORAGE_ROOT_PROFILE: "core:profile-registration_v1",

@@ -19,6 +19,8 @@ class PersistenceManager {
 
     areWindowsOpenedAppsShown: boolean = false;
     viewInstanceAccesssTokenForWindowsAppsUniqueNamesList: string | null = null;
+    savedWindowsAppsCategories: string | null = null;
+    windowsAppsWithAssignedCategories: object = {};
 
     public loadDataFromLocalStorage() {
         this.ip = localStorage.getItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
@@ -35,6 +37,8 @@ class PersistenceManager {
         this.areWindowsOpenedAppsShown = localStorage.getItem(localStorageConstants.ARE_WINDOWS_OPENED_APPS_SHOWN) === 'true';
 
         this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST);
+        this.savedWindowsAppsCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_CATEGORIES);
+        this.windowsAppsWithAssignedCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES) ? JSON.parse(localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES)) : {};
     }
 
     public setServerIPAddress(ip: string) {
@@ -110,6 +114,24 @@ class PersistenceManager {
     public setViewInstanceAccessTokenForWindowsAppsUniqueNamesList(token: string): void {
         this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = token;
         localStorage.setItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST, token);
+    }
+
+    public setSavedWindowsAppsCategories(categories: object): void {
+        localStorage.setItem(localStorageConstants.WINDOWS_APPS_CATEGORIES, JSON.stringify(categories));
+        this.savedWindowsAppsCategories = JSON.stringify(categories);
+    }
+
+    public getSavedWindowsAppsCategories(): object {
+        return this.savedWindowsAppsCategories == null ? {} : JSON.parse(this.savedWindowsAppsCategories);
+    }
+
+    public setAppsWithAssignedCategories(appsWithCategories: object): void {
+        localStorage.setItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES, JSON.stringify(appsWithCategories));
+        this.windowsAppsWithAssignedCategories = appsWithCategories;
+    }
+
+    public getAppsWithAssignedCategories(): object {
+        return this.windowsAppsWithAssignedCategories;
     }
 
     public areAllValuesSet(): boolean {

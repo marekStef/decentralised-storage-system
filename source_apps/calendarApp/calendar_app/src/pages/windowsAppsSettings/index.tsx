@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
     Container,
     TextField,
@@ -7,45 +8,145 @@ import {
     CircularProgress,
     Box,
     Tooltip,
-    ToggleButton, ToggleButtonGroup, InputLabel, Select, MenuItem, SelectChangeEvent, Alert
-} from '@mui/material';
+    ToggleButton,
+    ToggleButtonGroup,
+    InputLabel,
+    Select,
+    MenuItem,
+    SelectChangeEvent,
+    Alert,
+    Chip,
+    List,
+    ListItem,
+    ListItemText,
+    ListItemSecondaryAction,
+    IconButton,
+} from "@mui/material";
+import { darken, lighten } from "polished";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import PersistenceManager from '@/data/PersistenceManager';
-import React from 'react';
-import Link from 'next/link';
+import persistenceManager from "@/data/PersistenceManager";
+
+import Link from "next/link";
+import networkManager from "@/Network/NetworkManager";
+import { showError } from "@/components/AlertProvider/AlertProvider";
+import AppsCategoriesHandler from "@/components/windowsAppsSpecific/AppsCategoriesHandler/AppsCategoriesHandler";
 
 const WindowsAppsSettingsPage = () => {
-    const isWindowsAppsSetUp = PersistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList() != null;
+    const isWindowsAppsSetUp = persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList() != null;
+    const [isLoading, setIsLoading] = useState(false);
+    const [uniqueExeNames, setUniqueExeNames] = useState([]);
+    const [uniqueExeNamesWithAssignedCategories, setUniqueExeNamesWithAssginedCategories] = useState({});
+
+    const [categories, setCategories] = useState({});
+
+    const getWindowsAppsUniqueNamesList = () => {
+        const viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList =
+            persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList();
+        if (viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList == null)
+            return showError(
+                "Your app does not have token saved for executing remote view instance (viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList)"
+            );
+
+        networkManager
+            .executeViewInstance(
+                viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList,
+                {}
+            )
+            .then((result) => {
+                if (result.code != 200) {
+                    return showError(result.message);
+                }
+                console.log(result);
+                setUniqueExeNames(result.uniqueExeNames);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                showError(
+                    "Something went wrong exeucting view instance for getting events"
+                );
+                console.log(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        getWindowsAppsUniqueNamesList();
+        setUniqueExeNamesWithAssginedCategories(persistenceManager.getAppsWithAssignedCategories());
+        setCategories(persistenceManager.getSavedWindowsAppsCategories());
+    }, []);
+
+    const handleAppCategoryChange = (appName, event) => {
+        setUniqueExeNamesWithAssginedCategories(prev => {
+            const newObject = { ...prev, [appName]: event.target.value };
+            persistenceManager.setAppsWithAssignedCategories(newObject);
+            return newObject;
+        })
+
+    };
 
     return (
-        <Container maxWidth="sm">
-
+        <Container maxWidth="md">
             <Box sx={{ my: 4 }}>
-                <Grid container spacing={2} sx={{ my: 4 }}>
-                    <Typography variant="h4" gutterBottom paddingBottom={3} margin={0}>
-                        Windows Apps
-                    </Typography>
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    paddingBottom={3}
+                    margin={0}
+                >
+                    Windows Apps Categories
+                </Typography>
+                
+                <AppsCategoriesHandler categories={categories} setCategories={setCategories} />
 
-                        {isWindowsAppsSetUp ? (
-                            <>
-                            </>
-                        ) : (
-                            <Container>
-                                <Link href="/windowsAppsSettings/setup">
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        fullWidth
-                                        onClick={() => {}}
-                                    >
-                                        Set Up Windows Apps History
-                                    </Button>
-                                </Link>
-                            </Container>
-                        )}
+                <Grid>
+                    <Grid>
+
+                        <Grid item xs={12}>
+                            <List>
+                                {uniqueExeNames.map((appName, index) => (
+                                    <ListItem key={index}>
+                                        <ListItemText
+                                            primary={appName}
+                                            style={{
+                                                wordWrap: 'break-word',
+                                                padding: '0 1rem 0 0'
+                                            }}
+                                        />
+                                        <Select
+                                            value={uniqueExeNamesWithAssignedCategories[appName] || ""}
+                                            onChange={(e) =>
+                                                handleAppCategoryChange(appName, e)
+                                            }
+                                            displayEmpty
+                                            inputProps={{
+                                                "aria-label": "Without label",
+                                            }}
+                                            sx={{
+                                                backgroundColor: categories[uniqueExeNamesWithAssignedCategories[appName]]?.color || '#ccc',
+                                            }}
+                                        >
+                                            <MenuItem value="">
+                                                <em>Other</em>
+                                            </MenuItem>
+                                            {Object.entries(categories).map(([name, { color }], index) => (
+                                                <MenuItem
+                                                    key={index}
+                                                    value={name}
+                                                    
+                                                >
+                                                    {name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </ListItem>
+                                ))}
+                            </List>
+                        </Grid>
+                    </Grid>
                 </Grid>
-
-
             </Box>
         </Container>
     );

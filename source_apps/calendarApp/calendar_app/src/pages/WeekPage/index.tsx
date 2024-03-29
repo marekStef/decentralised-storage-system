@@ -86,7 +86,11 @@ const WeekPage = () => {
 
     const getSpecificEventsUsingCalendarViewInstance = (selectedWeek: SelectedWeek) => {
         console.log('fetching using view instance');
-        networkManager.executeViewInstance({ selectedWeek: selectedWeek.convertSelectedWeekToSimpleISODatesObject() })
+        const viewInstanceAccessTokenForCalendarEventsFetching = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
+        if (viewInstanceAccessTokenForCalendarEventsFetching == null)
+            return showError("Your app does not have token saved for executing remote view instance");
+
+        networkManager.executeViewInstance(viewInstanceAccessTokenForCalendarEventsFetching, { selectedWeek: selectedWeek.convertSelectedWeekToSimpleISODatesObject() })
             .then(result => {
                 if (result.code != 200) {
                     return showError(result.message);
