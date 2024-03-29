@@ -1,10 +1,11 @@
 import { colors } from '@/constants/colors';
 import React from 'react';
+import Link from 'next/link';
 
-const SquareButton = props => {
-    return (
+const SquareButton = ({ onClick, href, style, children, ...props }) => {
+    const buttonContent = (
         <button
-            onClick={props.onClick}
+            onClick={onClick}
             style={{
                 display: "flex",
                 alignItems: "center",
@@ -15,13 +16,22 @@ const SquareButton = props => {
                 borderWidth: '1px',
                 borderColor: colors.gray2,
                 borderStyle: 'solid',
-                ...props.style
+                ...style
             }}
             className="hover:bg-slate-50"
+            {...props}
         >
-            {...props.children}
+            {children}
         </button>
-    )
+    );
+
+    return href ? (
+        <Link href={href}>
+            {buttonContent}
+        </Link>
+    ) : (
+        buttonContent
+    );
 }
 
 export default SquareButton;

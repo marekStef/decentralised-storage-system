@@ -1,3 +1,4 @@
+import { darken } from 'polished';
 import { Event } from "@/data/EventsManager";
 import { Typography, IconButton, Button } from '@mui/material';
 import Popover from "@mui/material/Popover";
@@ -138,6 +139,8 @@ const EventUI: React.FC<EventUIParams> = (params) => {
 
     const eventHeight = getEventHeight(params.calendarHeight, durationMinutes);
 
+    const backgroundColorForEvent = params.event.payload.color ?? 'white';
+
     return (
         <>
             <div
@@ -147,16 +150,17 @@ const EventUI: React.FC<EventUIParams> = (params) => {
                     left: `${params.leftOffset}%`,
                     width: `${params.width}%`,
                     height: `${eventHeight}px`,
-                    padding: "1px",
+                    padding: "4px 6px",
                     margin: "1px 0",
                     borderRadius: "5px",
                     fontSize: "11px",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    border: "1px #ccc solid",
-                    backgroundColor: params.event.payload.color ?? 'white',
-                    zIndex: shouldEventBeOnTop || open ? 1000 : 50
+                    border: `1px ${darken(0.2, backgroundColorForEvent)} solid`,
+                    color: darken(0.5, backgroundColorForEvent),
+                    backgroundColor: backgroundColorForEvent,
+                    zIndex: shouldEventBeOnTop || open ? 10000 : 50
                 }}
                 className="hover:shadow-md cursor-pointer"
                 onClick={handlePopoverOpen}

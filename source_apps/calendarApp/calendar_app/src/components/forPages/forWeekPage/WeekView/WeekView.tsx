@@ -16,8 +16,8 @@ import { timeConstants } from "@/constants/timeConstants";
 import DraggableNewEventPreview from "./components/DraggableNewEventPreview/DraggableNewEventPreview";
 import { isToday } from "date-fns";
 import useScrollbarWidth from "@/customHooks/useScrollbarWidth";
-import { convertToLowerMultipleOf5 } from "./components/DraggableNewEventPreview/helpers/timehelpers";
 import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
+import HourSlots from "./components/HourSlots/HourSlots";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -339,46 +339,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 </div>
 
                                 {/* Hour Slots */}
-                                {Array.from({ length: 24 }).map(
-                                    (_, hour) => {
-                                        const slotHeight = calendarHeight / 24
-                                        const topOffset = params.calendarHeaderHeightInPixels + hour * slotHeight;
-                                        return (
-                                            <div
-                                                key={hour}
-                                                onClick={(e) => {
-                                                    const clickY = e.nativeEvent.offsetY;
-
-                                                    const minute = convertToLowerMultipleOf5(Math.max(0, Math.floor((clickY / slotHeight) * 60)))
-
-                                                    console.log(clickY)
-                                                    // handleHourClick(
-                                                    //     day,
-                                                    //     hour,
-                                                    //     minute
-                                                    // );
-
-                                                    params.openNewEventDialogHandler(
-                                                        Event.getNewEventWithDefaultDuration(new Date(day.date.getFullYear(), day.date.getMonth(), day.date.getDate(), hour, minute)),
-                                                        NewEventDialogOpenMode.NEW_EVENT
-                                                    )
-                                                }}
-                                                style={{
-                                                    height: `${slotHeight}px`,
-                                                    borderLeft: `1px solid ${colors.gray2}`,
-                                                    position: "absolute",
-                                                    top: `${topOffset}px`,
-                                                    width: `100%`,
-                                                    // borderTop:
-                                                    //     "1px solid gray",
-                                                }}
-                                                className="hover:bg-slate-50 bg-white"
-                                            >
-                                                {/* Empty */}
-                                            </div>
-                                        );
-                                    }
-                                )}
+                                <HourSlots calendarHeight={calendarHeight} day={day} openNewEventDialogHandler={params.openNewEventDialogHandler} calendarHeaderHeightInPixels={params.calendarHeaderHeightInPixels}/>
 
                                 {/* Events */}
 

@@ -12,6 +12,7 @@ import persistenceManager from '@/data/PersistenceManager';
 
 
 import appConstants from '../../constants/appConstants';
+import { showInfo, showSuccess } from '../AlertProvider/AlertProvider';
 
 interface CalendarSetttingsParams {
     open: boolean,
@@ -21,6 +22,7 @@ interface CalendarSetttingsParams {
 const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose }) => {
     const Router = useRouter();
     const [isViewInstanceUsed, setIsViewInstanceUsed] = useState(persistenceManager.getIsViewInstanceUsedForCalendarFetching());
+    const [isOpenedWindowsAppsHistoryShown, setIsOpenedWindowsAppsHistoryShown] = useState(persistenceManager.getAreWindowsOpenedAppsShown())
 
     const resetCalendarSettingHandler = () => {
         persistenceManager.resetAllValues();
@@ -31,13 +33,21 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
         const isUsed = event.target.checked;
         persistenceManager.setIsViewInstanceUsedForCalendarFetching(isUsed);
         setIsViewInstanceUsed(isUsed);
+        showInfo("Reload the app to apply changes");
+    }
+
+    const toggleShowingWindowsOpenedApps = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const shown = event.target.checked;
+        persistenceManager.setAreWindowsOpenedAppsShown(shown);
+        setIsOpenedWindowsAppsHistoryShown(shown);
+        showInfo("Reload the app to apply changes");
     }
 
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>CalendPro Settings</DialogTitle>
             <div className='p-6'>
-                <div className='border border-gray-500 p-4 rounded-md'>
+                <div className='border border-gray-300 p-4 rounded-md mb-5'>
                     <FormControlLabel
                         control={
                             <Switch
@@ -47,7 +57,43 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
                         }
                         label="Enable Fetching Events Using View Instance"
                     />
-                    <p className='text-gray-400 font-thin'>You can choose whether to use View Instance ( this is very effective as only the visible events are fetched from the dataStorage using custom javascript code) or whether to load all events from dataStorage and process them here in browser. This only highlights the dataStorage Views feature and in real life scenario, View Instance would be used by default</p>
+                    <p className='text-gray-400 font-thin'>
+                        You can choose whether to use View Instance ( this is very effective as only the visible events are fetched from the dataStorage using custom javascript code) 
+                        or whether to load all events from dataStorage and process them here in browser. 
+                        This only highlights the dataStorage Views feature and in real life scenario, View Instance would be used by default
+                    </p>
+
+                </div>
+
+                <div className='border border-gray-300 p-4 rounded-md mb-5'>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={isOpenedWindowsAppsHistoryShown}
+                                onChange={toggleShowingWindowsOpenedApps}
+                            />
+                        }
+                        label="Enable Showing Windows Opened Apps"
+                    />
+                    <p className='text-gray-400 font-thin'>
+                        Show Opened Windows Apps
+                    </p>
+
+                </div>
+
+                <div className='border border-gray-300 p-4 rounded-md'>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={false}
+                                onChange={() => {}}
+                            />
+                        }
+                        label="Enable Showing Location"
+                    />
+                    <p className='text-gray-400 font-thin'>
+                        Show your location (if possible)
+                    </p>
 
                 </div>
 

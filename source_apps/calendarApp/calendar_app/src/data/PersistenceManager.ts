@@ -17,6 +17,9 @@ class PersistenceManager {
 
     isViewInstanceUsedForCalendarFetching: boolean = false;
 
+    areWindowsOpenedAppsShown: boolean = false;
+    viewInstanceAccesssTokenForWindowsAppsUniqueNamesList: string | null = null;
+
     public loadDataFromLocalStorage() {
         this.ip = localStorage.getItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
         this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT);
@@ -29,6 +32,9 @@ class PersistenceManager {
 
         const isViewInstanceUsedForCalendarFetchingStr = localStorage.getItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING);
         this.isViewInstanceUsedForCalendarFetching = isViewInstanceUsedForCalendarFetchingStr === 'true';
+        this.areWindowsOpenedAppsShown = localStorage.getItem(localStorageConstants.ARE_WINDOWS_OPENED_APPS_SHOWN) === 'true';
+
+        this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST);
     }
 
     public setServerIPAddress(ip: string) {
@@ -85,7 +91,25 @@ class PersistenceManager {
 
     public getIsViewInstanceUsedForCalendarFetching(): boolean {
         return this.isViewInstanceUsedForCalendarFetching;
-        
+    }
+
+    public setAreWindowsOpenedAppsShown(shown: boolean): void {
+        localStorage.setItem(localStorageConstants.ARE_WINDOWS_OPENED_APPS_SHOWN, String(shown));
+        this.isViewInstanceUsedForCalendarFetching = shown;
+    }
+
+    public getAreWindowsOpenedAppsShown(): boolean {
+        return this.areWindowsOpenedAppsShown;
+    }
+
+
+    public getViewInstanceAccessTokenForWindowsAppsUniqueNamesList(): string | null {
+        return this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList;
+    }
+
+    public setViewInstanceAccessTokenForWindowsAppsUniqueNamesList(token: string): void {
+        this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = token;
+        localStorage.setItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST, token);
     }
 
     public areAllValuesSet(): boolean {
