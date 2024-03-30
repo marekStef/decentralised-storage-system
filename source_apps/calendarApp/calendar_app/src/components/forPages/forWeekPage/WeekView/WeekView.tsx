@@ -31,6 +31,7 @@ interface WeekViewParams {
     deleteEventHandler: (newEvent: Event) => void,
     isLoadingEvents: boolean,
     events: Events,
+    windowsAppsCategoriesByDaysAndHoursPercentages: Array<Array<object>> | null
 }
 
 const WeekView: React.FC<WeekViewParams> = (params) => {
@@ -293,7 +294,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                         </div>
                     </div>
 
-                    {weekDaysWithDatesForSelectedWeek?.map((day) => {
+                    {weekDaysWithDatesForSelectedWeek?.map((day, dayIndex) => {
                         const adjustedEvents = adjustEventPositions(
                             params.events.events[day.dayInUTC]
                         );
@@ -339,7 +340,17 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 </div>
 
                                 {/* Hour Slots */}
-                                <HourSlots calendarHeight={calendarHeight} day={day} openNewEventDialogHandler={params.openNewEventDialogHandler} calendarHeaderHeightInPixels={params.calendarHeaderHeightInPixels}/>
+                                <HourSlots 
+                                    calendarHeight={calendarHeight} 
+                                    day={day} 
+                                    openNewEventDialogHandler={params.openNewEventDialogHandler} 
+                                    calendarHeaderHeightInPixels={params.calendarHeaderHeightInPixels}
+                                    windowsAppsCategoriesByHours={
+                                        (params.windowsAppsCategoriesByDaysAndHoursPercentages != null && dayIndex < params.windowsAppsCategoriesByDaysAndHoursPercentages.length)
+                                        ? params.windowsAppsCategoriesByDaysAndHoursPercentages[dayIndex] 
+                                        : null
+                                    }
+                                />
 
                                 {/* Events */}
 

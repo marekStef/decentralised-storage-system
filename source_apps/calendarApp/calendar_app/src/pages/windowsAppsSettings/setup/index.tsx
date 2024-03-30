@@ -34,10 +34,7 @@ const WindowsAppsSettingsSetup = () => {
     const Router = useRouter();
     
     const [viewTemplateId, setViewTemplateId] = useState<string>("");
-    const [viewInstanceSendingStatus, setViewInstanceSendingStatus] =
-        useState<PossibleResultsWithServer>(
-            PossibleResultsWithServer.NOT_TRIED
-        );
+    const [viewInstanceSendingStatus, setViewInstanceSendingStatus] = useState<PossibleResultsWithServer>(PossibleResultsWithServer.NOT_TRIED);
 
     const createNewViewInstance = () => {
         if (

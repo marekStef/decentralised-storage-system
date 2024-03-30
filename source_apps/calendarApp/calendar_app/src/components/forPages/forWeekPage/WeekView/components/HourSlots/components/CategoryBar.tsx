@@ -1,28 +1,38 @@
 import React, { useState } from 'react';
 import { darken } from 'polished';
+import persistenceManager from '@/data/PersistenceManager';
 
-const CategoryBar = () => {
+interface CategoryBarParams {
+    windowsAppsCategoriesPercentagesForGivenHour: object
+}
+
+const CategoryBar: React.FC<CategoryBarParams> = (params) =>  {
+    
     const [hoveredCategory, setHoveredCategory] = useState(null);
 
-    const categories = [
-        { categoryType: 'productivity', percentage: 0.5 },
-        { categoryType: 'entertainment', percentage: 0.1 },
-        { categoryType: 'work', percentage: 0.3 },
-        { categoryType: 'family', percentage: 0.1 }
-    ];
+    // const categories = {
+    //     'productivity': 0.5,
+    //     'entertainment': 0.1,
+    //     'work': 0.3,
+    //     'family': 0.1
+    // };
 
-    const colors = {
-        'productivity': '#cdb4db',
-        'entertainment': '#ffc8dd',
-        'work': '#ffafcc',
-        'family': '#bde0fe'
-    };
+    // const colors = {
+    //     'productivity': '#cebaaa',
+    //     'entertainment': '#fccbbb',
+    //     'work': '#feaccc',
+    //     'family': '#baefff'
+    // };
 
-    const getDarkerColor = (color) => darken(0.2, color);
+    const colors = persistenceManager.getSavedWindowsAppsCategories();
 
+    const getDarkerColor = (color) => darken(0.4, color);
     return (
-        <div className="flex flex-col w-full h-full relative" style={{zIndex: 1000}}>
-            {categories.map(({ categoryType, percentage }) => (
+        <div 
+            className="flex flex-col w-full h-full absolute" 
+            style={{zIndex: 100}}
+        >
+            {Object.entries(params.windowsAppsCategoriesPercentagesForGivenHour).map(([categoryType, percentage]) => (
                 <div
                     key={categoryType}
                     onMouseEnter={() => setHoveredCategory(categoryType)}
@@ -30,8 +40,8 @@ const CategoryBar = () => {
                     className={`categoryBar ${hoveredCategory === categoryType ? 'hovered' : ''}`}
                     style={{
                         height: `${percentage * 100}%`,
-                        width: hoveredCategory === categoryType ? '600%' : '100%',
-                        background: `linear-gradient(to right, ${colors[categoryType]} 30%, transparent 100%)`,
+                        width: hoveredCategory === categoryType ? '2200%' : '100%',
+                        background: `linear-gradient(to right, ${colors[categoryType]?.color || '#ccc'} 30%, transparent 100%)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'flex-start',
@@ -46,9 +56,9 @@ const CategoryBar = () => {
                             top: '50%',
                             transform: 'translateY(-50%)',
                             whiteSpace: 'nowrap',
-                            color: getDarkerColor(colors[categoryType]),
+                            color: getDarkerColor(colors[categoryType]?.color || '#ccc'),
                             fontSize: "12px",
-                        }}>{categoryType}</span>
+                        }}>{categoryType} ({(percentage * 100).toFixed(2)}%)</span>
                     )}
                 </div>
             ))}

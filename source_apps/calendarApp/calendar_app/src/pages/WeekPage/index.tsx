@@ -46,6 +46,10 @@ const WeekPage = () => {
     const [isCreatingNewEvent, setIsCreatingNewEvent] = useState<boolean>(false)
     const [eventDialogMode, setEventDialogMode] = useState<NewEventDialogOpenMode>(NewEventDialogOpenMode.CLOSED);
 
+    // windows apps specific [START]
+    const [windowsAppsCategoriesByDaysAndHoursPercentages, setWindowsAppsCategoriesByDaysAndHoursPercentages] = useState<Array<Array<object>> | null>(null);
+    // windows apps specific [END]
+
     const openNewEventDialogHandler = (data: Event, dialogMode: NewEventDialogOpenMode) => {
         setNewEventDialogData(data);
         setEventDialogMode(dialogMode);
@@ -85,7 +89,6 @@ const WeekPage = () => {
     }
 
     const getSpecificEventsUsingCalendarViewInstance = (selectedWeek: SelectedWeek) => {
-        console.log('fetching using view instance');
         const viewInstanceAccessTokenForCalendarEventsFetching = persistenceManager.getViewInstanceAccessTokenForCalendarEventsFetching();
         if (viewInstanceAccessTokenForCalendarEventsFetching == null)
             return showError("Your app does not have token saved for executing remote view instance");
@@ -110,11 +113,32 @@ const WeekPage = () => {
             })
     }
 
+    const getWindowsAppsForSelectedWeek = (selectedWeek: SelectedWeek) => {
+        const viewInstanceAccessTokenForWindowsApps = persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList();
+        if (viewInstanceAccessTokenForWindowsApps == null)
+            return showError("Your app does not have token saved for executing remote view instance about windows apps");
+
+        networkManager.executeViewInstance(viewInstanceAccessTokenForWindowsApps, { getAppsForSpecificDay: true, selectedWeek: selectedWeek.convertSelectedWeekToSimpleISODatesObject(), appsWithAssignedCategories: persistenceManager.getAppsWithAssignedCategories() })
+            .then(result => {
+                if (result.code != 200) {
+                    return showError(result.message);
+                }
+                setWindowsAppsCategoriesByDaysAndHoursPercentages(result.eventsByDayAndHour);
+                console.log(result);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
     const getAllEventsForSelectedWeek = (selectedWeek: SelectedWeek) => {
         if (persistenceManager.getIsViewInstanceUsedForCalendarFetching())
             getSpecificEventsUsingCalendarViewInstance(selectedWeek);      
         else
-        getAllEventsUsingStandardAccessToken(selectedWeek);  
+            getAllEventsUsingStandardAccessToken(selectedWeek);  
+
+        if (persistenceManager.getAreWindowsOpenedAppsShown())
+            getWindowsAppsForSelectedWeek(selectedWeek);
     }
 
     const createNewEventHandler = (newEvent: Event): Promise<void> => {
@@ -262,6 +286,7 @@ const WeekPage = () => {
                 isLoadingEvents={isLoadingEvents}
                 events={events}
                 deleteEventHandler={deleteEventHandler}
+                windowsAppsCategoriesByDaysAndHoursPercentages={windowsAppsCategoriesByDaysAndHoursPercentages}
             />
         </div>
     )

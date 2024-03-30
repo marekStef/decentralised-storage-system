@@ -11,8 +11,8 @@ interface HourSlotsParams {
     calendarHeaderHeightInPixels: number,
     day: DayOfWeek,
     openNewEventDialogHandler: (data: Event, dialogMode: NewEventDialogOpenMode) => void,
+    windowsAppsCategoriesByHours: Array<object> | null
 }
-
 
 const HourSlots : React.FC<HourSlotsParams> = (params) =>  {
     const slotHeight = params.calendarHeight / 24
@@ -59,7 +59,9 @@ const HourSlots : React.FC<HourSlotsParams> = (params) =>  {
                             }}
                             className="hover:bg-slate-50 bg-white"
                         >
-                            <CategoryBar />
+                            {(params.windowsAppsCategoriesByHours != null && Object.keys(params.windowsAppsCategoriesByHours[hour]).length != 0) && (
+                                <CategoryBar windowsAppsCategoriesPercentagesForGivenHour={params.windowsAppsCategoriesByHours[hour]} />
+                            )}
                         </div>
                     );
                 }

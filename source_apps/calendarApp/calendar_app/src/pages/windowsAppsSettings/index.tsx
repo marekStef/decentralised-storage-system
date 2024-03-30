@@ -51,7 +51,9 @@ const WindowsAppsSettingsPage = () => {
         networkManager
             .executeViewInstance(
                 viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList,
-                {}
+                {
+                    getUniqueApps: true
+                }
             )
             .then((result) => {
                 if (result.code != 200) {
@@ -62,10 +64,10 @@ const WindowsAppsSettingsPage = () => {
                 setIsLoading(false);
             })
             .catch((err) => {
+                console.log(err);
                 showError(
                     "Something went wrong exeucting view instance for getting events"
                 );
-                console.log(err);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -128,8 +130,8 @@ const WindowsAppsSettingsPage = () => {
                                                 backgroundColor: categories[uniqueExeNamesWithAssignedCategories[appName]]?.color || '#ccc',
                                             }}
                                         >
-                                            <MenuItem value="">
-                                                <em>Other</em>
+                                            <MenuItem value="other">
+                                                <em>other</em>
                                             </MenuItem>
                                             {Object.entries(categories).map(([name, { color }], index) => (
                                                 <MenuItem
