@@ -46,24 +46,22 @@ const AndroidLocationExistingSetup: React.FC<AndroidLocationExistingSetupParams>
                     type="text"
                     variant="outlined"
                     value={viewInstanceAccessTokenForLocationTrackerData}
-                    onChange={event => setViewInstanceAccessTokenForLocationTrackerData(event.target.value)}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => setViewInstanceAccessTokenForLocationTrackerData(event.target.value)}
                     helperText="This token should be found near the existing app holder data"
                 />
             </Grid>
 
             <Grid item xs={12}>
                 <Tooltip title="Send permissions to the server" enterDelay={3000}>
-                    <span>
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            fullWidth
-                            onClick={saveTokens}
-                            startIcon={<SaveIcon />}
-                        >
-                            Save Configuration
-                        </Button>
-                    </span>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        fullWidth
+                        onClick={saveTokens}
+                        startIcon={<SaveIcon />}
+                    >
+                        Save Configuration
+                    </Button>
                 </Tooltip>
             </Grid>
         </Grid>

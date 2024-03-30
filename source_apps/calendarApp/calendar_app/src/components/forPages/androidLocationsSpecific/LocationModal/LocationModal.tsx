@@ -5,6 +5,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { DayOfWeek } from '@/data/SelectedWeek';
 import persistenceManager from '@/data/PersistenceManager';
+import networkManager from '@/Network/NetworkManager';
+import { showError } from '@/components/AlertProvider/AlertProvider';
 
 const defaultIcon = L.icon({
     iconUrl: '/images/leaflet/marker-icon.png',
@@ -46,8 +48,22 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
     const [isLoadingLocations, setIsLoadingLocations] = useState(true);
 
     const loadLocations = () => {
-        setLocations([{ latitude: 50.0255, longitude: 14.278, createdDate: '2024-03-30T12:30:00Z' }, { latitude: 52.2755, longitude: 12.43278, createdDate: '2024-03-30T12:30:00Z' }, { latitude: 48.0255, longitude: 8.428, createdDate: '2024-03-30T12:30:00Z' }]);
-        setIsLoadingLocations(false);
+        const viewInstanceAccessTokenForAndroidLocationsData = persistenceManager.getViewInstanceAccessTokenForAndroidLocations();
+        if (viewInstanceAccessTokenForAndroidLocationsData == null)
+            return showError("Your app does not have token saved for executing remote view instance about windows apps");
+
+        networkManager.executeViewInstance(viewInstanceAccessTokenForAndroidLocationsData, { selectedDateInISO: selectedDay?.dayInUTC } )
+            .then(result => {
+                console.log(result);
+                if (result.code != 200) {
+                    return showError(result.message);
+                }
+                setLocations(result.locations);
+                setIsLoadingLocations(false);
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     useEffect(() => {
@@ -76,6 +92,8 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
                 <>
                     <DialogTitle id="location-dialog-title">Location Details For {selectedDay?.date.toLocaleDateString()} ({selectedDay?.dayName})</DialogTitle>
                     <DialogContent>
+                        <DialogContentText sx={{my: 2}}>{locationEvents.length} location events</DialogContentText>
+
                         <MapContainer center={[0, 0]} zoom={13} style={{ height: '400px', width: '100%' }} whenCreated={mapInstance => {
                             if (locationEvents.length > 0) {
                                 const bounds = locationEvents.map(event => [event.latitude, event.longitude]);
