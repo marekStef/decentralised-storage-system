@@ -6,7 +6,7 @@ import { SelectedMonth } from '@/data/SelectedMonth';
 import persistenceManager from '@/data/PersistenceManager';
 
 import SquareButton from "@/components/SquareButton/SquareButton";
-import { IoAppsOutline } from 'react-icons/io5';
+import { IoAppsOutline, IoLocationOutline } from 'react-icons/io5';
 
 interface LeftPanelParams {
     calendarHeaderHeightInPixels: number,
@@ -18,6 +18,7 @@ interface LeftPanelParams {
 
 const LeftPanel: React.FC<LeftPanelParams> = params => {
     const isShowingWindowsAppsOn = persistenceManager.getAreWindowsOpenedAppsShown();
+    const isShowingAndroidLocations = persistenceManager.getAreAndroidLocationsShown();
 
     return (
         <div style={{marginTop: `${params.calendarHeaderHeightInPixels}px`, backgroundColor: 'white', padding: "0 1rem"}}>
@@ -32,8 +33,19 @@ const LeftPanel: React.FC<LeftPanelParams> = params => {
                 <>
                     <SquareButton style={{marginTop: '1rem', width: '100%'}} href="/windowsAppsSettings">
                         <IoAppsOutline size={24} />{" "}
-                        <p className="ml-4">
+                        <p className="ml-4 text-sm">
                             Windows Opened Apps
+                        </p>
+                    </SquareButton>
+                </>
+            )}
+
+            {isShowingAndroidLocations && (
+                <>
+                    <SquareButton style={{marginTop: '1rem', width: '100%'}} href="/androidLocationsSettings">
+                        <IoLocationOutline size={24} />{" "}
+                        <p className="ml-4 text-sm">
+                            Your Locations
                         </p>
                     </SquareButton>
                 </>

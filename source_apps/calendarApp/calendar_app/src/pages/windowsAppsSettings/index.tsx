@@ -30,7 +30,7 @@ import persistenceManager from "@/data/PersistenceManager";
 import Link from "next/link";
 import networkManager from "@/Network/NetworkManager";
 import { showError } from "@/components/AlertProvider/AlertProvider";
-import AppsCategoriesHandler from "@/components/windowsAppsSpecific/AppsCategoriesHandler/AppsCategoriesHandler";
+import AppsCategoriesHandler from "@/components/forPages/windowsAppsSpecific/AppsCategoriesHandler/AppsCategoriesHandler";
 
 const WindowsAppsSettingsPage = () => {
     const isWindowsAppsSetUp = persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList() != null;

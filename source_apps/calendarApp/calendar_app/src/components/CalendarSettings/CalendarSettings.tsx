@@ -22,12 +22,9 @@ interface CalendarSetttingsParams {
 const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose }) => {
     const Router = useRouter();
     const [isViewInstanceUsed, setIsViewInstanceUsed] = useState(persistenceManager.getIsViewInstanceUsedForCalendarFetching());
-    const [isOpenedWindowsAppsHistoryShown, setIsOpenedWindowsAppsHistoryShown] = useState(persistenceManager.getAreWindowsOpenedAppsShown())
+    const [isOpenedWindowsAppsHistoryShown, setIsOpenedWindowsAppsHistoryShown] = useState(persistenceManager.getAreWindowsOpenedAppsShown());
 
-    const resetCalendarSettingHandler = () => {
-        persistenceManager.resetAllValues();
-        Router.replace('/');
-    }
+    const [areAndroidLocationsShown, setAreAndroidLocationsShown] = useState(persistenceManager.getAreAndroidLocationsShown());
 
     const toggleViewInstance = (event: React.ChangeEvent<HTMLInputElement>) => {
         const isUsed = event.target.checked;
@@ -42,6 +39,25 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
         setIsOpenedWindowsAppsHistoryShown(shown);
         showInfo("Reload the app to apply changes");
     }
+
+    const toggleShowingAndroidLocations = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const shown = event.target.checked;
+        persistenceManager.setAreAndroidLocationsShown(shown);
+        setAreAndroidLocationsShown(shown);
+        showInfo("Reload the app to apply changes");
+    }
+
+    const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+
+    const resetCalendarSettingHandler = () => {
+        setResetConfirmOpen(false);
+        persistenceManager.resetAllValues();
+        Router.replace('/');
+    };
+
+    const handleOpenResetConfirm = () => {
+        setResetConfirmOpen(true);
+    };
 
     return (
         <Dialog open={open} onClose={handleClose}>
@@ -58,8 +74,8 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
                         label="Enable Fetching Events Using View Instance"
                     />
                     <p className='text-gray-400 font-thin'>
-                        You can choose whether to use View Instance ( this is very effective as only the visible events are fetched from the dataStorage using custom javascript code) 
-                        or whether to load all events from dataStorage and process them here in browser. 
+                        You can choose whether to use View Instance ( this is very effective as only the visible events are fetched from the dataStorage using custom javascript code)
+                        or whether to load all events from dataStorage and process them here in browser.
                         This only highlights the dataStorage Views feature and in real life scenario, View Instance would be used by default
                     </p>
 
@@ -85,8 +101,8 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
                     <FormControlLabel
                         control={
                             <Switch
-                                checked={false}
-                                onChange={() => {}}
+                                checked={areAndroidLocationsShown}
+                                onChange={toggleShowingAndroidLocations}
                             />
                         }
                         label="Enable Showing Location"
@@ -101,11 +117,34 @@ const CalendarSettings: React.FC<CalendarSetttingsParams> = ({ open, handleClose
 
                 <p className='text-gray-400 font-thin'>This calendar app produces events with this profile name:</p>
                 <p className='bg-gray-100 text-gray-500 font-thin p-2 rounded-md my-2'>{appConstants.calendarEventProfileName}</p>
+
+
+                <Button 
+                    onClick={handleOpenResetConfirm} 
+                    style={{ backgroundColor: 'red', color: 'white', marginTop: '10px', width: '100%' }}
+                    variant="contained"
+                >
+                    Reset The Whole App
+                </Button>
+
             </div>
+
+
+
             <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={resetCalendarSettingHandler}>Reset</Button>
+
             </DialogActions>
+            <Dialog open={resetConfirmOpen} onClose={() => setResetConfirmOpen(false)}>
+                    <DialogTitle>Reset App</DialogTitle>
+                    <div className='p-6'>
+                        Are you sure you want to reset all settings for the whole app?
+                    </div>
+                    <DialogActions>
+                        <Button onClick={() => setResetConfirmOpen(false)}>Cancel</Button>
+                        <Button onClick={resetCalendarSettingHandler} style={{ backgroundColor: 'red', color: 'white' }}>Reset</Button>
+                    </DialogActions>
+                </Dialog>
         </Dialog>
     );
 };

@@ -18,6 +18,7 @@ import { isToday } from "date-fns";
 import useScrollbarWidth from "@/customHooks/useScrollbarWidth";
 import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewEventDialogMaterial";
 import HourSlots from "./components/HourSlots/HourSlots";
+import WeekDayHeader from "./components/WeekDayHeader/WeekDayHeader";
 
 interface WeekViewParams {
     screenHeight: number,
@@ -299,8 +300,6 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                             params.events.events[day.dayInUTC]
                         );
 
-                        const isThisToday = isToday(day.date)
-
                         return (
                             <div
                                 key={day.dayName}
@@ -312,32 +311,10 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                     height: `${calendarHeight + params.calendarHeaderHeightInPixels}px`,
                                 }}
                             >
-                                <div
-                                    style={{
-                                        height: `${params.calendarHeaderHeightInPixels}px`,
-                                        position: "sticky",
-                                        top: 0,
-                                        width: "100%",
-                                        textAlign: "center",
-                                        backgroundColor: "white",
-                                        zIndex: 100,
-                                        borderBottom: `1px solid ${colors.gray2}`,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}
-                                >
-                                    <p style={{ fontSize: `1rem`, padding: 0, margin: 0, color: 'gray' }}>{day.dayName}</p>
-                                    <div style={{
-                                        borderRadius: isThisToday ? '1rem' : '0',
-                                        backgroundColor: isThisToday ? 'red' : 'transparent',
-                                        color: isThisToday ? 'white' : 'black',
-                                        fontSize: `1rem`, padding: '0.1rem 0.6rem', margin: 0
-                                    }}>
-                                        {day.dayNumberInMonth}
-                                    </div>
-                                </div>
+                                <WeekDayHeader 
+                                    calendarHeaderHeightInPixels={params.calendarHeaderHeightInPixels}
+                                    day={day}
+                                />
 
                                 {/* Hour Slots */}
                                 <HourSlots 

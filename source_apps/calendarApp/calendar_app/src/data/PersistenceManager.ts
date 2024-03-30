@@ -22,6 +22,12 @@ class PersistenceManager {
     savedWindowsAppsCategories: string | null = null;
     windowsAppsWithAssignedCategories: object = {};
 
+    // android locations specific [start]
+
+    areAndroidLocationsShown: boolean = false;
+
+    // android locations specific [end]
+
     public loadDataFromLocalStorage() {
         this.ip = localStorage.getItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
         this.port = localStorage.getItem(localStorageConstants.DATA_STORAGE_PORT);
@@ -39,6 +45,10 @@ class PersistenceManager {
         this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST);
         this.savedWindowsAppsCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_CATEGORIES);
         this.windowsAppsWithAssignedCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES) ? JSON.parse(localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES)) : {};
+
+        // android locations specific [start]
+        this.areAndroidLocationsShown = localStorage.getItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN) === 'true';
+        // android locations specific [end]
     }
 
     public setServerIPAddress(ip: string) {
@@ -133,6 +143,19 @@ class PersistenceManager {
     public getAppsWithAssignedCategories(): object {
         return this.windowsAppsWithAssignedCategories;
     }
+
+    // android locations related [start]
+
+    public getAreAndroidLocationsShown(): boolean {
+        return this.areAndroidLocationsShown;
+    }
+
+    public setAreAndroidLocationsShown(shown: boolean): void {
+        localStorage.setItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN, String(shown));
+        this.areAndroidLocationsShown = shown;
+    }
+
+    // android locations related [end]
 
     public areAllValuesSet(): boolean {
         const areAllValuesSet = this.ip != null 
