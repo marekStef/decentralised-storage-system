@@ -11,10 +11,17 @@ const viewInstanceAccessNameForCalendarEventsFetchingBasedOnSelectedWeek = 'View
 
 const windowsOpenedAppsActivityTrackerEventName = 'activityTracker.com/activityTrackerEvent';
 
+const androidLocationTrackerAppEventName = 'locationTracker.com/profiles/location_profile';
+const viewInstanceAccessNameForLocationTrackerAppData = 'View access for getting location data from the android app';
+
 export default {
     appName,
     calendarEventProfileName,
     windowsOpenedAppsActivityTrackerEventName,
+
+    androidLocationTrackerAppEventName,
+    viewInstanceAccessNameForLocationTrackerAppData,
+    
     permissonsObjectForCalendarEventPermissionRequest,
 
     DATA_STORAGE_ROOT_PROFILE: "core:profile-registration_v1",

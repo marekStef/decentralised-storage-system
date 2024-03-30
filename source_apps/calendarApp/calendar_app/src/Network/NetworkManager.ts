@@ -4,6 +4,13 @@ import persistenceManager from "@/data/PersistenceManager";
 
 import { Event } from "@/data/EventsManager";
 
+export enum PossibleResultsWithServer {
+    NOT_TRIED,
+    IS_LOADING,
+    SUCCESS,
+    FAILED,
+}
+
 class NetworkManager {
     // GET request
     // private async get<T>(endpoint: string): Promise<T> {

@@ -15,20 +15,13 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import appConstants from "@/constants/appConstants";
-import networkManager from "@/Network/NetworkManager";
+import networkManager, { PossibleResultsWithServer } from "@/Network/NetworkManager";
 import persistenceManager from "@/data/PersistenceManager";
 import {
     showError,
     showSuccess,
 } from "@/components/AlertProvider/AlertProvider";
 import { useRouter } from "next/router";
-
-enum PossibleResultsWithServer {
-    NOT_TRIED,
-    IS_LOADING,
-    SUCCESS,
-    FAILED,
-}
 
 const WindowsAppsSettingsSetup = () => {
     const Router = useRouter();

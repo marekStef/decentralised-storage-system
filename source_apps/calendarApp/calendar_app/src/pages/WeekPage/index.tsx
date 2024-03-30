@@ -99,7 +99,7 @@ const WeekPage = () => {
                     return showError(result.message);
                 }
 
-                console.log(result);
+                // console.log(result);
                 const eventsResponse = result.filteredEvents.map(event => Event.convertEventReceivedFromServerToThisEvent(event))
                 setEvents(displayEvents(eventsResponse))
                 setIsLoadingEvents(false)
@@ -124,7 +124,7 @@ const WeekPage = () => {
                     return showError(result.message);
                 }
                 setWindowsAppsCategoriesByDaysAndHoursPercentages(result.eventsByDayAndHour);
-                console.log(result);
+                // console.log(result);
             })
             .catch(err => {
                 console.log(err);
@@ -137,8 +137,10 @@ const WeekPage = () => {
         else
             getAllEventsUsingStandardAccessToken(selectedWeek);  
 
-        if (persistenceManager.getAreWindowsOpenedAppsShown())
+        if (persistenceManager.getAreWindowsOpenedAppsShown()) {
+            setWindowsAppsCategoriesByDaysAndHoursPercentages(null);
             getWindowsAppsForSelectedWeek(selectedWeek);
+        }
     }
 
     const createNewEventHandler = (newEvent: Event): Promise<void> => {

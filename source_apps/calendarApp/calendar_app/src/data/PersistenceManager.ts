@@ -25,6 +25,7 @@ class PersistenceManager {
     // android locations specific [start]
 
     areAndroidLocationsShown: boolean = false;
+    viewInstanceAccesssTokenForAndroidLocations: string | null = null;
 
     // android locations specific [end]
 
@@ -48,6 +49,7 @@ class PersistenceManager {
 
         // android locations specific [start]
         this.areAndroidLocationsShown = localStorage.getItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN) === 'true';
+        this.viewInstanceAccesssTokenForAndroidLocations = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS);
         // android locations specific [end]
     }
 
@@ -153,6 +155,19 @@ class PersistenceManager {
     public setAreAndroidLocationsShown(shown: boolean): void {
         localStorage.setItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN, String(shown));
         this.areAndroidLocationsShown = shown;
+    }
+
+    public getViewInstanceAccessTokenForAndroidLocations(): string | null {
+        return this.viewInstanceAccesssTokenForAndroidLocations;
+    }
+
+    public setViewInstanceAccessTokenForAndroidLocations(token: string): void {
+        this.viewInstanceAccesssTokenForAndroidLocations = token;
+        localStorage.setItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS, token);
+    }
+
+    public deleteViewInstanceAccessTokenForAndroidLocations(): void {
+        localStorage.removeItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS);
     }
 
     // android locations related [end]

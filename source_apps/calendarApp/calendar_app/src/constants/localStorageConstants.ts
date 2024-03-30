@@ -20,5 +20,6 @@ export default {
 
     // android locations specific [start]
     ARE_ANDROID_LOCATIONS_SHOWN: 'ARE_ANDROID_LOCATIONS_SHOWN',
+    VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS: 'VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS'
     // android locations specific [end]
 }

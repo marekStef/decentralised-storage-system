@@ -9,6 +9,7 @@ import persistenceManager from '@/data/PersistenceManager';
 interface WeekDayHeaderParams {
     calendarHeaderHeightInPixels: number,
     day: DayOfWeek,
+    openLocationsModal: (dayOfWeek: DayOfWeek) => void
 }
 
 const WeekDayHeader: React.FC<WeekDayHeaderParams> = (params) => {
@@ -51,7 +52,7 @@ const WeekDayHeader: React.FC<WeekDayHeaderParams> = (params) => {
 
             {shouldLocationBeVisible && isHovered && (
                 <SquareButton 
-                    onClick={() => {}}
+                    onClick={() => params.openLocationsModal(params.day)}
                     style={{
                         position: 'absolute',
                         top: '0rem',

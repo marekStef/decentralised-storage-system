@@ -20,6 +20,13 @@ import { NewEventDialogOpenMode } from "@/components/NewEventDialogMaterial/NewE
 import HourSlots from "./components/HourSlots/HourSlots";
 import WeekDayHeader from "./components/WeekDayHeader/WeekDayHeader";
 
+import dynamic from 'next/dynamic';
+
+const LocationModalWithNoSSR = dynamic(
+  () => import('@/components/forPages/androidLocationsSpecific/LocationModal/LocationModal'),
+  { ssr: false }
+);
+
 interface WeekViewParams {
     screenHeight: number,
     screenWidth: number,
@@ -62,7 +69,14 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     const currentHourOffsetInPixels = (calendarHeightWithoutHeader / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
 
-    const [weekDaysWithDatesForSelectedWeek, setWeekDaysWithDatesForSelectedWeek] = useState<Array<DayOfWeek> | null>(null)
+    const [weekDaysWithDatesForSelectedWeek, setWeekDaysWithDatesForSelectedWeek] = useState<Array<DayOfWeek> | null>(null);
+
+    // android locations specific [start]
+    const [locationsModalData, setLocationsModalData] = useState<DayOfWeek | null>(null);
+    const openLocationsModal = (day: DayOfWeek) => {
+        setLocationsModalData(day);
+    }
+    // android locations specific [end]
 
     useEffect(() => {
         setWeekDaysWithDatesForSelectedWeek(params.selectedWeek.getWeekDaysWithDates())
@@ -179,6 +193,12 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                     leftOffset={calendarLeftColumnHoursWidthInPixels}
                     position={params.calendarHeaderHeightInPixels + currentHourOffsetInPixels}
                     heightInPixels={2}
+                />
+
+                <LocationModalWithNoSSR // it needs to be no ssr as the library tried to access window on the server - which of course does not work as the window variable is in browser only
+                    open={locationsModalData != null}
+                    handleClose={() => setLocationsModalData(null)}
+                    selectedDay={locationsModalData}
                 />
 
                 <DraggableNewEventPreview 
@@ -314,6 +334,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 <WeekDayHeader 
                                     calendarHeaderHeightInPixels={params.calendarHeaderHeightInPixels}
                                     day={day}
+                                    openLocationsModal={openLocationsModal}
                                 />
 
                                 {/* Hour Slots */}
