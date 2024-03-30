@@ -9,6 +9,7 @@ import com.example.locationtracker.constants.Workers
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.eventSynchronisation.sendLocationsToServer
+import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.utils.getCurrentTimeInMillis
 import java.util.Date
 
@@ -19,6 +20,12 @@ class SynchronisationWorker(
     private var preferencesManager: PreferencesManager = PreferencesManager(context)
 
     override suspend fun doWork(): Result {
+        val dataStorageDetails: DataStorageDetails = this.preferencesManager.loadDataStorageDetails()
+
+        if (dataStorageDetails.ipAddress.length == 0 || dataStorageDetails.port.length == 0) {
+            return Result.failure()
+        }
+
         val database = DatabaseClient.getDatabase(context)
         val dao = database.locationDao()
 
@@ -30,7 +37,7 @@ class SynchronisationWorker(
 
         while (offset < totalCount) {
             val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, 0)
-            if (sendLocationsToServer(locations)) {
+            if (sendLocationsToServer(dataStorageDetails.ipAddress, dataStorageDetails.port, locations)) {
                 val locationIds = locations.map { it.id }
                 dao.deleteLocationsByIds(locationIds)
             }

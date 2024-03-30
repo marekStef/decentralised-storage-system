@@ -16,7 +16,7 @@ object SharedPreferences {
     const val SYNCHRONISATION_INFO_TOTAL_EVENTS_SYNCED = "total_events_synced"
 
     const val LOCATION_TRACKER_SERVICE_SHARED_PREFERENCES =
-        "location_tracker_service_shared_preferences_v7559997999"
+        "location_tracker_service_shared_preferences_v75599979399"
     const val LOCATION_TRACKER_SERVICE_RUNNING_FLAG = "is_service_running_flag"
 
     const val DATA_STORAGE_DETAILS_PREFERENCES = "data_storage_details_preferencess"

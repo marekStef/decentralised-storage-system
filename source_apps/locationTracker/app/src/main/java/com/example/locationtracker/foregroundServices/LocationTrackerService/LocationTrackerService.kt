@@ -72,9 +72,25 @@ class LocationTrackerService : Service() {
     }
 
     private fun isActiveTimeNow(): Boolean {
-        if (locationGatheringStartTime == locationGatheringEndTime)
-            return locationGatheringStartTime == LocalTime.MIDNIGHT
-        return LocalTime.now() <= locationGatheringEndTime && LocalTime.now() >= locationGatheringStartTime
+        val now = LocalTime.now()
+        val startTime = locationGatheringStartTime
+        val endTime = locationGatheringEndTime
+
+        if (startTime == null || endTime == null)
+            return false;
+
+        // active all the time
+        if (startTime == endTime) {
+            return true
+        }
+
+        // If the end time is after the start time in the same day
+        if (startTime < endTime) {
+            return now >= startTime && now <= endTime
+        } else {
+            // active period crosses midnight
+            return now >= startTime || now <= endTime
+        }
     }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
