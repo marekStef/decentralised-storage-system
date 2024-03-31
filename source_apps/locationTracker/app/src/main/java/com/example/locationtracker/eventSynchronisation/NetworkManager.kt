@@ -5,17 +5,23 @@ import android.net.wifi.WifiManager
 import android.util.Log
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
 import com.example.locationtracker.data.database.entities.Location
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 suspend fun isDataStorageServerReachable(ipAddress: String, port: String): Boolean = withContext(
@@ -255,11 +261,76 @@ suspend fun checkAccessTokenStatus(ip: String, port: String, accessToken: String
 }
 
 // returns bool whether syncing was successfull
-suspend fun sendLocationsToServer(ip: String, port: String, locations: List<Location>): Boolean {
-    Log.d("SENDING_LOCATIONS", "locationsc count: ${locations.size}")
-    Log.d("SENDING_LOCATIONS", "first event id: ${locations[0].id.toString()}, last event id: ${locations[locations.size - 1].id.toString()}")
-    // TODO: Implement the API call to sync locations
-    delay(4000)
+//suspend fun sendLocationsToServer(ip: String, port: String, accessToken: String, locations: List<Location>): Boolean {
+//    Log.d("SENDING_LOCATIONS", "locationsc count: ${locations.size}")
+//    Log.d("SENDING_LOCATIONS", "first event id: ${locations[0].id.toString()}, last event id: ${locations[locations.size - 1].id.toString()}")
+//    // TODO: Implement the API call to sync locations
+//    delay(4000)
+//
+//    return true
+//}
 
-    return true
+suspend fun sendLocationsToServer(ip: String, port: String, accessToken: String, locations: List<Location>): Boolean = withContext(Dispatchers.IO) {
+    Log.d("SENDING_LOCATIONS", "locations count: ${locations.size}")
+    Log.d("SENDING_LOCATIONS", "first event id: ${locations[0].id}, last event id: ${locations[locations.size - 1].id}")
+
+    val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+    val gson = Gson()
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("UTC")
+    }
+
+    val eventsJson = locations.map { location ->
+        mapOf(
+            "metadata" to mapOf(
+                "profile" to UNIQUE_LOCATION_PROFILE_NAME,
+                "createdDate" to dateFormat.format(Date(location.time))
+            ),
+            "payload" to mapOf(
+                "id" to location.id,
+                "latitude" to location.latitude,
+                "longitude" to location.longitude,
+                "accuracy" to location.accuracy,
+                "bearing" to location.bearing,
+                "bearingAccuracy" to location.bearingAccuracy,
+                "altitude" to location.altitude,
+                "speed" to location.speed,
+                "speedAccuracyMetersPerSecond" to location.speedAccuracyMetersPerSecond,
+                "provider" to location.provider,
+                "time" to dateFormat.format(Date(location.time)) // converting timestamp (in milliseconds) to ISO string
+            )
+        )
+    }
+    val requestBody = mapOf(
+        "accessToken" to accessToken,
+        "profileCommonForAllEventsBeingUploaded" to UNIQUE_LOCATION_PROFILE_NAME,
+        "events" to eventsJson
+    )
+
+    val jsonBody = gson.toJson(requestBody).toRequestBody(mediaType)
+
+    val client = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .build()
+
+    val request = Request.Builder()
+        .url("http://$ip:$port/app/api/uploadNewEvents")
+        .post(jsonBody)
+        .build()
+
+    try {
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                Log.d("SENDING_LOCATIONS", "Successfully sent locations to server")
+                return@withContext true
+            } else {
+                Log.e("SENDING_LOCATIONS", "Failed to send locations. Server responded with HTTP ${response.code}")
+                return@withContext false
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("SENDING_LOCATIONS", "Error sending locations to server", e)
+        return@withContext false
+    }
 }

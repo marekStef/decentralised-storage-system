@@ -53,7 +53,7 @@ class SynchronisationWorker(
 
         while (offset < totalCount) {
             val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, 0)
-            if (sendLocationsToServer(dataStorageDetails.ipAddress, dataStorageDetails.port, locations)) {
+            if (sendLocationsToServer(dataStorageDetails.ipAddress, dataStorageDetails.port, dataStorageDetails.accessTokenForLocationEvents, locations)) {
                 val locationIds = locations.map { it.id }
                 dao.deleteLocationsByIds(locationIds)
             }

@@ -26,7 +26,8 @@
         "type": "number"
       },
       "time": {
-        "type": "number"
+        "type": "string",
+        "description": "Time in ISO 8601 format"
       }
     },
     "required": [
