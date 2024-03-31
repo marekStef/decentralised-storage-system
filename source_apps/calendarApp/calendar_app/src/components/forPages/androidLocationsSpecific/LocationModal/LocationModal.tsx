@@ -28,7 +28,7 @@ function AutoAdjustBounds({ locationEvents }) {
 
     useEffect(() => {
         if (locationEvents.length > 0) {
-            const bounds = locationEvents.map(event => [event.latitude, event.longitude]);
+            const bounds = locationEvents.map(event => [event.payload.latitude, event.payload.longitude]);
             map.fitBounds(bounds);
         }
     }, [locationEvents, map]);
@@ -58,6 +58,7 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
                 if (result.code != 200) {
                     return showError(result.message);
                 }
+                console.log(result);
                 setLocations(result.locations);
                 setIsLoadingLocations(false);
             })
@@ -96,7 +97,9 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
 
                         <MapContainer center={[0, 0]} zoom={13} style={{ height: '400px', width: '100%' }} whenCreated={mapInstance => {
                             if (locationEvents.length > 0) {
-                                const bounds = locationEvents.map(event => [event.latitude, event.longitude]);
+
+                                const bounds = locationEvents.map(event => [event.payload.latitude, event.payload.longitude]);
+
                                 mapInstance.fitBounds(bounds);
                             }
                         }}>
@@ -106,11 +109,11 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
                             {locationEvents.map((event, index) => (
                                 <Marker
                                     key={index}
-                                    position={[event.latitude, event.longitude]}
+                                    position={[event.payload.latitude, event.payload.longitude]}
                                     icon={defaultIcon}
                                 >
                                     <Popup>
-                                        Time: {formatLocalTime(event.createdDate)}
+                                        Time: {formatLocalTime(event.payload.time)}
                                     </Popup>
                                 </Marker>
                             ))}

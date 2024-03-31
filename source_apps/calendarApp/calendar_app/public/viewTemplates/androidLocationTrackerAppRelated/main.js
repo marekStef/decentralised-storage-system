@@ -29,6 +29,23 @@ const isAccessTokenActive = (endpoint, accessToken) => {
     })
 }
 
+const getAllLocations = (dataEndpoint, tokenForLocationTrackerEvents, clientCustomData) => {
+    return new Promise(async (res, rej) => {
+        try {
+            const response = await get(`${dataEndpoint}${GET_ALL_EVENTS_FOR_GIVEN_ACCESS_TOKEN}`, {
+                accessToken: tokenForLocationTrackerEvents
+            });
+
+            res({
+                ...response,
+            });
+        } catch (error) {
+            console.error('Error getting apps events:', error);
+            rej(`Error getting apps events: ${error.message ?? 'Server not reachable probably'}`);
+        }
+    }) 
+}
+
 function filterEventsByDate(events, isoDateString) {
     const inputDate = new Date(isoDateString);
     const year = inputDate.getFullYear();
@@ -36,7 +53,7 @@ function filterEventsByDate(events, isoDateString) {
     const day = inputDate.getDate();
   
     const filteredEvents = events.filter(event => {
-      const eventDate = new Date(event.time);
+      const eventDate = new Date(event.payload.time);
       return (
         eventDate.getFullYear() === year &&
         eventDate.getMonth() === month &&
@@ -62,13 +79,27 @@ const mainFunction = (parametersObject) => {
             })
         }
 
-        const locationsData = [{ latitude: 50.0255, longitude: 14.278, time: '2024-03-30T12:30:00Z' }, { latitude: 52.2755, longitude: 12.43278, time: '2024-03-30T12:30:00Z' }, { latitude: 48.0255, longitude: 8.428, time: '2024-03-30T12:30:00Z' }]
+        getAllLocations(dataEndpoint, tokenForLocationsData, clientCustomData)
+            .then(response => {
+                const locationsEvents = response.events;
 
-        res({ 
-            code: 200,
-            clientCustomData,
-            locations: filterEventsByDate(locationsData, clientCustomData.selectedDateInISO)
-        });
+                res({ 
+                    code: 200,
+                    clientCustomData,
+                    locations: filterEventsByDate(locationsEvents, clientCustomData.selectedDateInISO),
+                    message: 'Locations loaded'
+                    // response
+                });
+            })
+            .catch(errResponse => {
+                console.log(errResponse);
+                res({
+                    code: 400,
+                    message: 'Could not load locations',
+                    errResponse: errResponse
+                })
+            })
+        
     })
 }
 
