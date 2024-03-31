@@ -110,6 +110,27 @@ fun DataStorageDetailsSection(dataStorageDetails: DataStorageDetails) {
                         .padding(horizontal = 10.dp, vertical = 5.dp),
                 )
             }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(id = R.string.access_token_for_location_events_used),
+                    fontSize = 12.sp,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = dataStorageDetails?.accessTokenForLocationEvents
+                        ?: stringResource(id = R.string.no_token),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Light,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colorResource(id = R.color.gray_light1))
+                        .padding(horizontal = 10.dp, vertical = 5.dp),
+                )
+            }
         }
     }
 }

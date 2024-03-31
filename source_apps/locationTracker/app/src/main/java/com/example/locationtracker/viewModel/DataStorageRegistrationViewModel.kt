@@ -153,6 +153,11 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
         _dataStorageDetails.value = currentDetails.copy(associationTokenUsedDuringRegistration = value)
     }
 
+    fun updateDataStorageAccessTokenForLocationEvents(value: String) {
+        val currentDetails = _dataStorageDetails.value ?: EmptyDataStorageDetails
+        _dataStorageDetails.value = currentDetails.copy(accessTokenForLocationEvents = value)
+    }
+
     // data storage server specific [END]
 
     // data storage server - profile creation [START]
@@ -215,10 +220,11 @@ class DataStorageRegistrationViewModel(private val application: Application, pri
             val result = sendPermissionRequestToServer(ip, port, tokenForPermissionsAndProfiles)
             _isAskingForPermissions.value = false
 
-            result.onSuccess { data ->
-                saveDataStorageDetails()
+            result.onSuccess { generatedAccessToken ->
                 _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSION_REQUEST_SENT
-                callback(true, data)
+                updateDataStorageAccessTokenForLocationEvents(generatedAccessToken);
+                saveDataStorageDetails()
+                callback(true, generatedAccessToken)
             }.onFailure { error ->
                 _askingForPermissionsStatus.value = PermissionsStatusEnum.PERMISSIONS_REQUEST_FAILED
                 callback(false, error.message ?: "Unknown error occurred")

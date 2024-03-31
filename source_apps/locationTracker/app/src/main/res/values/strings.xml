@@ -21,6 +21,7 @@
     <string name="no_port">No Port</string>
     <string name="no_token">No Token</string>
     <string name="association_token_used">Association Token Used</string>
+    <string name="access_token_for_location_events_used">Access Token For Events</string>
 
 <!--    Synchronisation Component -->
     <string name="syncing">Syncing</string>

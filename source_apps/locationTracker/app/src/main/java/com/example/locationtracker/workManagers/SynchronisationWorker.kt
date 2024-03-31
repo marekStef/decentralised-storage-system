@@ -2,12 +2,15 @@ package com.example.locationtracker.workManagers
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.locationtracker.data.database.DatabaseClient
 import com.example.locationtracker.constants.Workers
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
+import com.example.locationtracker.eventSynchronisation.checkAccessTokenStatus
+import com.example.locationtracker.eventSynchronisation.isDataStorageServerReachable
 import com.example.locationtracker.eventSynchronisation.sendLocationsToServer
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.utils.getCurrentTimeInMillis
@@ -24,6 +27,19 @@ class SynchronisationWorker(
 
         if (dataStorageDetails.ipAddress.length == 0 || dataStorageDetails.port.length == 0) {
             return Result.failure()
+        }
+
+        val isReachable = isDataStorageServerReachable(dataStorageDetails.ipAddress, dataStorageDetails.port)
+        if (!isReachable) {
+            return Result.failure();
+        }
+        if (dataStorageDetails.accessTokenForLocationEvents == null)
+            return Result.failure();
+
+        val isTokenActive = checkAccessTokenStatus(dataStorageDetails.ipAddress, dataStorageDetails.port, dataStorageDetails.accessTokenForLocationEvents)
+        Log.d("ACTIIIIIIIIVE", "$isTokenActive")
+        if (!isTokenActive) {
+            return Result.failure();
         }
 
         val database = DatabaseClient.getDatabase(context)

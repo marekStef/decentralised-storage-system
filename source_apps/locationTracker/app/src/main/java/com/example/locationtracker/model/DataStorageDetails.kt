@@ -8,7 +8,8 @@ data class DataStorageDetails(
     val longitude: Double?,
 
     val associationTokenUsedDuringRegistration: String,
-    val tokenForPermissionsAndProfiles: String?
+    val tokenForPermissionsAndProfiles: String?,
+    val accessTokenForLocationEvents: String?
 )
 
-val EmptyDataStorageDetails = DataStorageDetails("", "", null, null, null, "", null)
+val EmptyDataStorageDetails = DataStorageDetails("", "", null, null, null, "", null, null)

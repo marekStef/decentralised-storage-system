@@ -219,6 +219,41 @@ suspend fun sendPermissionRequestToServer(
     }
 }
 
+suspend fun checkAccessTokenStatus(ip: String, port: String, accessToken: String): Boolean = withContext(Dispatchers.IO) {
+    val url = "http://$ip:$port/app/api/checkAccessTokenStatus?accessToken=$accessToken"
+    Log.d("NETWORK", "Checking access token status: $url")
+
+    val client = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .build()
+
+    val request = Request.Builder()
+        .url(url)
+        .build()
+
+    try {
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                response.body?.string()?.let { responseBody ->
+                    val isActive = JSONObject(responseBody).getBoolean("isActive")
+                    Log.d("NETWORK", "Access token status: $isActive")
+                    return@withContext isActive
+                } ?: run {
+                    Log.e("NETWORK", "Error parsing response body")
+                    false
+                }
+            } else {
+                Log.e("NETWORK", "Error fetching access token status: ${response.code}")
+                false
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("NETWORK", "Error checking access token status", e)
+        false
+    }
+}
+
 // returns bool whether syncing was successfull
 suspend fun sendLocationsToServer(ip: String, port: String, locations: List<Location>): Boolean {
     Log.d("SENDING_LOCATIONS", "locationsc count: ${locations.size}")
