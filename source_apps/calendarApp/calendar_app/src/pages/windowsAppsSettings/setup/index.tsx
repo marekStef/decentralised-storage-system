@@ -2,29 +2,19 @@ import React, { useState } from "react";
 import dynamic from 'next/dynamic';
 import {
     Container,
-    TextField,
     Button,
     Grid,
     Typography,
-    CircularProgress,
     Box,
-    Tooltip,
     ToggleButtonGroup,
     ToggleButton,
 } from "@mui/material";
-import GetAppIcon from "@mui/icons-material/GetApp";
-
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 import appConstants from "@/constants/appConstants";
-import networkManager, { PossibleResultsWithServer } from "@/Network/NetworkManager";
 import persistenceManager from "@/data/PersistenceManager";
-import { showError, showSuccess } from "@/components/AlertProvider/AlertProvider";
-import { useRouter } from "next/router";
 import NewViewInstanceExistingSetupComponent from "@/components/NewViewInstanceSetupComponent/NewViewInstanceExistingSetupComponent";
 
-const NewViewInstanceSetupComponentpSSR = dynamic(() => import('@/components/NewViewInstanceSetupComponent/NewViewInstanceInitialSetupComponent'), {
+const NewViewInstanceInitialSetupComponentpSSR = dynamic(() => import('@/components/NewViewInstanceSetupComponent/NewViewInstanceInitialSetupComponent'), {
     ssr: false, // disables server-side rendering for the component
 });
 
@@ -34,40 +24,13 @@ enum SetupOption {
 }
 
 const WindowsAppsSettingsSetup = () => {
-    const Router = useRouter();
-
-    const [viewTemplateId, setViewTemplateId] = useState<string>("");
-    const [viewInstanceSendingStatus, setViewInstanceSendingStatus] = useState<PossibleResultsWithServer>(PossibleResultsWithServer.NOT_TRIED);
     const [viewInstanceAccessTokenForWindowsApps, setViewInstanceAccessTokenForWindowsApps] = useState<string | null>(persistenceManager.getViewInstanceAccessTokenForWindowsAppsData());
 
     const [selectedOption, setSelectedOption] = useState<SetupOption>(SetupOption.INITIAL_SETUP);
 
-    const createNewViewInstance = () => {
-        if (
-            viewInstanceSendingStatus == PossibleResultsWithServer.IS_LOADING ||
-            viewInstanceSendingStatus == PossibleResultsWithServer.SUCCESS
-        )
-            return;
-
-        networkManager
-            .createNewViewInstance(viewTemplateId, "View access for getting unique apps names")
-            .then((response) => {
-                persistenceManager.setViewInstanceAccessTokenForWindowsAppsData(
-                    response.viewAccessToken
-                );
-                console.log(response);
-                showSuccess(response.message);
-                setViewInstanceSendingStatus(PossibleResultsWithServer.SUCCESS);
-            })
-            .catch((errResponse) => {
-                setViewInstanceSendingStatus(PossibleResultsWithServer.FAILED);
-                console.log(errResponse, "heeeere");
-                showError(errResponse.message);
-            });
-    };
-
     const resetTokenPermanently = () => {
-        
+        persistenceManager.deleteViewInstanceAccessTokenForWindowsAppsData();
+        setViewInstanceAccessTokenForWindowsApps(null);
     }
 
     const saveTokenPermanently = (token: string ) => {
@@ -97,7 +60,7 @@ const WindowsAppsSettingsSetup = () => {
                     <Button
                         variant="contained"
                         color="error"
-                        onClick={() => {}}
+                        onClick={resetTokenPermanently}
                         sx={{ mt: 4}}
                     >
                         Reset View Instance For Windows Apps Data
@@ -141,7 +104,7 @@ const WindowsAppsSettingsSetup = () => {
                     </ToggleButtonGroup>
 
                     {selectedOption == SetupOption.INITIAL_SETUP && (
-                        <NewViewInstanceSetupComponentpSSR
+                        <NewViewInstanceInitialSetupComponentpSSR
                             firstParagraph="You need to create manually a new View Template
                             in the Control Centre. Download the following
                             javascript file."
