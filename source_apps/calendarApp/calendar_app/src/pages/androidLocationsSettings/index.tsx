@@ -35,9 +35,7 @@ const AndroidLocationsSettingsPage = () => {
 
     const [viewInstanceAccessTokenForLocationTrackerEvents, setViewInstanceAccesstokenForLocationTrackerEvents] = useState(persistenceManager.getViewInstanceAccessTokenForAndroidLocations());
 
-    const [selectedOption, setSelectedOption] = useState<SetupOption>(
-        SetupOption.INITIAL_SETUP
-    );
+    const [selectedOption, setSelectedOption] = useState<SetupOption>(SetupOption.INITIAL_SETUP);
 
     const setViewInstanceTokenForLocationTracker = (token: string) => {
         setViewInstanceAccesstokenForLocationTrackerEvents(token);
@@ -87,9 +85,7 @@ const AndroidLocationsSettingsPage = () => {
                         color="primary"
                         value={selectedOption}
                         exclusive
-                        onChange={(event, newOption) =>
-                            setSelectedOption(newOption)
-                        }
+                        onChange={(event, newOption) => setSelectedOption(newOption)}
                         fullWidth
                         style={{ marginBottom: "2rem" }}
                     >
@@ -109,12 +105,11 @@ const AndroidLocationsSettingsPage = () => {
                         />
                     )}
 
-                    {selectedOption ==
-                        SetupOption.PAIRING_TO_EXISTING_SETUP && (
-                            <AndroidLocationExistingSetup 
-                                setViewInstanceTokenForLocationTracker={setViewInstanceTokenForLocationTracker}
-                            />
-                        )}
+                    {selectedOption == SetupOption.PAIRING_TO_EXISTING_SETUP && (
+                        <AndroidLocationExistingSetup
+                            setViewInstanceTokenForLocationTracker={setViewInstanceTokenForLocationTracker}
+                        />
+                    )}
                 </Box>
             )}
 

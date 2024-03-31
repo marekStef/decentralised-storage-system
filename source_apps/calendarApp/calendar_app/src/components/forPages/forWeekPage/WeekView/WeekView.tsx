@@ -23,7 +23,7 @@ import WeekDayHeader from "./components/WeekDayHeader/WeekDayHeader";
 import dynamic from 'next/dynamic';
 
 const LocationModalWithNoSSR = dynamic(
-  () => import('@/components/forPages/androidLocationsSpecific/LocationModal/LocationModal'),
+  () => import('@/components/LocationModal/LocationModal'),
   { ssr: false }
 );
 

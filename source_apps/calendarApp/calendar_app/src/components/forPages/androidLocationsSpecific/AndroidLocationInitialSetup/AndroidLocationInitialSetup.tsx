@@ -1,20 +1,10 @@
 import React from 'react';
-import {
-    Container,
-    TextField,
-    Button,
-    Grid,
-    Typography,
-    CircularProgress,
-    Box,
-    Tooltip,
-} from "@mui/material";
+import { Box } from "@mui/material";
 
 import appConstants from "@/constants/appConstants";
 import dynamic from 'next/dynamic';
-import { showSuccess } from '@/components/AlertProvider/AlertProvider';
 
-const NewViewInstanceSetupComponentpSSR = dynamic(() => import('@/components/NewViewInstanceSetupComponent/NewViewInstanceSetupComponent'), {
+const NewViewInstanceSetupComponentpSSR = dynamic(() => import('@/components/NewViewInstanceSetupComponent/NewViewInstanceInitialSetupComponent'), {
     ssr: false, // disables server-side rendering for the component
 });
 

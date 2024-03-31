@@ -114,7 +114,7 @@ const WeekPage = () => {
     }
 
     const getWindowsAppsForSelectedWeek = (selectedWeek: SelectedWeek) => {
-        const viewInstanceAccessTokenForWindowsApps = persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList();
+        const viewInstanceAccessTokenForWindowsApps = persistenceManager.getViewInstanceAccessTokenForWindowsAppsData();
         if (viewInstanceAccessTokenForWindowsApps == null)
             return showError("Your app does not have token saved for executing remote view instance about windows apps");
 

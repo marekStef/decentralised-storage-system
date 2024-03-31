@@ -43,7 +43,7 @@ class PersistenceManager {
         this.isViewInstanceUsedForCalendarFetching = isViewInstanceUsedForCalendarFetchingStr === 'true';
         this.areWindowsOpenedAppsShown = localStorage.getItem(localStorageConstants.ARE_WINDOWS_OPENED_APPS_SHOWN) === 'true';
 
-        this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST);
+        this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOKEN_FOR_WINDOWS_OPENED_APPS_DATA);
         this.savedWindowsAppsCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_CATEGORIES);
         this.windowsAppsWithAssignedCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES) ? JSON.parse(localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES)) : {};
 
@@ -119,13 +119,17 @@ class PersistenceManager {
     }
 
 
-    public getViewInstanceAccessTokenForWindowsAppsUniqueNamesList(): string | null {
+    public getViewInstanceAccessTokenForWindowsAppsData(): string | null {
         return this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList;
     }
 
-    public setViewInstanceAccessTokenForWindowsAppsUniqueNamesList(token: string): void {
+    public setViewInstanceAccessTokenForWindowsAppsData(token: string): void {
         this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = token;
-        localStorage.setItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_WINDOWS_OPENED_APPS_UNIQUE_NAMES_LIST, token);
+        localStorage.setItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOKEN_FOR_WINDOWS_OPENED_APPS_DATA, token);
+    }
+
+    public deleteViewInstanceAccessTokenForWindowsAppsData(): void {
+        localStorage.removeItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOKEN_FOR_WINDOWS_OPENED_APPS_DATA);
     }
 
     public setSavedWindowsAppsCategories(categories: object): void {

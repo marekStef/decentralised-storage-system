@@ -24,16 +24,19 @@ import {
 } from "@mui/material";
 import { darken, lighten } from "polished";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useRouter } from 'next/router';
 
 import persistenceManager from "@/data/PersistenceManager";
 
 import Link from "next/link";
 import networkManager from "@/Network/NetworkManager";
 import { showError } from "@/components/AlertProvider/AlertProvider";
-import AppsCategoriesHandler from "@/components/forPages/windowsAppsSpecific/AppsCategoriesHandler/AppsCategoriesHandler";
+import AppsCategoriesHandler from "@/components/windowsAppsSpecific/AppsCategoriesHandler/AppsCategoriesHandler";
 
 const WindowsAppsSettingsPage = () => {
-    const isWindowsAppsSetUp = persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList() != null;
+    const Router = useRouter();
+
+    const isWindowsAppsSetUpCorrectly = persistenceManager.getViewInstanceAccessTokenForWindowsAppsData() != null;
     const [isLoading, setIsLoading] = useState(false);
     const [uniqueExeNames, setUniqueExeNames] = useState([]);
     const [uniqueExeNamesWithAssignedCategories, setUniqueExeNamesWithAssginedCategories] = useState({});
@@ -41,12 +44,8 @@ const WindowsAppsSettingsPage = () => {
     const [categories, setCategories] = useState({});
 
     const getWindowsAppsUniqueNamesList = () => {
-        const viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList =
-            persistenceManager.getViewInstanceAccessTokenForWindowsAppsUniqueNamesList();
-        if (viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList == null)
-            return showError(
-                "Your app does not have token saved for executing remote view instance (viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList)"
-            );
+        const viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList = persistenceManager.getViewInstanceAccessTokenForWindowsAppsData();
+        if (!viewInstanceAccessTokenForWindowsOpenedAppsUniqueNamesList) return;
 
         networkManager
             .executeViewInstance(
@@ -75,6 +74,8 @@ const WindowsAppsSettingsPage = () => {
     };
 
     useEffect(() => {
+        if (!isWindowsAppsSetUpCorrectly)
+            return;
         getWindowsAppsUniqueNamesList();
         setUniqueExeNamesWithAssginedCategories(persistenceManager.getAppsWithAssignedCategories());
         setCategories(persistenceManager.getSavedWindowsAppsCategories());
@@ -88,6 +89,11 @@ const WindowsAppsSettingsPage = () => {
         })
 
     };
+
+    if (!isWindowsAppsSetUpCorrectly) {
+        Router.push('/windowsAppsSettings/setup')
+        return <></>
+    }
 
     return (
         <Container maxWidth="md">

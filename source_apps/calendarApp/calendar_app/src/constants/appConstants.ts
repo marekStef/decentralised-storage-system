@@ -13,6 +13,7 @@ const windowsOpenedAppsActivityTrackerEventName = 'activityTracker.com/activityT
 
 const androidLocationTrackerAppEventName = 'locationTracker.com/profiles/location_profile';
 const viewInstanceAccessNameForLocationTrackerAppData = 'View access for getting location data from the android app';
+const viewInstanceAccessNameForWindowsAppsData = 'View access for getting windows apps data';
 
 export default {
     appName,
@@ -21,6 +22,7 @@ export default {
 
     androidLocationTrackerAppEventName,
     viewInstanceAccessNameForLocationTrackerAppData,
+    viewInstanceAccessNameForWindowsAppsData,
     
     permissonsObjectForCalendarEventPermissionRequest,
 

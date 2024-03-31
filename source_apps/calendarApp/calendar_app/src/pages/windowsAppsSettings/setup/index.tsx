@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dynamic from 'next/dynamic';
 import {
     Container,
     TextField,
@@ -8,6 +9,8 @@ import {
     CircularProgress,
     Box,
     Tooltip,
+    ToggleButtonGroup,
+    ToggleButton,
 } from "@mui/material";
 import GetAppIcon from "@mui/icons-material/GetApp";
 
@@ -17,17 +20,27 @@ import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import appConstants from "@/constants/appConstants";
 import networkManager, { PossibleResultsWithServer } from "@/Network/NetworkManager";
 import persistenceManager from "@/data/PersistenceManager";
-import {
-    showError,
-    showSuccess,
-} from "@/components/AlertProvider/AlertProvider";
+import { showError, showSuccess } from "@/components/AlertProvider/AlertProvider";
 import { useRouter } from "next/router";
+import NewViewInstanceExistingSetupComponent from "@/components/NewViewInstanceSetupComponent/NewViewInstanceExistingSetupComponent";
+
+const NewViewInstanceSetupComponentpSSR = dynamic(() => import('@/components/NewViewInstanceSetupComponent/NewViewInstanceInitialSetupComponent'), {
+    ssr: false, // disables server-side rendering for the component
+});
+
+enum SetupOption {
+    INITIAL_SETUP,
+    PAIRING_TO_EXISTING_SETUP,
+}
 
 const WindowsAppsSettingsSetup = () => {
     const Router = useRouter();
-    
+
     const [viewTemplateId, setViewTemplateId] = useState<string>("");
     const [viewInstanceSendingStatus, setViewInstanceSendingStatus] = useState<PossibleResultsWithServer>(PossibleResultsWithServer.NOT_TRIED);
+    const [viewInstanceAccessTokenForWindowsApps, setViewInstanceAccessTokenForWindowsApps] = useState<string | null>(persistenceManager.getViewInstanceAccessTokenForWindowsAppsData());
+
+    const [selectedOption, setSelectedOption] = useState<SetupOption>(SetupOption.INITIAL_SETUP);
 
     const createNewViewInstance = () => {
         if (
@@ -39,7 +52,7 @@ const WindowsAppsSettingsSetup = () => {
         networkManager
             .createNewViewInstance(viewTemplateId, "View access for getting unique apps names")
             .then((response) => {
-                persistenceManager.setViewInstanceAccessTokenForWindowsAppsUniqueNamesList(
+                persistenceManager.setViewInstanceAccessTokenForWindowsAppsData(
                     response.viewAccessToken
                 );
                 console.log(response);
@@ -53,10 +66,51 @@ const WindowsAppsSettingsSetup = () => {
             });
     };
 
+    const resetTokenPermanently = () => {
+        
+    }
+
+    const saveTokenPermanently = (token: string ) => {
+        persistenceManager.setViewInstanceAccessTokenForWindowsAppsData(token);
+        setViewInstanceAccessTokenForWindowsApps(token);
+    }
+
+    if (viewInstanceAccessTokenForWindowsApps != null) {
+        return (
+            <Box>
+                <Container maxWidth="sm">
+                    <Typography
+                        variant="h4"
+                        gutterBottom
+                        paddingBottom={3}
+                        margin={0}
+                    >
+                        Windows Apps Are Set Up Correctly
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        href="/windowsAppsSettings"
+                    >
+                        Go To Windows Apps Settings
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => {}}
+                        sx={{ mt: 4}}
+                    >
+                        Reset View Instance For Windows Apps Data
+                    </Button>
+                </Container>
+            </Box>
+        )
+    }
+
     return (
         <Box sx={{ my: 4 }}>
             <Grid container spacing={2} sx={{ my: 4 }}>
-                <Container maxWidth="sm">
+                <Container maxWidth="md">
                     <Typography
                         variant="h4"
                         gutterBottom
@@ -65,142 +119,66 @@ const WindowsAppsSettingsSetup = () => {
                     >
                         Windows Apps Set Up
                     </Typography>
-                    <Grid container spacing={2}>
-                        <Box
-                            sx={{
-                                margin: "1rem",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                            }}
+
+                    <ToggleButtonGroup
+                        color="primary"
+                        value={selectedOption}
+                        exclusive
+                        onChange={(event, newOption) =>
+                            setSelectedOption(newOption)
+                        }
+                        fullWidth
+                        style={{ marginBottom: "2rem" }}
+                    >
+                        <ToggleButton value={SetupOption.INITIAL_SETUP}>
+                            Initial Setup
+                        </ToggleButton>
+                        <ToggleButton
+                            value={SetupOption.PAIRING_TO_EXISTING_SETUP}
                         >
-                            <Typography variant="body1" sx={{ margin: "1rem" }}>
-                                You need to create manually a new View Template
-                                in the Control Centre. Download the following
-                                two javascript files.
-                            </Typography>
+                            Pairing to Existing Setup
+                        </ToggleButton>
+                    </ToggleButtonGroup>
 
-                            <Typography variant="body1" sx={{ margin: "1rem" }}>
-                                In profiles section, you need to add
-                                <Box
-                                    component="span"
-                                    sx={{
-                                        backgroundColor: "grey.300",
-                                        padding: "0.2rem 0.5rem",
-                                        borderRadius: "4px",
-                                        fontWeight: "bold",
-                                        margin: "0.2rem",
-                                    }}
-                                >
-                                    {appConstants.windowsOpenedAppsActivityTrackerEventName}
-                                </Box>{" "}
-                                event and add <b>READ</b> access right
-                            </Typography>
-
-                            <Box
-                                display="flex"
-                                flexDirection="column"
-                                gap="0.5rem"
-                                alignItems="center"
-                            >
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    href="/windowsOpenedAppsUniqueNamesListViewTemplateFunctions/main.js"
-                                    download
-                                    startIcon={<GetAppIcon />}
-                                >
-                                    Download Main.js
-                                </Button>
-                            </Box>
-                        </Box>
-
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="View Template ID"
-                                type="text"
-                                variant="outlined"
-                                value={viewTemplateId}
-                                onChange={(event) =>
-                                    setViewTemplateId(event.target.value)
-                                }
-                                helperText="You need to create View Template manually in the Control Centre and paste its ID here"
-                                disabled={
-                                    viewInstanceSendingStatus ==
-                                    PossibleResultsWithServer.SUCCESS
-                                }
-                            />
-                        </Grid>
-
-                        {viewInstanceSendingStatus !=
-                            PossibleResultsWithServer.SUCCESS && (
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    fullWidth
-                                    onClick={createNewViewInstance}
-                                    disabled={
-                                        viewInstanceSendingStatus ==
-                                        PossibleResultsWithServer.IS_LOADING
-                                    }
-                                >
-                                    Create View Instance Based On View Template
-                                </Button>
-                            </Grid>
-                        )}
-
-                        <Grid
-                            item
-                            xs={12}
-                            container
-                            justifyContent="center"
-                            alignItems="center"
-                        >
-                            {viewInstanceSendingStatus ==
-                                PossibleResultsWithServer.SUCCESS && (
+                    {selectedOption == SetupOption.INITIAL_SETUP && (
+                        <NewViewInstanceSetupComponentpSSR
+                            firstParagraph="You need to create manually a new View Template
+                            in the Control Centre. Download the following
+                            javascript file."
+                            secondParagraph={(
                                 <>
-                                    <CheckCircleOutlineIcon color="success" />
-                                    <Typography
-                                        variant="body1"
-                                        color="success.main"
-                                        style={{ marginLeft: "1rem" }}
+                                    In profiles section, you need to add
+                                    <Box
+                                        component="span"
+                                        sx={{
+                                            backgroundColor: "grey.300",
+                                            padding: "0.2rem 0.5rem",
+                                            borderRadius: "4px",
+                                            fontWeight: "bold",
+                                            margin: "0.2rem",
+                                        }}
                                     >
-                                        View Instance Created
-                                    </Typography>
+                                        {appConstants.windowsOpenedAppsActivityTrackerEventName}
+                                    </Box>{" "}
+                                    event and add <b>READ</b> access right
                                 </>
                             )}
-                            {viewInstanceSendingStatus ==
-                                PossibleResultsWithServer.FAILED && (
-                                <>
-                                    <ErrorOutlineIcon color="error" />
-                                    <Typography
-                                        variant="body1"
-                                        color="error.main"
-                                        style={{ marginLeft: "1rem" }}
-                                    >
-                                        View Instance Setup Failed
-                                    </Typography>
-                                </>
-                            )}
-                        </Grid>
+                            filesToDownload={
+                                [{ path: '/windowsOpenedAppsUniqueNamesListViewTemplateFunctions/main.js', name: 'Main.js' }]
+                            }
+                            newViewInstanceMessageForDataStorageSystem={appConstants.viewInstanceAccessNameForWindowsAppsData}
+                            showProceedButton={false}
+                            onProceed={() => { }}
+                            onViewInstanceCreated={(token) => { saveTokenPermanently(token) }}
+                        />
+                    )}
 
-                        <Grid item xs={12}>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                fullWidth
-                                onClick={() => Router.back()}
-                                disabled={
-                                    viewInstanceSendingStatus !=
-                                    PossibleResultsWithServer.SUCCESS
-                                }
-                            >
-                                Proceed
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    {selectedOption == SetupOption.PAIRING_TO_EXISTING_SETUP && (
+                        <NewViewInstanceExistingSetupComponent 
+                            viewInstanceAccessTokenName={appConstants.viewInstanceAccessNameForWindowsAppsData}
+                            onSaveToken={token => saveTokenPermanently(token)}
+                        />
+                    )}
                 </Container>
             </Grid>
         </Box>
