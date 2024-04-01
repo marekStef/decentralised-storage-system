@@ -127,7 +127,7 @@ const NewAppCreation = () => {
                     ) : (
                         <p>App is not associated yet</p>
                     )}
-                    <p className="font-bold mb-4 mt-">You've got 2 options now:</p>
+                    <p className="font-bold mb-4 mt-">You&lsquo;ve got 2 options now:</p>
                     <ol>
                         <li className="mb-4">
                             <p>

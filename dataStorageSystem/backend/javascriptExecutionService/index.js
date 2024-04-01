@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
@@ -7,7 +9,6 @@ const registerCodeRegistrationRoutes = require('./src/routes/codeRegistrationRou
 const registerCodeExecutionRoutes = require('./src/routes/codeExecutionRoutes');
 
 const app = express();
-const port = 3003;
 
 const UPLOADS_TEMPORARY_DIRECTORY = './temp_uploads';
 const MAXIMUM_UPLOAD_LIMIT_PER_FILE = 1024 * 1024 * 5; // 5 MB
@@ -38,9 +39,9 @@ app.use('/', registerCodeExecutionRoutes());
 
 const JS_EXECUTION_SERVICE_URL_MESSAGE = 'JS_EXECUTION_SERVICE_URL_MESSAGE';
 
-app.listen(port, () => {
-    console.log(`JavascriptExecutionService listening at http://localhost:${port}`);
+app.listen(process.env.JAVASCRIPT_EXECUTION_SERVICE_PORT, () => {
+    console.log(`JavascriptExecutionService listening at http://localhost:${process.env.JAVASCRIPT_EXECUTION_SERVICE_PORT}`);
     if (process && process.send) {
-        process.send({type: JS_EXECUTION_SERVICE_URL_MESSAGE, url: `http://localhost:${port}`});
+        process.send({type: JS_EXECUTION_SERVICE_URL_MESSAGE, url: `http://localhost:${process.env.JAVASCRIPT_EXECUTION_SERVICE_PORT}`});
     }
 });

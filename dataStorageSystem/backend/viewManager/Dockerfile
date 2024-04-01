@@ -1,7 +1,5 @@
 FROM node:21
 
-ARG DELETE_AND_INITIALISE=false
-
 # (this is the working directory for your application)
 WORKDIR /usr/src/app
 
@@ -15,8 +13,7 @@ RUN npm install
 
 COPY . .
 
-# Port 3000 available to the world outside this container
-EXPOSE 3000
+EXPOSE 3002
 
 CMD [ "npm", "start" ]
 

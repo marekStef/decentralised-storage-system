@@ -31,7 +31,7 @@ const AppsPage = () => {
                 console.error("Failed to fetch apps:", error);
                 setLoading(false);
             });
-    }, [currentPage]);
+    }, [currentPage, hasMore]);
 
     const loadMore = () => {
         setCurrentPage((prevPage) => prevPage + 1);

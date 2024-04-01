@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:21
 
 ARG DELETE_AND_INITIALISE=false
 
@@ -13,7 +13,6 @@ COPY package*.json ./
 
 RUN npm install
 
-# Bundle app source
 COPY . .
 
 # RUN if [ "$DELETE_AND_INITIALISE" = "true" ] ; then npm run delete_database > /usr/src/app/delete_db.log 2>&1 ; fi
