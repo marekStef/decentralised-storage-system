@@ -99,7 +99,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             </button>
                         </div>
                     </div>
-                    <div className="w-full mt-2 overflow-auto p-4">
+                    <div className="w-full mt-2 overflow-auto p-4 custom-scrollbar">
                         {(() => {
                             switch (selected) {
                                 case "new_app":

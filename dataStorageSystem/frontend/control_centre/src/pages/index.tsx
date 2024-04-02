@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
-import SettingsModal from "@/components/modal/modal";
+
 import Link from 'next/link';
 
-import {loadAppHolders} from '../network/networkHelpers';
+import { loadAppHolders } from '../network/networkHelpers';
+import LeftMainPanel from "@/components/LeftMainPanel/LeftMainPanel";
 
 const AppsPage = () => {
     const [apps, setApps] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
 
     useEffect(() => {
         if (!hasMore) return;
@@ -39,26 +35,10 @@ const AppsPage = () => {
 
     return (
         <div className="flex h-screen overflow-hidden">
-            <SettingsModal isOpen={isModalOpen} onClose={toggleModal} />
-            <div className="flex-none w-3/12 bg-slate-950 overflow-auto">
-                <div className="flex flex-col items-center">
-                    <div className="min-h-32 w-full p-4">
-                        <h1 className="text-white text-lg">Last activity</h1>
-                        <p className="text-center text-slate-500 py-5">None</p>
-                    </div>
-                    <div>
-                        <button
-                            className="px-4 py-2 bg-white text-slate-950 rounded hover:bg-slate-50 transition-colors"
-                            onClick={toggleModal}
-                        >
-                            Open Settings
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <LeftMainPanel />
             <div className="flex-grow overflow-auto p-4">
                 <div className="items-start flex">
-                  <h1 className="text-slate-700 text-3xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Panel</h1>
+                    <h1 className="text-slate-700 text-2xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Panel</h1>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {apps.map((app) => (
@@ -76,14 +56,14 @@ const AppsPage = () => {
                                 ).toLocaleDateString()}
                             </p>
                             {app.dateOfAssociationByApp ? (
-                              <p>
-                                Associated On:{" "}
-                                {new Date(
-                                    app.dateOfRegistration
-                                ).toLocaleString()}
-                            </p>
+                                <p>
+                                    Associated On:{" "}
+                                    {new Date(
+                                        app.dateOfRegistration
+                                    ).toLocaleString()}
+                                </p>
                             ) : (
-                              <p>Not associated yet</p>
+                                <p>Not associated yet</p>
                             )}
                         </Link>
                     ))}

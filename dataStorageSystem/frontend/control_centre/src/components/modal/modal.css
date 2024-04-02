@@ -71,18 +71,3 @@
         width: 60vw;
     }
 }
-
-.w-full.mt-2.overflow-auto.p-4::-webkit-scrollbar {
-    width: 12px;
-    
-}
-
-.w-full.mt-2.overflow-auto.p-4::-webkit-scrollbar-track {
-    background: #2f3542;
-}
-
-.w-full.mt-2.overflow-auto.p-4::-webkit-scrollbar-thumb {
-    background-color: #434a59;
-    border-radius: 6px;
-    border: 3px solid #2f3542;
-}

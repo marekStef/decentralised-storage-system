@@ -1,31 +1,27 @@
 import axios from "axios";
 
 export function loadAppHolders(currentPage) {
-    return axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps?page=${currentPage}`
-    );
+    return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps?page=${currentPage}`);
 }
 
 export function createNewAppHolder(nameDefinedByUser) {
     return axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/registerNewApp`,
-        { nameDefinedByUser }
+        {nameDefinedByUser}
     );
 }
 
 export function generateAssociationTokenForAppHolder(appHolderId) {
     return axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/generateOneTimeAssociationToken`,
-        { appHolderId }
+        {appHolderId}
     );
 }
 
 export function fetchAssociationStatus(appHolderId) {
     return new Promise((res, rej) => {
         axios
-            .get(
-                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps/${appHolderId}`
-            )
+            .get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps/${appHolderId}`)
             .then((result) => {
                 if (result.data && result.data.status == "success")
                     res(result.data.data.dateOfAssociationByApp != null);
@@ -42,9 +38,7 @@ export function fetchAssociationStatus(appHolderId) {
 export function getAppInfo(appHolderId) {
     return new Promise((res, rej) => {
         axios
-            .get(
-                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps/${appHolderId}`
-            )
+            .get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/apps/${appHolderId}`)
             .then((result) => {
                 if (result.data)
                     res(result.data);
@@ -57,12 +51,25 @@ export function getAppInfo(appHolderId) {
     })
 }
 
+export function getAllUnapprovedPermissions() {
+    return new Promise((res, rej) => {
+        axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/getUnapprovedPermissionsRequests`)
+            .then((result) => {
+                if (result.data)
+                    res(result.data.data.permissions);
+                else
+                    res(false);
+            })
+            .catch((err) => {
+                res(false);
+            });
+    })
+}
+
 export function getPermissionsForApp(appHolderId) {
     return new Promise((res, rej) => {
         axios
-            .get(
-                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/getPermissionsRequestsForGivenApp/${appHolderId}`
-            )
+            .get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/getPermissionsRequestsForGivenApp/${appHolderId}`)
             .then((result) => {
                 if (result.data)
                     res(result.data.permissions);
@@ -80,8 +87,8 @@ export function grantPermission(permissionId) {
         axios
             .put(
                 `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/approvePermissionRequest`, {
-                    permissionId
-                }
+                permissionId
+            }
             )
             .then((result) => {
                 console.log(result.status);

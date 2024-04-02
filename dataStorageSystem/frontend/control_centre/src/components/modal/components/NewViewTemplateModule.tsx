@@ -2,25 +2,28 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { showError, showSuccess } from '@/helpers/alerts';
 import { FaAngleDown, FaAngleUp, FaCheck, FaTimes } from 'react-icons/fa';
+import { FormEventHandler } from 'react';
 
 function MultipartForm() {
-    const [files, setFiles] = useState([]);
-    const [profiles, setProfiles] = useState([]);
+    const [files, setFiles] = useState<File[]>([]);
+    const [profiles, setProfiles] = useState<any[]>([]);
 
     const [runtime, setRuntime] = useState('');
     const [templateName, setTemplateName] = useState('');
 
     const [isNewTemplateCreationSuccessful, setIsNewTemplateCreationSuccessful] = useState(false);
 
-    const handleFileChange = (event) => {
-        setFiles(files => [...files, ...Array.from(event.target.files)]);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setFiles(files => [...files, ...Array.from(event.target.files)]);
+        }
     };
 
-    const handleDeleteFile = (fileIndex) => {
+    const handleDeleteFile = (fileIndex: number) => {
         setFiles(files => files.filter((_, index) => index !== fileIndex));
     };
 
-    const handleProfileFieldChange = (index, field, value) => {
+    const handleProfileFieldChange = (index: number, field: string, value: any) => {
         console.log(value);
         setProfiles(profiles => profiles.map((profile, i) => i === index ? { ...profile, [field]: value } : profile));
     };
@@ -29,19 +32,19 @@ function MultipartForm() {
         setProfiles(profiles => [...profiles, { profile: '', read: false, create: false, modify: false, delete: false }]);
     };
 
-    const handleRemoveProfile = (index) => {
+    const handleRemoveProfile = (index: number) => {
         setProfiles(profiles => profiles.filter((_, i) => i !== index));
     };
 
-    const handleRuntimeChange = (event) => {
+    const handleRuntimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setRuntime(event.target.value);
     };
 
-    const handleTemplateNameChange = (event) => {
+    const handleTemplateNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTemplateName(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: any) => {
         event.preventDefault();
 
         const formData = new FormData();
@@ -73,7 +76,7 @@ function MultipartForm() {
 
     if (isNewTemplateCreationSuccessful) return (
         <div className='text-green-500 flex flex-col items-center justify-center w-full h-full'>
-                <FaCheck className="text-green-500" size="3rem" />
+            <FaCheck className="text-green-500" size="3rem" />
 
             <p className='text-center'>Template Created</p>
         </div>
@@ -146,19 +149,19 @@ function MultipartForm() {
                             </div>
                             <div className="flex items-center space-x-2">
                                 <label className="flex items-center space-x-2">
-                                    <input type="checkbox" checked={profile.read} onChange={e => handleProfileFieldChange(index, 'read', e.target.checked)} />
+                                    <input type="checkbox" checked={profile.read} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileFieldChange(index, 'read', e.target.checked)} />
                                     <span className='text-sm text-gray-400'>Read</span>
                                 </label>
                                 <label className="flex items-center space-x-2">
-                                    <input type="checkbox" checked={profile.create} onChange={e => handleProfileFieldChange(index, 'create', e.target.checked)} />
+                                    <input type="checkbox" checked={profile.create} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileFieldChange(index, 'create', e.target.checked)} />
                                     <span className='text-sm text-gray-400'>Create</span>
                                 </label>
                                 <label className="flex items-center space-x-2">
-                                    <input type="checkbox" checked={profile.modify} onChange={e => handleProfileFieldChange(index, 'modify', e.target.checked)} />
+                                    <input type="checkbox" checked={profile.modify} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileFieldChange(index, 'modify', e.target.checked)} />
                                     <span className='text-sm text-gray-400'>Modify</span>
                                 </label>
                                 <label className="flex items-center space-x-2">
-                                    <input type="checkbox" checked={profile.delete} onChange={e => handleProfileFieldChange(index, 'delete', e.target.checked)} />
+                                    <input type="checkbox" checked={profile.delete} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleProfileFieldChange(index, 'delete', e.target.checked)} />
                                     <span className='text-sm text-gray-400'>Delete</span>
                                 </label>
 

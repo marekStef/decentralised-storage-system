@@ -1,6 +1,10 @@
 import { showError, showSuccess } from '@/helpers/alerts';
 
-const CopyToClipboardText = ({ value, className }) => {
+interface CopyToClipboardTextParams {
+    value: string,
+    className: any
+}
+const CopyToClipboardText: React.FC<CopyToClipboardTextParams> = ({ value, className }) => {
     const copyToClipboard = async () => {
         try {
             await navigator.clipboard.writeText(value);

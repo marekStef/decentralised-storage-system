@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 function AppPage() {
     const router = useRouter();
-    const { appId } = router.query;
+    const appId: string = Array.isArray(router.query.appId) ? router.query.appId[0] : router.query.appId;
 
     const [isLoadingAppInfo, setIsLoadingAppInfo] = useState<boolean>(true);
     const [appInfo, setAppInfo] = useState(null);
@@ -78,6 +78,20 @@ function AppPage() {
         loadInitialData(appId);
     }, [appId])
 
+    useEffect(() => {
+        if (!isLoadingAppPermissions) {
+          const hash = window.location.hash;
+          if (hash) {
+            const id = hash.replace('#', '');
+            const element = document.getElementById(id);
+            console.log('->', element);
+            if (element) {
+              element.scrollIntoView();
+            }
+          }
+        }
+      }, [isLoadingAppPermissions]);
+
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
             <h2 className="text-2xl font-semibold my-4">App Info</h2>
@@ -121,7 +135,7 @@ function AppPage() {
             ) : (
                 appPermissions && appPermissions.length > 0 ? (
                     appPermissions.map((permission) => (
-                        <div key={permission._id} className="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
+                        <div key={`permission-${permission._id}`} id={`permission-${permission._id}`} className="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
                             <div className="px-4 py-5 sm:px-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">Permission</h3>
                                 <p className="mt-1 max-w-2xl text-sm text-gray-500">{permission._id}</p>

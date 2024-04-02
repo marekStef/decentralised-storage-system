@@ -9,13 +9,13 @@ import SuccessImageIcon from '../../../../public/images/success.png'
 
 import { createNewAppHolder, generateAssociationTokenForAppHolder, fetchAssociationStatus } from "../../../network/networkHelpers";
 
-let appHolderId = null;
+let appHolderId: string | null = null;
 
 const NewAppCreation = () => {
     const [name, setName] = useState("");
     const [isCreatingNewAppHolder, setIsCreatingNewAppHolder] = useState(false);
 
-    
+
     const [associationId, setAssociationId] = useState(null);
     const [isLoadingAssociationToken, setIsLoadingAssociationToken] = useState(false);
 
@@ -29,7 +29,9 @@ const NewAppCreation = () => {
             })
     }
 
-    const loadAndShowAssociationToken = async (appHolderId) => {
+    const loadAndShowAssociationToken = async (appHolderId: string | null) => {
+        if (!appHolderId) return;
+
         generateAssociationTokenForAppHolder(appHolderId)
             .then(res => {
                 setAssociationId(res.data.tokenId)
@@ -115,14 +117,14 @@ const NewAppCreation = () => {
                     <h1 className="text-xl mb-2">
                         Association Token Has Been Created!
                     </h1>
-                    { isAppAlreadyAssociatedSuccessfully ? (
+                    {isAppAlreadyAssociatedSuccessfully ? (
                         <div className="flex">
                             <Image
                                 src={SuccessImageIcon}
                                 alt="My Icon"
                                 className="w-5 h-5 mr-2"
-                                />
-                            
+                            />
+
                             App is already associated! You can close this now.</div>
                     ) : (
                         <p>App is not associated yet</p>
@@ -152,11 +154,11 @@ const NewAppCreation = () => {
                             type="submit"
                             className="w-full my-4 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-opacity-50 flex flex-col items-center justify-center"
                         >
-                        Check association
-                    </button>
+                            Check association
+                        </button>
                     </div>
                     Network Ip address of the server: {process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}
-                
+
                 </div>
             )}
         </div>

@@ -3,7 +3,13 @@ import { LightAsync as SyntaxHighlighter } from 'react-syntax-highlighter';
 const { docco } = require('react-syntax-highlighter/dist/cjs/styles/hljs'); // using import throws error - leave it as is
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
-const CodeComponent = ({ codeString, language, fileName }) => {
+interface CodeComponentParams {
+    codeString: string;
+    language: string;
+    fileName: string;
+  }
+
+const CodeComponent: React.FC<CodeComponentParams> = ({ codeString, language, fileName }) => {
     const [isCodeVisible, setIsCodeVisible] = useState(true);
     const validLanguage = ['javascript', 'python'].includes(language) ? language : 'javascript';
 
