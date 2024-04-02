@@ -3,6 +3,6 @@
   "position": 2,
   "link": {
     "type": "generated-index",
-    "description": "Component for authentication and authorisation"
+    "description": "Auth Service is the component responsible of authenticating individual 3rd party apps and authorising them to process only data they are allowed to."
   }
 }

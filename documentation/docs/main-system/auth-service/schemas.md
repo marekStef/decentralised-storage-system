@@ -43,7 +43,7 @@ const ApplicationSchema = new mongoose.Schema({
 
 `ApplicationSchema` needs to have a unique `nameDefinedByUser`. That's because this name appears as a `source` in the event's metadata. `nameDefinedByApp` is (as the name says) a way of the actual app saying what's the name of it.
 
-`jwtTokenForPermissionRequestsAndProfiles` is a token used for asking for new permissions and registering new profiles. This token is obtained after the app is successfully associated.
+`jwtTokenForPermissionRequestsAndProfiles` is a token used for asking for new permissions and registering new profiles. This token is obtained after the app is successfully associated. The app needs to remember this token for the whole period of its existence!
 
 :::tip
 
@@ -67,13 +67,42 @@ const OneTimeAssociationTokenSchema = new mongoose.Schema({
 }, {collection: 'AssociationTokensForApplication'});
 ```
 
-After the admin user creates a new `appHolder` (which is basically `ApplicationSchema` record with `dateOfAssocationByApp` and `jwtTokenForPermissionRequestsAndProfiles` being null) the actual app does not know about it.
+After the admin user creates a new `appHolder` (which is basically `ApplicationSchema` record with `dateOfAssocationByApp` and `jwtTokenForPermissionRequestsAndProfiles` being null) the actual 3rd party app does not know anything about a system yet, let alone its `appHolder`.
 
 That's why `/generateOneTimeAssociationToken` endpoint needs to be hit to obtain this association token which needs to be passed to the app manually. This new app then uses this `association token` to associate itself.
 
 ### Data Access Related Schemas
 
+#### EventPermissionSchema
+
+```js title="EventPermissionSchema.js"
+const EventPermissionSchema = new mongoose.Schema({
+  profile: {
+    type: String,
+    required: true
+  },
+  read: {
+    type: Boolean,
+    default: false
+  },
+  create: {
+    type: Boolean,
+    default: false
+  },
+  modify: {
+    type: Boolean,
+    default: false
+  },
+  delete: {
+    type: Boolean,
+    default: false
+  }
+});
+```
+
 #### DataAccessPermissionSchema
+
+Auth Service, as mentioned multiple times before, handles permissions for accessing events data. Therefore it needs to store these permissions in the database among other things. As we can see, each `Data Access Permission` record hold exactly one permission event. If the app needs to have multiple accesses to different sets of events (in terms of their meaning and structure), it needs to have multiple `Data Access Permission`s registered in this service.
 
 ```js title="DataAccessPermissionSchema.js"
 const mongoose = require('mongoose');
@@ -128,33 +157,6 @@ module.exports = TokenSchema;
 `revokedDate` and `expirationDate` are not used at the moment and cannot be set. This is prepared only for the future possible use.
 
 :::
-
-#### EventPermissionSchema
-
-```js title="EventPermissionSchema.js"
-const EventPermissionSchema = new mongoose.Schema({
-  profile: {
-    type: String,
-    required: true
-  },
-  read: {
-    type: Boolean,
-    default: false
-  },
-  create: {
-    type: Boolean,
-    default: false
-  },
-  modify: {
-    type: Boolean,
-    default: false
-  },
-  delete: {
-    type: Boolean,
-    default: false
-  }
-});
-```
 
 ### Views Related Schemas
 

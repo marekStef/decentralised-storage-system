@@ -5,7 +5,17 @@ sidebar_position: 1
 # Schemas
 
 
-`DataStorage` component needs to have access to the database and it registers one schema:
+`DataStorage` component needs to have access to the database and it registers exactly one schema:
+
+### Event Schema
+
+As we already mentioned previously, we didn't want to put a lot of constraints on the structure of the event (as a unit of data).
+
+Therefore the only needed fields in the event are:
+
+- metadata.source (can be any string) - to know whose event this is
+- metadata.profile (can be any string) - to know what's the structure of the event
+- payload (as long as it's an object it can contain anything and is in the 3rd party app's hands)
 
 ```js title="EventSchema"
 const mongoose = require('mongoose');
@@ -21,11 +31,15 @@ const EventSchema = new mongoose.Schema({
     },
     profile: {
         type: String,
+        // highlight-start
         required: true
+        // highlight-end
     },
     source: {
-        type: String,
+      type: String,
+        // highlight-start
         required: true
+        // highlight-end
     },
     acceptedDate: {
       type: Date,
@@ -35,7 +49,9 @@ const EventSchema = new mongoose.Schema({
   },
   payload: {
     type: Object,
+    // highlight-start
     required: true
+    // highlight-end
   }
 });
 
@@ -44,10 +60,9 @@ const Event = mongoose.model('Event', EventSchema);
 module.exports = Event;
 ```
 
-
 Event consists of `metadata` and `payload`. Metadata consists of some predefined values such as when the event was created, by whom, which profile (described below) it abides to and so on. Payload is in the given app's hands and can contain basically anything since even binary data can be encoded to text (we are aware this form of saving a binary data is highly inefficient).
 
-This is what event looks like in database:
+This is what event looks like in the database:
 
 ```js title="Event"
 {
@@ -75,3 +90,7 @@ This is what event looks like in database:
   "__v": 0 // db specific
 }
 ```
+
+--- 
+
+Now that you know about this schema and have a thorough understanding of what a unit of data in the system looks like, have a look on the endpoints (very short reading).

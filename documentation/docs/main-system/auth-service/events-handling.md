@@ -4,6 +4,10 @@ sidebar_position: 5
 
 # Events Handling
 
+Even though you probably know that **Data Storage** component is responsible for handling events, this **Auth Service** component adds additional layer of security by introducing authentication and authorisation for events handling.
+
+When everything's fine, this component delegates your request to save the events to the **Data Storage** component.
+
 ## Events Uploading
 
 **/app/api/uploadNewEvents** *(POST)*

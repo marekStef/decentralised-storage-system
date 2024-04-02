@@ -31,3 +31,9 @@ C++ Windows desktop app. This app gathers data around what the user is currently
 
 ### Calendar app
 Desktop browser app (React, tsx). This app is a fully working calendar app. Apart from doing a normal calendar job, the app processes locations gathered by `Location Tracker` app and also displays a history of opened Windows apps.
+
+## New Developer of a New App?
+
+If you are thinking of creating a new app utilising this system's capabilities for its core business functionality, all you need to read is **Auth Service** and **View Manager**. You can definitely skip **Data Storage** and **\[language\] execution services**. 
+
+Definitely have a look at those provided example apps. We wish you a successful journey!

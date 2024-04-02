@@ -4,182 +4,36 @@ sidebar_position: 0
 
 # Introduction
 
-This component is the heart of the whole system. It allows any general event to be stored as long as the event contains `payload` and `metadata`. In the `metadata` object, `profile` and `source` needs to be set (it can be seen from the schema).
+This component is the heart of the whole system. It allows any general event to be stored as long as the event contains `payload` and `metadata`. In the `metadata` object, `profile` and `source` needs to be set (it can be seen from the schema). These two fields will be checked when saving the event, otherwise anything else can be put both in the `metadata` and `payload`.
 
-Any component having access to this component can do anything with the data. Therefore, access to this component cannot be directly provided to users' apps. That's why `Auth Service` is put between a user to authenticate and authorise any actions it comes across.
+Any component having access to this component can do anything with the data. Therefore, access to this component cannot be directly provided to users' apps, unless you don't want any form of authentication / authorisation. That's why `Auth Service` is put between a user (client 3rd party app) to authenticate and authorise any actions it comes across.
+
+## Endpoints
+
+### Events Related 
+`EventsRoutes.js`
 
 It allows these operations as of now:
 
-```js title="EventsRoutes.js"
-router.post('/uploadNewEvents', eventsController.uploadNewEvents);
+- **/app/api/uploadNewEvents** *(POST)*
 
-router.post('/get_filtered_events', eventsController.getFilteredEvents);
+- **/app/api/getFilteredEvents** *(POST)*
 
-router.put('/events/:eventId', eventsController.modifyGivenEvent);
+- **/app/api/events/:eventId** *(PUT)*
 
-router.delete('/events/:eventId', eventsController.deleteGivenEvent);
-```
+- **/app/api/events/:eventId** *(DELETE)*
 
-### /uploadNewEvents (POST)
+### Status Related
+`statusInfoRoutes.js`
 
-```js title="Example body in the request"
-{
-    "events": [
-        {
-            "metadata": {
-                "source": "some source",
-                "profile": "Some profile"
-            },
-            "payload": {
-                "message": "Some random event"
-            }
-        }
-    ]
-}
-```
+- **/status_info/checks/check_data_storage_presence** *(GET)*
 
-And this is the response from the server:
+The current functionality of **Data Storage** component has been intentionally designed to be minimalistic, prioritizing a high level of generality. This design choice ensures that it can serve as a *foundational building block*. By focusing on a core set of features and not adding other non-critical ones, we give other runtime components (current as well as future ones) in the system the freedom to utilize this component in ways that best suit their needs.
 
-```js title="Response"
-{
-    "message": "Events were created successfully",
-    "events": [
-        {
-            "metadata": {
-                "profile": "Some profile",
-                "source": "some source",
-                "createdDate": "2024-03-19T20:39:45.339Z",
-                "acceptedDate": "2024-03-19T20:39:45.339Z"
-            },
-            "payload": {
-                "message": "Some random event"
-            },
-            "_id": "65f9f8117ace27615f794bd3",
-            "__v": 0
-        }
-    ]
-}
-```
+This approach also ensures that the component remains *lightweight*, facilitating ease of potential future expansions. The simplicity of the component's current capabilities does not limit its potential; rather, it lays the groundwork for a scalable system that can evolve over time. As new requirements emerge (from other runtime components in the system) or as the ecosystem around it grows (new 3rd party apps requirements or whole new concepts being added in), additional functionalities can be seamlessly integrated.
 
-In case, one of the events does not contain required metadata such as `source`, `400` code is returned.
+In this way, the minimalist design of this component is not a reflection of its limitations but a strategic decision to maximize its adaptability and utility across a wide range of applications. This ensures that as the system evolves, the **Data Storage** component can be enhanced, making it a versatile and valuable asset in the architecture of the system.
 
-```js title="Wrong Response"
-{
-    "events": [
-        {
-            "metadata": {
-                "source": "some source"
-            },
-            "payload": {
-                "message": "Some random event"
-            }
-        }
-    ]
-}
-```
+--- 
 
-### /get_filtered_events (POST)
-
-:::danger[TODO]
-
-This endpoint returns all events as of now, pagination is being considered. It's not entirely necessary as this endpoint is used only internally between `Auth Service` and `Data Storage`.
-
-:::
-
-```js title="Example body in the request"
-{
-    "metadataMustContain": {
-        "profile": "CalendarPro.com_CalendarEventProfile"
-    }
-}
-```
-
-And this is the response from the server:
-```js title="Response"
-{
-    "success": true,
-    "count": 1,
-    "data": [
-        {
-            "metadata": {
-                "profile": "Some profile",
-                "source": "some source",
-                "createdDate": "2024-03-19T20:39:45.339Z",
-                "acceptedDate": "2024-03-19T20:39:45.339Z"
-            },
-            "_id": "65f9f8117ace27615f794bd3",
-            "payload": {
-                "message": "Some random event"
-            },
-            "__v": 0
-        }
-    ]
-}
-```
-
-### /events/:eventId (PUT)
-
-Example request needs to look like this: `{{DATA_STORAGE_URL}}/app/api/events/65f9f8117ace27615f794bd3`
-
-```js title="Example body in the request"
-{
-    "modifiedEvent": {
-        "metadata": {
-            "source": "some source",
-            "profile": "Some profile"
-        },
-        "payload": {
-            "message": "Modified text"
-        }
-    }
-}
-```
-
-And this is the response from the server:
-
-```js title="Response"
-{
-    "message": "Event updated successfully.",
-    "event": {
-        "metadata": {
-            "source": "some source",
-            "profile": "Some profile",
-            "createdDate": "2024-03-19T20:43:53.272Z",
-            "acceptedDate": "2024-03-19T20:43:53.272Z"
-        },
-        "_id": "65f9f8117ace27615f794bd3",
-        "payload": {
-            "message": "Modified text"
-        },
-        "__v": 0
-    }
-}
-```
-
-In case, the event is not found, `400` is returned:
-
-```js title="Wrong Response"
-{
-    "message": "Event not found."
-}
-```
-
-### /events/:eventId (DELETE)
-
-Example request needs to look like this: `{{DATA_STORAGE_URL}}/app/api/events/65f9f8117ace27615f794bd3` and body does not contain anything.
-
-And this is the response from the server (status `200`):
-
-```js title="Response"
-{
-    "message": "Event deleted successfully."
-}
-```
-
-In case the event is not found, `404` status is returned: 
-
-```js title="Wrong Response"
-{
-    "message": "Event not found."
-}
-```
+To know more about the schemas of the event and about the interfaces of the endpoints, continue with your reading, please. 

@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # Introduction
 
-This component is the only component accessible to apps. All other components of the system will be on a hidden private network. This allows all the other components to communicated with each other with http requests instead of setting up https.
+This component is the only component accessible to apps. All other components of the system (except for a part of View Manager component) will be on a hidden private network. This allows all the other components to communicated with each other with http requests instead of setting up https.
 
 ## Endpoints
 
@@ -32,18 +32,6 @@ This component is the only component accessible to apps. All other components of
 - **/app/api/requestNewPermission** *(POST)*
 - **/app/api/checkAccessTokenStatus?accessToken=[token]** *(GET)*
 
-<!-- ```js title="association, registration, permissions"
-// const applicationController = require("../../controllers/applicationController");
-
-// router.post('/associateWithStorageAppHolder', applicationController.associateAppWithStorageAppHolder);
-
-// router.post('/registerNewProfile', applicationController.registerNewProfile);
-
-// router.get('/checkAccessTokenStatus', applicationController.isAccessTokenForGivenPermissionRequestActive);
-
-// router.post('/requestNewPermission', applicationController.requestNewPermission);
-``` -->
-
 `events related`
 
 - **/app/api/uploadNewEvents** *(POST)*
@@ -51,30 +39,14 @@ This component is the only component accessible to apps. All other components of
 - **/app/api/deleteEvent** *(DELETE)*
 - **/app/api/getAllEventsForGivenAccessToken** *(GET)*
 
-<!-- ```js title="events related"
-// router.post('/uploadNewEvents', applicationController.uploadNewEvents);
-
-// router.put('/modifyEvent', applicationController.modifyEvent);
-
-// router.delete('/deleteEvent', applicationController.deleteEvent);
-
-// router.get('/getAllEventsForGivenAccessToken', applicationController.getAllEventsOfGivenProfile);
-``` -->
-
 `views related`
 
 - **/app/api/registerNewViewInstance** *(POST)*
 - **/app/api/runViewInstance** *(POST)*
 
-<!-- ```js title="views related"
-router.post('/registerNewViewInstance', applicationController.registerNewViewInstance);
-
-router.post('/runViewInstance', applicationController.runViewInstace);
-``` -->
-
 :::caution
 
-Registering a new `View Template` needs to be done manually through `View Manager API`.
+Registering a new `View Template` needs to be done manually through `View Manager API`. Allowing third-party applications to register new `View Template`s directly could inadvertently open the door to executing malicious code, thereby compromising the system's integrity and potentially leading to a range of unwanted outcomes, from data breaches to unauthorized access or manipulation of system functionalities.
 
 :::
 

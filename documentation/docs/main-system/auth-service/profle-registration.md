@@ -4,25 +4,73 @@ sidebar_position: 3
 
 # Profile Registration
 
-After your app is set up and has `jwtTokenForPermissionRequestsAndProfiles` correctly saved, it can proceed to create `profile`.
+After your app is set up and has `jwtTokenForPermissionRequestsAndProfiles` correctly saved, it can proceed to create a new `profile`.
 
-Before proceeding, please read about profiles [here in introduction](/docs/main-system/intro#profile)
+Before proceeding, please read about profiles [here in introduction](/docs/main-system/introduction/aspects-of-system-and-vocabulary#profile)
 
-## When to create a profile?
+## When to create a new profile?
 
 Now it's time to ask yourself a question about whether your app is about to produce its own unique data or not.
 
-If not, you can skip creating a profile and go to Permissions.
+If not, you can skip creating a *profile* and go to *Permissions* part.
 
 ## Profile registration
 
-You are here because your app has been developed to produce its own data. Before it can start saving that data in this system, it first needs to tell this system something about it.
+You are here because your app has been developed to produce its own data. Before it can start saving that data in this system, it first needs to tell this system something about the structure of that data.
 
-To create a new profile, a request to **/app/api/registerNewProfile** *(POST)* needs to be made.
+As you can see, the profile registration request object is very similar to the event itself. That's because the `auth service` stores these profiles as general events in the *Data Storage* system.
+
+As you already know, each `Event` needs to have `profile` field set in the metadata so that the system knows of what type this event is.
+
+Therefore, this new permission request needs to have `metadata.profile` set to `core:profile-registration_v1`.
+
+:::warning 
+
+`metadata.profile` really needs to be set to `core:profile-registration_v1`! Nothing else won't work. `core:profile-registration_v1` is automatically registered in the system and is added to the `Data Storage` component via a manual running of a script when this whole system is being set up.
+
+If you are the future admin of this system, head over to [auth service setup](./setup) to know which script needs to be run when the whole system is being set up for the first time. If you are a developer of a new app, ignore this.
+
+:::
+
+This is the content of `core:profile-registration_v1`:
+
+```js title="core:profile-registration_v1"
+{
+    "type": "object",
+    "properties": {
+        "metadata": {
+            "type": "object",
+            "properties": {
+                "createdDate": { "type": "string", "format": "date-time" },
+                "profile": { "type": "string" },
+                "source": { "type": "string" },
+                "acceptedDate": { "type": "string", "format": "date-time" }
+            },
+            "required": [
+                "createdDate",
+                "profile",
+                "source",
+                "acceptedDate"
+            ]
+        },
+        "payload": { 
+            "type": "object",
+            "properties": {
+                "profile_name": { "type": "string" },
+                "json_schema": { "type": "object" }
+            },
+            "required": ["profile_name", "json_schema"]
+        }
+    },
+    "required": ["metadata", "payload"]
+}
+```
+
+To create a new profile, a request to **/app/api/registerNewProfile** *(POST)* endpoint needs to be made.
 
 This is what the body of the request needs to look like:
 
-```js title="body of registerNewProfile request"
+```js title="body of /app/api/registerNewProfile request"
 {
     "jwtTokenForPermissionRequestsAndProfiles": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZmFlMDk0N2E5MGI0YTUyNjNhNDk4MCIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIiwibmFtZURlZmluZWRCeUFwcCI6ImFwcGxpY2F0aW9uLmNvbSIsImlhdCI6MTcxMDk0MDcxMywiZXhwIjoxMTE3ODIyMDcxM30.3zHTC0_igQKfzjF8uZadJLkmd4qRXY_hePd_M6pmPj0",
     "metadata": {
@@ -55,9 +103,9 @@ This is what the body of the request needs to look like:
 }
 ```
 
-There are multiple kinds of resposnes:
+There are multiple kinds of resposnes based on the outcome:
 
-- request is successfull
+- request is successfull - profile created
 
 ```js title="201 (created) response"
 {
@@ -65,7 +113,8 @@ There are multiple kinds of resposnes:
 }
 ```
 
-- profile with a given name already exists but the content of json schema is the same
+- profile with a given name already exists but the content of json schema is the same (hash is computed internally and matched against existing profile)
+
 ```js title="201 (created) response (profile name uniquness broken but pardoned due to the json schema being same)"
 {
     "message": "Profile registered successfully",
@@ -160,10 +209,13 @@ For instance this request lacks jwt token:
 
 ---
 
-Congratulations! Your app has now its own profile registered in the system! 🎉🎉🎉
-
 :::caution
 
-You might suppose your app now has all permissions to this profile but that is not the case! Next step for your app is to request permissions for that profile as if it was a profile created by another app.
+You might suppose your app now has all permissions to this profile since it just created it a few moments ago but that is not the case! 
+
+Next step for your app is to request permissions for that profile as if it was a profile created by another app.
 
 :::
+
+
+Congratulations! Your app has now its own profile registered in the system! 🎉🎉🎉

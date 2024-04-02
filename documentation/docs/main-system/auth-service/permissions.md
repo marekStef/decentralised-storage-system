@@ -4,17 +4,17 @@ sidebar_position: 4
 
 # Permissions
 
-Before continuing, your app needs to have profiles sorted out.
+Before continuing, your app needs to have profiles sorted out. In other words, if it needs to work with a completely new type of events, it first needs to notify the system of that new type of event. If the app just wants to process some existing events, you already should know, you don't need to do anything.
 
 ## Requesting New Permission *(application part)*
 
-When you app wants to access raw events, it needs to specify which profile it wants to access and what rights the app wants. Events are bound to profiles so that's the reason why `profile` name must be specified.
+When you app wants to access raw events, it needs to specify which profile it wants to access and what rights the app wants. Events are bound to profiles so that's the reason why `profile` name must be specified in every event.
 
-When the app requests to access a profile which does not exist, this is totally fine and the app will get an empty list of events. The idea is that in future, such profile may be created.
+When the app requests to access a profile ( we mean a set of events having that particular profile in the metadata) which does not exist, this is totally fine and the app will get an empty list of events. The idea is that in future, such profile may be created, rendering the set of events of that particular type non-empty.
 
 The app needs to hit this endpoint: **/app/api/requestNewPermission** *(POST)* with the following body (as example):
 
-```js title=""
+```js title="Body of a new permission request"
 {
     "jwtTokenForPermissionRequestsAndProfiles": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY1ZmFlMDk0N2E5MGI0YTUyNjNhNDk4MCIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIiwibmFtZURlZmluZWRCeUFwcCI6ImFwcGxpY2F0aW9uLmNvbSIsImlhdCI6MTcxMDk0MDcxMywiZXhwIjoxMTE3ODIyMDcxM30.3zHTC0_igQKfzjF8uZadJLkmd4qRXY_hePd_M6pmPj0",
     "permissionsRequest": {
@@ -28,13 +28,13 @@ The app needs to hit this endpoint: **/app/api/requestNewPermission** *(POST)* w
 }
 ```
 
-Optional message can be left out. This is just an opportunity for the app to state its reason behind this permission request.
+Optional message can be left out. This is just an opportunity for the app to state its reason behind this permission request. This message is shown in the admin frontend `Control Centre` component.
 
 There are multiple possible responses:
 
 - everything ok, `generatedAccessToken` is returned.
 
-```js title="response 201 (created)"
+```js title="201 - Created response"
 {
     "message": "Permissions requested successfully",
     // highlight-start
@@ -45,19 +45,19 @@ There are multiple possible responses:
 
 :::caution
 
-Just as with `jwtTokenForPermissionRequestsAndProfiles`, your app needs to remember `generatedAccessToken` which will be used once the app decides to manipulate events.
+Just as with `jwtTokenForPermissionRequestsAndProfiles`, your app needs to remember `generatedAccessToken` which will be used once the app decides to manipulate or processs events in some way.
 
 :::
 
 - invalid `jwtTokenForPermissionRequestsAndProfiles`
 
-```js title="401 (unauthorised)"
+```js title="401 - Unauthorised response"
 {
     "message": "Invalid or expired JWT token"
 }
 ```
 
-Remeber, this was just a permission request which needs to be approved. Therefore an app has an option to check for permission status (access token status).
+Remeber, this was just a permission request which needs to be approved. Unless it's approved, the app cannot do anything about it. However, the app has an option to check for permission status (access token status) and so can notify its user that they should take an action if they want to fully use their new app. Or maybe the user will find out the app wants to access some other irrelevant data it should have no access to!
 
 ## Checking Permission Status
 
@@ -73,7 +73,8 @@ And the response is following:
 
 ```js title="response - 200"
 {
-    "isActive": true
+    "isActive": true,
+    "isRevoked": false
 }
 ```
 
@@ -158,6 +159,8 @@ The response is the following:
 }
 ```
 
+This endpoint, as mentioned before, is utilised by the **Control Centre**.
+
 ## Getting Unapproved Permissions Requests For Given App *(admin part)*
 
 For getting a full list of unapproved permissions for a given app, admin can hit this endpoint (it is paginated): **/admin/api/permissions/getUnapprovedPermissionsRequests/:appHolderId** *(GET)*
@@ -233,7 +236,6 @@ For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d
     ]
 }
 ```
-
 
 ## Approving Permission Request *(admin part)*
 
