@@ -4,10 +4,8 @@ const axios = require('axios');
 const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
 const ViewInstance = require("../database/models/ViewInstanceSchema");
-const {allowedRuntimes} = require('../constants/viewsRelated');
 
-const JAVASCRIPT_RUNTIME = 'javascript';
-const PYTHON_RUNTIME = 'python';
+const { getExecutionServiceUrlBasedOnSelectedRuntime } = require("../constants/viewsRelated");
 
 const createNewViewInstance = async (req, res) => {
     const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
@@ -101,15 +99,9 @@ const prepareDataForExecutionService = (accessTokensToProfiles, configuration, c
 }
 
 const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {
-    let executionServiceUrl = null;
+    let executionServiceUrl = getExecutionServiceUrlBasedOnSelectedRuntime(runtime);
     
-    if (runtime == JAVASCRIPT_RUNTIME) {
-        executionServiceUrl = process.env.JAVASCRIPT_EXECUTION_SERVICE_URI;
-
-    } else if (runtime == PYTHON_RUNTIME) {
-        executionServiceUrl = process.env.PYTHON_EXECUTION_SERVICE_URI;
-    }
-    else { // unknown runtime (this should not happen as such view template should not be allowed to be created)
+    if (executionServiceUrl == null) { // unknown runtime (this should not happen as such view template should not be allowed to be created)
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Bad runtime' });
     }
 

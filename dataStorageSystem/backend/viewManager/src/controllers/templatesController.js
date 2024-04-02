@@ -8,6 +8,7 @@ const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
 const ViewInstance = require('../database/models/ViewInstanceSchema');
 const {isAllowedRuntime} = require('../constants/viewsRelated');
+const {allowedRuntimes} = require('../constants/viewsRelated');
 
 const cleanFiles = files => {
     files.forEach(file => {

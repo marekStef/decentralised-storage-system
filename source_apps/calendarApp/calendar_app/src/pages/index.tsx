@@ -18,6 +18,7 @@ const Index = () => {
             style={{
                 width: '100vw',
                 height: '100vh',
+                position: 'absolute',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
