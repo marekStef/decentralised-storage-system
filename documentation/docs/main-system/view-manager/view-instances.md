@@ -48,6 +48,8 @@ And this is response. Response shows which access tokens to profiles the view in
 }
 ```
 
+TODO ------> MENTION HERE THAT VIEW MAANGER ACTUALLY SENDS PERMISSIONS REQUESTS BASED ON WHAT'S SPECIFIED IN THE VIEW TEMPLATE
+
 ### Running View Instance
 
 **/viewInstances/runViewInstance** *(POST)*

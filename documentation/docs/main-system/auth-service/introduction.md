@@ -17,32 +17,37 @@ This component is the only component accessible to apps. All other components of
 - **/admin/api/registerNewApp** *(POST)*
 - **/admin/api/generateOneTimeAssociationToken** *(POST)*
 
-#### Permissions
+#### Permissions related
 - **/admin/api/permissions/getUnapprovedPermissionsRequests?pageIndex=2&limit=100** *(GET)*
 - **/admin/api/permissions/getUnapprovedPermissionsRequests /:appHolderId** *(GET)*
 - **/admin/api/permissions/approvePermissionRequest** *(PUT)*
 - **/admin/api/permissions/revokePermission** *(PUT)*
 
+#### Views related
+
+- **/admin/api/views** *(GET)*
+- **/admin/api/apps/:appHolderId/views** *(GET)*
+
 ### Endpoints meant to be used by applications themselves
 
-`association, registration, permissions`
+#### Association, registration, permissions related
 
 - **/app/api/associateWithStorageAppHolder** *(POST)*
 - **/app/api/registerNewProfile** *(POST)*
 - **/app/api/requestNewPermission** *(POST)*
 - **/app/api/checkAccessTokenStatus?accessToken=[token]** *(GET)*
 
-`events related`
+#### Events related
 
 - **/app/api/uploadNewEvents** *(POST)*
 - **/app/api/modifyEvent** *(PUT)*
 - **/app/api/deleteEvent** *(DELETE)*
 - **/app/api/getAllEventsForGivenAccessToken** *(GET)*
 
-`views related`
+#### Views related
 
-- **/app/api/registerNewViewInstance** *(POST)*
-- **/app/api/runViewInstance** *(POST)*
+- **/app/api/views/registerNewViewInstanceAccess** *(POST)*
+- **/app/api/views/runViewInstance** *(POST)*
 
 :::caution
 
