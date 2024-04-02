@@ -287,9 +287,11 @@ const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
 
     const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
     const isActive = dataAccessPermission && dataAccessPermission.isActive;
+    const isRevoked = dataAccessPermission && dataAccessPermission.revokedDate != null;
 
     return res.status(httpStatusCodes.OK).json({
-        isActive
+        isActive,
+        isRevoked
     })
 }
 
@@ -570,7 +572,7 @@ const getAllEventsOfGivenProfile = async (req, res) => {
     // let sourceAppName = dataAccessPermission.app.nameDefinedByApp
 
     try {
-        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/get_filtered_events`, {
+        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/getFilteredEvents`, {
             metadataMustContain: {
                 profile: dataAccessPermission.permission.profile,
                 // source: dataAccessPermission.app.nameDefinedByUser

@@ -5,7 +5,7 @@ const eventsController = require("../../controllers/eventsController");
 
 router.post('/uploadNewEvents', eventsController.uploadNewEvents);
 
-router.post('/get_filtered_events', eventsController.getFilteredEvents);
+router.post('/getFilteredEvents', eventsController.getFilteredEvents);
 
 router.put('/events/:eventId', eventsController.modifyGivenEvent);
 

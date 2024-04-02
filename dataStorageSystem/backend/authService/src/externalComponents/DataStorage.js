@@ -33,7 +33,7 @@ class DataStorage {
         return new Promise(async (resolve, reject) => {
             try {
                 // this should be get but adding body in get request is not supported
-                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/get_filtered_events`, {
+                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/getFilteredEvents`, {
                     payloadMustContain: {
                         profile_name
                     }
