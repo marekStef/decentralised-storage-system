@@ -6,7 +6,7 @@ sidebar_position: 3
 
 After your app is set up and has `jwtTokenForPermissionRequestsAndProfiles` correctly saved, it can proceed to create `profile`.
 
-Before proceeding, please read about profiles [here in introduction](/docs/mainSystem/intro#profile)
+Before proceeding, please read about profiles [here in introduction](/docs/main-system/intro#profile)
 
 ## When to create a profile?
 

@@ -83,9 +83,9 @@ const config = {
           },
           {
             type: 'docSidebar',
-            sidebarId: 'demoAppsSidebar',
+            sidebarId: 'exampleAppsSidebar',
             position: 'left',
-            label: 'Demo Apps',
+            label: 'Fully-fledged Example Apps',
           },
           // {to: '/blog', label: 'Blog', position: 'left'},
           {
@@ -106,7 +106,7 @@ const config = {
                 to: '/docs/intro',
               },
               {
-                label: 'Demo Apps',
+                label: 'Fully-fledged Example Apps',
                 to: '/docs/intro',
               },
             ],

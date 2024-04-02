@@ -162,7 +162,7 @@ The response is the following:
 
 For getting a full list of unapproved permissions for a given app, admin can hit this endpoint (it is paginated): **/admin/api/permissions/getUnapprovedPermissionsRequests/:appHolderId** *(GET)*
 
-`appHolderId` is the id you get when you register a new app holder [(look here)](/docs/mainSystem/auth-service/new-app-setup).
+`appHolderId` is the id you get when you register a new app holder [(look here)](/docs/main-system/auth-service/new-app-setup).
 
 For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d8f72d3cb5a148a96f6` the following is the response:
 
