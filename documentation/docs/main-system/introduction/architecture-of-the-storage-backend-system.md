@@ -8,7 +8,7 @@ We can see the architecture of the main storage backend system.
 
 There are multiple running components, each having a different set of responsibilities. We won't talk in-depth about them here but the sole purpose of this section is to give you a broad idea of the system.
 
-![Docusaurus logo](/img/backend-architecture/architecture.svg)
+![Architecture](/img/backend-architecture/architecture.svg)
 
 ### Auth Service
 As you can see in the picture abpve, most of the communication between outside world and the storage system goes through the `Auth Service`. That's because the `Auth Service` is the component responsible of authenticating individual 3rd party apps and authorising them to process only data they are allowed to.

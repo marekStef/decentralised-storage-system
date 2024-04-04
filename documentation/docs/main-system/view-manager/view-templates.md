@@ -18,7 +18,7 @@ Recommended workflow is the following:
 
 When the app wants to use `View Templates`, it should provide the user with the source code and instructions for downloading it, which profiles needs to be set and so on. Once the user has the source code, they can either utilise this endpoint directly or via the `Control Centre`.
 
-For seeing examples `View Template Source Code`, visit documentation describing execution services such as `Javascript Execution Service`.
+For seeing examples of `View Template Source Code`, visit documentation describing execution services.
 
 #### Request
 
@@ -28,7 +28,28 @@ Request body needs to be of type `form-data`.
 
 - files
 
-example value: `[actual files]`
+An array of file objects to be uploaded with the request. Each file is associated with a form field identifier.
+Each file object includes metadata such as filename, content type, and the file data itself.
+The file data should be encoded as binary for transmission.
+
+example value: 
+
+```js
+[
+  {
+    "field": "attachment1",
+    "filename": "example1.js",
+    "content_type": "application/javascript",
+    "data": "<BINARY DATA>"
+  },
+  {
+    "field": "attachment2",
+    "filename": "example2.js",
+    "content_type": "application/javascript",
+    "data": "<BINARY DATA>"
+  }
+]
+```
 
 - profiles
 

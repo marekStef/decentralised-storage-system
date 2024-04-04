@@ -1,10 +1,14 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Requirements On Source Code
 
-`View Manager` component is independent of any specific source code language. It depends on other _ execution services such as `Javascript Execution Service` or `Python Execution Service`.
+`View Manager` component is independent of any specific source code language. It depends on other other execution services such as `Javascript Execution Service` or `Python Execution Service`.
+
+Requirements mentioned here are general and valid for all execution services. 
+
+However, it is crucial to recognize that while these general requirements provide a solid framework, each execution service introduces its own set of additional, specific requirements. These nuanced requirements are tailored to the unique characteristics and capabilities of the respective execution service, addressing aspects such as language-specific conventions. It's of high importance for you to read those as well if you are about to develop new block of source code for a new `View Template`.
 
 ### Requirements For Javascript Code
 

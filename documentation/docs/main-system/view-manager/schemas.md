@@ -1,16 +1,16 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 # Schemas
 
 View Manager component needs to have access to the database and it registers multiple schemas:
 
-### ProfilePermissionSchema
+### ProfilePermission Schema
 
-Each `View Template` needs to have profiles specified so that when `View Instance` is created out of it, `View Manager` can request permissions for the given `View Instance`. 
+Each `View Template` needs to have profiles specified so that when `View Instance` is created out of it, `View Manager` can request permissions from the `Auth Service` for the given `View Instance`. 
 
-`View Template` therefore holds which profiles future instances will have access to but also what kind of access.
+`View Template` therefore holds which profiles future instances will have access to but also what kind of access. This cannot be changed after the `View Template` is created.
 
 ```js title="ProfilePermissionSchema.js"
 
@@ -38,9 +38,9 @@ const ProfilePermissionSchema = new mongoose.Schema({
 });
 ```
 
-### ViewTemplateMetadataSchema
+### ViewTemplateMetadata Schema
 
-This schema is pretty straightforward. One thing to point out is `sourceCodeId`. This is the id of the uploaded source code from the given execution service.
+This schema is pretty straightforward. One thing to point out is `sourceCodeId`. This is the id of the uploaded source code from the given execution service such as `Javascript Execution Service`.
 
 ```js title="ViewTemplateMetadataSchema.js"
 
@@ -75,9 +75,6 @@ const ViewTemplateSchema = new mongoose.Schema({
     type: [ProfilePermissionSchema],
     required: true
   },
-  // source: { // who registered this template (this should be a unique app name)
-  // 	type: String
-  // },
 });
 
 const ViewTemplate = mongoose.model('ViewTemplate', ViewTemplateSchema);
@@ -89,7 +86,7 @@ module.exports = {
 
 ```
 
-### ViewInstanceSchema
+### ViewInstance Schema
 
 ```js title="ViewInstanceSchema.js"
 
@@ -103,10 +100,6 @@ const ViewInstanceSchema = new mongoose.Schema({
       type: Date,
       default: Date.now
   },
-  // source: {
-  //     type: String,
-  //     required: true
-  // },
   accessTokensToProfiles: { // tokens to profiles defined in ViewTemplate ( keys must be the profile names defined in "profiles" in ViewTemplateSchema)
       type: Object
   },
@@ -123,4 +116,4 @@ module.exports = ViewInstance;
 
 ```
 
-Now that you have a general idea of what kind of db access this component requires, you can move on to View Templates handling. 
+Now that you have a general idea of what kind of db access this component requires, you can move on to Requirements imposed on the View Template's source code.

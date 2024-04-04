@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # Introduction
 
-`Javascript Execution Service` is intended to be used by `View Manager` component to execute custom defined javascript source code.
+`Javascript Execution Service` is intended to be used by `View Manager` component to execute custom defined javascript source code. It has been designed as a general code execution component and does not feature any `View Manager`'s related logic. This allows the component to be used by future newly added concepts in the system.
 
 :::caution
 

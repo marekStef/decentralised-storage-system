@@ -27,6 +27,8 @@ This is example request:
 }
 ```
 
+Each `View Template` contains a list of profiles with their respective rights. Individual `View Instances` are meant to be utilising these sets of data corresponding to these profiles. Therefore, when the new `View Instance` is created, `View Manager` requests permissions for these profiles automatically in the `Auth Service`. These permissions requests need to be approved by the admin user using the `Auth Service` endpoints or using user interface in the form of `Control Centre` frontend component.
+
 And this is response. Response shows which access tokens to profiles the view instance source code will get but most importantly, `_id` of the newly created `View Instance` is returned. This is the most important part of the response and the client app needs to remember this id for future execution of this source code.
 
 ```js title="Example New View Instance Response For Initiated Request"
@@ -47,8 +49,6 @@ And this is response. Response shows which access tokens to profiles the view in
     "__v": 0
 }
 ```
-
-TODO ------> MENTION HERE THAT VIEW MAANGER ACTUALLY SENDS PERMISSIONS REQUESTS BASED ON WHAT'S SPECIFIED IN THE VIEW TEMPLATE
 
 ### Running View Instance
 

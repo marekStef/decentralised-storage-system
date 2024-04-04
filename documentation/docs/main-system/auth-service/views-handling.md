@@ -33,7 +33,7 @@ As you can see in the request there is this `configuration` field that may surpr
 
 ## Running View Instance *(application endpoint)*
 
-As mentioned, **Auth Service** only performs checks and delegates Views related business logic to **View Manager** component. Therefore it's that component who is in the power of saying what's needed in the request.
+As mentioned, **Auth Service** only performs checks and delegates Views related business logic to **View Manager** component. Therefore it's that component which is in the power of saying what's needed in the request.
 
 For the sake of completness, we show it here as it's the **Auth Service** that is being requested (**View Manager** does not have `View Instances` related endpoints publicly accessible).
 
@@ -52,7 +52,7 @@ For the sake of completness, we show it here as it's the **Auth Service** that i
 
 :::note
 
-To really know how `configuration`, `clientCustomData` and other data are passed to `View Instance` during its execution, you need to read **View Manager** component thoroughly as it has been already advised multiple times to you.
+To really know how `configuration` (static, life-time object being passed to each view execution), `clientCustomData` (dynamic, per-execution object being passed to each view instance from the client side request) and other data are passed to `View Instance` during its execution, you need to read **View Manager** component thoroughly as it has been already advised multiple times to you.
 
 :::
 
