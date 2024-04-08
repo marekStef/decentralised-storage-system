@@ -13,6 +13,9 @@ const wxString ACTIVITY_TRACKER_EVENT_ACCESS_TOKEN_KEY_ = "ACTIVITY_TRACKER_EVEN
 
 const wxString DIRECTORY_FOR_DATA_CONFIG_KEY = "DATA_STORAGE_TOKEN_FOR_PROFILES_AND_PERMISSIONS";
 
+const wxString PERIODICITY_FOR_SCREENSHOTS_KEY = "PERIODICITY_FOR_SCREENSHOTS_KEY";
+const wxString PERIODICITY_FOR_FETCHING_WINDOWS_APPS_INFO_KEY = "PERIODICITY_FOR_FETCHING_WINDOWS_APPS_INFO_KEY";
+
 class ConfigManager {
 public:
     ConfigManager();
@@ -45,12 +48,21 @@ public:
     wxString GetDirectoryForAppsInfo() const;
     wxString GetDirectoryForScreenshots() const;
 
+    int GetPeriodicityForScreenshots() const;
+    void SetPeriodicityForScreenshots(int periodicity);
+
+    int GetPeriodicityForFetchingAppsInfo() const;
+    void SetPeriodicityForFetchingAppsInfo(int periodicity);
+
 private:
     wxString serverAddress;
     wxString serverPort;
     wxString dataStorageJwtAssociationToken;
     wxString dataStorageTokenForProfilesCreationAndPermissionsRequests;
     wxString acitivyTrackerEventAccessToken_;
+
+    int periodicityForScreenshots; // in seconds
+    int periodicityForFethcingWindowsAppsInfo; // in seconds
 
     wxFileConfig* config;
 

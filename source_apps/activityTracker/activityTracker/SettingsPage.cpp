@@ -1,6 +1,8 @@
 #include "SettingsPage.hpp"
 #include "automaticStartupHelpers.hpp"
 
+#include <wx/spinctrl.h>
+
 SettingsPage::SettingsPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
     setupUI();
     loadConfig();
@@ -18,10 +20,17 @@ void SettingsPage::setupUI() {
     wxButton* selectDirButton = new wxButton(this, wxID_ANY, "Select Directory");
     directorySizer->Add(selectDirButton, 0, wxALL, 5);
     selectDirButton->Bind(wxEVT_BUTTON, &SettingsPage::OnSelectDirectoryClick, this);
-
     directoryDisplay = new wxStaticText(this, wxID_ANY, "No directoryForData selected");
     directorySizer->Add(directoryDisplay, 0, wxALL, 5);
     sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
+
+    wxStaticBoxSizer* periodicitySizer = new wxStaticBoxSizer(wxVERTICAL, this, "Set Periodicity");
+    screenshotsPeriodicitySpinCtrl = new wxSpinCtrl(this, wxID_ANY);
+    screenshotsPeriodicitySpinCtrl->SetRange(1, 1000000); // range for periodicity
+    screenshotsPeriodicitySpinCtrl->SetValue(60); // Default value
+    periodicitySizer->Add(screenshotsPeriodicitySpinCtrl, 0, wxALL | wxEXPAND, 5);
+    sizer->Add(periodicitySizer, 0, wxEXPAND | wxALL, 10);
+    screenshotsPeriodicitySpinCtrl->Bind(wxEVT_SPINCTRL, &SettingsPage::onScreenshotsPeriodicityChange, this);
 
     wxStaticBoxSizer* automaticStartupSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Automatic Startup");
     wxButton* autoStartupButton = new wxButton(this, 1111, IsAppInStartupList() ? "Remove From Auto Startup" : "Add Auto Startup");
@@ -81,7 +90,14 @@ void SettingsPage::OnResetAppConfigButtonClick(wxCommandEvent& event) {
 }
 
 
-void SettingsPage::loadConfig() {
-    directoryDisplay->SetLabel(configManager.GetDirectory());
+void SettingsPage::onScreenshotsPeriodicityChange(wxSpinEvent& event) {
+    int periodicityValue = event.GetValue();
+    configManager.SetPeriodicityForScreenshots(periodicityValue);
+    configManager.SaveConfig();
 }
 
+
+void SettingsPage::loadConfig() {
+    directoryDisplay->SetLabel(configManager.GetDirectory());
+    screenshotsPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForScreenshots());
+}

@@ -140,9 +140,9 @@ void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
         return;
     }
 
-    int interval = 10 * 1000; // in milliseconds
-    ScreenshotsThread* thread = new ScreenshotsThread(configManager, interval);
+    ScreenshotsThread* thread = new ScreenshotsThread(configManager);
     if (thread->Run() != wxTHREAD_NO_ERROR) {
         wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
     }
 }
+

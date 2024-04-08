@@ -18,6 +18,22 @@ void ConfigManager::LoadConfig() {
     config->Read(ACTIVITY_TRACKER_EVENT_ACCESS_TOKEN_KEY_, &acitivyTrackerEventAccessToken_, "");
 
     config->Read(DIRECTORY_FOR_DATA_CONFIG_KEY, &directoryForData, "");
+
+    long temp;
+
+    if (config->Read(PERIODICITY_FOR_SCREENSHOTS_KEY, &temp, 0L)) {
+        periodicityForScreenshots = static_cast<int>(temp);
+    }
+    else {
+        periodicityForScreenshots = 100; // default
+    }
+
+    if (config->Read(PERIODICITY_FOR_FETCHING_WINDOWS_APPS_INFO_KEY, &temp, 0L)) {
+        periodicityForFethcingWindowsAppsInfo = static_cast<int>(temp);
+    }
+    else {
+        periodicityForFethcingWindowsAppsInfo = 100; // default
+    }
 }
 
 void ConfigManager::SaveConfig() {
@@ -28,6 +44,9 @@ void ConfigManager::SaveConfig() {
     config->Write(ACTIVITY_TRACKER_EVENT_ACCESS_TOKEN_KEY_, acitivyTrackerEventAccessToken_);
 
     config->Write(DIRECTORY_FOR_DATA_CONFIG_KEY, directoryForData);
+
+    config->Write(PERIODICITY_FOR_SCREENSHOTS_KEY, periodicityForScreenshots);
+    config->Write(PERIODICITY_FOR_FETCHING_WINDOWS_APPS_INFO_KEY, periodicityForFethcingWindowsAppsInfo);
 
     config->Flush();
 }
@@ -86,3 +105,12 @@ wxString ConfigManager::GetDirectoryForScreenshots() const {
     dir.AppendDir(GetCurrentDateForPath());
     return dir.GetFullPath();
 }
+
+int ConfigManager::GetPeriodicityForScreenshots() const { return periodicityForScreenshots; } // in seconds
+
+void ConfigManager::SetPeriodicityForScreenshots(int periodicity) { periodicityForScreenshots = periodicity; }
+
+// in seconds
+int ConfigManager::GetPeriodicityForFetchingAppsInfo() const { return periodicityForFethcingWindowsAppsInfo; }
+
+void ConfigManager::SetPeriodicityForFetchingAppsInfo(int periodicity) { periodicityForFethcingWindowsAppsInfo = periodicity; }

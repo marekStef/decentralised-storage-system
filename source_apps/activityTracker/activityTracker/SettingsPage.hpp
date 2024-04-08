@@ -20,6 +20,9 @@ private:
     wxStaticText* directoryDisplay;
     wxString defaultDirectory;
 
+    wxSpinCtrl* screenshotsPeriodicitySpinCtrl;
+    void onScreenshotsPeriodicityChange(wxSpinEvent& event);
+
     void setupUI();
 };
 

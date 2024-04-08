@@ -5,8 +5,8 @@
 #include <wx/thread.h>
 #include <wx/utils.h> // sleep
 
-ScreenshotsThread::ScreenshotsThread(ConfigManager& configManager, int intervalInMilliseconds)
-        : wxThread(wxTHREAD_DETACHED), configManager(configManager), intervalInMilliseconds(intervalInMilliseconds) {}
+ScreenshotsThread::ScreenshotsThread(ConfigManager& configManager)
+        : wxThread(wxTHREAD_DETACHED), configManager(configManager) {}
 
 ScreenshotsThread::~ScreenshotsThread() {
 
@@ -17,6 +17,7 @@ wxThread::ExitCode ScreenshotsThread::Entry()  {
 
     while (!TestDestroy()) {
         screenshotsManager.take_screenshots_of_all_screens(configManager.GetDirectoryForScreenshots().ToStdString());
+        int intervalInMilliseconds = configManager.GetPeriodicityForScreenshots() * 1000;
         wxThread::Sleep(intervalInMilliseconds);
     }
 
