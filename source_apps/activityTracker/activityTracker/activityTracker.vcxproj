@@ -141,6 +141,7 @@
     <ClCompile Include="MainFrame.hpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="ScreenshotsManager.cpp" />
+    <ClCompile Include="ScreenshotsThread.cpp" />
     <ClCompile Include="SettingsPage.cpp" />
     <ClCompile Include="timeHelpers.hpp" />
     <ClCompile Include="WindowsAppsInfoManager.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="MainPage.hpp" />
     <ClInclude Include="ScreenshotsManager.hpp" />
     <ClInclude Include="ScreenshotsManagerConstants.hpp" />
+    <ClInclude Include="ScreenshotsThread.hpp" />
     <ClInclude Include="SettingsPage.hpp" />
     <ClInclude Include="WindowInfo.hpp" />
     <ClInclude Include="WindowsAppsInfoManager.hpp" />

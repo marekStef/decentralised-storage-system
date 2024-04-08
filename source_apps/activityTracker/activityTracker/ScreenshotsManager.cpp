@@ -94,7 +94,7 @@ void create_folder_if_not_exists(const std::filesystem::path& path) {
 /// This is to ensure screenshots match the actual display resolution on high DPI settings.
 /// </summary>
 /// <param name="output_directory"></param>
-ScreenshotsManager::ScreenshotsManager(const std::filesystem::path& output_directory) : output_dir_(output_directory) {
+ScreenshotsManager::ScreenshotsManager() {
     // Attempting to set the process as per-monitor DPI aware ( crucial for getting accurate screenshots across multiple monitors )
     if (!SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE)) {
         SetProcessDPIAware(); // fallback
@@ -296,9 +296,9 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const s
 /// </summary>
 /// <param name="output_dir">Directory where images will be saved</param>
 /// <returns>vector of output filepaths</returns>
-std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_screens() const {
+std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_screens(const std::filesystem::path& output_directory) const {
     // check if the output directory where images are about to be stored exists, otherwise create one
-    create_folder_if_not_exists(output_dir_);
+    create_folder_if_not_exists(output_directory);
 
     // GDI+ requires initialization before any GDI+ functions or classes are used and a corresponding shutdown 
     // when those operations are complete. 
@@ -313,7 +313,7 @@ std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_s
     for (size_t i = 0; i < monitors.size(); ++i) {
         std::filesystem::path image_name = generate_unique_image_name(i);
 
-        std::filesystem::path path_to_output_image = output_dir_ / image_name;
+        std::filesystem::path path_to_output_image = output_directory / image_name;
         capture_monitor(monitors[i], path_to_output_image);
         output_filepaths.push_back(path_to_output_image);
     }

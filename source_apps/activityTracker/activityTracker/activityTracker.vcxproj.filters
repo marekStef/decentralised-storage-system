@@ -105,6 +105,9 @@
     <ClCompile Include="ScreenshotsManager.cpp">
       <Filter>Source Files\activityTracking\Screenshots</Filter>
     </ClCompile>
+    <ClCompile Include="ScreenshotsThread.cpp">
+      <Filter>Source Files\activityTracking\Screenshots</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="ScreenshotsManagerConstants.hpp">
       <Filter>Header Files\activityTracking\Screenshots</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenshotsThread.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

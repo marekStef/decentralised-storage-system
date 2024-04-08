@@ -21,8 +21,8 @@ struct MonitorInfo {
 
 class ScreenshotsManager {
 public:
-	ScreenshotsManager(const std::filesystem::path& output_directory);
-	std::vector<std::filesystem::path> take_screenshots_of_all_screens() const;
+	ScreenshotsManager();
+	std::vector<std::filesystem::path> take_screenshots_of_all_screens(const std::filesystem::path& output_directory) const;
 	bool upload_screenshots_to_server(const std::vector<std::filesystem::path>& file_paths) const;
 private:
 	std::filesystem::path output_dir_;

@@ -12,7 +12,7 @@
 
 #include "timeHelpers.hpp"
 
-#include "ScreenshotsManager.hpp"
+#include "ScreenshotsThread.hpp"
 
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)) {
     setupUI();
@@ -123,12 +123,26 @@ void MainPage::startPeriodicDataGathering() {
     timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
 }
 
+//void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
+//    auto screenshotsDir = configManager.GetDirectoryForScreenshots();
+//    if (screenshotsDir.length() == 0) {
+//        return;
+//    }
+//    wxMessageBox(screenshotsDir, "Alert", wxOK | wxICON_INFORMATION);
+//    ScreenshotsManager screenshots_manager(screenshotsDir.ToStdString());
+//    screenshots_manager.take_screenshots_of_all_screens();
+//}
+
 void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
     auto screenshotsDir = configManager.GetDirectoryForScreenshots();
     if (screenshotsDir.length() == 0) {
+        wxMessageBox("You need to set directory where screenshots will be saved first in the settings", "Alert", wxOK | wxICON_INFORMATION);
         return;
     }
-    wxMessageBox(screenshotsDir, "Alert", wxOK | wxICON_INFORMATION);
-    ScreenshotsManager screenshots_manager(screenshotsDir.ToStdString());
-    screenshots_manager.take_screenshots_of_all_screens();
+
+    int interval = 10 * 1000; // in milliseconds
+    ScreenshotsThread* thread = new ScreenshotsThread(configManager, interval);
+    if (thread->Run() != wxTHREAD_NO_ERROR) {
+        wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
+    }
 }
