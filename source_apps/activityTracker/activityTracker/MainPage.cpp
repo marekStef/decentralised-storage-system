@@ -12,6 +12,8 @@
 
 #include "timeHelpers.hpp"
 
+#include "ScreenshotsManager.hpp"
+
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)) {
     setupUI();
 
@@ -39,12 +41,19 @@ void MainPage::setupUI() {
 
     sizer->Add(windowsOpenedAppsSizer, 0, wxEXPAND | wxALL, 10);
 
+    wxStaticBoxSizer* screenshotsGatheringSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Screenshots Gathering");
+    wxButton* startGatheringScreenshotsButton = new wxButton(this, wxID_ANY, "Start Gathering Screenshots");
+    screenshotsGatheringSizer->Add(startGatheringScreenshotsButton, 0, wxALIGN_CENTER | wxALL, 10);
+    startGatheringScreenshotsButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringScreenshotsButtonClick, this);
+    sizer->Add(screenshotsGatheringSizer, 0, wxEXPAND | wxALL, 10);
+
+
     wxButton* exitAppButton = new wxButton(this, wxID_ANY, wxT("EXIT APP"));
     sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
     exitAppButton->Bind(wxEVT_BUTTON, &MainPage::CloseApplication, this);
 
-    this->SetSizer(sizer); // set the sizer for this to arrange its children
-    this->Layout(); // This ensures the layout is recalculated
+    this->SetSizer(sizer);
+    this->Layout();
 }
 
 void saveAllCurrentlyOpenedWindowsInfo(const wxString& appsInfoDir) {
@@ -112,4 +121,14 @@ void MainPage::PeriodicDataGatheringFunction() { // wxTimerEvent& event
 void MainPage::startPeriodicDataGathering() {
     PeriodicDataGatheringFunction();
     timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
+}
+
+void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
+    auto screenshotsDir = configManager.GetDirectoryForScreenshots();
+    if (screenshotsDir.length() == 0) {
+        return;
+    }
+    wxMessageBox(screenshotsDir, "Alert", wxOK | wxICON_INFORMATION);
+    ScreenshotsManager screenshots_manager(screenshotsDir.ToStdString());
+    screenshots_manager.take_screenshots_of_all_screens();
 }

@@ -1,5 +1,5 @@
 #include "ConfigManager.hpp"
-
+#include "timeHelpers.hpp"
 
 ConfigManager::ConfigManager()
     : config(new wxFileConfig(wxEmptyString, wxEmptyString, CONFIG_FILE_PATH, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)) {
@@ -75,5 +75,14 @@ wxString ConfigManager::GetDirectoryForAppsInfo() const {
     if (dir == "") return "";
 
     dir.AppendDir("apps");
+    return dir.GetFullPath();
+}
+
+wxString ConfigManager::GetDirectoryForScreenshots() const {
+    wxFileName dir(GetDirectory(), "");
+    if (dir == "") return "";
+
+    dir.AppendDir("screenshots");
+    dir.AppendDir(GetCurrentDateForPath());
     return dir.GetFullPath();
 }

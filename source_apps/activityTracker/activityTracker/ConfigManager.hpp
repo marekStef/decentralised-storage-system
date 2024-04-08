@@ -43,6 +43,7 @@ public:
     void SetDirectory(const wxString& directoryForData);
 
     wxString GetDirectoryForAppsInfo() const;
+    wxString GetDirectoryForScreenshots() const;
 
 private:
     wxString serverAddress;

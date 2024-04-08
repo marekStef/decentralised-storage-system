@@ -46,16 +46,17 @@ void MainFrame::setupUI() {
     auto mainPage = new MainPage(notebook, configManager);
     auto settingsPage = new SettingsPage(notebook, configManager);
 
-    notebook->AddPage(initialSetupPage, "Initial DataStorage Setup", true); // true to make it the selected tab
+    bool isAppAlreadySetup = configManager.IsAppProperlySetUp();
+
+    notebook->AddPage(initialSetupPage, "Initial DataStorage Setup", !isAppAlreadySetup); // true to make it the selected tab
     notebook->AddPage(existingSetupPage, "Existing DataStorage Setup");
     notebook->AddPage(settingsPage, "Settings");
-    notebook->AddPage(mainPage, "Home");
+    notebook->AddPage(mainPage, "Home", isAppAlreadySetup);
 
     mainSizer->Add(notebook, 1, wxEXPAND, 0);
 
     this->SetSizer(mainSizer);
     Layout();
-
 }
 
 void MainFrame::OnClose(wxCloseEvent& event) {

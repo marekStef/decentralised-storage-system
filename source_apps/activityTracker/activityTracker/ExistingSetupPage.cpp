@@ -5,6 +5,7 @@ const wxColour disabledGreenColour(0, 255, 0);
 
 ExistingSetupPage::ExistingSetupPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
     setupUI();
+    LoadConfig();
 }
 
 void ExistingSetupPage::setupUI() {
@@ -83,4 +84,11 @@ void ExistingSetupPage::DisableServerLocationInputs() {
 
     serverAddressInputField->Refresh();
     serverPortInputField->Refresh();
+}
+
+void ExistingSetupPage::LoadConfig() {
+    serverAddressInputField->SetValue(configManager.GetServerAddress());
+    serverPortInputField->SetValue(configManager.GetServerPort());
+    jwtTokenForProfilesAndPermissionsRequestsInputField->SetValue(configManager.GetDataStorageTokenForProfilesAndPermissionsRequests());
+    accessTokenForActivityTrackingEventsInputField->SetValue(configManager.GetActivityTrackerEventAccessToken());
 }

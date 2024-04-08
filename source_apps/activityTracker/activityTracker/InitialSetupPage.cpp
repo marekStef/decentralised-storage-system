@@ -10,9 +10,26 @@ const wxColour PageMainBackgroundColour = wxColour(255, 255, 255);
 const wxColour disabledGreenColour(0, 255, 0);
 
 InitialSetupPage::InitialSetupPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
-    setupUI();
+    if (configManager.IsAppProperlySetUp())
+        setupAlreadySetupUI();
+    else {
+        setupUI();
+        LoadConfig();
+    }
+}
 
-    LoadConfig();
+void InitialSetupPage::setupAlreadySetupUI() {
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText* staticText = new wxStaticText(this, wxID_ANY, wxT("The App Is Already Set"),
+        wxDefaultPosition, wxDefaultSize,
+        wxALIGN_CENTER_HORIZONTAL);
+    staticText->SetForegroundColour(*wxGREEN);
+
+    sizer->Add(staticText, 0, wxALIGN_CENTER | wxALL, 10);
+
+    this->SetSizer(sizer); // set the sizer for this to arrange its children
+    this->Layout(); // This ensures the layout is recalculated
 }
 
 void InitialSetupPage::setupUI() {
@@ -62,6 +79,8 @@ void InitialSetupPage::setupUI() {
     this->SetSizer(sizer); // set the sizer for this to arrange its children
     this->Layout(); // This ensures the layout is recalculated
 }
+
+
 
 
 void InitialSetupPage::CheckAuthServicePresence(wxCommandEvent& event) {

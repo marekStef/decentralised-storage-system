@@ -55,6 +55,12 @@
     <Filter Include="Header Files\generalHelpers">
       <UniqueIdentifier>{dde375c5-1c50-4e01-b2e0-791207772ee1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\activityTracking\Screenshots">
+      <UniqueIdentifier>{25cd91f4-48b6-4cb9-ac4d-db1b04c1b0ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\activityTracking\Screenshots">
+      <UniqueIdentifier>{f948b6ac-c313-431b-88ca-30ce503bce75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -95,6 +101,9 @@
     </ClCompile>
     <ClCompile Include="timeHelpers.hpp">
       <Filter>Header Files\generalHelpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenshotsManager.cpp">
+      <Filter>Source Files\activityTracking\Screenshots</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +148,12 @@
     </ClInclude>
     <ClInclude Include="dataStorageSetupNetworkHelpers.hpp">
       <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenshotsManager.hpp">
+      <Filter>Header Files\activityTracking\Screenshots</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenshotsManagerConstants.hpp">
+      <Filter>Header Files\activityTracking\Screenshots</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

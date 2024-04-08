@@ -13,6 +13,7 @@ private:
     ConfigManager& configManager;
 
     void setupUI();
+    void setupAlreadySetupUI();
 
     wxTextCtrl* serverAddressInputField;
     wxTextCtrl* serverPortInputField;

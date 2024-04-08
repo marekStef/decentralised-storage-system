@@ -23,6 +23,7 @@ private:
     wxTimer* timer; // Timer to trigger the periodic execution function
 
     void StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event);
+    void StartGatheringScreenshotsButtonClick(wxCommandEvent& event);
     void PeriodicDataGatheringFunction();
     void startPeriodicDataGathering();
 };
