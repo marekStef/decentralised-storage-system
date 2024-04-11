@@ -2,10 +2,6 @@ const mongoose = require('mongoose');
 
 const EventSchema = new mongoose.Schema({
   metadata: {
-    identifier: {
-      type: String,
-      // unique: true
-    },
     createdDate: {
       type: Date,
       default: Date.now

@@ -150,8 +150,7 @@ const registerNewProfile = async (req, res) => {
     metadata = {
         ...metadata,
         acceptedDate: new Date().toISOString(),
-        source: nameDefinedByApp,
-        identifier: uuidv4()
+        source: nameDefinedByApp
     };
 
     try {
@@ -339,8 +338,7 @@ const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppNam
         ...event,
         metadata: {
             ...event.metadata,
-            source: sourceAppName,
-            identifier: uuidv4()
+            source: sourceAppName
         }
     };
 }

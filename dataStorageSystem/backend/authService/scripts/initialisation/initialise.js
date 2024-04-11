@@ -43,7 +43,6 @@ const create_app_core_profile_for_definining_other_profiles = async () => {
     // Create the profile
     const profileData = {
         metadata: {
-            identifier: uuidv4(),
             createdDate: new Date(),
             source: process.env.AUTH_SERVICE_DOMAIN,
             acceptedDate: new Date(),
