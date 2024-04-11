@@ -88,7 +88,6 @@ const createNewAppConnection = async (req, res) => {
     } catch (error) {
         console.log(error);
         if (error.code === mongoDbCodes.DUPLICATE_ERROR) {
-            console.log('here@0');
             return generateBadResponse(res, httpStatusCodes.CONFLICT, adminResponseMessages.error.APPLICATION_NAME_DEFINED_BY_USER_ALREADY_EXISTING);
         }
 
@@ -284,7 +283,7 @@ const getAllViewsAccesses = async (req, res) => {
         const viewAccesses = await ViewAccessSchema.find({});
         res.status(httpStatusCodes.OK).json(viewAccesses);
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
     }
 };
 

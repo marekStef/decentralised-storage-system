@@ -1,25 +1,30 @@
 const axios = require('axios');
 
+const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
+
+const DATA_STORAGE_ENDPOINT_FOR_UPLOADING_NEW_EVENTS = 'app/api/uploadNewEvents';
+const DATA_STORAGE_ENDPOINT_FOR_GETTING_FILTERED_EVENTS = 'app/api/getFilteredEvents';
+
 class DataStorage {
     sendEventsToDataStorage(events) {
         return new Promise(async (resolve, reject) => {
             try {
-                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/uploadNewEvents`, {
+                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/${DATA_STORAGE_ENDPOINT_FOR_UPLOADING_NEW_EVENTS}`, {
                     events: events
                 });
 
-                if (response.status === 201) {
+                if (response.status === httpStatusCodes.CREATED) {
                     console.log('Event uploaded successfully:', response.data.message);
-                    resolve({ code: 201, message: response.data.message });
+                    resolve({ code: httpStatusCodes.CREATED, message: response.data.message });
                 } else {
                     // Other status codes except for 500
                     console.error('Unexpected response status:', response.status);
                     reject({ code: response.status, message: 'Unexpected response status: ' + response.status });
                 }
             } catch (error) {
-                if (error.response && error.response.status === 500) {
+                if (error.response && error.response.status === httpStatusCodes.INTERNAL_SERVER_ERROR) {
                     console.log(error.response.data.message);
-                    reject({ code: 500, message: error.response.data.message });
+                    reject({ code: httpStatusCodes.INTERNAL_SERVER_ERROR, message: error.response.data.message });
                 } else {
                     // network issue
                     console.log("Network or other error", error.message || error);
@@ -33,24 +38,24 @@ class DataStorage {
         return new Promise(async (resolve, reject) => {
             try {
                 // this should be get but adding body in get request is not supported
-                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/getFilteredEvents`, {
+                const response = await axios.post(`${process.env.DATA_STORAGE_URL}/${DATA_STORAGE_ENDPOINT_FOR_GETTING_FILTERED_EVENTS}`, {
                     payloadMustContain: {
                         profile_name
                     }
                 });
 
-                if (response.status === 200) {
+                if (response.status === httpStatusCodes.OK) {
                     // console.log('getProfileFromDataStorage:', response.data);
-                    resolve({ code: 200, body: response.data });
+                    resolve({ code: httpStatusCodes.OK, body: response.data });
                 } else {
                     // Other status codes except for 500
                     console.error('Unexpected response status:', response.status);
                     reject({ code: response.status, message: 'Unexpected response status: ' + response.status });
                 }
             } catch (error) {
-                if (error.response && error.response.status === 500) {
+                if (error.response && error.response.status === httpStatusCodes.INTERNAL_SERVER_ERROR) {
                     console.log(error.response.data.message);
-                    reject({ code: 500, message: error.response.data.message });
+                    reject({ code: httpStatusCodes.INTERNAL_SERVER_ERROR, message: error.response.data.message });
                 } else {
                     // network issue
                     console.log("Network or other error", error.message || error);

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 
 const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
@@ -161,7 +160,6 @@ const registerNewProfile = async (req, res) => {
         const jsonSchema = body.data[0].payload.json_schema
 
         let isNewProfileEventValid = validateJsonSchema(jsonSchema, {metadata, payload});
-        console.log("is it valid?" + isNewProfileEventValid)
         if (!isNewProfileEventValid) {
             return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JSON_VALIDATION_ERROR);
         }
