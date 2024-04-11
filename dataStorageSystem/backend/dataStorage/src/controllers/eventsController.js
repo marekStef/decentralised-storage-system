@@ -9,7 +9,20 @@ const EventSchema = require('../database/models/eventRelatedModels/EventSchema')
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const eventsRelated = require('../constants/forApiResponses/eventsRelated');
 
-const checkRequiredDataInEvent = event => {
+const isDateInISOFormat = dateVal => {
+    const date = new Date(dateVal);
+    return !isNaN(date.getTime());
+}
+
+const checkRequiredDataInEventAndCheckCorrectMetadataFields = event => {
+    // if createdDate is present, check that it's in ISO 8601 format
+    if (event.metadata.createdDate && !isDateInISOFormat(event.metadata.createdDate)) {
+        throw {
+            statusCode: httpStatusCodes.BAD_REQUEST,
+            message: 'Invalid createdDate format. It must be in ISO 8601 format',
+        };
+    }
+
     if (!event.metadata || event.metadata.profile === undefined || event.metadata.source === undefined) {
         throw {
             statusCode: httpStatusCodes.BAD_REQUEST,
@@ -22,7 +35,7 @@ const checkRequiredDataInEvent = event => {
 // validates the event agains profile schema
 // saves the event into db
 const saveNewEvent = async (session, event) => {
-    checkRequiredDataInEvent(event);
+    checkRequiredDataInEventAndCheckCorrectMetadataFields(event);
 
     try {
         const newEvent = new EventSchema(event);
@@ -156,7 +169,7 @@ const modifyGivenEvent = async (req, res) => {
     const { modifiedEvent } = req.body;
 
     try {
-        checkRequiredDataInEvent(modifiedEvent);
+        checkRequiredDataInEventAndCheckCorrectMetadataFields(modifiedEvent);
     }
     catch (err) {
         return res.status(err.statusCode).json({ message: err.message });
