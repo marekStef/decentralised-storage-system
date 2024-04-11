@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import '../../app/globals.css'
 
-import { getAppInfo, getPermissionsForApp, getViewAccessesForGivenApp, grantPermission } from '../../network/networkHelpers';
+import { getAppInfo, getPermissionsForApp, getViewAccessesForGivenApp, grantPermission, revokePermission } from '../../network/networkHelpers';
 import { showError, showSuccess } from '@/helpers/alerts';
 import CopyToClipboardText from '@/components/copyToClipboard/CopyToClipboardText';
 import Link from 'next/link';
@@ -71,6 +71,19 @@ function AppPage() {
             .finally(() => {
                 loadInitialData(appId);
             })
+    }
+
+    const revokePermissionHandler = permissionId => {
+        revokePermission(permissionId)
+            .then((message) => {
+                showSuccess(message);
+            })
+            .catch((message) => {
+                showError(message);
+            })
+            .finally(() => {
+                loadInitialData(appId);
+            });
     }
 
     useEffect(() => {
@@ -143,10 +156,17 @@ function AppPage() {
                             <div className="border-t border-gray-200">
                                 <dl>
                                     <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                        <dt className="text-sm font-medium text-gray-500">Optional Message</dt>
+                                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                            {permission.optionalMessage || "-"}
+                                        </dd>
+                                    </div>
+
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Permission Profile</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{permission.permission.profile}</dd>
                                     </div>
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Permissions Granted</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             <div>Read: {permission.permission.read ? 'Yes' : 'No'}</div>
@@ -155,44 +175,49 @@ function AppPage() {
                                             <div>Delete: {permission.permission.delete ? 'Yes' : 'No'}</div>
                                         </dd>
                                     </div>
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Created Date</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{new Date(permission.createdDate).toLocaleString()}</dd>
                                     </div>
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Approved Date</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             {permission.approvedDate ? new Date(permission.approvedDate).toLocaleString() : 'N/A'}
                                         </dd>
                                     </div>
-
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                                        <dt className="text-sm font-medium text-gray-500">Optional Message</dt>
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                        <dt className="text-sm font-medium text-gray-500">Revoked Date</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                                            {permission.optionalMessage || "-"}
+                                            {permission.revokedDate ? new Date(permission.revokedDate).toLocaleString() : 'N/A'}
                                         </dd>
                                     </div>
 
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Active</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             {permission.isActive ? 'Yes' : 'No'}
-                                            {!permission.isActive && (
+                                            {permission.revokedDate == null && (
                                                 <button
-                                                    onClick={() => approvePermissionRequestHandler(permission._id)}
-                                                    className="ml-4 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                                                    onClick={() => {
+                                                        if (permission.isActive)
+                                                            revokePermissionHandler(permission._id);
+                                                        else
+                                                            approvePermissionRequestHandler(permission._id);
+                                                    }}
+                                                    className={`ml-4 text-white font-bold py-2 px-4 rounded ${permission.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
                                                 >
-                                                    Approve
+                                                   {permission.isActive ? 'Revoke' : 'Approve'} 
                                                 </button>
-                                            )}</dd>
+                                            )}
+                                            </dd>
                                     </div>
-                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Expiration Date</dt>
                                         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
                                             {permission.expirationDate ? new Date(permission.expirationDate).toLocaleString() : 'N/A'}
                                         </dd>
                                     </div>
-                                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                                         <dt className="text-sm font-medium text-gray-500">Access Token</dt>
                                         {/* <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">{permission.accessToken}</dd> */}
                                         <CopyToClipboardText value={permission.accessToken} className="sm:col-span-2 text-sm" />

@@ -88,8 +88,7 @@ export function grantPermission(permissionId) {
             .put(
                 `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/approvePermissionRequest`, {
                 permissionId
-            }
-            )
+            })
             .then((result) => {
                 console.log(result.status);
                 if (result.status != 200)
@@ -101,6 +100,26 @@ export function grantPermission(permissionId) {
                 rej(err.response.data.message);
             });
     })
+}
+
+export function revokePermission(permissionId) {
+    return new Promise((res, rej) => {
+        axios
+            .put(
+                `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}/admin/api/permissions/revokePermission`, {
+                permissionId
+            })
+            .then((result) => {
+                console.log(result.status);
+                if (result.status != 200)
+                    return rej('Permission revoking failed');
+                res('Permission was revoked');
+            })
+            .catch((err) => {
+                console.log(err.response.data);
+                rej(err.response.data.message);
+            });
+    });
 }
 
 // views 
