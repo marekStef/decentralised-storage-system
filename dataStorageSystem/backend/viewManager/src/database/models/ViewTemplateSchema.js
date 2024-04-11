@@ -31,9 +31,6 @@ const ViewTemplateSchema = new mongoose.Schema({
 		type: [ProfilePermissionSchema],
 		required: true
 	},
-	// source: { // who registered this template (this should be a unique app name)
-	// 	type: String
-	// },
 });
 
 const ViewTemplate = mongoose.model('ViewTemplate', ViewTemplateSchema);
