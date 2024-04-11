@@ -42,6 +42,13 @@ void MainPage::setupUI() {
     sizer->Add(windowsOpenedAppsSizer, 0, wxEXPAND | wxALL, 10);
 
     wxStaticBoxSizer* screenshotsGatheringSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Screenshots Gathering");
+    auto screenshotsGeneralInformationText = new wxStaticText(
+        this, 
+        wxID_ANY, 
+        "Screenshots Gathering works without the app being set up with the storage system.\nJust set periodicity and screenshots dir in the settings."
+    );
+    screenshotsGatheringSizer->Add(screenshotsGeneralInformationText, 0, wxALL, 5);
+
     wxButton* startGatheringScreenshotsButton = new wxButton(this, wxID_ANY, "Start Gathering Screenshots");
     screenshotsGatheringSizer->Add(startGatheringScreenshotsButton, 0, wxALIGN_CENTER | wxALL, 10);
     startGatheringScreenshotsButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringScreenshotsButtonClick, this);

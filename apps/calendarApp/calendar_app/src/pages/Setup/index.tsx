@@ -82,7 +82,7 @@ const SetupPage = () => {
     };
 
     return (
-        <Container maxWidth="sm">
+        <Container maxWidth="md">
             <Box sx={{ my: 4 }}>
                 <Grid container spacing={2} sx={{ my: 4 }}>
                     <Typography
