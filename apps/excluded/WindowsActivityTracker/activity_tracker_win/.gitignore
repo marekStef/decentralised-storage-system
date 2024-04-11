@@ -1,0 +1,13 @@
+﻿################################################################################
+# Never commit compilation (by-)products and machine-specific settings
+################################################################################
+
+.vscode
+.vs
+build
+out
+Debug
+Release
+x64
+*.user
+CMakeSettings.json
