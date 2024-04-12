@@ -2,7 +2,6 @@ const { createLogger, format, transports } = require('winston');
 require('dotenv').config();
 
 // the logger captures log entries that have a severity level of info or more severe (info, warn, and error)
-// others are ignored
 const logger = createLogger({
     level: 'info',
     format: format.combine(

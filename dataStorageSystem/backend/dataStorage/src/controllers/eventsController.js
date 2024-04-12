@@ -9,6 +9,8 @@ const EventSchema = require('../database/models/eventRelatedModels/EventSchema')
 const mongoDbCodes = require('../constants/mongoDbCodes');
 const eventsRelated = require('../constants/forApiResponses/eventsRelated');
 
+const logger = require('../logger/winston');
+
 const isDateInISOFormat = dateVal => {
     const date = new Date(dateVal);
     return !isNaN(date.getTime());
@@ -19,14 +21,14 @@ const checkRequiredDataInEventAndCheckCorrectMetadataFields = event => {
     if (event.metadata.createdDate && !isDateInISOFormat(event.metadata.createdDate)) {
         throw {
             statusCode: httpStatusCodes.BAD_REQUEST,
-            message: 'Invalid createdDate format. It must be in ISO 8601 format',
+            message: eventsRelatedResponseMessages.error.INVALID_CREATED_DATE_FORMAT_MUST_BE_ISO
         };
     }
 
     if (!event.metadata || event.metadata.profile === undefined || event.metadata.source === undefined) {
         throw {
             statusCode: httpStatusCodes.BAD_REQUEST,
-            message: 'Event does not contain correct metadata',
+            message: eventsRelatedResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA,
         };
     }
 }
@@ -42,14 +44,14 @@ const saveNewEvent = async (session, event) => {
         await newEvent.save({ session }); // Save using the session for transaction
         return newEvent; // Return the event for later use
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         if (error.code == mongoDbCodes.DUPLICATE_ERROR)
             throw {
                 statusCode: httpStatusCodes.CONFLICT,
                 message: eventsRelated.DUPLICATE,
             };
         else {
-            console.error('Error saving new event:', error);
+            logger.error('Error saving new event:' + error);
             throw {
                 statusCode: httpStatusCodes.INTERNAL_SERVER_ERROR,
                 message: generalResponseMessages.INTERNAL_SERVER_ERROR,
@@ -82,7 +84,7 @@ const uploadNewEvents_TransactionsVersion = async (req, res) => {
         //     ...event.toJSON(),
         // }));
 
-		// console.log(savedEvents);
+		// logger.info(savedEvents);
 
         res.status(httpStatusCodes.CREATED).json({
             message: eventsRelatedResponseMessages.success.EVENTS_CREATED_SUCCESSFULLY,
@@ -92,9 +94,9 @@ const uploadNewEvents_TransactionsVersion = async (req, res) => {
 		if (session != null)
         	await session.abortTransaction(); // Rollback the transaction on error
         res.status(err.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: err.message || 'An error occurred',
+            message: err.message || generalResponseMessages.ERROR_OCCURED,
         });
-        console.log(err);
+        logger.error(err);
     } finally {
 		if (session != null)
         	session.endSession(); // End the session whether success or fail
@@ -112,7 +114,7 @@ const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
 
     try {
         const savedEvents = await Promise.all(events.map(event => saveNewEvent(null, event)));
-        console.log(savedEvents);
+        logger.info('savedEvents: ' + savedEvents);
 
         res.status(httpStatusCodes.CREATED).json({
             message: eventsRelatedResponseMessages.success.EVENTS_CREATED_SUCCESSFULLY,
@@ -120,10 +122,9 @@ const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
         });
     } catch (err) {
         res.status(err.statusCode || httpStatusCodes.INTERNAL_SERVER_ERROR).json({
-            message: err.message || 'An error occurred',
+            message: err.message || generalResponseMessages.ERROR_OCCURED,
         });
-        console.log('-----------------------');
-        console.log(err);
+        logger.error(err);
     }
 };
 
@@ -150,16 +151,16 @@ const getFilteredEvents = async (req, res) => {
 
 		const events = await EventSchema.find(query);
 
-		res.status(200).json({
+		res.status(httpStatusCodes.OK).json({
 			success: true,
 			count: events.length,
 			data: events
 		});
 	} catch (error) {
-		console.error('Error fetching events:', error);
-		res.status(500).json({
+		logger.error('Error fetching events:' + error);
+		res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({
 			success: false,
-			message: 'Server error while fetching events'
+			message: eventsRelatedResponseMessages.error.SERVER_ERROR_WHILE_FETCHING_EVENTS
 		});
 	}
 };
@@ -179,19 +180,19 @@ const modifyGivenEvent = async (req, res) => {
         const event = await EventSchema.findById(eventId);
         
         if (!event) {
-            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Event not found.' });
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: eventsRelatedResponseMessages.error.EVENT_NOT_FOUND });
         }
         
         const updatedEvent = await EventSchema.findByIdAndUpdate(eventId, { $set: modifiedEvent }, { new: true });
         
-        res.status(httpStatusCodes.OK).json({ message: 'Event updated successfully.', event: updatedEvent });
+        res.status(httpStatusCodes.OK).json({ message: eventsRelatedResponseMessages.success.EVENT_UPDATED_SUCCESSFULLY, event: updatedEvent });
     } catch (error) {
         if (error.kind === 'ObjectId' && error.name === 'CastError') {
             // if the eventId is not a valid mongodb ObjectId
-            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Invalid eventId.' });
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: eventsRelatedResponseMessages.error.INVALILD_EVENT_ID_FORMAT });
         }
 
-        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while updating the event.', error: error.message });
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: eventsRelatedResponseMessages.error.ERROR_DURING_UPDATE_OF_EVENT, error: error.message });
     }
 }
 
@@ -203,16 +204,16 @@ const deleteGivenEvent = async (req, res) => {
         
         // no event found
         if (!deletedEvent) {
-            return res.status(httpStatusCodes.NOT_FOUND).json({ message: 'Event not found.' });
+            return res.status(httpStatusCodes.NOT_FOUND).json({ message: eventsRelatedResponseMessages.error.EVENT_NOT_FOUND });
         }
         
-        res.status(httpStatusCodes.OK).json({ message: 'Event deleted successfully.' });
+        res.status(httpStatusCodes.OK).json({ message: eventsRelatedResponseMessages.success.EVENT_DELETED_SUCCESSFULLY });
     } catch (error) {
         if (error.kind === 'ObjectId' && error.name === 'CastError') {
             // if the eventId is not a valid mongodb ObjectId
-            return res.status(400).json({ message: 'Invalid event ID format.' });
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: eventsRelatedResponseMessages.error.INVALILD_EVENT_ID_FORMAT });
         }
-        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'An error occurred while deleting the event.', error: error.message });
+        res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: eventsRelatedResponseMessages.error.ERROR_DURING_DELETE_OF_EVENT, error: error.message });
     }
 }
 
