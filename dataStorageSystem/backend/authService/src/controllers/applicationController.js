@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-
 const axios = require('axios');
+
+const logger = require('../logger/winston');
 
 const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const generalResponseMessages = require('../constants/forApiResponses/general');
@@ -22,6 +23,14 @@ const { compareObjects } = require('./helpers/hashing');
 const authServiceSpecificCodes = require('../constants/authServiceSpecificCodes');
 
 const { generateTokenForViewAccess, decodeTokenForViewAccess } = require('./helpers/viewAccessHelpers');
+
+// constants for data storage component endpoints
+
+const DATA_STORAGE_ENDPOINT_FOR_UPLOADING_NEW_EVENTS = 'app/api/uploadNewEvents';
+const DATA_STORAGE_ENDPOINT_FOR_GETTING_FILTERED_EVENTS = 'app/api/getFilteredEvents';
+
+const getEndpointForViewManagerViewInstanceCreation = () => `${process.env.VIEW_MANAGER_URL}/viewInstances/createNewViewInstance`;
+const getEndpointForViewManagerViewInstanceRunning = () => `${process.env.VIEW_MANAGER_URL}/viewInstances/runViewInstance`;
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
@@ -102,7 +111,7 @@ const associateAppWithStorageAppHolder = async (req, res) => {
         //     return generateBadResponse(res, httpStatusCodes.CONFLICT, applicationResponseMessages.error.APP_NAME_CONFLICT);
         // }
 
-        console.error('Error associating app with storage app holder:', error);
+        logger.error('Error associating app with storage app holder:' + error);
         generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
@@ -115,9 +124,8 @@ const registerNewProfile = async (req, res) => {
     let decodedToken;
     try {
         decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
-        console.log(decodedToken);
     } catch (error) {
-        return res.status(401).json({message: 'Invalid or expired JWT token'});
+        return res.status(401).json({message: applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN});
     }
 
     const {nameDefinedByApp} = decodedToken;
@@ -143,7 +151,7 @@ const registerNewProfile = async (req, res) => {
         }
     }
     catch ({code, message}) {
-        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, message)
+        return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, message);
     } 
 
     metadata = {
@@ -165,7 +173,7 @@ const registerNewProfile = async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err)
+        logger.error('error registering new profile: ' + err);
         // {code, message}
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
     } 
@@ -182,19 +190,18 @@ const registerNewProfile = async (req, res) => {
 
     try {
         const {code, message} = await DataStorage.sendEventsToDataStorage([newProfileEvent])
-        if (code === 201) {
-            console.log('Event uploaded successfully:', message);
+        if (code === httpStatusCodes.CREATED) {
+            logger.info('Event uploaded successfully:' + message);
         } else {
             // Other status codes except for 500
-            console.error('Unexpected response status:', code);
+            logger.error('Unexpected response status:' + code);
             throw new Error('Unexpected response status: ' + code);
         }
     }
     catch (err) {
         if (err?.code == httpStatusCodes.CONFLICT)
             return generateBadResponse(res, httpStatusCodes.CONFLICT, generalResponseMessages.DUPLICATE_ERROR)
-        console.log(err)
-        console.error('Error registering new profile:', err);
+        logger.error('Error registering new profile:' + err);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
     }
 
@@ -262,7 +269,7 @@ const requestNewPermission = async (req, res) => {
             generatedAccessToken: newGeneratedAccessJwtToken
         });
     } catch (error) {
-        console.error('Error requesting new permissions:', error);
+        logger.error('Error requesting new permissions:' + error);
         generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
     }
 };
@@ -294,52 +301,52 @@ const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
-const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName) => {
-    // Validate event against Profile schema
-    if (!event.metadata || !event.metadata.profile) {
-        throw {
-            statusCode: httpStatusCodes.BAD_REQUEST,
-            message: 'Event does not contain correct metadata'
+    const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName) => {
+        // Validate event against Profile schema
+        if (!event.metadata || !event.metadata.profile) {
+            throw {
+                statusCode: httpStatusCodes.BAD_REQUEST,
+                message: applicationResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA
+            }
         }
+
+        if (!event.payload) {
+            throw {
+                statusCode: httpStatusCodes.BAD_REQUEST,
+                message: applicationResponseMessages.error.EVENT_NOT_CONTAINING_PAYLOAD
+            }
+        }
+
+
+        if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
+            throw{
+                statusCode: httpStatusCodes.NOT_FOUND,
+                message: 'One of the events has different profile set in metadata'
+            }
+        }
+
+        // todo - repair checking profile - currently new events are not checked against it
+
+        // const foundProfileData = await EventProfileSchema.findOne({ name: event.metadata.profile });
+
+        // if (!foundProfileData) {
+        //     throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: applicationResponseMessages.error.PROFILE_NOT_FOUND }));
+        // }
+
+        // if (!validateJsonSchema(JSON.parse(foundProfileData.schema), event.payload)) {
+        //     console.log("<<<<<<");
+        //     console.log("why it is here first");
+        //     throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA }));
+        // }
+
+        return {
+            ...event,
+            metadata: {
+                ...event.metadata,
+                source: sourceAppName
+            }
+        };
     }
-
-    if (!event.payload) {
-        throw {
-            statusCode: httpStatusCodes.BAD_REQUEST,
-            message: 'Event does not contain payload'
-        }
-    }
-
-
-    if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
-        throw{
-            statusCode: httpStatusCodes.NOT_FOUND,
-            message: 'One of the events has different profile set in metadata'
-        }
-    }
-
-    // todo - repair checking profile - currently new events are not checked against it
-
-    // const foundProfileData = await EventProfileSchema.findOne({ name: event.metadata.profile });
-
-    // if (!foundProfileData) {
-    //     throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: applicationResponseMessages.error.PROFILE_NOT_FOUND }));
-    // }
-
-    // if (!validateJsonSchema(JSON.parse(foundProfileData.schema), event.payload)) {
-    //     console.log("<<<<<<");
-    //     console.log("why it is here first");
-    //     throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA }));
-    // }
-
-    return {
-        ...event,
-        metadata: {
-            ...event.metadata,
-            source: sourceAppName
-        }
-    };
-}
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
@@ -350,26 +357,26 @@ const transformEvents = (profileNeededToBePresentInAllEvents, events, sourceAppN
 // sends events to dataStorage component
 const sendEventsToDataStorage = async (res, events) => {
     try {
-        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/uploadNewEvents`, {
+        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/${DATA_STORAGE_ENDPOINT_FOR_UPLOADING_NEW_EVENTS}`, {
             events: events
         });
 
         if (response.status === httpStatusCodes.CREATED) {
-            console.log('Event uploaded successfully:', response.data);
+            logger.info('Event uploaded successfully:' + response.data);
             return res.status(httpStatusCodes.CREATED).json({ message: response.data.message, events: response.data.events });
         } else {
             // Other status codes except for 500
-            console.error('Unexpected response status:', response.status);
+            logger.error('Unexpected response status:' + response.status);
             throw new Error('Unexpected response status: ' + response.status);
         }
     } catch (error) {
-        console.error('Error uploading new event:', error);
+        logger.error('Error uploading new event:' + error);
 
         if (error.response && error.response.status === httpStatusCodes.INTERNAL_SERVER_ERROR) {
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error at the data storage service.' });
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.INTERNAL_SERVER_ERROR_AT_DATA_STORAGE_COMPONENT });
         } else {
             // network issue
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.INTERNAL_SERVER_ERROR_WHILE_SENDING_EVENTS });
         }
     }
 }
@@ -384,7 +391,6 @@ const decodeAccessToken = accessToken => {
 
 const getDataAcessPermission = async dataAccessPermissionId => {
     const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
-    // console.log("-------", dataAccessPermissionId)
     if (!dataAccessPermission || !dataAccessPermission.isActive) {
         return null;
     }
@@ -412,7 +418,7 @@ const uploadNewEvents = async (req, res) => {
     const dataAccessPermission = await getDataAcessPermission(dataAccessPermissionId);
 
     if (dataAccessPermission == null) {
-        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.ACCESS_PERMISSION_NOT_ACTIVE_OR_REVOKED });
     }
 
     // Check for create permission
@@ -430,15 +436,14 @@ const uploadNewEvents = async (req, res) => {
         updatedEvents = transformEvents(profileCommonForAllEventsBeingUploaded, events, sourceAppName)
     }
     catch (errResponse) {
-        console.log(errResponse)
+        logger.error('uploading new events: ' + errResponse)
         return res.status(errResponse.statusCode).json({ message: errResponse.message })
     }
 
     try {
         await sendEventsToDataStorage(res, updatedEvents)
     } catch (errResponse) {
-        // console.log(errResponse);
-        // console.log("<<<<<<1");
+        logger.error(errResponse);
         return errResponse;
     }
 };
@@ -458,7 +463,7 @@ const modifyEvent = async (req, res) => {
     const dataAccessPermission = await getDataAcessPermission(decodedToken.dataAccessPermissionId);
 
     if (dataAccessPermission == null) {
-        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.ACCESS_PERMISSION_NOT_ACTIVE_OR_REVOKED });
     }
 
     const hasModifyPermission = dataAccessPermission.permission.profile == modifiedEvent.metadata?.profile && dataAccessPermission.permission.modify == true;
@@ -475,20 +480,20 @@ const modifyEvent = async (req, res) => {
         });
 
         if (response.status === httpStatusCodes.OK) {
-            console.log('Event modified successfully:', response.data);
+            logger.info('Event modified successfully:' + response.data);
             return res.status(httpStatusCodes.OK).json({ message: response.data.message, event: response.data.event });
         } else {
             // Other status codes except for 500
-            console.error('Unexpected response status:', response.status);
+            logger.error('Unexpected response status:' + response.status);
             throw new Error('Unexpected response status: ' + response.status);
         }
     } catch (error) {
-        console.error('Error modifying event:', error.response.data);
+        logger.error('Error modifying event:' + error.response.data);
         if (error.response && error.response.data != null && error.response.data.message != null) {
             return res.status(error.response.status).json({ message: error.response.data.message });
         } else {
             // network issue
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.INTERNAL_SERVER_ERROR_WHILE_SENDING_EVENTS });
         }
     }
 }
@@ -497,7 +502,7 @@ const deleteEvent = async (req, res) => {
     const { eventId, accessToken } = req.body;
 
     if (!eventId || !accessToken) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'eventId and accessToken are required in the request' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.EVENT_ID_AND_ACCESS_TOKEN_REQUIRED });
     }
 
     let decodedToken = decodeAccessToken(accessToken);
@@ -508,7 +513,7 @@ const deleteEvent = async (req, res) => {
     const dataAccessPermission = await getDataAcessPermission(decodedToken.dataAccessPermissionId);
 
     if (dataAccessPermission == null) {
-        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.ACCESS_PERMISSION_NOT_ACTIVE_OR_REVOKED });
     }
 
     const hasDeletePermission = dataAccessPermission.permission.delete == true; // possible improvement of security would be to fetch the event first from dataStorage and check its profile but I assume the id is too difficult to guess
@@ -520,20 +525,20 @@ const deleteEvent = async (req, res) => {
         const response = await axios.delete(`${process.env.DATA_STORAGE_URL}/app/api/events/${eventId}`);
 
         if (response.status === httpStatusCodes.OK) {
-            console.log('Event deleted successfully:', response.data);
+            logger.info('Event deleted successfully:' + response.data);
             return res.status(httpStatusCodes.OK).json({ message: response.data.message });
         } else {
             // Other status codes except for 500
-            console.error('Unexpected response status:', response.status);
+            logger.error('Unexpected response status:' + response.status);
             throw new Error('Unexpected response status: ' + response.status);
         }
     } catch (error) {
-        console.error('Error modifying event:', error.response.data);
+        logger.error('Error modifying event:' + error.response.data);
         if (error.response && error.response.data != null && error.response.data.message != null) {
             return res.status(error.response.status).json({ message: error.response.data.message });
         } else {
             // network issue
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error while sending events.' });
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.INTERNAL_SERVER_ERROR_WHILE_SENDING_EVENTS });
         }
     }
 }
@@ -557,7 +562,7 @@ const getAllEventsOfGivenProfile = async (req, res) => {
 
     const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
     if (!dataAccessPermission || !dataAccessPermission.isActive) {
-        return res.status(httpStatusCodes.FORBIDDEN).json({ message: 'Access permission is not active or has been revoked' });
+        return res.status(httpStatusCodes.FORBIDDEN).json({ message: applicationResponseMessages.error.ACCESS_PERMISSION_NOT_ACTIVE_OR_REVOKED });
     }
 
     const hasCreatePermission = dataAccessPermission.permission.read == true;
@@ -568,7 +573,7 @@ const getAllEventsOfGivenProfile = async (req, res) => {
     // let sourceAppName = dataAccessPermission.app.nameDefinedByApp
 
     try {
-        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/app/api/getFilteredEvents`, {
+        const response = await axios.post(`${process.env.DATA_STORAGE_URL}/${DATA_STORAGE_ENDPOINT_FOR_GETTING_FILTERED_EVENTS}`, {
             metadataMustContain: {
                 profile: dataAccessPermission.permission.profile,
                 // source: dataAccessPermission.app.nameDefinedByUser
@@ -576,21 +581,21 @@ const getAllEventsOfGivenProfile = async (req, res) => {
         });
 
         if (response.status == httpStatusCodes.OK) {
-            // console.log('Event received successflly:', response.data);
+            // logger.info('Event received successflly:' + response.data);
             return res.status(httpStatusCodes.OK).json({ events: response.data.data, count: response.data.count });
         } else {
             // Other status codes except for 500
-            console.error('Unexpected response status:', response);
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch eventss" });
+            logger.error('Unexpected response status:' + response);
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.COULD_NOT_FETCH_EVENTS });
         }
     } catch (error) {
-        console.error('Error fetching events:', error);
+        logger.error('Error fetching events:' + error);
 
-        if (error.response && error.response.status === 500) {
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch events2" });
+        if (error.response && error.response.status === httpStatusCodes.INTERNAL_SERVER_ERROR) {
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.COULD_NOT_FETCH_EVENTS });
         } else {
             // network issue
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: "Could not fetch events3" }); // todo - this is useless as of now
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.COULD_NOT_FETCH_EVENTS });
         }
     }
 }
@@ -628,7 +633,7 @@ const registerNewViewInstanceAccess = async (req, res) => {
     let responseFromViewManager = null;
 
     try {
-        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/viewInstances/createNewViewInstance`, {
+        responseFromViewManager = await axios.post(getEndpointForViewManagerViewInstanceCreation(), {
             viewTemplateId,
             jwtTokenForPermissionRequestsAndProfiles,
             configuration
@@ -636,17 +641,17 @@ const registerNewViewInstanceAccess = async (req, res) => {
 
         if (responseFromViewManager.status != httpStatusCodes.CREATED) {
             // Other status codes except for 500
-            console.error('Unexpected response status:', response);
+            logger.error('Unexpected response status:' + response);
             return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: response.data.message });
         }
     } catch (error) {
-        console.error('Error creating new view instance:', error);
+        logger.error('Error creating new view instance:' + error);
         if (error.response && error.response.data && error.response.data.message) {
-            console.error('Error from js execution service:', error.response.data.message);
+            logger.error('Error from js execution service:' + error.response.data.message);
             return res.status(error.response.status).send({message: error.response.data.message});
         } else {
-            console.error('Network or other error:', error.message);
-            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed create new view instance'});
+            logger.error('Network or other error:' + error.message);
+            return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: applicationResponseMessages.error.FAILED_TO_CREATE_NEW_VIEW_INSTANCE });
         }
     }
 
@@ -665,13 +670,13 @@ const registerNewViewInstanceAccess = async (req, res) => {
 
         await ViewAccessSchema.findByIdAndUpdate(viewAccess._id, { $set: { viewAccessToken } });
 
-        return res.status(httpStatusCodes.CREATED).json({ viewAccessToken, message: 'New View Instance registered successfully.' });
+        return res.status(httpStatusCodes.CREATED).json({ viewAccessToken, message: applicationResponseMessages.success.NEW_VIEW_INSTANCE_REGISTERED_SUCCESSFULLY });
     }
     catch (err) {
-        console.log(err);
+        logger.error(err);
         return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during saving of new view instance in auth service. Instance was created in view manager though.' });
+        // TODO - DELETE IT FROM VIEW MANAGER NOW!!!! 
     }
-
 }
 
 const checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager = async (viewAccessId, viewInstanceId) => {
@@ -689,7 +694,7 @@ const checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInVie
 const runViewInstace = async (req, res) => {
     const { viewAccessToken, clientCustomData } = req.body;
     if (!viewAccessToken || !clientCustomData) {
-        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'viewAccessToken and clientCustomData are required' });
+        return res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.VIEW_ACCESS_TOKEN_AND_CLIENT_CUSTOM_DATA_REQUIRED });
     }
 
     let decodedToken;
@@ -702,29 +707,29 @@ const runViewInstace = async (req, res) => {
     const {viewInstanceId, appId, authServiceViewAccessId} = decodedToken;
 
     if (!checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager(authServiceViewAccessId, viewInstanceId)) {
-        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: 'Given view does not exist' });
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({ message: applicationResponseMessages.error.VIEW_DOES_NOT_EXIST });
     }
 
     let responseFromViewManager = null;
     try {
-        responseFromViewManager = await axios.post(`${process.env.VIEW_MANAGER_URL}/viewInstances/runViewInstance`, {
+        responseFromViewManager = await axios.post(getEndpointForViewManagerViewInstanceRunning(), {
             viewInstanceId,
             clientCustomData,
         });
 
         if (responseFromViewManager.status != httpStatusCodes.OK) {
-            console.error('Unexpected response status:', response);
+            logger.error('Unexpected response status:' + response);
             return res.status(responseFromViewManager.status).json({ message: responseFromViewManager.data.message });
         }
 
         return res.status(httpStatusCodes.OK).json({ ...responseFromViewManager.data })
     } catch (error) {
-        console.error('Error during running of view instance:', error);
+        logger.error('Error during running of view instance:' + error);
         if (error.response && error.response.data && error.response.data.message) {
-            console.error('Error from view manager:', error.response.data.message);
+            logger.error('Error from view manager:' + error.response.data.message);
             res.status(error.response.status).send({message: error.response.data.message, sourceError: 'error comes from view manager component' });
         } else {
-            console.error('Network or other error:', error.message);
+            logger.error('Network or other error:' + error.message);
             res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Failed run view instance - viewManager seems to be down'});
         }
     }

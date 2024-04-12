@@ -28,7 +28,25 @@ module.exports = {
         NO_DELETE_PERMISSION_FOR_EVENT_CREATION: "No delete permission for this event",
         NO_READ_PERMISSION_FOR_EVENT: "No read permission for this event",
 
-        INVALID_OR_EXPIRED_ACCESS_TOKEN: "Invalid or expired access token"
+        INVALID_OR_EXPIRED_ACCESS_TOKEN: "Invalid or expired access token",
+
+        EVENT_ID_AND_ACCESS_TOKEN_REQUIRED: 'eventId and accessToken are required in the request',
+
+        EVENT_NOT_CONTAINING_CORRECT_METADATA: 'Event does not contain correct metadata',
+        EVENT_NOT_CONTAINING_PAYLOAD: 'Event does not contain payload',
+
+        INTERNAL_SERVER_ERROR_AT_DATA_STORAGE_COMPONENT: 'Internal server error at the data storage service.',
+        INTERNAL_SERVER_ERROR_WHILE_SENDING_EVENTS: 'Internal server error while sending events.',
+
+        ACCESS_PERMISSION_NOT_ACTIVE_OR_REVOKED: 'Access permission is not active or has been revoked',
+
+        COULD_NOT_FETCH_EVENTS: 'Could not fetch events',
+
+        // views related
+
+        VIEW_DOES_NOT_EXIST: 'Given view does not exist',
+        VIEW_ACCESS_TOKEN_AND_CLIENT_CUSTOM_DATA_REQUIRED: 'viewAccessToken and clientCustomData are required',
+        FAILED_TO_CREATE_NEW_VIEW_INSTANCE: 'Failed create new view instance',
     },
     success: {
         APP_ASSOCIATED_WITH_STORAGE_APP_HOLDER: "App successfully associated with the storage app holder",
@@ -37,6 +55,10 @@ module.exports = {
 
         PERMISSIONS_REQUESTED_SUCCESS: "Permissions requested successfully",
 
-        EVENTS_UPLOADED_SUCCESSFULLY: "Events uploaded successfully"
+        EVENTS_UPLOADED_SUCCESSFULLY: "Events uploaded successfully",
+
+        // views related
+
+        NEW_VIEW_INSTANCE_REGISTERED_SUCCESSFULLY: 'New View Instance registered successfully.'
     }
 }

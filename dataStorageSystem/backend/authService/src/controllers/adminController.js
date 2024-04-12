@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const axios = require('axios');
 
+const logger = require('../logger/winston');
+
 const httpStatusCodes = require('../constants/forApiResponses/httpStatusCodes');
 const adminResponseMessages = require('../constants/forApiResponses/admin/responseMessages');
 const generalResponseMessages = require('../constants/forApiResponses/general');
@@ -39,14 +41,13 @@ const getAllApps = async (req, res) => {
             currentPage: pageIndex
         });
     } catch (error) {
-        console.error('Error fetching apps:', error);
+        logger.error('Error fetching apps: ' + error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 }
 
 const getAppHolderById = async (req, res) => {
     const { appHolderId } = req.params;
-    console.log(appHolderId);
 
     try {
         const app = await ApplicationSchema.findById(appHolderId);
@@ -54,7 +55,7 @@ const getAppHolderById = async (req, res) => {
         if (!app) {
             return res.status(httpStatusCodes.NOT_FOUND).json({
                 status: 'error',
-                message: 'App not found'
+                message: adminResponseMessages.error.APPLICATION_NOT_FOUND
             });
         }
 
@@ -63,7 +64,7 @@ const getAppHolderById = async (req, res) => {
             data: app
         });
     } catch (error) {
-        console.error(`Error fetching app with ID ${appHolderId}:`, error);
+        logger.error(`Error fetching app with ID ${appHolderId}:` + error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 }
@@ -76,7 +77,6 @@ const createNewAppConnection = async (req, res) => {
     }
 
     try {
-        console.log(nameDefinedByUser);
         const newApplication = new ApplicationSchema({ nameDefinedByUser });
 
         const savedApplication = await newApplication.save();
@@ -86,14 +86,11 @@ const createNewAppConnection = async (req, res) => {
             appHolderId: savedApplication._id
         });
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         if (error.code === mongoDbCodes.DUPLICATE_ERROR) {
             return generateBadResponse(res, httpStatusCodes.CONFLICT, adminResponseMessages.error.APPLICATION_NAME_DEFINED_BY_USER_ALREADY_EXISTING);
         }
 
-        console.log(error)
-
-        // other possible errors
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, adminResponseMessages.error.APPLICATION_REGISTRATION_FAILED);
     }
 }
@@ -107,7 +104,6 @@ const isAppAlreadyAssociated = app => {
 // which the real software app will use to associate itself with its app holder in storage system
 
 const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, res) => {
-    console.log(req.body);
     const { appHolderId } = req.body; // assuming the app's ID is passed as 'appHolderId'
 
     if (!appHolderId) {
@@ -147,7 +143,7 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
         });
 
     } catch (error) {
-        console.error(adminResponseMessages.error.ASSOCIATION_TOKEN_GENERATING_FAILED + ": " + error);
+        logger.error(adminResponseMessages.error.ASSOCIATION_TOKEN_GENERATING_FAILED + ": " + error);
         res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: generalResponseMessages.INTERNAL_SERVER_ERROR });
     }
 };
@@ -178,7 +174,7 @@ const getUnapprovedPermissionsRequests = async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error fetching unapproved permissions requests:', error);
+        logger.error('Error fetching unapproved permissions requests:', error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
@@ -195,7 +191,7 @@ const getAllPermissionsForGivenApp = async (req, res) => {
             permissions
         });
     } catch (error) {
-        console.error('Error fetching permissions for the app:', error);
+        logger.error('Error fetching permissions for the app:' + error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
@@ -235,7 +231,7 @@ const approvePermissionRequest = async (req, res) => {
             data: updatedPermission
         });
     } catch (error) {
-        console.error('Error approving permission request:', error);
+        logger.error('Error approving permission request:' + error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
@@ -273,7 +269,7 @@ const revokeApprovedPermission = async (req, res) => {
             data: updatedPermission
         });
     } catch (error) {
-        console.error('Error revoking permission request:', error);
+        logger.error('Error revoking permission request:' + error);
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR);
     }
 };
@@ -317,7 +313,7 @@ const getAllViewsAccessesForGivenApp = async (req, res) => {
 
         res.status(httpStatusCodes.OK).json({ viewAccesses: enhancedViewAccesses });
     } catch (error) {
-        console.error('Error fetching view accesses:', error.message);
+        logger.error('Error fetching view accesses:' + error.message);
         res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).send(error.message);
     }
 }
