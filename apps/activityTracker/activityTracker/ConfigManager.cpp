@@ -106,11 +106,10 @@ wxString ConfigManager::GetDirectoryForScreenshots() const {
     return dir.GetFullPath();
 }
 
-int ConfigManager::GetPeriodicityForScreenshots() const { return periodicityForScreenshots; } // in seconds
+int ConfigManager::GetPeriodicityForScreenshots() const { return periodicityForScreenshots; } // in milliseconds
 
 void ConfigManager::SetPeriodicityForScreenshots(int periodicity) { periodicityForScreenshots = periodicity; }
 
-// in seconds
-int ConfigManager::GetPeriodicityForFetchingAppsInfo() const { return periodicityForFethcingWindowsAppsInfo; }
+int ConfigManager::GetPeriodicityForFetchingAppsInfo() const { return periodicityForFethcingWindowsAppsInfo; } // in milliseconds
 
 void ConfigManager::SetPeriodicityForFetchingAppsInfo(int periodicity) { periodicityForFethcingWindowsAppsInfo = periodicity; }

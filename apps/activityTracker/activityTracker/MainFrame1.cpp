@@ -43,7 +43,9 @@ void MainFrame::setupUI() {
 
     auto initialSetupPage = new InitialSetupPage(notebook, configManager);
     auto existingSetupPage = new ExistingSetupPage(notebook, configManager);
-    auto mainPage = new MainPage(notebook, configManager);
+
+    auto closeAppFunc = std::bind(&MainFrame::ForceClose, this); // Bind the ForceClose method of this MainFrame instance to a callable function object
+    auto mainPage = new MainPage(notebook, configManager, closeAppFunc);
     auto settingsPage = new SettingsPage(notebook, configManager);
 
     bool isAppAlreadySetup = configManager.IsAppProperlySetUp();
@@ -89,7 +91,6 @@ void MainFrame::OnIconize(wxIconizeEvent& event) {
    /* if (event.IsIconized()) {
         Hide();
     }*/
-    
 }
 
 void MainFrame::OnRestore(wxCommandEvent& event) {
@@ -104,4 +105,8 @@ void MainFrame::OnTaskBarIconClick(wxTaskBarIconEvent& event) {
 
 void MainFrame::OnExit(wxCommandEvent& event) {
     Close(true);
+}
+
+void MainFrame::ForceClose() {
+    Destroy();
 }

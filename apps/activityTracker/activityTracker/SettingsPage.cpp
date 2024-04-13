@@ -24,13 +24,21 @@ void SettingsPage::setupUI() {
     directorySizer->Add(directoryDisplay, 0, wxALL, 5);
     sizer->Add(directorySizer, 0, wxEXPAND | wxALL, 10);
 
-    wxStaticBoxSizer* periodicitySizer = new wxStaticBoxSizer(wxVERTICAL, this, "Set Periodicity");
+    wxStaticBoxSizer* periodicitySizer = new wxStaticBoxSizer(wxVERTICAL, this, "Set Periodicity For Screenshots (in seconds)");
     screenshotsPeriodicitySpinCtrl = new wxSpinCtrl(this, wxID_ANY);
-    screenshotsPeriodicitySpinCtrl->SetRange(1, 1000000); // range for periodicity
+    screenshotsPeriodicitySpinCtrl->SetRange(1, 1000000);
     screenshotsPeriodicitySpinCtrl->SetValue(60); // Default value
     periodicitySizer->Add(screenshotsPeriodicitySpinCtrl, 0, wxALL | wxEXPAND, 5);
     sizer->Add(periodicitySizer, 0, wxEXPAND | wxALL, 10);
     screenshotsPeriodicitySpinCtrl->Bind(wxEVT_SPINCTRL, &SettingsPage::onScreenshotsPeriodicityChange, this);
+
+    wxStaticBoxSizer* appsInfoFetchingPeriodicitySizer = new wxStaticBoxSizer(wxVERTICAL, this, "Set Periodicity For Getting Apps Info (in seconds)");
+    appsInfoFetchingPeriodicitySpinCtrl = new wxSpinCtrl(this, wxID_ANY);
+    appsInfoFetchingPeriodicitySpinCtrl->SetRange(1, 1000000);
+    appsInfoFetchingPeriodicitySpinCtrl->SetValue(60); // Default value
+    appsInfoFetchingPeriodicitySizer->Add(appsInfoFetchingPeriodicitySpinCtrl, 0, wxALL | wxEXPAND, 5);
+    sizer->Add(appsInfoFetchingPeriodicitySizer, 0, wxEXPAND | wxALL, 10);
+    appsInfoFetchingPeriodicitySpinCtrl->Bind(wxEVT_SPINCTRL, &SettingsPage::onAppsInfoFetchingPeriodicityChange, this);
 
     wxStaticBoxSizer* automaticStartupSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Automatic Startup");
     wxButton* autoStartupButton = new wxButton(this, 1111, IsAppInStartupList() ? "Remove From Auto Startup" : "Add Auto Startup");
@@ -92,12 +100,18 @@ void SettingsPage::OnResetAppConfigButtonClick(wxCommandEvent& event) {
 
 void SettingsPage::onScreenshotsPeriodicityChange(wxSpinEvent& event) {
     int periodicityValue = event.GetValue();
-    configManager.SetPeriodicityForScreenshots(periodicityValue);
+    configManager.SetPeriodicityForScreenshots(periodicityValue * 1000); // needs to be in milliseconds
     configManager.SaveConfig();
 }
 
+void SettingsPage::onAppsInfoFetchingPeriodicityChange(wxSpinEvent& event) {
+    int periodicityValue = event.GetValue();
+    configManager.SetPeriodicityForFetchingAppsInfo(periodicityValue * 1000);  // needs to be in milliseconds
+    configManager.SaveConfig();
+}
 
 void SettingsPage::loadConfig() {
     directoryDisplay->SetLabel(configManager.GetDirectory());
-    screenshotsPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForScreenshots());
+    screenshotsPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForScreenshots() / 1000); // to display it in seconds
+    appsInfoFetchingPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForFetchingAppsInfo() / 1000); // to display it in seconds
 }

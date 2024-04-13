@@ -17,7 +17,7 @@ wxThread::ExitCode ScreenshotsThread::Entry()  {
 
     while (!TestDestroy()) {
         screenshotsManager.take_screenshots_of_all_screens(configManager.GetDirectoryForScreenshots().ToStdString());
-        int intervalInMilliseconds = configManager.GetPeriodicityForScreenshots() * 1000;
+        int intervalInMilliseconds = configManager.GetPeriodicityForScreenshots();
         wxThread::Sleep(intervalInMilliseconds);
     }
 

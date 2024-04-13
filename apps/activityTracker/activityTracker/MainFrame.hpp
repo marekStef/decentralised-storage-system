@@ -19,6 +19,7 @@ private:
     void setupUI();
 
     ConfigManager& configManager;
+    void ForceClose();
 
     // task bar related [start]
 

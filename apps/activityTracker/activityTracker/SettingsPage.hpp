@@ -21,7 +21,10 @@ private:
     wxString defaultDirectory;
 
     wxSpinCtrl* screenshotsPeriodicitySpinCtrl;
-    void onScreenshotsPeriodicityChange(wxSpinEvent& event);
+    void onScreenshotsPeriodicityChange(wxSpinEvent& event); 
+    
+    wxSpinCtrl* appsInfoFetchingPeriodicitySpinCtrl;
+    void onAppsInfoFetchingPeriodicityChange(wxSpinEvent& event);
 
     void setupUI();
 };

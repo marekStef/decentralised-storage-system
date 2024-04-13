@@ -63,6 +63,14 @@ For more information, see the docs here:
 
 ```
 
+Lastly, we need `Graphic Device Interface Plus (GDI+)` for getting and saving screenshots of all monitors.
+
+To be able to compile this project successfully, you need to have:
+- Visual Studio installed with the `Desktop Development with C++`
+- Windows SDK (this typically comes installed with the Desktop Development workload, but ensure it's included)
+
+In `Project > Properties > Linker > Input > Addition Dependencies`, check that the list contains `gdiplus.lib`.
+
 Now we are able to use run the project.
 
 --- 

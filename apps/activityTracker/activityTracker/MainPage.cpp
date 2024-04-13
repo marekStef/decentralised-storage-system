@@ -14,7 +14,8 @@
 
 #include "ScreenshotsThread.hpp"
 
-MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)) {
+MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction) 
+    : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
     setupUI();
 
     // bind timer event
@@ -81,14 +82,7 @@ void MainPage::OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event) {
 }
 
 void MainPage::CloseApplication(wxCommandEvent& event) {
-    // Navigate up the hierarchy to find the MainFrame
-    wxWindow* parent = this->GetParent();
-    if (parent) {
-        wxWindow* grandParent = parent->GetParent();
-        if (grandParent) {
-            grandParent->Close(true);
-        }
-    }
+    forceCloseApp();
 }
 
 void MainPage::StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event) {
@@ -127,7 +121,7 @@ void MainPage::PeriodicDataGatheringFunction() { // wxTimerEvent& event
 
 void MainPage::startPeriodicDataGathering() {
     PeriodicDataGatheringFunction();
-    timer->Start(PERIODIC_FUNCTION_INTERVAL_IN_MILLISECONDS);
+    timer->Start(configManager.GetPeriodicityForFetchingAppsInfo());
 }
 
 //void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {

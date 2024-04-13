@@ -21,7 +21,7 @@
 #include "ScreenshotsManager.hpp"
 #include "ScreenshotsManagerConstants.hpp"
 
-#pragma comment(lib, "gdiplus.lib")
+//#pragma comment(lib, "gdiplus.lib") // not needed here - it's already mentioned in the project settings > Linker > Additional Dependencies
 
 //#pragma comment (lib, "Normaliz.lib")
 //#pragma comment (lib, "Ws2_32.lib")

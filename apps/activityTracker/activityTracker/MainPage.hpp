@@ -1,6 +1,7 @@
 #ifndef MAIN_PAGE_HPP
 #define MAIN_PAGE_HPP
 
+#include <functional>
 #include <wx/wx.h>
 #include "wx/notebook.h"
 
@@ -8,9 +9,10 @@
 
 class MainPage : public wxScrolledWindow {
 public:
-    MainPage(wxNotebook* parent, ConfigManager& configManager);
+    MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction);
 private:
     ConfigManager& configManager;
+    std::function<void()> forceCloseApp;
 
     void setupUI();
 
