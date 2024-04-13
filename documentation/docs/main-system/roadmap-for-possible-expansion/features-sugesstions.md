@@ -16,7 +16,7 @@ There could be a cloud sharing service running on a publicly accessible network 
 
 ### Possible Use Case
 
-Among the example apps, we have a [calendar app](../../example-apps/calendar-pro/introduction).
+Among the example apps, we have a [calendar app](../../example-apps/calendar-pro/walkthrough).
 
 There could be a scenario where you and your colleague want to meet up for some business or any other activity. you have multiple types of events such as events for work, hobby, etc. and you want to reach agreement as to when to meet. this can be pretty tedious task as you are available on monday 4 pm, he is not, he is available on tuesday, 5pm but you are not. You know this.
 
