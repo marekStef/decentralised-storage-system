@@ -2,6 +2,8 @@
 #define CONFIGMANAGER_H
 
 #include <wx/fileconf.h>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 const wxString CONFIG_FILE_PATH = "configg.ini";
 
@@ -47,6 +49,7 @@ public:
 
     wxString GetDirectoryForAppsInfo() const;
     wxString GetDirectoryForScreenshots() const;
+    fs::path GetDirectoryForKeyPresses() const;
 
     int GetPeriodicityForScreenshots() const;
     void SetPeriodicityForScreenshots(int periodicity);

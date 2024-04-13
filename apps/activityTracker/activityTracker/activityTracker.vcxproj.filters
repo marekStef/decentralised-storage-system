@@ -61,6 +61,12 @@
     <Filter Include="Source Files\activityTracking\Screenshots">
       <UniqueIdentifier>{f948b6ac-c313-431b-88ca-30ce503bce75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\activityTracking\KeyPresses">
+      <UniqueIdentifier>{312e053a-82a2-40e0-aa9c-050e4dee191f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\activityTracking\KeyPresses">
+      <UniqueIdentifier>{c7ef47ac-6dde-4c3f-901f-ad96a4220310}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -107,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="ScreenshotsThread.cpp">
       <Filter>Source Files\activityTracking\Screenshots</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyPressesManager.cpp">
+      <Filter>Source Files\activityTracking\KeyPresses</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="ScreenshotsThread.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyPressesManager.hpp">
+      <Filter>Header Files\activityTracking\KeyPresses</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

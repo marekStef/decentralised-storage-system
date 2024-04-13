@@ -140,6 +140,7 @@
     <ClCompile Include="dataStorageSetupNetworkHelpers.cpp" />
     <ClCompile Include="ExistingSetupPage.cpp" />
     <ClCompile Include="InitialSetupPage.cpp" />
+    <ClCompile Include="KeyPressesManager.cpp" />
     <ClCompile Include="MainApp.cpp" />
     <ClCompile Include="MainFrame1.cpp" />
     <ClCompile Include="MainFrame.hpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="generalHelpers.hpp" />
     <ClInclude Include="InitialSetupPage.hpp" />
     <ClInclude Include="JsonHelpers.hpp" />
+    <ClInclude Include="KeyPressesManager.hpp" />
     <ClInclude Include="MainApp.hpp" />
     <ClInclude Include="MainPage.hpp" />
     <ClInclude Include="ScreenshotsManager.hpp" />

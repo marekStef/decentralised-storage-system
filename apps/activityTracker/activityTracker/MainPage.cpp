@@ -13,6 +13,7 @@
 #include "timeHelpers.hpp"
 
 #include "ScreenshotsThread.hpp"
+#include "KeyPressesManager.hpp"
 
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction) 
     : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
@@ -26,6 +27,7 @@ MainPage::~MainPage() {
     if (screenshotsThread && screenshotsThread->IsRunning()) {
         screenshotsThread->Delete(); // to properly stop the screenshots thread
     }
+    keyPressesManager->End();
 }
 
 void MainPage::setupUI() {
@@ -55,11 +57,17 @@ void MainPage::setupUI() {
         "Screenshots Gathering works without the app being set up with the storage system.\nJust set periodicity and screenshots dir in the settings."
     );
     screenshotsGatheringSizer->Add(screenshotsGeneralInformationText, 0, wxALL, 5);
-
     startGatheringScreenshotsButton = new wxButton(this, wxID_ANY, "Start Gathering Screenshots");
     screenshotsGatheringSizer->Add(startGatheringScreenshotsButton, 0, wxALIGN_CENTER | wxALL, 10);
     startGatheringScreenshotsButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringScreenshotsButtonClick, this);
     sizer->Add(screenshotsGatheringSizer, 0, wxEXPAND | wxALL, 10);
+
+
+    wxStaticBoxSizer* keyPressesGatheringSizer = new wxStaticBoxSizer(wxVERTICAL, this, "KeyPresses Gathering");
+    wxButton* startGatheringKeyPressesButton = new wxButton(this, wxID_ANY, "Start Gathering Key Presses");
+    keyPressesGatheringSizer->Add(startGatheringKeyPressesButton, 0, wxALIGN_CENTER | wxALL, 10);
+    startGatheringKeyPressesButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringKeyPressesButtonClick, this);
+    sizer->Add(keyPressesGatheringSizer, 0, wxEXPAND | wxALL, 10);
 
 
     wxButton* exitAppButton = new wxButton(this, wxID_ANY, wxT("EXIT APP"));
@@ -174,4 +182,9 @@ void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
         screenshotsThread = nullptr;
         startGatheringScreenshotsButton->SetLabel("Start Gathering Screenshots");
     }
+}
+
+void MainPage::StartGatheringKeyPressesButtonClick(wxCommandEvent& event) {
+    keyPressesManager = KeyPressesManager::CreateManagerInstance();
+    keyPressesManager->Start(configManager.GetDirectoryForKeyPresses());
 }

@@ -1,6 +1,9 @@
 #include "ConfigManager.hpp"
 #include "timeHelpers.hpp"
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
 ConfigManager::ConfigManager()
     : config(new wxFileConfig(wxEmptyString, wxEmptyString, CONFIG_FILE_PATH, wxEmptyString, wxCONFIG_USE_LOCAL_FILE)) {
     LoadConfig();
@@ -104,6 +107,15 @@ wxString ConfigManager::GetDirectoryForScreenshots() const {
     dir.AppendDir("screenshots");
     dir.AppendDir(GetCurrentDateForPath());
     return dir.GetFullPath();
+}
+
+fs::path ConfigManager::GetDirectoryForKeyPresses() const {
+    fs::path dir = fs::path(GetDirectory().ToStdString());
+    if (dir.empty()) return {};
+
+    dir /= "keypresses";
+    dir /= "1.txt";
+    return dir;
 }
 
 int ConfigManager::GetPeriodicityForScreenshots() const { return periodicityForScreenshots; } // in milliseconds

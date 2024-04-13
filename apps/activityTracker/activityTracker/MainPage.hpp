@@ -4,9 +4,11 @@
 #include <functional>
 #include <wx/wx.h>
 #include "wx/notebook.h"
+#include <memory>
 
 #include "ConfigManager.hpp"
 #include "ScreenshotsThread.hpp"
+#include "KeyPressesManager.hpp"
 
 class MainPage : public wxScrolledWindow {
 public:
@@ -34,6 +36,11 @@ private:
     // screenshots related
     ScreenshotsThread* screenshotsThread = nullptr;
     wxButton* startGatheringScreenshotsButton;
+
+    // keypresses related
+    std::shared_ptr<KeyPressesManager> keyPressesManager;
+    void StartGatheringKeyPressesButtonClick(wxCommandEvent& event);
+
 };
 
 #endif // MAIN_PAGE_HPP
