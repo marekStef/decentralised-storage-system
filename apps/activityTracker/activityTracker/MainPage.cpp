@@ -22,6 +22,12 @@ MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::functi
     this->Bind(wxEVT_TIMER, [this](wxTimerEvent& event) { this->PeriodicDataGatheringFunction(); }, timer->GetId());
 }
 
+MainPage::~MainPage() {
+    if (screenshotsThread && screenshotsThread->IsRunning()) {
+        screenshotsThread->Delete(); // to properly stop the screenshots thread
+    }
+}
+
 void MainPage::setupUI() {
     this->SetScrollbars(20, 10, 50, 100);
     this->SetTransparent(245);
@@ -50,7 +56,7 @@ void MainPage::setupUI() {
     );
     screenshotsGatheringSizer->Add(screenshotsGeneralInformationText, 0, wxALL, 5);
 
-    wxButton* startGatheringScreenshotsButton = new wxButton(this, wxID_ANY, "Start Gathering Screenshots");
+    startGatheringScreenshotsButton = new wxButton(this, wxID_ANY, "Start Gathering Screenshots");
     screenshotsGatheringSizer->Add(startGatheringScreenshotsButton, 0, wxALIGN_CENTER | wxALL, 10);
     startGatheringScreenshotsButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringScreenshotsButtonClick, this);
     sizer->Add(screenshotsGatheringSizer, 0, wxEXPAND | wxALL, 10);
@@ -134,6 +140,19 @@ void MainPage::startPeriodicDataGathering() {
 //    screenshots_manager.take_screenshots_of_all_screens();
 //}
 
+//void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
+//    auto screenshotsDir = configManager.GetDirectoryForScreenshots();
+//    if (screenshotsDir.length() == 0) {
+//        wxMessageBox("You need to set directory where screenshots will be saved first in the settings", "Alert", wxOK | wxICON_INFORMATION);
+//        return;
+//    }
+//
+//    ScreenshotsThread* thread = new ScreenshotsThread(configManager);
+//    if (thread->Run() != wxTHREAD_NO_ERROR) {
+//        wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
+//    }
+//}
+
 void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
     auto screenshotsDir = configManager.GetDirectoryForScreenshots();
     if (screenshotsDir.length() == 0) {
@@ -141,9 +160,18 @@ void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
         return;
     }
 
-    ScreenshotsThread* thread = new ScreenshotsThread(configManager);
-    if (thread->Run() != wxTHREAD_NO_ERROR) {
-        wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
+    if (!screenshotsThread || !screenshotsThread->IsRunning()) {
+        screenshotsThread = new ScreenshotsThread(configManager);
+        if (screenshotsThread->Run() != wxTHREAD_NO_ERROR) {
+            wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
+        }
+        else {
+            startGatheringScreenshotsButton->SetLabel("Stop Gathering Screenshots");
+        }
+    }
+    else {
+        if (screenshotsThread) screenshotsThread->Delete();
+        screenshotsThread = nullptr;
+        startGatheringScreenshotsButton->SetLabel("Start Gathering Screenshots");
     }
 }
-
