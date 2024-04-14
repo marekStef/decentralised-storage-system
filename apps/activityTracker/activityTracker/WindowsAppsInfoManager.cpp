@@ -14,30 +14,30 @@
 #include "WindowInfo.hpp"
 
 void saveWindowsInfoToFile(const std::string& file_path) {
-    std::filesystem::path fs_path(file_path);
+    std::filesystem::path fsPath(file_path);
 
-    std::filesystem::path parent_path = fs_path.parent_path();
+    std::filesystem::path parentPath = fsPath.parent_path();
 
-    if (!parent_path.empty() && !std::filesystem::exists(parent_path)) {
-        std::filesystem::create_directories(parent_path);
+    if (!parentPath.empty() && !std::filesystem::exists(parentPath)) {
+        std::filesystem::create_directories(parentPath);
     }
 
-    std::wofstream file_out(file_path, std::wofstream::out);
+    std::wofstream fileOut(file_path, std::wofstream::out);
 
-    if (!file_out) {
+    if (!fileOut) {
         std::cerr << "Failed to open file at " << file_path << std::endl;
         return; // Ensure we don't proceed if file couldn't be opened
     }
 
-    auto windows_manager = WindowsAppsInfoManager();
+    auto windowsManager = WindowsAppsInfoManager();
 
-    for (const auto& window : windows_manager.get_windows_info()) {
-        file_out << window << std::endl; // Write to file instead of console
+    for (const auto& window : windowsManager.getWindowsInfo()) {
+        fileOut << window << std::endl; // Write to file instead of console
     }
 
-    file_out << L"\n\n***********************************\n\n\n";
+    fileOut << L"\n\n***********************************\n\n\n";
 
-    file_out.close(); // Close the file to flush any remaining output
+    fileOut.close(); // Close the file to flush any remaining output
 }
 
 std::wostream& operator<<(std::wostream& os, const WindowInfo& window_info) {
@@ -156,7 +156,7 @@ BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 }
 
 
-std::vector<WindowInfo> WindowsAppsInfoManager::get_windows_info() {
+std::vector<WindowInfo> WindowsAppsInfoManager::getWindowsInfo() {
     std::vector<WindowInfo> windows;
     EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&windows));
     return windows;

@@ -167,9 +167,6 @@
     <ClInclude Include="WindowInfo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="windowsAppsInfoNetworkHelpers.hpp">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
     <ClInclude Include="JsonHelpers.hpp">
       <Filter>Header Files\Network\JSON</Filter>
     </ClInclude>
@@ -189,7 +186,10 @@
       <Filter>Header Files\activityTracking\Screenshots</Filter>
     </ClInclude>
     <ClInclude Include="WindowsAppsInfoThread.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\activityTracking\WindowsAppsInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="windowsAppsInfoNetworkHelpers.hpp">
+      <Filter>Header Files\activityTracking\WindowsAppsInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

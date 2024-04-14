@@ -56,7 +56,7 @@ json serializeWindowsInfoToJson(const std::vector<WindowInfo>& windows_info, con
 
 void saveCurrentWindowsInfoToFile(const std::string& filePath, const std::string& createdDateInISO) {
 	auto windows_manager = WindowsAppsInfoManager();
-	auto windowsInfo = windows_manager.get_windows_info();
+	auto windowsInfo = windows_manager.getWindowsInfo();
 
 	json jsonResult = serializeWindowsInfoToJson(windowsInfo, createdDateInISO);
 

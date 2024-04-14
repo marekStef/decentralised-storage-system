@@ -15,7 +15,7 @@ std::wostream& operator<<(std::wostream& os, const WindowInfo& window_info);
 
 class WindowsAppsInfoManager {
 public:
-    std::vector<WindowInfo> get_windows_info();
+    std::vector<WindowInfo> getWindowsInfo();
 };
 
 void saveWindowsInfoToFile(const std::string& file_path);
