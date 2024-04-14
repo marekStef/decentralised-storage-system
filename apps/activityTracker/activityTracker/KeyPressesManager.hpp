@@ -18,17 +18,17 @@ public:
 	void Start(const std::filesystem::path& filepath);
 	void End();
 private:
-	static std::ofstream log_file_;
+	static std::ofstream logFile_;
 	static std::shared_ptr<KeyPressesManager> instance_;
 	static std::atomic_bool running_;
-	static DWORD message_loop_thread_id_;
+	static DWORD messageLoopThreadId_;
 
 
-	void unset_global_keyboard_hook();
-	void set_global_keyboard_hook();
-	static LRESULT CALLBACK low_level_keyboard_press_callback(int nCode, WPARAM wParam, LPARAM lParam);
+	void unsetGlobalKeyboardHook();
+	void setGlobalKeyboardHook();
+	static LRESULT CALLBACK lowLevelKeyboardPressCallback(int nCode, WPARAM wParam, LPARAM lParam);
 
-	void message_loop_thread();
+	void messageLoopThread();
 };
 
 #endif // !_KEY_PRESSES_MANAGER_HPP_
