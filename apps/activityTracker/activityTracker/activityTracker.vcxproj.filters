@@ -67,6 +67,12 @@
     <Filter Include="Header Files\activityTracking\KeyPresses">
       <UniqueIdentifier>{c7ef47ac-6dde-4c3f-901f-ad96a4220310}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\activityTracking\Network">
+      <UniqueIdentifier>{46c90e34-2846-465e-8a6b-6fea85a85878}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\activityTracking\Network">
+      <UniqueIdentifier>{907379c9-c4a6-4d78-8f9b-93b988b561e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainApp.cpp">
@@ -119,6 +125,12 @@
     </ClCompile>
     <ClCompile Include="WindowsAppsInfoThread.cpp">
       <Filter>Source Files\activityTracking\WindowsAppsInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.hpp">
+      <Filter>Header Files\activityTracking\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>Source Files\activityTracking\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

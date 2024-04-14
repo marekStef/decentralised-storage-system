@@ -1,3 +1,10 @@
+## Setting Up And Building the Project
+
+### Preqrequisites
+
+- **Windows 10 or later**
+- **Visaul Studio 2019 or later:** Ensure you have Visual Studio with C++ development tools installed
+
 You need to have a vcpkg installed on your computer in a directory such as `C:\dev`. You need to have visual studio build tools installed.
 
 ```bash
@@ -63,7 +70,7 @@ For more information, see the docs here:
 
 ```
 
-Lastly, we need `Graphic Device Interface Plus (GDI+)` for getting and saving screenshots of all monitors.
+We also need `Graphic Device Interface Plus (GDI+)` for getting and saving screenshots of all monitors.
 
 To be able to compile this project successfully, you need to have:
 - Visual Studio installed with the `Desktop Development with C++`
@@ -71,7 +78,9 @@ To be able to compile this project successfully, you need to have:
 
 In `Project > Properties > Linker > Input > Addition Dependencies`, check that the list contains `gdiplus.lib`.
 
-Now we are able to use run the project.
+Lastly, we need `Wlanapi.lib`. This is also provided by Windows SDK so if u followed the previous step, you are free to go! Note: `Wlanapi.lib` is also included among `Additional Dependencies` in the Linker settings of Visual Studio solution.
+
+Now we are able to use run the project by building it in the menu.
 
 --- 
 

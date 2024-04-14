@@ -11,10 +11,12 @@
 #include "WindowsAppsInfoThread.hpp"
 #include "ScreenshotsThread.hpp"
 #include "KeyPressesManager.hpp"
+#include "NetworkManager.hpp"
 
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction) 
     : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
     setupUI();
+    loadData();
 
     keyPressesManager = KeyPressesManager::CreateManagerInstance();
 }
@@ -61,6 +63,10 @@ void MainPage::setupUI() {
     gatheringKeypressesButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringKeyPressesButtonClick, this);
     sizer->Add(keyPressesGatheringSizer, 0, wxEXPAND | wxALL, 10);
 
+    wxStaticBoxSizer* currentNetworkSSIDsSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Currently Connected-to Network SSIDs");
+    ssidList = new wxListBox(this, wxID_ANY);
+    currentNetworkSSIDsSizer->Add(ssidList, 0, wxEXPAND | wxALL, 10);
+    sizer->Add(currentNetworkSSIDsSizer, 0, wxEXPAND | wxALL, 10);
 
     wxButton* exitAppButton = new wxButton(this, wxID_ANY, wxT("EXIT APP"));
     sizer->Add(exitAppButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
@@ -70,6 +76,15 @@ void MainPage::setupUI() {
     this->Layout();
 }
 
+void MainPage::loadData() {
+    NetworkManager networkManager;
+
+    std::vector<std::string> network_ssids = networkManager.getCurrentSSIDs();
+    ssidList->Clear();
+    for (auto& ssid : network_ssids) {
+        ssidList->Append(ssid);
+    }
+}
 
 void MainPage::CloseApplication(wxCommandEvent& event) {
     forceCloseApp();

@@ -10,6 +10,7 @@
 #include "ScreenshotsThread.hpp"
 #include "KeyPressesManager.hpp"
 #include "WindowsAppsInfoThread.hpp"
+#include "NetworkManager.hpp"
 
 class MainPage : public wxScrolledWindow {
 public:
@@ -20,6 +21,7 @@ private:
     std::function<void()> forceCloseApp;
 
     void setupUI();
+    void loadData();
 
     void CloseApplication(wxCommandEvent& event);
 
@@ -42,6 +44,9 @@ private:
     wxButton* gatheringKeypressesButton;
     std::shared_ptr<KeyPressesManager> keyPressesManager;
     void StartGatheringKeyPressesButtonClick(wxCommandEvent& event);
+
+    // network ssids related
+    wxListBox* ssidList;
 
 };
 
