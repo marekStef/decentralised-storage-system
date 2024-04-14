@@ -1,19 +1,12 @@
-from app import app
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint, current_app
 from werkzeug.utils import secure_filename
 import os
 import uuid
+import shutil
 
-MAIN_FILE_NAME = 'main.py'
+code_registration_bp = Blueprint('codeRegistration', __name__)
 
-UPLOAD_FOLDER = 'uploads/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024 # maximum allowed payload 10 MB
-
-@app.route('/uploadNewSourceCode', methods=['POST'])
+@code_registration_bp.route('/uploadNewSourceCode', methods=['POST'])
 def upload_file():
     if len(request.files) == 0:
         return jsonify({'message': 'No files sent'}), 400
@@ -26,7 +19,7 @@ def upload_file():
             return jsonify({'message': 'All files must be python files'}), 400
 
     # Check that exactly one file is named main.py
-    main_py_count = sum(1 for file in files if file.filename == MAIN_FILE_NAME)
+    main_py_count = sum(1 for file in files if file.filename == current_app.config['MAIN_FILE_NAME'])
     if main_py_count != 1:
         return jsonify({'message': 'Exactly one file must be named main.py'}), 400
     
@@ -34,7 +27,7 @@ def upload_file():
     print(len(files))
 
     source_code_id = str(uuid.uuid4())
-    unique_dir_name = os.path.join(app.config['UPLOAD_FOLDER'], source_code_id)
+    unique_dir_name = os.path.join(current_app.config['UPLOAD_FOLDER'], source_code_id)
 
     os.makedirs(unique_dir_name, exist_ok=True)
 
@@ -52,9 +45,9 @@ def upload_file():
 
     return jsonify({'message': 'Files uploaded successfully', 'sourceCodeId': source_code_id, 'filenames': uploaded_files}), 200
 
-@app.route('/sourceCodes/<sourceCodeId>', methods=['GET'])
+@code_registration_bp.route('/sourceCodes/<sourceCodeId>', methods=['GET'])
 def get_source_code(sourceCodeId):
-    source_code_directory = os.path.join(UPLOAD_FOLDER, sourceCodeId)
+    source_code_directory = os.path.join(current_app.config['UPLOAD_FOLDER'], sourceCodeId)
 
     if not os.path.exists(source_code_directory):
         return jsonify({'message': 'Source code not found.'}), 404
@@ -77,8 +70,16 @@ def get_source_code(sourceCodeId):
         print('Failed to read source code files:', str(e))
         return jsonify({'message': 'Something went wrong while retrieving the source code'}), 500
 
-@app.route('/execute', methods=['POST'])
-def execute_code():
-    code = request.json.get('code', '')
-    print(f"Executing Python code: {code}")
-    return jsonify({"result": "Code executed", "code": code})
+@code_registration_bp.route('/sourceCodes/<sourceCodeId>', methods=['DELETE'])
+def delete_source_code(sourceCodeId):
+    source_code_directory = os.path.join(current_app.config['UPLOAD_FOLDER'], sourceCodeId)
+
+    if not os.path.exists(source_code_directory):
+        return jsonify({'message': 'Source code not found.'}), 404
+
+    try:
+        shutil.rmtree(source_code_directory)
+        return jsonify({'message': 'Source code deleted successfully.'}), 200
+    except Exception as e:
+        print('Failed to delete source code:', str(e))
+        return jsonify({'message': 'Something went wrong during the deletion process.'}), 500
