@@ -8,8 +8,5 @@ Dokumentace celeho projektu se nachazi [zde](./documentation)
 
 ---
 
-### Overleaf link: 
-`https://www.overleaf.com/read/hwhprkczkqpj#fe99fd`
-
-### Design in Figma: 
-`https://www.figma.com/file/6sM6QS9BgGvkaSwjPg2iqR/Managify?type=design&node-id=0%3A1&t=xgImJRXXdyZQrjTp-1`
+<!-- ### Design in Figma: 
+`https://www.figma.com/file/6sM6QS9BgGvkaSwjPg2iqR/Managify?type=design&node-id=0%3A1&t=xgImJRXXdyZQrjTp-1` -->
