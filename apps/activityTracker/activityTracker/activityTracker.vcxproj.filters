@@ -117,6 +117,9 @@
     <ClCompile Include="KeyPressesManager.cpp">
       <Filter>Source Files\activityTracking\KeyPresses</Filter>
     </ClCompile>
+    <ClCompile Include="WindowsAppsInfoThread.cpp">
+      <Filter>Source Files\activityTracking\WindowsAppsInfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApp.hpp">
@@ -167,11 +170,14 @@
     <ClInclude Include="ScreenshotsManagerConstants.hpp">
       <Filter>Header Files\activityTracking\Screenshots</Filter>
     </ClInclude>
-    <ClInclude Include="ScreenshotsThread.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyPressesManager.hpp">
       <Filter>Header Files\activityTracking\KeyPresses</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenshotsThread.hpp">
+      <Filter>Header Files\activityTracking\Screenshots</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsAppsInfoThread.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

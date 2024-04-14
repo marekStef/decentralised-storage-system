@@ -151,6 +151,7 @@
     <ClCompile Include="timeHelpers.hpp" />
     <ClCompile Include="WindowsAppsInfoManager.cpp" />
     <ClCompile Include="windowsAppsInfoNetworkHelpers.cpp" />
+    <ClCompile Include="WindowsAppsInfoThread.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="automaticStartupHelpers.hpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="WindowInfo.hpp" />
     <ClInclude Include="WindowsAppsInfoManager.hpp" />
     <ClInclude Include="windowsAppsInfoNetworkHelpers.hpp" />
+    <ClInclude Include="WindowsAppsInfoThread.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon.ico" />

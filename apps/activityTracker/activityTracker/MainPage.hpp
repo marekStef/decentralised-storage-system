@@ -9,6 +9,7 @@
 #include "ConfigManager.hpp"
 #include "ScreenshotsThread.hpp"
 #include "KeyPressesManager.hpp"
+#include "WindowsAppsInfoThread.hpp"
 
 class MainPage : public wxScrolledWindow {
 public:
@@ -20,24 +21,24 @@ private:
 
     void setupUI();
 
-    void OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event);
-
     void CloseApplication(wxCommandEvent& event);
 
     wxStaticText* lastRunTimeDisplay;
 
     wxTimer* timer; // Timer to trigger the periodic execution function of fetching info about windows apps
 
+    // windows apps info related
     void StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event);
-    void StartGatheringScreenshotsButtonClick(wxCommandEvent& event);
-    void PeriodicDataGatheringFunction();
-    void startPeriodicDataGathering();
+    wxButton* toggleGatheringWindowsAppsInfoButton;
+    WindowsAppsInfoThread* windowsAppsInfoThread = nullptr;
 
     // screenshots related
+    void StartGatheringScreenshotsButtonClick(wxCommandEvent& event);
     ScreenshotsThread* screenshotsThread = nullptr;
     wxButton* startGatheringScreenshotsButton;
 
     // keypresses related
+    bool isKeyPressesLoggingRunning = false;
     wxButton* gatheringKeypressesButton;
     std::shared_ptr<KeyPressesManager> keyPressesManager;
     void StartGatheringKeyPressesButtonClick(wxCommandEvent& event);

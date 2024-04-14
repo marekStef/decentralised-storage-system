@@ -3,15 +3,12 @@
 #include "constants.hpp"
 
 #include "MainPage.hpp"
-#include "WindowsAppsInfoManager.hpp"
-#include "generalHelpers.hpp"
-
-#include "windowsAppsInfoNetworkHelpers.hpp"
 #include "JsonHelpers.hpp"
 #include "nlohmann/json.hpp"
 
 #include "timeHelpers.hpp"
 
+#include "WindowsAppsInfoThread.hpp"
 #include "ScreenshotsThread.hpp"
 #include "KeyPressesManager.hpp"
 
@@ -19,8 +16,7 @@ MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::functi
     : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
     setupUI();
 
-    // bind timer event
-    this->Bind(wxEVT_TIMER, [this](wxTimerEvent& event) { this->PeriodicDataGatheringFunction(); }, timer->GetId());
+    keyPressesManager = KeyPressesManager::CreateManagerInstance();
 }
 
 MainPage::~MainPage() {
@@ -37,16 +33,12 @@ void MainPage::setupUI() {
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticBoxSizer* windowsOpenedAppsSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Windows opened apps info gathering");
-    wxButton* openedWindowsAppsGatheringButton = new wxButton(this, wxID_ANY, "Start Windows Apps Info Gathering");
-    windowsOpenedAppsSizer->Add(openedWindowsAppsGatheringButton, 0, wxALIGN_CENTER | wxALL, 10);
-    openedWindowsAppsGatheringButton->Bind(wxEVT_BUTTON, &MainPage::StartOpenedWindowsAppsGatheringButtonClick, this);
+    toggleGatheringWindowsAppsInfoButton = new wxButton(this, wxID_ANY, "Start Windows Apps Info Gathering");
+    windowsOpenedAppsSizer->Add(toggleGatheringWindowsAppsInfoButton, 0, wxALIGN_CENTER | wxALL, 10);
+    toggleGatheringWindowsAppsInfoButton->Bind(wxEVT_BUTTON, &MainPage::StartOpenedWindowsAppsGatheringButtonClick, this);
 
-    wxButton* fetchAllAppsButton = new wxButton(this, wxID_ANY, wxT("Fetch All Apps Info Now Manually"));
-    windowsOpenedAppsSizer->Add(fetchAllAppsButton, 0, wxALIGN_CENTER | wxBOTTOM, 10);
-    fetchAllAppsButton->Bind(wxEVT_BUTTON, &MainPage::OnFetchAllWindowsAppsInfoButtonClick, this);
-
-    lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last gathering time: Never Since The App's Start");
-    windowsOpenedAppsSizer->Add(lastRunTimeDisplay, 0, wxALL, 5);
+    /*lastRunTimeDisplay = new wxStaticText(this, wxID_ANY, "Last gathering time: Never Since The App's Start");
+    windowsOpenedAppsSizer->Add(lastRunTimeDisplay, 0, wxALL, 5);*/
 
     sizer->Add(windowsOpenedAppsSizer, 0, wxEXPAND | wxALL, 10);
 
@@ -78,22 +70,6 @@ void MainPage::setupUI() {
     this->Layout();
 }
 
-void saveAllCurrentlyOpenedWindowsInfo(const wxString& appsInfoDir) {
-    wxString fileName = getCurrentTimeInIso() + ".json";
-    wxFileName filePath(appsInfoDir, fileName);
-    saveCurrentWindowsInfoToFile(filePath.GetFullPath().ToStdString(), GetCurrentISODate());
-    wxMessageBox("Finished exporting to" + filePath.GetFullPath().ToStdString(), "Alert", wxOK | wxICON_INFORMATION);
-}
-
-void MainPage::OnFetchAllWindowsAppsInfoButtonClick(wxCommandEvent& event) {
-    auto appsInfoDir = configManager.GetDirectoryForAppsInfo();
-    if (appsInfoDir.length() == 0) {
-        wxMessageBox("You need to set default directory first in the settings", "Alert", wxOK | wxICON_INFORMATION);
-        return;
-    }
-    
-    saveAllCurrentlyOpenedWindowsInfo(appsInfoDir);
-}
 
 void MainPage::CloseApplication(wxCommandEvent& event) {
     forceCloseApp();
@@ -110,56 +86,21 @@ void MainPage::StartOpenedWindowsAppsGatheringButtonClick(wxCommandEvent& event)
         return;
     }
 
-    startPeriodicDataGathering();
-}
-
-void MainPage::PeriodicDataGatheringFunction() { // wxTimerEvent& event
-    auto appsInfoDir = configManager.GetDirectoryForAppsInfo();
-    if (appsInfoDir.length() == 0) {
-        return;
+    if (!windowsAppsInfoThread || !windowsAppsInfoThread->IsRunning()) {
+        windowsAppsInfoThread = new WindowsAppsInfoThread(configManager);
+        if (windowsAppsInfoThread->Run() != wxTHREAD_NO_ERROR) {
+            wxMessageBox("Failed to start the windows apps info gathering thread!", "Error", wxOK | wxICON_ERROR);
+        }
+        else {
+            toggleGatheringWindowsAppsInfoButton->SetLabel("Stop Gathering Windows Apps Info");
+        }
     }
-
-    saveAllCurrentlyOpenedWindowsInfo(appsInfoDir);
-
-    tryToSendUnsynchronisedEventsFilesToDataStorageServer(
-        configManager.GetServerAddress().ToStdString(),
-        configManager.GetServerPort().ToStdString(),
-        configManager.GetActivityTrackerEventAccessToken().ToStdString(),
-        appsInfoDir.ToStdString()
-    );
-
-    wxDateTime currentTime = wxDateTime::Now();
-    wxString timeString = currentTime.Format("%Y-%m-%d %H:%M:%S");
-    lastRunTimeDisplay->SetLabel(wxString::Format("Last run: %s", timeString));
+    else {
+        if (windowsAppsInfoThread) windowsAppsInfoThread->Delete();
+        windowsAppsInfoThread = nullptr;
+        toggleGatheringWindowsAppsInfoButton->SetLabel("Start Gathering Windows Apps Info");
+    }
 }
-
-void MainPage::startPeriodicDataGathering() {
-    PeriodicDataGatheringFunction();
-    timer->Start(configManager.GetPeriodicityForFetchingAppsInfo());
-}
-
-//void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
-//    auto screenshotsDir = configManager.GetDirectoryForScreenshots();
-//    if (screenshotsDir.length() == 0) {
-//        return;
-//    }
-//    wxMessageBox(screenshotsDir, "Alert", wxOK | wxICON_INFORMATION);
-//    ScreenshotsManager screenshots_manager(screenshotsDir.ToStdString());
-//    screenshots_manager.take_screenshots_of_all_screens();
-//}
-
-//void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
-//    auto screenshotsDir = configManager.GetDirectoryForScreenshots();
-//    if (screenshotsDir.length() == 0) {
-//        wxMessageBox("You need to set directory where screenshots will be saved first in the settings", "Alert", wxOK | wxICON_INFORMATION);
-//        return;
-//    }
-//
-//    ScreenshotsThread* thread = new ScreenshotsThread(configManager);
-//    if (thread->Run() != wxTHREAD_NO_ERROR) {
-//        wxMessageBox("Failed to start the screenshots gathering thread!", "Error", wxOK | wxICON_ERROR);
-//    }
-//}
 
 void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
     auto screenshotsDir = configManager.GetDirectoryForScreenshots();
@@ -185,6 +126,16 @@ void MainPage::StartGatheringScreenshotsButtonClick(wxCommandEvent& event) {
 }
 
 void MainPage::StartGatheringKeyPressesButtonClick(wxCommandEvent& event) {
-    keyPressesManager = KeyPressesManager::CreateManagerInstance();
-    keyPressesManager->Start(configManager.GetDirectoryForKeyPresses());
+    if (!keyPressesManager) return;
+
+    if (isKeyPressesLoggingRunning) {
+        isKeyPressesLoggingRunning = false;
+        keyPressesManager->End();
+        gatheringKeypressesButton->SetLabel("Start Gathering Key Presses");
+    }
+    else {
+        isKeyPressesLoggingRunning = true;
+        keyPressesManager->Start(configManager.GetDirectoryForKeyPresses() / (GetCurrentDateForPath() + ".txt"));
+        gatheringKeypressesButton->SetLabel("Stop Gathering Key Presses");
+    }
 }

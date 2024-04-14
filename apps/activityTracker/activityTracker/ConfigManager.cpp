@@ -114,7 +114,6 @@ fs::path ConfigManager::GetDirectoryForKeyPresses() const {
     if (dir.empty()) return {};
 
     dir /= "keypresses";
-    dir /= "1.txt";
     return dir;
 }
 
