@@ -33,7 +33,7 @@
     Helper functions [START]
 */
 
-std::string generate_unique_image_name(size_t index) {
+std::string generateUniqueImageName(size_t index) {
     auto now = std::chrono::system_clock::now();
     auto now_sec = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch());
     auto now_sec_str = std::to_string(now_sec.count());
@@ -48,7 +48,7 @@ std::string generate_unique_image_name(size_t index) {
     return ss.str();
 }
 
-void create_folder_if_not_exists(const std::filesystem::path& path) {
+void createFolderIfNotAlreadyExists(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path)) {
         // Create the folder
         if (std::filesystem::create_directory(path)) {
@@ -100,11 +100,11 @@ ScreenshotsManager::ScreenshotsManager() {
         SetProcessDPIAware(); // fallback
     }
 
-    encoder_params.Count = 1;
-    encoder_params.Parameter[0].Guid = Gdiplus::EncoderQuality;
-    encoder_params.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
-    encoder_params.Parameter[0].NumberOfValues = 1;
-    encoder_params.Parameter[0].Value = &IMAGE_QUALITY_LEVEL;
+    encoderParams.Count = 1;
+    encoderParams.Parameter[0].Guid = Gdiplus::EncoderQuality;
+    encoderParams.Parameter[0].Type = Gdiplus::EncoderParameterValueTypeLong;
+    encoderParams.Parameter[0].NumberOfValues = 1;
+    encoderParams.Parameter[0].Value = &IMAGE_QUALITY_LEVEL;
 };
 
 /// <summary>
@@ -140,7 +140,7 @@ BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMoni
 ///     Enumerates all the monitors connected to the system and stores their information for later use
 /// </summary>
 /// <returns>vector of information about each monitor</returns>
-std::vector<MonitorInfo> ScreenshotsManager::get_all_monitors() const {
+std::vector<MonitorInfo> ScreenshotsManager::getAllMonitors() const {
     std::vector<MonitorInfo> monitors;
     BOOL result = EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&monitors);
     if (!result)
@@ -166,7 +166,7 @@ bool compare_wide_character_strings(const wchar_t* str1, const wchar_t* str2) {
 /// <param name="format">Encoder with MIME type set to format is returned</param>
 /// <param name="pClsid"></param>
 /// <returns>-1 if encoder with mime type equal to format not found. Other number otherwise.</returns>
-void get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
+void getEncoderClsid(const WCHAR* format, CLSID* pClsid) {
     if (format == nullptr || pClsid == nullptr)
         throw std::invalid_argument(PARAMETER_NULL_MESSAGE);
     UINT num = 0;
@@ -210,7 +210,7 @@ void get_encoder_clsid(const WCHAR* format, CLSID* pClsid) {
 /// </summary>
 /// <param name="monitorInfo"></param>
 /// <param name="monitorIndex"></param>
-void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const std::filesystem::path& output_filename) const {
+void ScreenshotsManager::captureMonitor(const MonitorInfo& monitorInfo, const std::filesystem::path& output_filename) const {
     // A Device Context (DC) is a Windows construct that represents a set of graphic objects and their 
     // associated attributes, along with the graphic modes that affect output. 
     //  The DC is an abstraction that allows applications to draw on devices like monitors, printers, 
@@ -270,9 +270,9 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const s
 
         Gdiplus::Bitmap bitmap(hBitmap, nullptr);
         CLSID bmpClsid;
-        get_encoder_clsid(DESIRED_OUTPUT_IMAGE_MIME_TYPE, &bmpClsid);
+        getEncoderClsid(DESIRED_OUTPUT_IMAGE_MIME_TYPE, &bmpClsid);
         const wchar_t* output_filename_wchar_pointer = output_filename.c_str();
-        Gdiplus::Status result = bitmap.Save(output_filename_wchar_pointer, &bmpClsid, &encoder_params);
+        Gdiplus::Status result = bitmap.Save(output_filename_wchar_pointer, &bmpClsid, &encoderParams);
         if (result != Gdiplus::Ok)
             throw std::runtime_error(FAILED_TO_SAVE_BITMAP_MESSAGE);
     }
@@ -296,9 +296,9 @@ void ScreenshotsManager::capture_monitor(const MonitorInfo& monitorInfo, const s
 /// </summary>
 /// <param name="output_dir">Directory where images will be saved</param>
 /// <returns>vector of output filepaths</returns>
-std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_screens(const std::filesystem::path& output_directory) const {
+std::vector<std::filesystem::path> ScreenshotsManager::takeScreenshotsOfAllScreens(const std::filesystem::path& output_directory) const {
     // check if the output directory where images are about to be stored exists, otherwise create one
-    create_folder_if_not_exists(output_directory);
+    createFolderIfNotAlreadyExists(output_directory);
 
     // GDI+ requires initialization before any GDI+ functions or classes are used and a corresponding shutdown 
     // when those operations are complete. 
@@ -307,14 +307,14 @@ std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_s
     Gdiplus::Status result = GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
     // After calling GdiplusStartup, GDI+ functionalities are available globally within the application process.
 
-    auto monitors = get_all_monitors();
+    auto monitors = getAllMonitors();
 
     std::vector<std::filesystem::path> output_filepaths;
     for (size_t i = 0; i < monitors.size(); ++i) {
-        std::filesystem::path image_name = generate_unique_image_name(i);
+        std::filesystem::path image_name = generateUniqueImageName(i);
 
         std::filesystem::path path_to_output_image = output_directory / image_name;
-        capture_monitor(monitors[i], path_to_output_image);
+        captureMonitor(monitors[i], path_to_output_image);
         output_filepaths.push_back(path_to_output_image);
     }
 
@@ -343,13 +343,13 @@ std::vector<std::filesystem::path> ScreenshotsManager::take_screenshots_of_all_s
 ///     user-provided pointer where you can store the data that libcurl passes to this callback.
 /// </param>
 /// <returns></returns>
-size_t curl_response_data_write_callback(void* contents, size_t size, size_t nmemb, std::string* user_buffer) {
+size_t curlResponseDataWriteCallback(void* contents, size_t size, size_t nmemb, std::string* user_buffer) {
     size_t real_size = size * nmemb; // Multiplying nmemb by size gives you the total size of the data block in bytes.
     user_buffer->append((char*)contents, real_size);
     return real_size;
 }
 
-std::vector<std::string> parse_response_json_from_server_after_uploading_images(const std::string& response_read_buffer_data) {
+std::vector<std::string> parseResponseJsonFromServerAfterUploadingImages(const std::string& response_read_buffer_data) {
     std::cout << "Response from the server: " << std::endl << response_read_buffer_data << std::endl << std::endl;
     std::vector<std::string> ids;
     try {
@@ -375,7 +375,7 @@ std::vector<std::string> parse_response_json_from_server_after_uploading_images(
 /// </summary>
 /// <param name="image_paths"></param>
 /// <returns></returns>
-bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::filesystem::path>& image_paths) const {
+bool ScreenshotsManager::uploadScreenshotsToServer(const std::vector<std::filesystem::path>& image_paths) const {
     CURL* curl;
     CURLcode res;
     curl_mime* form = NULL;
@@ -402,7 +402,7 @@ bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::fil
         curl_easy_setopt(curl, CURLOPT_MIMEPOST, form); // prepare a MIME-encoded POST request
 
         // Set the write callback function
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_response_data_write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlResponseDataWriteCallback);
         // Set the data structure (just a simple string in this case) to store the response
         std::string response_read_buffer_data;
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response_read_buffer_data); // instruct the curl to call my callback for reading incoming data as soon as some data is received
@@ -420,7 +420,7 @@ bool ScreenshotsManager::upload_screenshots_to_server(const std::vector<std::fil
         }
 
         // now parse the response which is going to be a json
-        std::vector<std::string> IDs_representing_uploaded_images_received_from_server = parse_response_json_from_server_after_uploading_images(response_read_buffer_data);
+        std::vector<std::string> IDs_representing_uploaded_images_received_from_server = parseResponseJsonFromServerAfterUploadingImages(response_read_buffer_data);
 
         std::cout << "Parsed ids representing uploaded screenshots received from server: " << std::endl;
         for (auto&& response_id_for_uploaded_image_from_server : IDs_representing_uploaded_images_received_from_server)

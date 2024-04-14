@@ -6,7 +6,6 @@
 #include <vector>
 #include "curl/curl.h"
 #include <windows.h>
-#pragma comment(lib, "gdiplus.lib")
 #include <gdiplus.h>
 
 inline ULONG IMAGE_QUALITY_LEVEL = 90; // Quality level between 0 and 100
@@ -22,15 +21,15 @@ struct MonitorInfo {
 class ScreenshotsManager {
 public:
 	ScreenshotsManager();
-	std::vector<std::filesystem::path> take_screenshots_of_all_screens(const std::filesystem::path& output_directory) const;
-	bool upload_screenshots_to_server(const std::vector<std::filesystem::path>& file_paths) const;
+	std::vector<std::filesystem::path> takeScreenshotsOfAllScreens(const std::filesystem::path& output_directory) const;
+	bool uploadScreenshotsToServer(const std::vector<std::filesystem::path>& file_paths) const;
 private:
-	std::filesystem::path output_dir_;
+	std::filesystem::path outputDir_;
 
-	Gdiplus::EncoderParameters encoder_params;
+	Gdiplus::EncoderParameters encoderParams;
 
-	void capture_monitor(const MonitorInfo& monitorInfo, const std::filesystem::path& output_filename) const;
-	std::vector<MonitorInfo> get_all_monitors() const;
+	void captureMonitor(const MonitorInfo& monitorInfo, const std::filesystem::path& output_filename) const;
+	std::vector<MonitorInfo> getAllMonitors() const;
 };
 
 #endif // !_SCREENSHOTS_MANAGER_HPP_

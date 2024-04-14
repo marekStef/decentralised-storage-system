@@ -16,7 +16,7 @@ ScreenshotsThread::~ScreenshotsThread() {
 //    ScreenshotsManager screenshotsManager;
 //
 //    while (!TestDestroy()) {
-//        screenshotsManager.take_screenshots_of_all_screens(configManager.GetDirectoryForScreenshots().ToStdString());
+//        screenshotsManager.takeScreenshotsOfAllScreens(configManager.GetDirectoryForScreenshots().ToStdString());
 //        int intervalInMilliseconds = configManager.GetPeriodicityForScreenshots();
 //        wxThread::Sleep(intervalInMilliseconds);
 //    }
@@ -28,7 +28,7 @@ wxThread::ExitCode ScreenshotsThread::Entry() {
     ScreenshotsManager screenshotsManager;
 
     while (!TestDestroy()) {
-        screenshotsManager.take_screenshots_of_all_screens(configManager.GetDirectoryForScreenshots().ToStdString());
+        screenshotsManager.takeScreenshotsOfAllScreens(configManager.GetDirectoryForScreenshots().ToStdString());
 
         int intervalInMilliseconds = configManager.GetPeriodicityForScreenshots();
 
