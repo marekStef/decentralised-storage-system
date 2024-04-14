@@ -64,9 +64,9 @@ void MainPage::setupUI() {
 
 
     wxStaticBoxSizer* keyPressesGatheringSizer = new wxStaticBoxSizer(wxVERTICAL, this, "KeyPresses Gathering");
-    wxButton* startGatheringKeyPressesButton = new wxButton(this, wxID_ANY, "Start Gathering Key Presses");
-    keyPressesGatheringSizer->Add(startGatheringKeyPressesButton, 0, wxALIGN_CENTER | wxALL, 10);
-    startGatheringKeyPressesButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringKeyPressesButtonClick, this);
+    gatheringKeypressesButton = new wxButton(this, wxID_ANY, "Start Gathering Key Presses");
+    keyPressesGatheringSizer->Add(gatheringKeypressesButton, 0, wxALIGN_CENTER | wxALL, 10);
+    gatheringKeypressesButton->Bind(wxEVT_BUTTON, &MainPage::StartGatheringKeyPressesButtonClick, this);
     sizer->Add(keyPressesGatheringSizer, 0, wxEXPAND | wxALL, 10);
 
 

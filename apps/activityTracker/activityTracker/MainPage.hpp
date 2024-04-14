@@ -38,6 +38,7 @@ private:
     wxButton* startGatheringScreenshotsButton;
 
     // keypresses related
+    wxButton* gatheringKeypressesButton;
     std::shared_ptr<KeyPressesManager> keyPressesManager;
     void StartGatheringKeyPressesButtonClick(wxCommandEvent& event);
 

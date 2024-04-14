@@ -41,7 +41,8 @@ void SettingsPage::setupUI() {
     appsInfoFetchingPeriodicitySpinCtrl->Bind(wxEVT_SPINCTRL, &SettingsPage::onAppsInfoFetchingPeriodicityChange, this);
 
     wxStaticBoxSizer* automaticStartupSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Automatic Startup");
-    wxButton* autoStartupButton = new wxButton(this, 1111, IsAppInStartupList() ? "Remove From Auto Startup" : "Add Auto Startup");
+    bool isAppAmongStartupApps = IsAppInStartupList();
+    autoStartupButton = new wxButton(this, wxID_ANY, isAppAmongStartupApps? "Remove From Auto Startup" : "Add Auto Startup");
     automaticStartupSizer->Add(autoStartupButton, 0, wxALL, 5);
     autoStartupButton->Bind(wxEVT_BUTTON, &SettingsPage::OnAutomaticAppStartupButtonClick, this);
     sizer->Add(automaticStartupSizer, 0, wxEXPAND | wxALL, 10);
@@ -68,35 +69,32 @@ void SettingsPage::OnSelectDirectoryClick(wxCommandEvent& event) {
 }
 
 void SettingsPage::OnAutomaticAppStartupButtonClick(wxCommandEvent& event) {
-    wxButton* button = dynamic_cast<wxButton*>(event.GetEventObject());
-
     bool isAppAmongStartupApps = IsAppInStartupList();
 
     if (isAppAmongStartupApps) {
-        button->SetLabel("Remove From Auto Startup");
-        MessageBox(NULL, L"added.", L"Success", MB_OK);
+        autoStartupButton->SetLabel("Add Auto Startup");
+        //MessageBox(NULL, L"removed.", L"Success", MB_OK);
         RemoveAppFromStartup();
     }
     else {
-        button->SetLabel("Add Auto Startup");
-        MessageBox(NULL, L"removed.", L"Success", MB_OK);
+        autoStartupButton->SetLabel("Remove From Auto Startup");
+        //MessageBox(NULL, L"added.", L"Success", MB_OK);
         addAppToAutomaticStartupAppsList();
     }
 
-    wxSize bestSize = button->GetBestSize();
-    button->SetMinSize(bestSize);
-    button->SetSize(bestSize);
+    wxSize bestSize = autoStartupButton->GetBestSize();
+    autoStartupButton->SetMinSize(bestSize);
+    autoStartupButton->SetSize(bestSize);
     this->Layout();
 
-    button->Refresh();
-    button->Update();
+    autoStartupButton->Refresh();
+    autoStartupButton->Update();
 }
 
 void SettingsPage::OnResetAppConfigButtonClick(wxCommandEvent& event) {
     configManager.ResetConfig();
     loadConfig();
 }
-
 
 void SettingsPage::onScreenshotsPeriodicityChange(wxSpinEvent& event) {
     int periodicityValue = event.GetValue();

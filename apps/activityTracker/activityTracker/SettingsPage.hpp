@@ -26,6 +26,8 @@ private:
     wxSpinCtrl* appsInfoFetchingPeriodicitySpinCtrl;
     void onAppsInfoFetchingPeriodicityChange(wxSpinEvent& event);
 
+    wxButton* autoStartupButton;
+
     void setupUI();
 };
 
