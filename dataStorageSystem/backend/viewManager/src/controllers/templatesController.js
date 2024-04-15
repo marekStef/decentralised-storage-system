@@ -8,12 +8,24 @@ const httpStatusCodes = require("../constants/httpStatusCodes");
 const {ViewTemplate} = require('../database/models/ViewTemplateSchema');
 const ViewInstance = require('../database/models/ViewInstanceSchema');
 const {isAllowedRuntime} = require('../constants/viewsRelated');
-const {allowedRuntimes} = require('../constants/viewsRelated');
+const {allowedRuntimes, getExecutionServiceUrlBasedOnSelectedRuntime} = require('../constants/viewsRelated');
 
 const cleanFiles = files => {
     files.forEach(file => {
         fs.unlinkSync(file.path);
     });
+}
+
+const getExecutionServiceEndpointForUploadingNewSourceCode = runtime => {
+    return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/uploadNewSourceCode`;
+}
+
+const getExecutionServiceEndpointForGettingGivenSourceCode = (runtime, sourceCodeId) => {
+    return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/sourceCodes/${sourceCodeId}`;
+}
+
+const getExecutionServiceEndpointForDeletingGivenSourceCode = (runtime, sourceCodeId) => {
+    return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/sourceCodes/${sourceCodeId}`;
 }
 
 // this is a multipart data request (due to those files being uploaded) - so the things in the body are only texts! They need to be parsed individually
@@ -54,7 +66,7 @@ const createNewViewTemplate = async (req, res) => {
     });
 
     try {
-        const response = await axios.post(`${process.env.JAVASCRIPT_EXECUTION_SERVICE_URI}/uploadNewSourceCode`, formData, {
+        const response = await axios.post(getExecutionServiceEndpointForUploadingNewSourceCode(runtime), formData, {
             headers: {
                 ...formData.getHeaders(),
             },
@@ -67,7 +79,7 @@ const createNewViewTemplate = async (req, res) => {
 
             const newViewTemplate = new ViewTemplate({
                 sourceCodeId: sourceCodeId,
-                metadata: {runtime: 'javascript'},
+                metadata: { runtime },
                 profiles: profiles,
                 templateName
             });
@@ -111,7 +123,7 @@ const getDetailedTemplateInformation = templateId => {
                 })
             }
 
-            const executionServerEndpoint = `${process.env.JAVASCRIPT_EXECUTION_SERVICE_URI}/sourceCodes/${template.sourceCodeId}`;
+            const executionServerEndpoint = getExecutionServiceEndpointForGettingGivenSourceCode(template.metadata.runtime, template.sourceCodeId);
             const response = await axios.get(executionServerEndpoint);
             const sourceCode = response.data.sourceCode;
 
@@ -159,6 +171,7 @@ const getTemplate = async (req, res) => {
 
 const deleteTemplateViewBasedOnId = templateId => {
     return new Promise(async (res, rej) => {
+
         try {
             const deletedTemplate = await ViewTemplate.findByIdAndDelete(templateId);
             if (!deletedTemplate) {
@@ -167,10 +180,20 @@ const deleteTemplateViewBasedOnId = templateId => {
                     message: 'ViewTemplate not found.'
                 });
             } else {
-                res({
-                    code: httpStatusCodes.OK,
-                    message: 'ViewTemplate successfully deleted.'
-                })
+                // now delete the view template's source code in the respective execution service
+                const executionEndpointForSourceCodeDeletion = getExecutionServiceEndpointForDeletingGivenSourceCode(deletedTemplate.metadata.runtime, deletedTemplate.sourceCodeId);
+                const response = await axios.delete(executionEndpointForSourceCodeDeletion);
+                if (response.status == httpStatusCodes.OK) {
+                    res({
+                        code: httpStatusCodes.OK,
+                        message: 'ViewTemplate successfully deleted.'
+                    })
+                } else {
+                    res({
+                        code: httpStatusCodes.INTERNAL_SERVER_ERROR,
+                        message: 'View Template was successfully deleted in the ViewManager component but the source code failed to be deleted in the execution service'
+                    })
+                }
             }
         } catch (error) {
             console.error('Error deleting ViewTemplate:', error);

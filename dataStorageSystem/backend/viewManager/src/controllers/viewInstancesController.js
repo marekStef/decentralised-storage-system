@@ -7,6 +7,17 @@ const ViewInstance = require("../database/models/ViewInstanceSchema");
 
 const { getExecutionServiceUrlBasedOnSelectedRuntime } = require("../constants/viewsRelated");
 
+const getAuthServiceEndpointForRequestingPermissions = () => {
+    return `${process.env.AUTH_SERVICE_URI}/app/api/requestNewPermission`;
+}
+
+const getExecutionServiceEndpointForExecutingSourceCode = (runtime, sourceCodeId) => {
+    let executionServiceUrl = getExecutionServiceUrlBasedOnSelectedRuntime(runtime);
+    if (executionServiceUrl == null) return null;
+
+    return `${executionServiceUrl}/executeSourceCode/${sourceCodeId}`;
+}
+
 const createNewViewInstance = async (req, res) => {
     const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
@@ -59,7 +70,7 @@ const createNewViewInstance = async (req, res) => {
         console.log(permissionsRequest);
 
         try {
-            const response = await axios.post(`${process.env.AUTH_SERVICE_URI}/app/api/requestNewPermission`, permissionsRequest);
+            const response = await axios.post(getAuthServiceEndpointForRequestingPermissions(), permissionsRequest);
 
             if (response.status === httpStatusCodes.CREATED) {
                 accessTokensToProfiles[profileItem.profile] = response.data.generatedAccessToken;
@@ -99,15 +110,15 @@ const prepareDataForExecutionService = (accessTokensToProfiles, configuration, c
 }
 
 const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {
-    let executionServiceUrl = getExecutionServiceUrlBasedOnSelectedRuntime(runtime);
+    let executionEndpoint = getExecutionServiceEndpointForExecutingSourceCode(runtime, sourceCodeId);
     
-    if (executionServiceUrl == null) { // unknown runtime (this should not happen as such view template should not be allowed to be created)
+    if (executionEndpoint == null) { // unknown runtime (this should not happen as such view template should not be allowed to be created)
         return res.status(httpStatusCodes.BAD_REQUEST).json({ message: 'Bad runtime' });
     }
 
     try {
         const response = await axios.post(
-            `${executionServiceUrl}/executeSourceCode/${sourceCodeId}`, 
+            executionEndpoint,
             { parametersForMainEntry}
         );
 
