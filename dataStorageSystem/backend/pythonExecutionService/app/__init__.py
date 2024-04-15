@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 from app import routes
 
-UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'uploads/')
+UPLOAD_FOLDER = os.getenv('UPLOAD_FOLDER', 'source_codes/')
 MAIN_FILE_NAME = 'main.py'
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
