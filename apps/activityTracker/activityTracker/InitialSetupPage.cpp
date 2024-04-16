@@ -19,6 +19,7 @@ InitialSetupPage::InitialSetupPage(wxNotebook* parent, ConfigManager& configMana
 }
 
 void InitialSetupPage::setupAlreadySetupUI() {
+    this->DestroyChildren();
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticText* staticText = new wxStaticText(this, wxID_ANY, wxT("The App Is Already Set"),
@@ -33,6 +34,7 @@ void InitialSetupPage::setupAlreadySetupUI() {
 }
 
 void InitialSetupPage::setupUI() {
+    this->DestroyChildren();
     this->SetScrollbars(20, 10, 50, 100);
     this->SetBackgroundColour(PageMainBackgroundColour);
     this->SetTransparent(245);
@@ -120,7 +122,7 @@ void InitialSetupPage::AssociateTheAppWithDataStorageButtonClick(wxCommandEvent&
     if (tokenForProfilesAndPermissions.empty())
         wxMessageBox("Something went wrong", "Alert", wxOK | wxICON_INFORMATION);
     else {
-        wxMessageBox(tokenForProfilesAndPermissions, "Alert", wxOK | wxICON_INFORMATION);
+        wxMessageBox("Successfully associated", "Alert", wxOK | wxICON_INFORMATION);
         configManager.SetDataStorageJwtAssociationToken(associationTokenValue);
         configManager.SetDataStorageTokenForProfilesAndPermissionsRequests(tokenForProfilesAndPermissions);
         configManager.SaveConfig();
@@ -174,16 +176,17 @@ void InitialSetupPage::CreateProfilesAndAskForPermissionsButtonClick(wxCommandEv
     }
 
     
-    wxMessageBox(generatedAccessToken, "Alert", wxOK | wxICON_INFORMATION);
+    wxMessageBox("Successfully created profile and asked for permissions", "Alert", wxOK | wxICON_INFORMATION);
     configManager.SetActivityTrackerEventAccessToken(generatedAccessToken);
     configManager.SaveConfig();
-
-    wxMessageBox("Profile created and Permission requested", "Alert", wxOK | wxICON_INFORMATION);
 
     areProfilesCreatedAndPermissionsAsked = true;
 }
 
 void InitialSetupPage::SaveSetupAndProceedButtonClick(wxCommandEvent& event) {
+    setupAlreadySetupUI();
+    return;
+
     if (!areProfilesCreatedAndPermissionsAsked) {
         wxMessageBox("Profiles must be registered first and permissions requested", "Alert", wxOK | wxICON_INFORMATION);
         return;

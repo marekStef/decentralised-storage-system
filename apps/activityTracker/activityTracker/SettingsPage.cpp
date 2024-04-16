@@ -93,6 +93,7 @@ void SettingsPage::OnAutomaticAppStartupButtonClick(wxCommandEvent& event) {
 
 void SettingsPage::OnResetAppConfigButtonClick(wxCommandEvent& event) {
     configManager.ResetConfig();
+    wxMessageBox("You need to restart the app to fully reset the app", "Alert", wxOK | wxICON_INFORMATION);
     loadConfig();
 }
 
