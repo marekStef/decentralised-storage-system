@@ -40,6 +40,9 @@ const AppsPage = () => {
                 <div className="items-start flex">
                     <h1 className="text-slate-700 text-2xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Panel</h1>
                 </div>
+                {apps.length == 0 && (
+                    <h3 className="w-full text-center text-gray-400">No apps in the system</h3>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {apps.map((app) => (
                         <Link key={app._id} href={`/apps/${app._id}`} className="shadow p-4 hover:bg-slate-50 overflow-auto">
