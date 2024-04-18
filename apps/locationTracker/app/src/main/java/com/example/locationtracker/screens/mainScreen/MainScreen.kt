@@ -74,54 +74,10 @@ fun MainScreen(
     )
 
     val context = LocalContext.current
-//    val dialoPermissionsQueue = viewModel.visiblePermissionDialogQueue
-//    val permissionsToRequest = arrayOf(
-//        Manifest.permission.ACCESS_COARSE_LOCATION,
-//        Manifest.permission.ACCESS_FINE_LOCATION,
-//        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//    )
 
     val appSettings by viewModel.appSettings.observeAsState()
 
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
-
-//    val FineLocationPermissionResultLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestPermission(),
-//        onResult = {isGranted ->
-//            viewModel.onPermissionResult(
-//                permission = Manifest.permission.ACCESS_FINE_LOCATION,
-//                isGranted = isGranted
-//            )
-//        }
-//    )
-
-
-//    val multiplePermissionResultLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.RequestMultiplePermissions(),
-//        onResult = { permissions ->
-//            permissionsToRequest.forEach { permission ->
-//                viewModel.onPermissionResult(
-//                    permission = permission,
-//                    isGranted = permissions[permission] == true
-//                )
-//            }
-//        }
-//    )
-
-//    LaunchedEffect(key1 = Unit) { // Unit for key1 so this only launches once when the Composable enters the composition
-//        val allPermissionsGranted =
-//            permissionsToRequest.all { permission -> // Determine if permissions are already granted
-//                ContextCompat.checkSelfPermission(
-//                    context,
-//                    permission
-//                ) == PackageManager.PERMISSION_GRANTED
-//            }
-//
-//        // If not all permissions are granted, launch the permission request
-//        if (!allPermissionsGranted) {
-//            multiplePermissionResultLauncher.launch(permissionsToRequest)
-//        }
-//    }
 
     Column(Modifier.background(Color.White)) {
 
@@ -195,27 +151,6 @@ fun MainScreen(
                     }
                 }
             }
-
-//            dialoPermissionsQueue
-//                .reversed()
-//                .forEach { permission ->
-//                    PermissionDialog(
-//                        permissionTextProvider = when (permission) {
-//                            Manifest.permission.ACCESS_COARSE_LOCATION -> CoarseLocationPermissionTextProvider()
-//                            Manifest.permission.ACCESS_FINE_LOCATION -> FineLocationPermissionTextProvider()
-//                            Manifest.permission.ACCESS_BACKGROUND_LOCATION -> BackgroundLocationPermissionTextProvider()
-//                            else -> return@forEach
-//                        },
-//                        isPermanentlyDeclined = arePermissionsRequestsPermanentlyDeclined(permission),
-//                        onDismiss = { viewModel.dismissDialog() },
-//                        onOkClick = {
-//                            viewModel.dismissDialog()
-//                            multiplePermissionResultLauncher.launch(
-//                                permissionsToRequest
-//                            )
-//                        },
-//                        onGoToAppSettingsClick = { openAppSettings() })
-//                }
         }
         BottomActionBar(
             viewModelRef,
