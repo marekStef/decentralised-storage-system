@@ -2,7 +2,7 @@ import { showError, showSuccess } from '@/helpers/alerts';
 
 interface CopyToClipboardTextParams {
     value: string,
-    className: any
+    className: string
 }
 const CopyToClipboardText: React.FC<CopyToClipboardTextParams> = ({ value, className }) => {
     const copyToClipboard = async () => {
@@ -15,7 +15,7 @@ const CopyToClipboardText: React.FC<CopyToClipboardTextParams> = ({ value, class
     };
 
     return (
-        <div className={`${className || ''} inline`}>
+        <div className={`${className} inline`}>
             <code className="bg-gray-100 hover:text-gray-500 text-gray-900 py-1 px-3 rounded break-words w-full cursor-pointer" onClick={copyToClipboard}>{value}</code>
         </div>
     );

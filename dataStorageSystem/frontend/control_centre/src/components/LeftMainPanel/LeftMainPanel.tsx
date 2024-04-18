@@ -34,7 +34,6 @@ const LeftMainPanel = props => {
     useEffect(() => {
         getAllUnapprovedPermissions()
             .then(unapprovedPermissionsResult => {
-                console.log(unapprovedPermissionsResult)
                 setUnapprovedPermissions(unapprovedPermissionsResult);
                 setIsLoadingPermissions(false);
             })

@@ -6,6 +6,8 @@ import { getAppInfo, getPermissionsForApp, getViewAccessesForGivenApp, grantPerm
 import { showError, showSuccess } from '@/helpers/alerts';
 import CopyToClipboardText from '@/components/copyToClipboard/CopyToClipboardText';
 import Link from 'next/link';
+import { DataAccess } from '@/network/types/DataAcessItem';
+import { IViewAccess } from '@/network/types/IViewAccess';
 
 function AppPage() {
     const router = useRouter();
@@ -15,10 +17,10 @@ function AppPage() {
     const [appInfo, setAppInfo] = useState(null);
 
     const [isLoadingAppPermissions, setIsLoadingAppPermissions] = useState<boolean>(true);
-    const [appPermissions, setAppPermissions] = useState<object[] | null>(null);
+    const [appPermissions, setAppPermissions] = useState<DataAccess[] | null>(null);
 
     const [isLoadingViewAccesses, setIsLoadingViewAccesses] = useState<boolean>(true);
-    const [viewAccesses, setViewAccesses] = useState<object[]>([]);
+    const [viewAccesses, setViewAccesses] = useState<IViewAccess[]>([]);
 
     const loadInitialData = (appId: string) => {
         getAppInfo(appId)
@@ -147,7 +149,7 @@ function AppPage() {
                 <p>Loading permissions...</p>
             ) : (
                 appPermissions && appPermissions.length > 0 ? (
-                    appPermissions.map((permission) => (
+                    appPermissions.map((permission: DataAccess) => (
                         <div key={`permission-${permission._id}`} id={`permission-${permission._id}`} className="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
                             <div className="px-4 py-5 sm:px-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">Permission</h3>
@@ -237,7 +239,7 @@ function AppPage() {
                 <p>Loading view accesses...</p>
             ) : (
                 viewAccesses.length > 0 ? (
-                    viewAccesses.map(viewAccess => (
+                    viewAccesses.map((viewAccess: IViewAccess) => (
                         <div key={viewAccess.viewAccessId} className="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
                             <div className="px-4 py-5 sm:px-6">
                                 <h3 className="text-lg leading-6 font-medium text-gray-900">View Instance Access</h3>

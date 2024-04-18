@@ -74,7 +74,7 @@ const ViewTemplate = props => {
                     <div className="bg-white shadow rounded-lg p-6 mb-6">
                         <h2 className="text-xl font-semibold text-gray-700 mb-4">Basic Info</h2>
                         <p><strong>Template Name:</strong> {templateData.template.templateName}</p>
-                        <p className='inline'><strong>Template ID:</strong></p> <CopyToClipboardText value={templateData.template._id} />
+                        <p className='inline'><strong>Template ID:</strong></p> <CopyToClipboardText value={templateData.template._id} className=''/>
                         <p className="text-sm font-thin text-gray-800">You can copy this Template ID to your app which can create View Instance off of it</p>
                         <p><strong>Runtime:</strong> {templateData.template.metadata.runtime}</p>
                         <p><strong>Created Date:</strong> {new Date(templateData.template.createdDate).toLocaleString()}</p>
