@@ -41,7 +41,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/66045321c3020f877c1ab176/views",
+											"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/66210df2e884b7f9c7ec20a5/views",
 											"host": [
 												"{{AUTH_SERVER_URL}}"
 											],
@@ -49,7 +49,7 @@
 												"admin",
 												"api",
 												"apps",
-												"66045321c3020f877c1ab176",
+												"66210df2e884b7f9c7ec20a5",
 												"views"
 											]
 										}
@@ -64,7 +64,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/65f75e5a1db2c68e0b0534c8",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/661eb26350c2b2f3f8266387",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -72,7 +72,7 @@
 										"admin",
 										"api",
 										"apps",
-										"65f75e5a1db2c68e0b0534c8"
+										"661eb26350c2b2f3f8266387"
 									]
 								}
 							},
@@ -132,7 +132,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"65fae0947a90b4a5263a4981\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"661eb26350c2b2f3f8266387\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -179,7 +179,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getPermissionsRequestsForGivenApp/65f85d8f72d3cb5a148a96f6",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getPermissionsRequestsForGivenApp/66210df2e884b7f9c7ec20a5",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -188,7 +188,7 @@
 										"api",
 										"permissions",
 										"getPermissionsRequestsForGivenApp",
-										"65f85d8f72d3cb5a148a96f6"
+										"66210df2e884b7f9c7ec20a5"
 									]
 								}
 							},
@@ -327,7 +327,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"66042e91c3020f877c1ab13d\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"661eb26b50c2b2f3f826638b\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -621,7 +621,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"some_example_profile\",\r\n                \"source\": \"some source\"\r\n            },\r\n            \"payload\": {\r\n                \"message\": \"Some random event\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"some_example_profile\",\r\n                \"source\": \"some source\",\r\n                \"createdDate\": \"202sssss00Z\"\r\n            },\r\n            \"payload\": {\r\n                \"message\": \"Some random event\"\r\n            }\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -711,8 +711,8 @@
 											"key": "files",
 											"type": "file",
 											"src": [
-												"/Users/stefanec/Desktop/marek_bakalarka/repo/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/main.js",
-												"/Users/stefanec/Desktop/marek_bakalarka/repo/managementsystem/dataStorageSystem/exampleJSDataViewFunctions/ex1/second.js"
+												"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d",
+												"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49"
 											]
 										},
 										{
@@ -733,7 +733,7 @@
 										},
 										{
 											"key": "templateName",
-											"value": "First Demo Template",
+											"value": "First Demo Templatesaaaasss",
 											"type": "text"
 										}
 									]
@@ -757,14 +757,14 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/1",
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/661cfe2267b9a47d972e38ba",
 									"host": [
 										"{{VIEW_MANAGER_URL}}"
 									],
 									"path": [
 										"viewTemplates",
 										"deleteViewTemplate",
-										"1"
+										"661cfe2267b9a47d972e38ba"
 									]
 								}
 							},
@@ -794,14 +794,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates/65fb4e1c54ae8e1876e56164",
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates/661cfe2267b9a47d972e38ba",
 									"host": [
 										"{{VIEW_MANAGER_URL}}"
 									],
 									"path": [
 										"viewTemplates",
 										"templates",
-										"65fb4e1c54ae8e1876e56164"
+										"661cfe2267b9a47d972e38ba"
 									]
 								}
 							},
@@ -927,13 +927,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/3cd89158-9968-44cc-94c6-629c68f551dd",
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/c3770463-5621-4ea2-8737-3b57d4edfe34",
 									"host": [
 										"{{JS_EXECUTION_SERVICE_URL}}"
 									],
 									"path": [
 										"sourceCodes",
-										"3cd89158-9968-44cc-94c6-629c68f551dd"
+										"c3770463-5621-4ea2-8737-3b57d4edfe34"
 									]
 								}
 							},
@@ -945,13 +945,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/f159f0c7-5cea-4215-aaed-4b684b210258",
+									"raw": "{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/b09c6a33-1f45-47fd-9673-86c99a1fc281",
 									"host": [
 										"{{JS_EXECUTION_SERVICE_URL}}"
 									],
 									"path": [
 										"sourceCodes",
-										"f159f0c7-5cea-4215-aaed-4b684b210258"
+										"b09c6a33-1f45-47fd-9673-86c99a1fc281"
 									]
 								}
 							},
@@ -997,40 +997,114 @@
 			"name": "pythonExecutionService",
 			"item": [
 				{
-					"name": "uploadNewSourceCode",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files",
-									"type": "file",
-									"src": [
-										"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d",
-										"postman-cloud:///1eedfaef-dd82-4ad0-b3f1-0fc8372d2d49"
+					"name": "codeRegistration",
+					"item": [
+						{
+							"name": "uploadNewSourceCode",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "files",
+											"type": "file",
+											"src": [
+												"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d",
+												"/Users/marekstefanec/Documents/bakalarka/managementsystem/dataStorageSystem/backend/pythonExecutionService/exampleSourceCode/examplePython.py",
+												"/Users/marekstefanec/Documents/bakalarka/managementsystem/dataStorageSystem/backend/pythonExecutionService/exampleSourceCode/main.py"
+											]
+										}
+									]
+								},
+								"url": {
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
+									"host": [
+										"{{PYTHON_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"uploadNewSourceCode"
 									]
 								}
-							]
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/uploadNewSourceCode",
-							"host": [
-								"{{PYTHON_EXECUTION_SERVICE_URL}}"
-							],
-							"path": [
-								"uploadNewSourceCode"
-							]
+						{
+							"name": "getSourceCode",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/db5ea9a8-41a7-4bd9-bb70-b755114061c3",
+									"host": [
+										"{{PYTHON_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"sourceCodes",
+										"db5ea9a8-41a7-4bd9-bb70-b755114061c3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deleteSourceCode",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/83eb8a96-32ab-4e8d-9e7c-90db9d07bfcb",
+									"host": [
+										"{{PYTHON_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"sourceCodes",
+										"83eb8a96-32ab-4e8d-9e7c-90db9d07bfcb"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
+				},
+				{
+					"name": "codeExecution",
+					"item": [
+						{
+							"name": "executeSourceCode",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"parametersForMainEntry\": {\"marek\": \"hey\"}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/executeSourceCode/89297a89-b92e-4ebe-b7af-9e8ffe52858d",
+									"host": [
+										"{{PYTHON_EXECUTION_SERVICE_URL}}"
+									],
+									"path": [
+										"executeSourceCode",
+										"89297a89-b92e-4ebe-b7af-9e8ffe52858d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
