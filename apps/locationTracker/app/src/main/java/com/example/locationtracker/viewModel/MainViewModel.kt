@@ -1,8 +1,11 @@
 package com.example.locationtracker.viewModel
 
+import android.Manifest
 import android.app.Application
 import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.runtime.mutableStateListOf
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -221,5 +224,4 @@ class MainViewModel(private val application: Application, private val dbManager:
     fun startSynchronisingGatheredData() {
         syncManager.startSyncing();
     }
-
 }

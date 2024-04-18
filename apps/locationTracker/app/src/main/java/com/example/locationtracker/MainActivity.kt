@@ -1,11 +1,13 @@
 package com.example.locationtracker
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Log;
@@ -13,9 +15,11 @@ import android.util.Log;
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -23,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
@@ -58,12 +63,13 @@ class MainActivity : ComponentActivity() {
     private lateinit var createDocumentLauncher: ActivityResultLauncher<String>
 
     // The showDialog function is now moved to MainActivity
-    private fun showAlertDialogWithOkButton(title: String, message: String) {
+    private fun showAlertDialogWithOkButton(title: String, message: String, onOkPressed: () -> Unit) {
         AlertDialog.Builder(this)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()
+                onOkPressed()
             }
             .show()
     }
@@ -125,7 +131,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private val requestBatteryOptimisationPermission = {
-
         Log.d("TAG", "aaaaaaare optimisations turned offff?  ${isAppExemptFromBatteryOptimizations(this)}");
         requestDisableBatteryOptimization(this)
     }
@@ -147,23 +152,71 @@ class MainActivity : ComponentActivity() {
     private fun registerNotificationObservers() {
         mainViewModel.alertDialogRequest.observe(this) { dialogInfo ->
             dialogInfo?.let {
-                showAlertDialogWithOkButton(it.first, it.second)
+                showAlertDialogWithOkButton(it.first, it.second) {}
                 mainViewModel.resetShowAlertDialog()
             }
         }
     }
 
+    private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    private var permissionIndex = 0
+
+    private val permissionsToRequest = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    )
+
+    private fun requestNextLocationPermission() {
+        if (permissionIndex >= permissionsToRequest.size) return
+
+        val allPermissionsGranted =
+            permissionsToRequest.all { permission ->
+                ContextCompat.checkSelfPermission(
+                    applicationContext,
+                    permission
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+
+        if (allPermissionsGranted) return
+
+        if (permissionsToRequest.isNotEmpty()) {
+            showAlertDialogWithOkButton(
+                title = "Location Permission Required",
+                message = "This app requires all types of locations permissions to provide location-based services. Please grant the permission when requested. Otherwise the app will be closed!",
+                onOkPressed = {
+                    permissionLauncher.launch(permissionsToRequest[permissionIndex])
+                }
+            )
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestPostNotificationsPermission(this)
+
+        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                permissionIndex++
+                if (permissionIndex < permissionsToRequest.size) {
+                    requestNextLocationPermission()
+                }
+            } else {
+                showAlertDialogWithOkButton("Permission Required", "This app cannot function without the required permissions. The app will close now. You can change the permission in the phone's settings or by reinstalling this app. Bye for now.") {
+                    finish() // Close the application if permission is denied
+                }
+            }
+        }
 
         dbManager = DatabaseManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
-        Log.d("still here", "heeere---")
         dataStorageRegistrationViewModel = ViewModelProvider(this, viewModelFactory)[DataStorageRegistrationViewModel::class.java]
         logsScreenViewModel = ViewModelProvider(this, viewModelFactory)[LogsScreenViewModel::class.java]
 
-        requestBatteryOptimisationPermission()
+        if (savedInstanceState == null) { // This means it's the first time creating this Activity
+            requestBatteryOptimisationPermission()
+            requestNextLocationPermission()
+            requestPostNotificationsPermission(this)
+        }
 
         registerReceivers()
         registerNotificationObservers()
