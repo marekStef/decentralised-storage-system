@@ -11,16 +11,20 @@ import com.example.locationtracker.data.database.entities.Location
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.utils.convertLongToTime
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileWriter
 
-class DatabaseManager private constructor(private var db: Database, private val context: Context) {
-    // for signleton pattern
-    companion object {
 
+class DatabaseManager private constructor(private var db: Database, private val context: Context) {
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
+
+    companion object {
         @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: DatabaseManager? = null
@@ -76,7 +80,7 @@ class DatabaseManager private constructor(private var db: Database, private val 
     }
 
     fun saveNewLocation(newLocation: NewLocation) {
-        GlobalScope.launch(Dispatchers.IO) {
+        scope.launch {
             db.locationDao().insertLocation(
                 Location(
                     latitude = newLocation.latitude,
@@ -98,22 +102,14 @@ class DatabaseManager private constructor(private var db: Database, private val 
         return db.locationDao().getLocationsDescendingWithLimitOffset(limit, offset)
     }
 
-    fun logLast10Locations() {
-        GlobalScope.launch(Dispatchers.IO) {
-            val last100Locations = db.locationDao().getLocationsDescendingWithLimitOffset(10, 0)
-            last100Locations.takeLast(10).forEach { location ->
-                Log.d(
-                    "LocationLog",
-                    "Location: - Lat: ${location.latitude}, Long: ${location.longitude}, Time: ${location.time}"
-                )
-            }
+    fun deleteAllLocations() {
+        scope.launch {
+            db.locationDao().deleteAllLocations()
         }
     }
 
-    fun deleteAllLocations() {
-        GlobalScope.launch(Dispatchers.IO) {
-            db.locationDao().deleteAllLocations()
-        }
+    fun clear() {
+        job.cancel()  // Cancel the job when the database manager is no longer needed
     }
 
     suspend fun exportLocationsToCsv(file: File) {
@@ -127,7 +123,6 @@ class DatabaseManager private constructor(private var db: Database, private val 
             }
         }
     }
-
 }
 
 class NewLocation(
