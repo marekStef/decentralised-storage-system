@@ -29,6 +29,10 @@ suspend fun isDataStorageServerReachable(ipAddress: String, port: String): Boole
 ) {
     Log.d("NETWORK", "http://$ipAddress:$port/status_info/checks/check_auth_service_presence")
 
+    if (ipAddress.isBlank() || port.isBlank()) {
+        Log.e("NETWORK", "Invalid IP address or port: IP='$ipAddress', Port='$port'")
+        return@withContext false
+    }
 
     val client = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)

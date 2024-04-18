@@ -234,18 +234,20 @@ fun RegistrationScreen(
                         }
                     )
 
-                    CustomDefaultButton(stringResource(id = R.string.associate_this_app_with_data_storage)) {
-                        dataStorageRegistrationViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
-                            if (isSuccess) {
-                                // Handle success
-                                Log.d("AssociateApp", "Success: $message")
-                            } else {
-                                // Handle failure
-                                Log.e("AssociateApp", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
-                                    "Error",
-                                    message
-                                )
+                    if (isServerReachable.value == ServerReachabilityEnum.REACHABLE) {
+                        CustomDefaultButton(stringResource(id = R.string.associate_this_app_with_data_storage)) {
+                            dataStorageRegistrationViewModel.associateAppWithStorageAppHolder() { isSuccess, message ->
+                                if (isSuccess) {
+                                    // Handle success
+                                    Log.d("AssociateApp", "Success: $message")
+                                } else {
+                                    // Handle failure
+                                    Log.e("AssociateApp", "Failure: $message")
+                                    dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                        "Error",
+                                        message
+                                    )
+                                }
                             }
                         }
                     }
