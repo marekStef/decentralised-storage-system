@@ -34,7 +34,6 @@ const WeekDayHeader: React.FC<WeekDayHeaderParams> = (params) => {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                relative: 'relative'
             }}
         >
             <p style={{ fontSize: `1rem`, padding: 0, margin: 0, color: 'gray' }}>

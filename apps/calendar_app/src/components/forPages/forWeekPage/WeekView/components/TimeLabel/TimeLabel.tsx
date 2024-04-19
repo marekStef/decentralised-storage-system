@@ -1,6 +1,13 @@
 import React from "react";
 
-const TimeLabel = ({ index, calendarHeight, headerHeight, calendarLeftColumnHoursWidthInPixels }) => {
+export interface TimeLabelParams {
+    index: number,
+    calendarHeight: number,
+    headerHeight: number,
+    calendarLeftColumnHoursWidthInPixels: number
+}
+
+const TimeLabel: React.FC<TimeLabelParams> = ({ index, calendarHeight, headerHeight, calendarLeftColumnHoursWidthInPixels }) => {
     const slotHeight = calendarHeight / 24
     return (
         <div

@@ -6,22 +6,21 @@ interface WithSetupValidationOptions {
   redirectToIfNotSetup?: string;
   redirectToIfSetup?: string;
 }
-
 function withSetupValidation<P extends React.JSX.IntrinsicAttributes>(
   WrappedComponent: ComponentType<P>,
   { redirectToIfNotSetup = '/Setup', redirectToIfSetup = '/WeekPage' }: WithSetupValidationOptions = {}
 ) {
-  return (props: P) => {
+
+  const WithValidation = (props: P) => {
     const Router = useRouter();
-    
+
     const isCalendarSetupSuccessfully = (): boolean => {
       persistenceManager.loadDataFromLocalStorage();
       return persistenceManager.areAllValuesSet();
     };
 
     useEffect(() => {
-      if (typeof window === 'undefined') // if the page is being loaded on the server, and if so, do nothing
-          return;
+      if (typeof window === 'undefined') return;
 
       const setupComplete = isCalendarSetupSuccessfully();
 
@@ -38,6 +37,10 @@ function withSetupValidation<P extends React.JSX.IntrinsicAttributes>(
 
     return <WrappedComponent {...props} />;
   };
+
+  WithValidation.displayName = `WithSetupValidation(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  return WithValidation;
 };
+
 
 export default withSetupValidation;

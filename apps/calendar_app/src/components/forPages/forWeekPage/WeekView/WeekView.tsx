@@ -42,6 +42,14 @@ interface WeekViewParams {
     windowsAppsCategoriesByDaysAndHoursPercentages: Array<Array<object>> | null
 }
 
+interface IEventWithAdditionalDataForDisplayPurposes {
+    originalEvent: Event,
+    startInMinutes: number,
+    endInMinutes: number,
+    leftOffset: number,
+    width: number
+}
+
 const WeekView: React.FC<WeekViewParams> = (params) => {
     const [currentDateTime, setCurrentDateTime] = useState<Date>(new Date())
     const [currentTimeHorizontalLineOffset, setCurrentTimeHorizontalLineOffset] = useState<number>(0)
@@ -133,11 +141,12 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
         return params.calendarHeaderHeightInPixels + startTime.getHours() * hourHeight + (startTime.getMinutes() * hourHeight) / 60;
     };
 
-    const adjustEventPositions = (dayEvents: Event[]) => {
+    const adjustEventPositions = (dayEvents: Event[]): IEventWithAdditionalDataForDisplayPurposes[] => {
         if (!dayEvents) return [];
+
         // Converting event times to minutes for comparison
         const eventsWithPosition = dayEvents.map((event) => ({
-            ...event,
+            originalEvent: event,
             startInMinutes:
                 event.payload.startTime.getHours() * 60 +
                 event.payload.startTime.getMinutes(),
@@ -351,21 +360,22 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
                                 />
 
                                 {/* Events */}
-
-                                {adjustedEvents.map((event: Event, index: number) => (
-                                    <EventUI
-                                        key={event.id}
-                                        topOffset={calculateTopOffset(
-                                            event.payload.startTime
-                                        )}
-                                        leftOffset={event.leftOffset}
-                                        width={event.width}
-                                        calendarHeight={calendarHeight}
-                                        openNewEventDialogHandler={params.openNewEventDialogHandler}
-                                        event={event}
-                                        deleteEventHandler={params.deleteEventHandler}
-                                    />
-                                ))}
+                                {adjustedEvents.map((eventWithAdditionalDataForDisplay: IEventWithAdditionalDataForDisplayPurposes, index: number) => {
+                                    return (
+                                        <EventUI
+                                            key={eventWithAdditionalDataForDisplay.originalEvent.id}
+                                            topOffset={calculateTopOffset(
+                                                eventWithAdditionalDataForDisplay.originalEvent.payload.startTime
+                                            )}
+                                            leftOffset={eventWithAdditionalDataForDisplay.leftOffset}
+                                            width={eventWithAdditionalDataForDisplay.width}
+                                            calendarHeight={calendarHeight}
+                                            openNewEventDialogHandler={params.openNewEventDialogHandler}
+                                            event={eventWithAdditionalDataForDisplay.originalEvent}
+                                            deleteEventHandler={params.deleteEventHandler}
+                                        />
+                                    )
+                                })}
                             </div>
                         );
                     })}

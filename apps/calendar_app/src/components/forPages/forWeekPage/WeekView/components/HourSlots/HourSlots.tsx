@@ -17,24 +17,19 @@ interface HourSlotsParams {
 const HourSlots : React.FC<HourSlotsParams> = (params) =>  {
     const slotHeight = params.calendarHeight / 24
 
-    const onClickHandler = e => {
-        (e) => {
-            const clickY = e.nativeEvent.offsetY;
+    const onClickHandler = (offsetY: number, hour: number) => {
+        const minute = convertToLowerMultipleOf5(Math.max(0, Math.floor((offsetY / slotHeight) * 60)))
 
-            const minute = convertToLowerMultipleOf5(Math.max(0, Math.floor((clickY / slotHeight) * 60)))
+        // handleHourClick(
+        //     params.day,
+        //     hour,
+        //     minute
+        // );
 
-            console.log(clickY)
-            // handleHourClick(
-            //     params.day,
-            //     hour,
-            //     minute
-            // );
-
-            params.openNewEventDialogHandler(
-                Event.getNewEventWithDefaultDuration(new Date(params.day.date.getFullYear(), params.day.date.getMonth(), params.day.date.getDate(), hour, minute)),
-                NewEventDialogOpenMode.NEW_EVENT
-            )
-        }
+        params.openNewEventDialogHandler(
+            Event.getNewEventWithDefaultDuration(new Date(params.day.date.getFullYear(), params.day.date.getMonth(), params.day.date.getDate(), hour, minute)),
+            NewEventDialogOpenMode.NEW_EVENT
+        )
     }
 
     return (
@@ -47,7 +42,10 @@ const HourSlots : React.FC<HourSlotsParams> = (params) =>  {
                     return (
                         <div
                             key={hour}
-                            onClick={onClickHandler}
+                            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                                const clickY = e.nativeEvent.offsetY;
+                                onClickHandler(clickY, hour);
+                            }}
                             style={{
                                 height: `${slotHeight}px`,
                                 borderLeft: `1px solid ${colors.gray2}`,

@@ -2,7 +2,14 @@ import { colors } from '@/constants/colors';
 import React from 'react';
 import Link from 'next/link';
 
-const SquareButton = ({ onClick, href, style, children, ...props }) => {
+interface SquareButtonProps {
+    href?: string;
+    onClick?: () => void;
+    style?: React.CSSProperties;
+    children: React.ReactNode;
+}
+
+const SquareButton: React.FC<SquareButtonProps> = ({ onClick, href, style, children, ...props }) => {
     const buttonContent = (
         <button
             onClick={onClick}

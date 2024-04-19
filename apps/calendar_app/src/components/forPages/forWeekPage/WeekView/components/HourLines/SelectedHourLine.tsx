@@ -7,7 +7,10 @@ interface SelectedHourLineParams {
     leftOffset: number,
     heightInPixels: number,
     widthInPixels: number,
-    selectedStartTime: object,
+    selectedStartTime: {
+        hour: number,
+        minute: number
+    },
     durationTime: number
 }
 

@@ -5,6 +5,10 @@ export enum HttpProtocolType {
     https = 'https'
 }
 
+export interface IColorMap {
+    [key: string]: { color: string };
+}
+
 class PersistenceManager {
     ip: string | null = null;
     port: string | null = null;
@@ -45,7 +49,7 @@ class PersistenceManager {
 
         this.viewInstanceAccesssTokenForWindowsAppsUniqueNamesList = localStorage.getItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOKEN_FOR_WINDOWS_OPENED_APPS_DATA);
         this.savedWindowsAppsCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_CATEGORIES);
-        this.windowsAppsWithAssignedCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES) ? JSON.parse(localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES)) : {};
+        this.windowsAppsWithAssignedCategories = localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES) ? JSON.parse(localStorage.getItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES)!) : {};
 
         // android locations specific [start]
         this.areAndroidLocationsShown = localStorage.getItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN) === 'true';
@@ -137,7 +141,7 @@ class PersistenceManager {
         this.savedWindowsAppsCategories = JSON.stringify(categories);
     }
 
-    public getSavedWindowsAppsCategories(): object {
+    public getSavedWindowsAppsCategories(): IColorMap {
         return this.savedWindowsAppsCategories == null ? {} : JSON.parse(this.savedWindowsAppsCategories);
     }
 

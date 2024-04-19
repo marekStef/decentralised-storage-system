@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { darken } from 'polished';
-import persistenceManager from '@/data/PersistenceManager';
+import persistenceManager, { IColorMap } from '@/data/PersistenceManager';
 
 interface CategoryBarParams {
     windowsAppsCategoriesPercentagesForGivenHour: object
@@ -8,7 +8,7 @@ interface CategoryBarParams {
 
 const CategoryBar: React.FC<CategoryBarParams> = (params) =>  {
     
-    const [hoveredCategory, setHoveredCategory] = useState(null);
+    const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
     // const categories = {
     //     'productivity': 0.5,
@@ -24,9 +24,9 @@ const CategoryBar: React.FC<CategoryBarParams> = (params) =>  {
     //     'family': '#baefff'
     // };
 
-    const colors = persistenceManager.getSavedWindowsAppsCategories();
+    const colors: IColorMap = persistenceManager.getSavedWindowsAppsCategories();
 
-    const getDarkerColor = (color) => darken(0.4, color);
+    const getDarkerColor = (color: string) => darken(0.4, color);
     return (
         <div 
             className="flex flex-col w-full h-full absolute" 

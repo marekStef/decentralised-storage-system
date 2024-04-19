@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions, FormControl, InputLabel, Select, MenuItem, colors, ListItemText, ListItemIcon } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/cs';
@@ -42,19 +42,32 @@ interface NewEventDialogMaterialParams {
 }
 
 const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) => {
-    if (params.newEventDialogData == null) return null;
+    // const startTimeDate: Date = params.newEventDialogData.payload.startTime;
+    // const endTimeDate: Date = params.newEventDialogData.payload.endTime;
 
-    const startTimeDate: Date = params.newEventDialogData.payload.startTime;
-    const endTimeDate: Date = params.newEventDialogData.payload.endTime;
-
-    const [title, setTitle] = useState(params.newEventDialogData.payload.title);
-    const [description, setDescription] = useState(params.newEventDialogData.payload.description);
-    const [startTime, setStartTime] = useState<Date>(startTimeDate);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [startTime, setStartTime] = useState<Date | null>(null);
     // const [startTime, setStartTime] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));
-    const [endTime, setEndTime] = useState<Date | null>(endTimeDate);
-    const [color, setColor] = useState(colorsForSelection[0].value);
+    const [endTime, setEndTime] = useState<Date | null>(null);
+    const [color, setColor] = useState("#ffffff");
+
+    useEffect(() => {
+        if (params.newEventDialogData != null) {
+            const { payload } = params.newEventDialogData;
+            setTitle(payload.title);
+            setDescription(payload.description);
+            setStartTime(new Date(payload.startTime));
+            setEndTime(new Date(payload.endTime));
+            setColor(colorsForSelection[0].value);
+        }
+    }, [params.newEventDialogData])
+
+    if (params.newEventDialogData == null) return <></>;
 
     const createNewEventHandler = () => {
+        if (!startTime) return;
+
         console.log({ title, description, startTime, endTime, color });
         if (endTime == null) return;
         const newEvent: Event = new Event(null, new EventPayload(startTime, endTime, title, description, color), new EventMetadata());
@@ -68,7 +81,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     }
 
     const editExistingEventHandler = () => {
-        if (params.newEventDialogData?.metadata == null) return;
+        if (!startTime || !endTime || params.newEventDialogData?.metadata == null) return;
         const editedEvent: Event = new Event(params.newEventDialogData.id, new EventPayload(startTime, endTime, title, description, color), params.newEventDialogData.metadata);
         console.log(params.newEventDialogData);
         console.log(editedEvent);
