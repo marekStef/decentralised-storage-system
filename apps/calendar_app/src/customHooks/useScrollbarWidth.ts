@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, RefObject} from 'react';
 
 // Hook to calculate the scrollbar width
-const useScrollbarWidth = (ref) => {
+const useScrollbarWidth = (ref: RefObject<HTMLElement>) => {
   const [scrollbarWidth, setScrollbarWidth] = useState(0);
 
   useEffect(() => {

@@ -73,7 +73,7 @@ export class Event {
     }
 
     // basically converts string dates to javascript Date objects
-    static convertEventReceivedFromServerToThisEvent(event: object) {
+    static convertEventReceivedFromServerToThisEvent(event: any) {
         return new Event(
             event._id, 
             new EventPayload(new Date(event.payload.startTime), new Date(event.payload.endTime), event.payload.title, event.payload.description, event.payload.color), 

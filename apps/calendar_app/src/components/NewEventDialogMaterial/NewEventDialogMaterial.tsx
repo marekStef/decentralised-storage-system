@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, TextField, Button, DialogActions, FormControl, InputLabel, Select, MenuItem, colors, ListItemText, ListItemIcon } from '@mui/material';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import 'dayjs/locale/cs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { addMinutes } from 'date-fns';
 import { timeConstants } from '@/constants/timeConstants';
+
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import { sk } from 'date-fns/locale/sk';
 
 import { SyncLoader } from "react-spinners";
 
@@ -131,12 +133,12 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="cs">
-                    <DateTimePicker label="Start Time" value={dayjs(startTime)} onChange={(newValue: Date | null) => setStartTime(new Date(newValue))} />
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={sk}>
+                    <DateTimePicker label="Start Time" value={startTime} onChange={(newValue: Date | null) => newValue && setStartTime(new Date(newValue))} />
                 </LocalizationProvider>
 
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="cs" >
-                    <DateTimePicker label="End Time" value={dayjs(endTime)} onChange={(newValue: Date | null) => setEndTime(new Date(newValue))} />
+                <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={sk}>
+                    <DateTimePicker label="End Time" value={endTime} onChange={(newValue: Date | null) => newValue && setEndTime(new Date(newValue))} />
                 </LocalizationProvider>
 
                 <FormControl fullWidth margin="normal">

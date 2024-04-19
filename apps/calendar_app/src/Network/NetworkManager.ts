@@ -91,7 +91,7 @@ class NetworkManager {
             };
 
             this.post(networkRoutes.ASSOCIATE_WITH_DATA_STORAGE_ROUTE, data)
-                .then(body => {
+                .then((body: any) => {
                     console.log(body.status)
                     console.log(body)
                     res(body.jwtTokenForPermissionRequestsAndProfiles);

@@ -8,6 +8,22 @@ import persistenceManager from '@/data/PersistenceManager';
 import networkManager from '@/Network/NetworkManager';
 import { showError } from '@/components/AlertProvider/AlertProvider';
 
+interface LocationModalParams {
+    open: boolean,
+    handleClose: () => void,
+    selectedDay: DayOfWeek | null
+}
+
+interface ILocationEvent {
+    payload: {
+        id: number,
+        accuracy: number,
+        latitude: number,
+        longitude: number,
+        time: string
+    }
+}
+
 const defaultIcon = L.icon({
     iconUrl: '/images/leaflet/marker-icon.png',
     shadowUrl: '/images/leaflet/marker-shadow.png',
@@ -23,12 +39,26 @@ const formatLocalTime = (isoDate: string) => {
 };
 
 // hook to automatically adjust map bounds
-function AutoAdjustBounds({ locationEvents }) {
+function AutoAdjustBounds({ locationEvents }: { locationEvents: ILocationEvent[] }) {
     const map = useMap();
 
     useEffect(() => {
         if (locationEvents.length > 0) {
-            const bounds = locationEvents.map(event => [event.payload.latitude, event.payload.longitude]);
+            let minLat = Infinity, minLng = Infinity, maxLat = -Infinity, maxLng = -Infinity;
+
+            locationEvents.forEach((event: ILocationEvent) => {
+                const { latitude, longitude } = event.payload;
+                if (latitude < minLat) minLat = latitude;
+                if (longitude < minLng) minLng = longitude;
+                if (latitude > maxLat) maxLat = latitude;
+                if (longitude > maxLng) maxLng = longitude;
+            });
+
+            const bounds: L.LatLngBoundsExpression = [
+                [minLat, minLng], // South West
+                [maxLat, maxLng]  // North East
+            ];
+            
             map.fitBounds(bounds);
         }
     }, [locationEvents, map]);
@@ -36,15 +66,9 @@ function AutoAdjustBounds({ locationEvents }) {
     return null;
 }
 
-interface LocationModalParams {
-    open: boolean,
-    handleClose: () => void,
-    selectedDay: DayOfWeek | null
-}
-
 const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selectedDay }) => {
     const [isAndroidLocationsViewInstanceProperlySetup, setIsAndroidLocationsViewInstanceProperlySetup] = useState(false);
-    const [locationEvents, setLocations] = useState([]);
+    const [locationEvents, setLocations] = useState<ILocationEvent[]>([]);
     const [isLoadingLocations, setIsLoadingLocations] = useState(true);
 
     const loadLocations = () => {
@@ -95,14 +119,20 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
                     <DialogContent>
                         <DialogContentText sx={{my: 2}}>{locationEvents.length} location events</DialogContentText>
 
-                        <MapContainer center={[0, 0]} zoom={13} style={{ height: '400px', width: '100%' }} whenCreated={mapInstance => {
-                            if (locationEvents.length > 0) {
+                        <MapContainer 
+                            center={[0, 0]} 
+                            zoom={13} 
+                            style={{ height: '400px', width: '100%' }} 
+                            // whenReady={(mapInstance: any) => {
+                            //     if (locationEvents.length > 0) {
 
-                                const bounds = locationEvents.map(event => [event.payload.latitude, event.payload.longitude]);
+                            //         const bounds = locationEvents.map(event => [event.payload.latitude, event.payload.longitude]);
 
-                                mapInstance.fitBounds(bounds);
-                            }
-                        }}>
+                            //         mapInstance.fitBounds(bounds);
+                            //     }
+                            // }}
+                            
+                        >
                             <TileLayer
                                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             />

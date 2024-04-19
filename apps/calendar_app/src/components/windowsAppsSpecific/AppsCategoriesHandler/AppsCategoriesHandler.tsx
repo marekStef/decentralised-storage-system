@@ -27,7 +27,16 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import persistenceManager from "@/data/PersistenceManager";
 
-const AppsCategoriesHandler = (params) => {
+interface Category {
+    color: string;
+}
+
+interface AppsCategoriesHandlerProps {
+    categories: { [key: string]: Category };
+    setCategories: React.Dispatch<React.SetStateAction<{ [key: string]: Category }>>;
+}
+
+const AppsCategoriesHandler: React.FC<AppsCategoriesHandlerProps> = (params) => {
     const [newCategoryName, setNewCategoryName] = useState("");
     const [newCategoryColor, setNewCategoryColor] = useState("#FFFFFF");
 
@@ -45,7 +54,7 @@ const AppsCategoriesHandler = (params) => {
         setNewCategoryColor("#FFFFFF");
     };
 
-    const handleDeleteCategory = (categoryName) => {
+    const handleDeleteCategory = (categoryName: string) => {
         const { [categoryName]: _, ...rest } = params.categories;
         params.setCategories(rest);
         persistenceManager.setSavedWindowsAppsCategories(rest);
