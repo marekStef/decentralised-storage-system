@@ -13,8 +13,8 @@ const PermissionItem = params => {
                 <h3 className="text-slate-200 font-bold">{permission.app.nameDefinedByUser}</h3>
                 <p className="text-slate-600 text-sm">{permission._id}</p>
                 <p className="text-slate-400">App: {permission.app.nameDefinedByApp}</p>
-                <p className="text-slate-400">Profile: {permission.permission.profile}</p>
-                <div className="text-slate-400">
+                <p className="text-slate-400 break-words">Profile: {permission.permission.profile}</p>
+                <div className="text-slate-400 break-words">
                     <p>{permission.permission.read ? 'Read ' : ''} {permission.permission.create ? 'Create' : ''} {permission.permission.modify ? 'Modify' : ''} {permission.permission.delete ? 'Delete' : ''}</p>
                 </div>
             </div>
