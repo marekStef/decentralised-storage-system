@@ -243,10 +243,10 @@ fun RegistrationScreen(
                                 } else {
                                     // Handle failure
                                     Log.e("AssociateApp", "Failure: $message")
-                                    dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
-                                        "Error",
-                                        message
-                                    )
+//                                    dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+//                                        "Error",
+//                                        message
+//                                    )
                                 }
                             }
                         }

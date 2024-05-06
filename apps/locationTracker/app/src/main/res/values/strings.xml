@@ -57,10 +57,12 @@
     <string name="ask_for_permissions">Ask for permissions</string>
     <string name="permissions_sending_failed">Permissions sending failed</string>
     <string name="permission_request_sent_and_needs_to_be_approved">Permission request has been sent. \n Needs to be approved in the admin centre.</string>
-    <string name="need_to_ask_for_data_storage_permissions">You need to ask for data storage permissions</string>
+    <string name="need_to_ask_for_data_storage_permissions">
+        You need to ask for data storage permissions.</string>
     <string name="welcome_to_new_app">Welcome to you new app</string>
     <string name="app_prepared_for_cooperation_with_data_storage_server">Your app is prepared for its cooperation with DataStorage Server</string>
     <string name="proceed_to_the_app">Proceed to the app</string>
+    <string name="ip_or_port_missing_when_registering_new_profile">IP address or port is missing. Therefore we cannot create needed profiles on the server side. If you don\'t want this app to be associated with the server, ignore this button and use the debug button to get to the main app. However, you will only be able to generate and export the location data, not sync them with the server</string>
 
 <!--    Registration Screen -->
     <string name="registration">Registration</string>

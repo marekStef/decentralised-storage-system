@@ -1,6 +1,9 @@
 package com.example.locationtracker.screens.ProfilesAndPermissionsScreen
 
+import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,11 +46,22 @@ import com.example.locationtracker.viewModel.PermissionsStatusEnum
 import com.example.locationtracker.viewModel.ProfileRegistrationStatusEnum
 import java.lang.ref.WeakReference
 
+fun showAlertDialogWithOkButton(context: Context, title: String, message: String) {
+    AlertDialog.Builder(context)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        .show()
+}
+
 @Composable
 fun ProfilesAndPermissionsScreen(
     navController: NavController,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
 ) {
+    val context = LocalContext.current
     val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get() ?: return
 
     val gradientColors = listOf(
@@ -133,22 +148,31 @@ fun ProfilesAndPermissionsScreen(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    val errorMessageForMissingPort = stringResource(id = R.string.ip_or_port_missing_when_registering_new_profile)
                     CustomDefaultButton(
                         text = stringResource(id = R.string.register_needed_profiles)
                     ) {
-
-                        dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer() { isSuccess, message ->
-                            if (isSuccess) {
-                                Log.d("Registering profile", "Success: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                        dataStorageRegistrationViewModel.registerLocationProfileInDataStorageServer() { result, optionalMessage: String? ->
+                            if (result == DataStorageRegistrationViewModel.registeringLocationProfileResult.SUCCESS_PROFILE_CREATED) {
+                                Log.d("Registering profile", "Success")
+                                showAlertDialogWithOkButton(
+                                    context,
                                     "Success",
-                                    message
+                                    "Profile has been created"
+                                )
+                            } else if (result == DataStorageRegistrationViewModel.registeringLocationProfileResult.FAIL_IP_OR_PORT_MISSING) {
+                                Log.e("Registering profile", "Failure: $optionalMessage")
+
+                                showAlertDialogWithOkButton(
+                                    context,
+                                    "Error creating the profile",
+                                    errorMessageForMissingPort
                                 )
                             } else {
-                                Log.e("Registering profile", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
-                                    "Error",
-                                    message
+                                showAlertDialogWithOkButton(
+                                    context,
+                                    "Error creating the profile",
+                                    optionalMessage ?: "Something went wrong"
                                 )
                             }
                         }
@@ -207,26 +231,22 @@ fun ProfilesAndPermissionsScreen(
                         text = stringResource(id = R.string.ask_for_permissions)
                     ) {
                         if (appProfileRegistrationStatus.value != ProfileRegistrationStatusEnum.PROFILE_CREATED) {
-                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
-                                "Error",
-                                "You need to register profiles first"
-                            )
+                            showAlertDialogWithOkButton(context, "Error", "You need to register profiles first. \nIf the profile is not created, then this device cannot request the server for permissions to access the data it will generate")
                             return@CustomDefaultButton
                         }
 
                         dataStorageRegistrationViewModel.sendPermissionRequest() { isSuccess, message ->
+                            Log.d("Creating permission request", "")
                             if (isSuccess) {
                                 Log.d("Creating permission request", "Success: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                                showAlertDialogWithOkButton(
+                                    context,
                                     "Success",
                                     "Permission request has been sent. You need to approve it now before the app sends some data"
                                 )
                             } else {
-                                Log.e("Creating permission request", "Failure: $message")
-                                dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
-                                    "Error",
-                                    message
-                                )
+                                Log.d("Creating permission request", "Failure: $message")
+                                showAlertDialogWithOkButton(context, "Error", message)
                             }
                         }
                     }
@@ -260,6 +280,12 @@ fun ProfilesAndPermissionsScreen(
                             )
                         }
                     }
+                    Text(text = "These are not android specific permissions!\nThese Permissions are created on the server side and this device needs to initiate the permission request.",
+                        fontWeight = FontWeight.Thin,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -304,7 +330,8 @@ fun ProfilesAndPermissionsScreen(
                                     inclusive = true
                                 }
                             }
-                            dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                            showAlertDialogWithOkButton(
+                                context,
                                 "Welcome",
                                 "Your app has been successfully set!"
                             )
@@ -323,7 +350,8 @@ fun ProfilesAndPermissionsScreen(
                                 inclusive = true
                             }
                         }
-                        dataStorageRegistrationViewModel.showAlertDialogWithOkButton(
+                        showAlertDialogWithOkButton(
+                            context,
                             "Welcome",
                             "Your app has been successfully set!"
                         )
