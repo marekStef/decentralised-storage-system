@@ -3,7 +3,6 @@ package com.example.locationtracker.screens.ProfilesAndPermissionsScreen
 import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.DataStorageRelated.UNIQUE_LOCATION_PROFILE_NAME
-import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.PermissionsStatusEnum
@@ -324,7 +323,7 @@ fun ProfilesAndPermissionsScreen(
                             textColor = Color.White
                         ) {
                             dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
-                            navController.navigate(ScreensNames.MAIN_SCREEN) {
+                            navController.navigate(ScreenName.MAIN_SCREEN) {
                                 // so that the user cannot get back
                                 popUpTo(navController.graph.startDestinationId) {
                                     inclusive = true
@@ -344,7 +343,7 @@ fun ProfilesAndPermissionsScreen(
                         textColor = Color.White
                     ) {
                         dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
-                        navController.navigate(ScreensNames.MAIN_SCREEN) {
+                        navController.navigate(ScreenName.MAIN_SCREEN) {
                             // so that the user cannot get back
                             popUpTo(navController.graph.startDestinationId) {
                                 inclusive = true

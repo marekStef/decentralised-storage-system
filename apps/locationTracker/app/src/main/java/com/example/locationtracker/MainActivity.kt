@@ -15,7 +15,6 @@ import android.util.Log;
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
@@ -30,14 +29,14 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.locationtracker.constants.LocationTrackerServiceBroadcastParameters
-import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.constants.Services
 import com.example.locationtracker.constants.Workers
-import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.screens.ProfilesAndPermissionsScreen.ProfilesAndPermissionsScreen
@@ -55,7 +54,6 @@ import java.lang.ref.WeakReference
 import java.util.Date
 
 class MainActivity : ComponentActivity() {
-    private lateinit var dbManager : DatabaseManager;
     private lateinit var mainViewModel: MainViewModel;
     private lateinit var logsScreenViewModel: LogsScreenViewModel;
     private lateinit var dataStorageRegistrationViewModel: DataStorageRegistrationViewModel
@@ -78,13 +76,13 @@ class MainActivity : ComponentActivity() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(application, dbManager, PreferencesManager(applicationContext)) as T
+                return MainViewModel(application, PreferencesManager(applicationContext)) as T
             } else if (modelClass.isAssignableFrom(DataStorageRegistrationViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
                 return DataStorageRegistrationViewModel(application, PreferencesManager(applicationContext)) as T
             } else if (modelClass.isAssignableFrom(LogsScreenViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return LogsScreenViewModel(application, dbManager) as T
+                return LogsScreenViewModel(application) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
@@ -207,7 +205,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        dbManager = DatabaseManager.getInstance(this);
         mainViewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         dataStorageRegistrationViewModel = ViewModelProvider(this, viewModelFactory)[DataStorageRegistrationViewModel::class.java]
         logsScreenViewModel = ViewModelProvider(this, viewModelFactory)[LogsScreenViewModel::class.java]
@@ -235,8 +232,15 @@ class MainActivity : ComponentActivity() {
             val logsScreenViewModelRef = WeakReference(logsScreenViewModel)
             val dataStorageRegistrationViewModelRef = WeakReference(dataStorageRegistrationViewModel)
 
-            MyApp(mainViewModelRef, logsScreenViewModelRef, dataStorageRegistrationViewModelRef,
-                applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined)
+            MyApp(
+                mainViewModelRef,
+                logsScreenViewModelRef,
+                dataStorageRegistrationViewModelRef,
+                applicationContext,
+                openAppSettings,
+                arePermissionsRequestsPermanentlyDeclined,
+                ::navigateToNewScreen
+            )
         }
     }
 
@@ -299,6 +303,17 @@ class MainActivity : ComponentActivity() {
             permission
         )
     }
+
+    private fun navigateToNewScreen(navController: NavController, screenName: String?, popBackStackOnly: Boolean = false) {
+        if (popBackStackOnly) {
+            navController.popBackStack();
+            return
+        }
+
+        if (screenName == null) return
+
+        navController.navigate(screenName) {}
+    }
 }
 
 @Composable
@@ -307,9 +322,13 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
           dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
           applicationContext: Context,
           openAppSettings: () -> Unit,
-          arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean) {
+          arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
+          navigateToNewScreen: (NavController, String?, Boolean) -> Unit
+) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
+    val navController = rememberNavController()
+
     SideEffect {
         systemUiController.setStatusBarColor(
             color = statusBarColor,
@@ -324,14 +343,26 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
 
     var preferencesManager = PreferencesManager(applicationContext)
 
-    val startDestination = if (preferencesManager.isAppProperlyRegistered()) ScreensNames.MAIN_SCREEN else ScreensNames.REGISTRATION_SCREEN
+    val startDestination = if (preferencesManager.isAppProperlyRegistered()) ScreenName.MAIN_SCREEN else ScreenName.REGISTRATION_SCREEN
 
-    val navController = rememberNavController()
+    val navigateToScreenHandler = { screenName: String?, popBackStackOnly: Boolean -> navigateToNewScreen(navController, screenName, popBackStackOnly) }
+
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable(ScreensNames.MAIN_SCREEN) { MainScreen(navController, mainViewModelRef, dataStorageRegistrationViewModelRef, applicationContext, openAppSettings, arePermissionsRequestsPermanentlyDeclined) }
-        composable(ScreensNames.LOG_SCREEN) { LogScreen(navController, logsScreenViewModelRef) }
-        composable(ScreensNames.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModelRef) }
-        composable(ScreensNames.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModelRef) }
-        composable(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModelRef, dataStorageRegistrationViewModelRef) }
+        composable(ScreenName.MAIN_SCREEN) {
+            MainScreen(
+                navController,
+                mainViewModelRef,
+                dataStorageRegistrationViewModelRef,
+                applicationContext,
+                openAppSettings,
+                arePermissionsRequestsPermanentlyDeclined,
+                navigateToScreenHandler,
+            )
+        }
+
+        composable(ScreenName.LOG_SCREEN) { LogScreen(logsScreenViewModelRef, navigateToScreenHandler) }
+        composable(ScreenName.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModelRef) }
+        composable(ScreenName.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModelRef) }
+        composable(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModelRef, dataStorageRegistrationViewModelRef) }
     }
 }

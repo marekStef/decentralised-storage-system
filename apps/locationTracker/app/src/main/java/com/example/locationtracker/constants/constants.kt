@@ -66,7 +66,7 @@ object DataStorageRelated {
     const val UNIQUE_LOCATION_PROFILE_NAME = "${UNIQUE_APP_NAME}/profiles/location_profile"
 }
 
-object ScreensNames {
+object ScreenName {
     const val MAIN_SCREEN = "mainScreen"
     const val LOG_SCREEN = "logScreen"
     const val PROFILES_AND_PERMISSIONS_SCREEN = "profilesAndPermissions"

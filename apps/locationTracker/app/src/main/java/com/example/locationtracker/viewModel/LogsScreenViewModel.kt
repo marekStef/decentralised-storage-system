@@ -10,7 +10,9 @@ import kotlinx.coroutines.launch
 
 import com.example.locationtracker.data.database.entities.Location
 
-class LogsScreenViewModel(private val application: Application, private val databaseManager: DatabaseManager): AndroidViewModel(application) {
+class LogsScreenViewModel(private val application: Application): AndroidViewModel(application) {
+    private val databaseManager: DatabaseManager = DatabaseManager.getInstance(application.applicationContext);
+
     val limit = 100
     private var offset = 0
 

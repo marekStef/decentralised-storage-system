@@ -13,26 +13,15 @@ import java.lang.ref.WeakReference
 
 fun stopLocationGatheringServiceIfRunning(
     applicationContext: Context,
-    viewModelRef: WeakReference<MainViewModel>,
+    isLocationServiceRunning: Boolean
 ) {
-    val viewModel = viewModelRef.get() ?: return
-
-    val appSettings = viewModel.appSettings.value
-
-    val isServiceRunning = viewModel.serviceRunningLiveData.value ?: false
-
-    if (!isServiceRunning) return
+    if (!isLocationServiceRunning) return
 
     toggleLocationGatheringService(
-        isServiceRunning,
+        isLocationServiceRunning,
         applicationContext,
-        appSettings,
+        null,
         null
-    )
-
-    viewModel.showAlertDialogWithOkButton(
-        "Location Tracker Service",
-        "Location Tracking Service has been stopped."
     )
 }
 

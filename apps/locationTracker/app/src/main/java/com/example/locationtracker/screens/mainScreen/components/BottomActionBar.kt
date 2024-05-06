@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
-import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.foregroundServices.LocationTrackerService.toggleLocationGatheringService
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
@@ -62,7 +62,7 @@ fun BottomActionBar(
                     containerColor = colorResource(id = R.color.gray_light2),
                     contentColor = Color.DarkGray
                 ),
-                onClick = { navController.navigate(ScreensNames.LOG_SCREEN) }) {
+                onClick = { navController.navigate(ScreenName.LOG_SCREEN) }) {
                 Text(
                     stringResource(id = R.string.show_data),
                     style = TextStyle(

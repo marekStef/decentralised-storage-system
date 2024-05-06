@@ -43,7 +43,10 @@ import java.util.Locale
 
 
 @Composable
-fun LogScreen(navController: NavController, logsScreenViewModelRef: WeakReference<LogsScreenViewModel>) {
+fun LogScreen(
+    logsScreenViewModelRef: WeakReference<LogsScreenViewModel>,
+    navigateToScreenHandler: (ScreenName: String?, popBackStackOnly: Boolean) -> Unit
+) {
     val logsScreenViewModel = logsScreenViewModelRef.get() ?: return
 
     val showDeleteLocationsDialog by logsScreenViewModel.showDeleteLocationsDialog.observeAsState()
@@ -91,7 +94,7 @@ fun LogScreen(navController: NavController, logsScreenViewModelRef: WeakReferenc
                 Text("Last ${locations.size} Unsynced Locations", style = MaterialTheme.typography.subtitle2, color = Color.White)
             } },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = { navigateToScreenHandler(null, true) }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",

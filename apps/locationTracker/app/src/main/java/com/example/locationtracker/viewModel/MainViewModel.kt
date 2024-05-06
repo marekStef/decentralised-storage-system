@@ -1,11 +1,8 @@
 package com.example.locationtracker.viewModel
 
-import android.Manifest
 import android.app.Application
 import android.content.Context
-import android.content.pm.PackageManager
 import androidx.compose.runtime.mutableStateListOf
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,13 +11,12 @@ import androidx.navigation.NavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.constants.ScreenName
 
 import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
 import com.example.locationtracker.eventSynchronisation.CentralizedSyncManager
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
-import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultAppSettings
@@ -30,11 +26,12 @@ import com.example.locationtracker.workManagers.ExportLocationsWorker
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 import java.time.LocalTime
 import java.util.Date
 
-class MainViewModel(private val application: Application, private val dbManager: DatabaseManager, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
+class MainViewModel(private val application: Application, private val preferencesManager: PreferencesManager) : AndroidViewModel(application) {
+    private var dbManager : DatabaseManager = DatabaseManager.getInstance(application.applicationContext);
+
     private val workManager = WorkManager.getInstance(application)
 
     private val _appSettings = MutableLiveData<AppSettings>()
@@ -198,10 +195,9 @@ class MainViewModel(private val application: Application, private val dbManager:
 
     fun resetApplication(applicationContext: Context, navController: NavController) {
         preferencesManager.resetAllPreferences()
-        stopLocationGatheringServiceIfRunning(applicationContext, WeakReference(this))
         deleteAllLocations()
         resetViewModel()
-        navController.navigate(ScreensNames.REGISTRATION_SCREEN)
+        navController.navigate(ScreenName.REGISTRATION_SCREEN)
     }
 
     private val _alertDialogRequest = MutableLiveData<Pair<String, String>?>(null)

@@ -9,23 +9,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.MutableLiveData
 import com.example.locationtracker.R
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
+import java.time.LocalTime
 
 @Composable
 fun ActiveHoursSetter(
-    context: Context,
-    applicationContext: Context,
     appSettings: AppSettings?,
-    viewModelRef: WeakReference<MainViewModel>
+    updateAppSettingsStartTime: (LocalTime) -> Unit,
+    updateAppSettingsEndTime: (LocalTime) -> Unit,
+    isLocationServiceRunning: Boolean
 ) {
-    val viewModel = viewModelRef.get() ?: return
+    val context: Context = LocalContext.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -41,10 +44,10 @@ fun ActiveHoursSetter(
             context,
             appSettings?.selectedStartTimeForLocationLogging
         ) {
-            viewModel.updateAppSettingsStartTime(it)
+            updateAppSettingsStartTime(it)
             stopLocationGatheringServiceIfRunning(
-                applicationContext,
-                viewModelRef,
+                context,
+                isLocationServiceRunning
             )
         }
 
@@ -54,10 +57,10 @@ fun ActiveHoursSetter(
             context,
             appSettings?.selectedEndTimeForLocationLogging
         ) {
-            viewModel.updateAppSettingsEndTime(it)
+            updateAppSettingsEndTime(it)
             stopLocationGatheringServiceIfRunning(
-                applicationContext,
-                viewModelRef,
+                context,
+                isLocationServiceRunning
             )
         }
     }

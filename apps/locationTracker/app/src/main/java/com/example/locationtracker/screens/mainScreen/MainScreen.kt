@@ -1,10 +1,6 @@
 package com.example.locationtracker
 
-import android.Manifest
 import android.content.Context
-import android.content.pm.PackageManager
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +19,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
@@ -33,17 +28,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import com.example.locationtracker.constants.ScreensNames
+import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.model.EmptyDataStorageDetails
+import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.screens.mainScreen.components.ActiveHoursSetter
 import com.example.locationtracker.screens.mainScreen.components.AutoSyncSetter
-import com.example.locationtracker.screens.mainScreen.components.FineLocationPermissionTextProvider
-import com.example.locationtracker.screens.mainScreen.components.PermissionDialog
-import com.example.locationtracker.screens.mainScreen.components.BackgroundLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.BottomActionBar
-import com.example.locationtracker.screens.mainScreen.components.CoarseLocationPermissionTextProvider
 import com.example.locationtracker.screens.mainScreen.components.DataStorageDetailsSection
 import com.example.locationtracker.screens.mainScreen.components.SyncStatusCard
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
@@ -57,7 +48,8 @@ fun MainScreen(
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
     applicationContext: Context,
     openAppSettings: () -> Unit,
-    arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean
+    arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
+    navigateToScreenHandler: (ScreenName: String?, popBackStackOnly: Boolean) -> Unit
 ) {
 
     val viewModel = viewModelRef.get()
@@ -68,6 +60,8 @@ fun MainScreen(
         Text(text = stringResource(id = R.string.view_models_not_available), color = Color.Red)
         return
     }
+
+    val syncInfo by viewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(
         EmptyDataStorageDetails
@@ -92,7 +86,7 @@ fun MainScreen(
                     .padding(0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SyncStatusCard(viewModelRef)
+                SyncStatusCard(syncInfo)
 
                 LazyColumn() {
                     item {
@@ -117,19 +111,19 @@ fun MainScreen(
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 ActiveHoursSetter(
-                                    context,
-                                    applicationContext,
                                     appSettings,
-                                    viewModelRef
+                                    viewModel::updateAppSettingsStartTime,
+                                    viewModel::updateAppSettingsEndTime,
+                                    viewModel.serviceRunningLiveData.value ?: false
                                 )
 
                                 AutoSyncSetter(
-                                    viewModelRef,
                                     appSettings,
                                     dataStorageDetails,
                                     dataStorageRegistrationViewModel,
                                     isServiceRunning,
-                                    applicationContext
+                                    viewModel::updateAppSettingsAutoSync,
+                                    viewModel::showAlertDialogWithOkButton
                                 )
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -137,7 +131,7 @@ fun MainScreen(
                                         text = stringResource(id = R.string.network_for_synchronisation),
                                         fontSize = 16.sp
                                     )
-                                    IconButton(onClick = { navController.navigate(ScreensNames.SETTINGS_SCREEN_FOR_REGISTERED_APP) }) {
+                                    IconButton(onClick = { navController.navigate(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP) }) {
                                         Icon(
                                             imageVector = Icons.Outlined.Settings,
                                             contentDescription = stringResource(id = R.string.settings),

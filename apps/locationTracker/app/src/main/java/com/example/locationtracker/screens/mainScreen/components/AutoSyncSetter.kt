@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
@@ -23,15 +24,14 @@ import java.lang.ref.WeakReference
 
 @Composable
 fun AutoSyncSetter(
-    viewModelRef: WeakReference<MainViewModel>,
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails,
     dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     isServiceRunning: Boolean,
-    applicationContext: Context
+    updateAppSettingsAutoSync: (Boolean) -> Unit,
+    showAlertDialogWithOkButton: (String, String) -> Unit
 ) {
-    val viewModel = viewModelRef.get() ?: return
-
+    val localContext: Context = LocalContext.current
     val cannotSetAutosyncTitle = stringResource(id = R.string.cannot_set_autosync_title)
     val autosyncErrorDetail = stringResource(id = R.string.autosync_cannot_be_turned_on_ssid_missing)
 
@@ -63,12 +63,12 @@ fun AutoSyncSetter(
                 val dataStorageDetailsValue = dataStorageRegistrationViewModel.dataStorageDetails.value
 
                 if (dataStorageDetailsValue == null || dataStorageDetails.networkSSID == null) {
-                    viewModel.showAlertDialogWithOkButton(cannotSetAutosyncTitle, autosyncErrorDetail)
+                    showAlertDialogWithOkButton(cannotSetAutosyncTitle, autosyncErrorDetail)
                     return@Switch
                 }
-                viewModel.updateAppSettingsAutoSync(isChecked)
+                updateAppSettingsAutoSync(isChecked)
                 if (isServiceRunning)
-                    sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation(applicationContext, isChecked)
+                    sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation(localContext, isChecked)
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = colorResource(id = R.color.gray_light5),

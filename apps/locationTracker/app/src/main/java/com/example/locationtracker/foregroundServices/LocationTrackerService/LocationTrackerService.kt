@@ -205,7 +205,6 @@ class LocationTrackerService : Service() {
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag")
         wakeLock?.acquire(10 * 1000L /*10 minutes*/)
 
-
         handlerThread = HandlerThread("HandlerThread", Process.THREAD_PRIORITY_BACKGROUND)
         handlerThread.start()
         handler = Handler(handlerThread.looper)
@@ -215,21 +214,22 @@ class LocationTrackerService : Service() {
     private fun logLocation() {
         Log.d("SPRAVA", "Periodic task run")
         val lastUpdateTime = SimpleDateFormat("hh:mm:ss a", Locale.getDefault()).format(Date())
-        Log.d("LOCATION", lastUpdateTime)
 
         if (ActivityCompat.checkSelfPermission(
                 this@LocationTrackerService,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(
                 this@LocationTrackerService,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
+            || ActivityCompat.checkSelfPermission(this@LocationTrackerService, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
             updateNotification(
                 applicationContext,
                 NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE,
                 NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE,
-                "Are u kidding me?",
+                "Are u kidding me? Location not granted...",
                 "(Last update: $lastUpdateTime)"
             )
             // TODO: Consider calling
@@ -241,14 +241,16 @@ class LocationTrackerService : Service() {
             // for ActivityCompat#requestPermissions for more details.
             return
         }
+
+        Log.d("LOCATION", lastUpdateTime)
+
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
-                // Log location or use as needed
                 location?.let {
                     location.provider
 
                     Log.d(
-                        "\tLOCATION2",
+                        "LOCATION",
                         "Current location: ${location.latitude}, ${location.longitude}"
                     )
 
@@ -276,8 +278,11 @@ class LocationTrackerService : Service() {
                 }
             }
             .addOnFailureListener { exception ->
-                Log.e("\tLOCATION2", "Error getting the location", exception)
+                Log.d("\tLOCATION2", "Error getting the location", exception)
             }
+            .addOnCanceledListener({
+                Log.d("Location", "here?")
+            })
 
     }
 

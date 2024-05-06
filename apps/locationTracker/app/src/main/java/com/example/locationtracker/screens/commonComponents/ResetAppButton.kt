@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 
@@ -39,6 +40,7 @@ fun ResetAppButton(applicationContext: Context, viewModelRef: WeakReference<Main
                 ) {
                     showDialog = false
                     viewModel.resetApplication(applicationContext, navController);
+                    stopLocationGatheringServiceIfRunning(applicationContext, viewModel.serviceRunningLiveData.value ?: false)
                     viewModel.showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
                 }
             },
