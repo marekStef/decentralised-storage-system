@@ -1,17 +1,14 @@
 package com.example.locationtracker.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.locationtracker.constants.ScreenName
 
 import com.example.locationtracker.data.DatabaseManager
 import com.example.locationtracker.data.PreferencesManager
@@ -111,7 +108,7 @@ class MainViewModel(private val application: Application, private val preference
 
     // csv exporting
     private val _workInfo = MutableLiveData<WorkInfo>()
-    val workInfo: LiveData<WorkInfo> = _workInfo
+    val csvExportingWorkInfo: LiveData<WorkInfo> = _workInfo
 
     fun exportData() {
         val request = OneTimeWorkRequestBuilder<ExportLocationsWorker>().build()

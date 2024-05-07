@@ -19,16 +19,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.locationtracker.R
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
+import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.model.defaultSyncInfo
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 
 @Composable
-fun SynchronisationComponent(mainViewModelRef: WeakReference<MainViewModel>) {
-    val mainViewModel = mainViewModelRef.get() ?: return
-
-    val syncInfo = mainViewModel.syncInfo.observeAsState(defaultSyncInfo)
-
+fun SynchronisationComponent(
+    syncInfo: SyncInfo,
+    startSyncingData: () -> Unit
+) {
     Button(modifier = Modifier
         .fillMaxWidth()
         .padding(0.dp),
@@ -37,20 +37,20 @@ fun SynchronisationComponent(mainViewModelRef: WeakReference<MainViewModel>) {
             containerColor = colorResource(id = R.color.green0),
             contentColor = colorResource(id = R.color.green3)
         ),
-        onClick = { mainViewModel.startSynchronisingGatheredData() }
+        onClick = { startSyncingData() }
     ){
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (syncInfo.value.syncStatus == EventsSyncingStatus.SYNCING) {
+            if (syncInfo.syncStatus == EventsSyncingStatus.SYNCING) {
                 Text(stringResource(id = R.string.syncing))
                 LinearProgressIndicator(
-                    progress = (syncInfo.value.currentSynchronisationProgress ?: 1) / 100f,
+                    progress = (syncInfo.currentSynchronisationProgress ?: 1) / 100f,
                     color = colorResource(id = R.color.green3),
                     trackColor = Color.White,
                     modifier = Modifier
                         .padding(horizontal = 10.dp)
                         .width(100.dp)
                 )
-                Text(text = "${syncInfo.value.currentSynchronisationProgress}%")
+                Text(text = "${syncInfo.currentSynchronisationProgress}%")
             } else {
                 Text(stringResource(id = R.string.sync_now))
             }

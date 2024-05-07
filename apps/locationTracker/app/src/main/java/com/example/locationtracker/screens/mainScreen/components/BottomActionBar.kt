@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,18 +23,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import androidx.work.WorkInfo
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.foregroundServices.LocationTrackerService.toggleLocationGatheringService
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
+import com.example.locationtracker.model.SyncInfo
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 
 @Composable
 fun BottomActionBar(
-    viewModelRef: WeakReference<MainViewModel>,
+    csvExportWorkInfo: State<WorkInfo?>,
+    initiateExportCsvHandler: () -> Unit,
+    openFilePickerForGeneratedCsv: (generatedCsvFilePath: String) -> Unit,
+    syncInfo: SyncInfo,
+    startSyncingData: () -> Unit,
     isServiceRunning: Boolean,
     navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit,
     appSettings: AppSettings?,
@@ -47,7 +55,7 @@ fun BottomActionBar(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row() {
-            SynchronisationComponent(viewModelRef)
+            SynchronisationComponent(syncInfo, startSyncingData)
         }
         Row(
             modifier = Modifier
@@ -71,7 +79,7 @@ fun BottomActionBar(
                 )
             }
 
-            ExportButton(viewModelRef)
+            ExportButton(csvExportWorkInfo, initiateExportCsvHandler, openFilePickerForGeneratedCsv)
 
             ServiceControlButton(appSettings, dataStorageDetails, isServiceRunning)
         }

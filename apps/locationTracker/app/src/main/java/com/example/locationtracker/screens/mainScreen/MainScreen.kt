@@ -19,6 +19,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Divider
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.work.WorkInfo
 import com.example.locationtracker.constants.ScreenName
 import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.model.defaultSyncInfo
@@ -57,11 +59,13 @@ fun MainScreen(
         return
     }
 
-    val syncInfo by viewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(
         EmptyDataStorageDetails
     )
+
+    val csvExportingWorkInfoObservedAsState: State<WorkInfo?> = viewModel.csvExportingWorkInfo.observeAsState()
+    val syncInfo by viewModel.syncInfo.observeAsState(defaultSyncInfo)
 
     val appSettings by viewModel.appSettings.observeAsState()
 
@@ -108,7 +112,7 @@ fun MainScreen(
                                     appSettings,
                                     viewModel::updateAppSettingsStartTime,
                                     viewModel::updateAppSettingsEndTime,
-                                    viewModel.serviceRunningLiveData.value ?: false
+                                    isServiceRunning
                                 )
 
                                 AutoSyncSetter(
@@ -141,7 +145,11 @@ fun MainScreen(
         }
 
         BottomActionBar(
-            viewModelRef,
+            csvExportingWorkInfoObservedAsState,
+            initiateExportCsvHandler = { viewModel.exportData() },
+            openFilePickerForGeneratedCsv = {filePath: String -> viewModel.setTempFilePath(filePath) },
+            syncInfo,
+            startSyncingData = { viewModel.startSynchronisingGatheredData() },
             isServiceRunning,
             navigateToScreenHandler,
             appSettings,
