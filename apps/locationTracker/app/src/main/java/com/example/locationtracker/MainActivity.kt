@@ -199,8 +199,9 @@ class MainActivity : ComponentActivity() {
                     requestNextLocationPermission()
                 }
             } else {
-                showAlertDialogWithOkButton("Permission Required", "This app cannot function without the required permissions. The app will close now. You can change the permission in the phone's settings or by reinstalling this app. Bye for now.") {
-                    finish() // Close the application if permission is denied
+                showAlertDialogWithOkButton("Permission Required", "This app cannot function without the required permissions. You will be redirected now to the settings. We need to have the location 'Allow all the time'") {
+//                    finish() // Close the application if permission is denied
+                    openAppSettings()
                 }
             }
         }
@@ -237,8 +238,6 @@ class MainActivity : ComponentActivity() {
                 logsScreenViewModelRef,
                 dataStorageRegistrationViewModelRef,
                 applicationContext,
-                openAppSettings,
-                arePermissionsRequestsPermanentlyDeclined,
                 ::navigateToNewScreen,
                 ::popBackScreenFromStack
             )
@@ -298,12 +297,12 @@ class MainActivity : ComponentActivity() {
         this.startActivity(intent)
     }
 
-    private val arePermissionsRequestsPermanentlyDeclined: (permission: String) -> Boolean = { permission ->
-        !ActivityCompat.shouldShowRequestPermissionRationale(
-            this,
-            permission
-        )
-    }
+//    private val arePermissionsRequestsPermanentlyDeclined: (permission: String) -> Boolean = { permission ->
+//        !ActivityCompat.shouldShowRequestPermissionRationale(
+//            this,
+//            permission
+//        )
+//    }
 
     private fun navigateToNewScreen(navController: NavController, screenName: String, canUserNavigateBack: Boolean) {
         navController.navigate(screenName) {
@@ -325,8 +324,6 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
           logsScreenViewModelRef: WeakReference<LogsScreenViewModel>,
           dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
           applicationContext: Context,
-          openAppSettings: () -> Unit,
-          arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
           navigateToNewScreen: (NavController, String, canUserNavigateBack: Boolean) -> Unit,
           popBackScreen: (NavController) -> Unit
 ) {
@@ -354,17 +351,7 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
     val popBackScreenHandler = { -> popBackScreen(navController) }
 
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
-        composable(ScreenName.MAIN_SCREEN) {
-            MainScreen(
-                mainViewModelRef,
-                dataStorageRegistrationViewModelRef,
-                applicationContext,
-                openAppSettings,
-                arePermissionsRequestsPermanentlyDeclined,
-                navigateToScreenHandler,
-            )
-        }
-
+        composable(ScreenName.MAIN_SCREEN) { MainScreen(mainViewModelRef, dataStorageRegistrationViewModelRef, navigateToScreenHandler) }
         composable(ScreenName.LOG_SCREEN) { LogScreen(logsScreenViewModelRef, popBackScreenHandler) }
         composable(ScreenName.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(dataStorageRegistrationViewModelRef, navigateToScreenHandler) }
         composable(ScreenName.REGISTRATION_SCREEN) { RegistrationScreen(dataStorageRegistrationViewModelRef, navigateToScreenHandler) }

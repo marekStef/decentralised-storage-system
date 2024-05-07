@@ -18,6 +18,7 @@ import com.example.locationtracker.R
 import com.example.locationtracker.foregroundServices.LocationTrackerService.sendInfoToLocationTrackerServiceAboutAutomaticSynchronisation
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
+import com.example.locationtracker.model.EmptyDataStorageDetails
 import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
 import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
@@ -26,7 +27,6 @@ import java.lang.ref.WeakReference
 fun AutoSyncSetter(
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails,
-    dataStorageRegistrationViewModel: DataStorageRegistrationViewModel,
     isServiceRunning: Boolean,
     updateAppSettingsAutoSync: (Boolean) -> Unit,
     showAlertDialogWithOkButton: (String, String) -> Unit
@@ -60,9 +60,7 @@ fun AutoSyncSetter(
         Switch(
             checked = appSettings?.isAutoSyncToggled ?: false,
             onCheckedChange = { isChecked: Boolean ->
-                val dataStorageDetailsValue = dataStorageRegistrationViewModel.dataStorageDetails.value
-
-                if (dataStorageDetailsValue == null || dataStorageDetails.networkSSID == null) {
+                if (dataStorageDetails == EmptyDataStorageDetails || dataStorageDetails.networkSSID == null) {
                     showAlertDialogWithOkButton(cannotSetAutosyncTitle, autosyncErrorDetail)
                     return@Switch
                 }

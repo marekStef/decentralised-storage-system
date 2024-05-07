@@ -12,14 +12,14 @@ import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 
 fun stopLocationGatheringServiceIfRunning(
-    applicationContext: Context,
+    context: Context,
     isLocationServiceRunning: Boolean
 ) {
     if (!isLocationServiceRunning) return
 
     toggleLocationGatheringService(
         isLocationServiceRunning,
-        applicationContext,
+        context,
         null,
         null
     )
@@ -27,7 +27,7 @@ fun stopLocationGatheringServiceIfRunning(
 
 fun toggleLocationGatheringService(
     isServiceRunning: Boolean,
-    applicationContext: Context,
+    context: Context,
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails?
 ) {
@@ -37,7 +37,7 @@ fun toggleLocationGatheringService(
         LocationTrackerService.Actions.START.toString()
     }
 
-    Intent(applicationContext, LocationTrackerService::class.java).also { intent ->
+    Intent(context, LocationTrackerService::class.java).also { intent ->
         intent.action = action
         if (action == LocationTrackerService.Actions.START.toString()) {
             if (appSettings != null) {
@@ -64,7 +64,7 @@ fun toggleLocationGatheringService(
 
             }
         }
-        applicationContext.startForegroundService(intent)
+        context.startForegroundService(intent)
     }
 }
 

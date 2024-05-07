@@ -34,11 +34,11 @@ import java.lang.ref.WeakReference
 @Composable
 fun BottomActionBar(
     viewModelRef: WeakReference<MainViewModel>,
+    isServiceRunning: Boolean,
     navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit,
     appSettings: AppSettings?,
-    dataStorageDetails: DataStorageDetails
+    dataStorageDetails: DataStorageDetails,
 ) {
-    // This Column aligns the buttons to the bottom
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -73,41 +73,18 @@ fun BottomActionBar(
 
             ExportButton(viewModelRef)
 
-            ServiceControlButton(viewModelRef, appSettings, dataStorageDetails)
+            ServiceControlButton(appSettings, dataStorageDetails, isServiceRunning)
         }
-
-//            }
-//                Row(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    horizontalArrangement = Arrangement.SpaceEvenly
-//                ) {
-////                    Button(onClick = {
-////                        FineLocationPermissionTextProvider.launch(
-////                            Manifest.permission.ACCESS_FINE_LOCATION
-////                        )
-////                    }) {
-////                        Text("Request 1 permission")
-////                    }
-//                    Button(onClick = {
-//
-//                    }) {
-//                        Text("Request multiple permissions")
-//                    }
-//                }
     }
 }
 
 @Composable
 fun ServiceControlButton(
-    viewModelRef: WeakReference<MainViewModel>,
     appSettings: AppSettings?,
-    dataStorageDetails: DataStorageDetails
+    dataStorageDetails: DataStorageDetails,
+    isServiceRunning: Boolean
 ) {
     val localContext: Context = LocalContext.current
-
-    val viewModel = viewModelRef.get() ?: return
-
-    val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
 
     Button(
         modifier = Modifier

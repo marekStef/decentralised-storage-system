@@ -229,7 +229,7 @@ class LocationTrackerService : Service() {
                 applicationContext,
                 NOTIFICATION_ID_FOR_LOCATION_TRACKER_SERVICE,
                 NOTIFICATION_CHANNEL_ID_FOR_LOCATION_TRACKER_SERVICE,
-                "Are u kidding me? Location not granted...",
+                "Location not granted...",
                 "(Last update: $lastUpdateTime)"
             )
             // TODO: Consider calling

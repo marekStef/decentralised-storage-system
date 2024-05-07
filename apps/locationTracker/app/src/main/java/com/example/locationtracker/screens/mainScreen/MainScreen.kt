@@ -45,9 +45,6 @@ import java.lang.ref.WeakReference
 fun MainScreen(
     viewModelRef: WeakReference<MainViewModel>,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
-    applicationContext: Context,
-    openAppSettings: () -> Unit,
-    arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
     navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit
 ) {
 
@@ -65,8 +62,6 @@ fun MainScreen(
     val dataStorageDetails by dataStorageRegistrationViewModel.dataStorageDetails.observeAsState(
         EmptyDataStorageDetails
     )
-
-    val context = LocalContext.current
 
     val appSettings by viewModel.appSettings.observeAsState()
 
@@ -119,7 +114,6 @@ fun MainScreen(
                                 AutoSyncSetter(
                                     appSettings,
                                     dataStorageDetails,
-                                    dataStorageRegistrationViewModel,
                                     isServiceRunning,
                                     viewModel::updateAppSettingsAutoSync,
                                     viewModel::showAlertDialogWithOkButton
@@ -148,6 +142,7 @@ fun MainScreen(
 
         BottomActionBar(
             viewModelRef,
+            isServiceRunning,
             navigateToScreenHandler,
             appSettings,
             dataStorageDetails
