@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.locationtracker.R
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.screens.commonComponents.CustomTextField

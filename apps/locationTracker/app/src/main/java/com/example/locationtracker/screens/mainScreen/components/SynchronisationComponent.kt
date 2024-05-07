@@ -10,7 +10,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,9 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.example.locationtracker.R
 import com.example.locationtracker.eventSynchronisation.EventsSyncingStatus
 import com.example.locationtracker.model.SyncInfo
-import com.example.locationtracker.model.defaultSyncInfo
-import com.example.locationtracker.viewModel.MainViewModel
-import java.lang.ref.WeakReference
 
 @Composable
 fun SynchronisationComponent(

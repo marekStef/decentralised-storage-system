@@ -15,10 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
-import com.example.locationtracker.viewModel.MainViewModel
-import java.lang.ref.WeakReference
 
 @Composable
 fun ResetAppButton(onReset: () -> Unit) {

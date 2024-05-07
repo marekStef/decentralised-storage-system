@@ -19,9 +19,6 @@ import com.example.locationtracker.foregroundServices.LocationTrackerService.sen
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.EmptyDataStorageDetails
-import com.example.locationtracker.viewModel.DataStorageRegistrationViewModel
-import com.example.locationtracker.viewModel.MainViewModel
-import java.lang.ref.WeakReference
 
 @Composable
 fun AutoSyncSetter(

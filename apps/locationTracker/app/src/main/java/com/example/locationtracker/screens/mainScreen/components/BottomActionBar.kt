@@ -12,8 +12,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LiveData
-import androidx.navigation.NavController
 import androidx.work.WorkInfo
 import com.example.locationtracker.R
 import com.example.locationtracker.constants.ScreenName
@@ -32,8 +28,6 @@ import com.example.locationtracker.foregroundServices.LocationTrackerService.tog
 import com.example.locationtracker.model.AppSettings
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.model.SyncInfo
-import com.example.locationtracker.viewModel.MainViewModel
-import java.lang.ref.WeakReference
 
 @Composable
 fun BottomActionBar(

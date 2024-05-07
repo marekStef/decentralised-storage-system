@@ -13,12 +13,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.MutableLiveData
 import com.example.locationtracker.R
 import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.model.AppSettings
-import com.example.locationtracker.viewModel.MainViewModel
-import java.lang.ref.WeakReference
 import java.time.LocalTime
 
 @Composable
