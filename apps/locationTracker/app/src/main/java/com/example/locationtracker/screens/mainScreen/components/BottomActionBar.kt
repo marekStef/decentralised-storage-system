@@ -16,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -33,8 +34,7 @@ import java.lang.ref.WeakReference
 @Composable
 fun BottomActionBar(
     viewModelRef: WeakReference<MainViewModel>,
-    navController: NavController,
-    applicationContext: Context,
+    navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit,
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails
 ) {
@@ -62,7 +62,7 @@ fun BottomActionBar(
                     containerColor = colorResource(id = R.color.gray_light2),
                     contentColor = Color.DarkGray
                 ),
-                onClick = { navController.navigate(ScreenName.LOG_SCREEN) }) {
+                onClick = { navigateToScreenHandler(ScreenName.LOG_SCREEN, true) }) {
                 Text(
                     stringResource(id = R.string.show_data),
                     style = TextStyle(
@@ -73,7 +73,7 @@ fun BottomActionBar(
 
             ExportButton(viewModelRef)
 
-            ServiceControlButton(applicationContext, viewModelRef, appSettings, dataStorageDetails)
+            ServiceControlButton(viewModelRef, appSettings, dataStorageDetails)
         }
 
 //            }
@@ -99,11 +99,12 @@ fun BottomActionBar(
 
 @Composable
 fun ServiceControlButton(
-    applicationContext: Context,
     viewModelRef: WeakReference<MainViewModel>,
     appSettings: AppSettings?,
     dataStorageDetails: DataStorageDetails
 ) {
+    val localContext: Context = LocalContext.current
+
     val viewModel = viewModelRef.get() ?: return
 
     val isServiceRunning by viewModel.serviceRunningLiveData.observeAsState(false)
@@ -118,7 +119,7 @@ fun ServiceControlButton(
         onClick = {
             toggleLocationGatheringService(
                 isServiceRunning,
-                applicationContext,
+                localContext,
                 appSettings,
                 dataStorageDetails
             )

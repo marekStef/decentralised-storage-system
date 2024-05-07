@@ -193,11 +193,10 @@ class MainViewModel(private val application: Application, private val preference
         }
     }
 
-    fun resetApplication(applicationContext: Context, navController: NavController) {
+    fun resetApplication() {
         preferencesManager.resetAllPreferences()
         deleteAllLocations()
         resetViewModel()
-        navController.navigate(ScreenName.REGISTRATION_SCREEN)
     }
 
     private val _alertDialogRequest = MutableLiveData<Pair<String, String>?>(null)

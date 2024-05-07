@@ -57,8 +57,8 @@ fun showAlertDialogWithOkButton(context: Context, title: String, message: String
 
 @Composable
 fun ProfilesAndPermissionsScreen(
-    navController: NavController,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
+    navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit
 ) {
     val context = LocalContext.current
     val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get() ?: return
@@ -323,12 +323,7 @@ fun ProfilesAndPermissionsScreen(
                             textColor = Color.White
                         ) {
                             dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
-                            navController.navigate(ScreenName.MAIN_SCREEN) {
-                                // so that the user cannot get back
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = true
-                                }
-                            }
+                            navigateToScreenHandler(ScreenName.MAIN_SCREEN, false)
                             showAlertDialogWithOkButton(
                                 context,
                                 "Welcome",
@@ -343,12 +338,7 @@ fun ProfilesAndPermissionsScreen(
                         textColor = Color.White
                     ) {
                         dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
-                        navController.navigate(ScreenName.MAIN_SCREEN) {
-                            // so that the user cannot get back
-                            popUpTo(navController.graph.startDestinationId) {
-                                inclusive = true
-                            }
-                        }
+                        navigateToScreenHandler(ScreenName.MAIN_SCREEN, false)
                         showAlertDialogWithOkButton(
                             context,
                             "Welcome",

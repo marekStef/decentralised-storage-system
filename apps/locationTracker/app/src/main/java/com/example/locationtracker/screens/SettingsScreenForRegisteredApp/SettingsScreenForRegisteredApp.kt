@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.locationtracker.R
+import com.example.locationtracker.constants.ScreenName
+import com.example.locationtracker.foregroundServices.LocationTrackerService.stopLocationGatheringServiceIfRunning
 import com.example.locationtracker.screens.commonComponents.CustomDefaultButton
 import com.example.locationtracker.screens.commonComponents.CustomTextField
 import com.example.locationtracker.screens.commonComponents.ResetAppButton
@@ -48,9 +50,9 @@ import java.lang.ref.WeakReference
 @Composable
 fun SettingsScreenForRegisteredApp(
     applicationContext: Context,
-    navController: NavController,
     mainViewModelRef: WeakReference<MainViewModel>,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
+    navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit
 ) {
     val viewModel = mainViewModelRef.get()
     val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get()
@@ -205,7 +207,6 @@ fun SettingsScreenForRegisteredApp(
                         Text(
                             text = stringResource(id = R.string.network_name_with_colon),
                             fontSize = 15.sp,
-//                            modifier = Modifier.weight(1f)
                         )
 
                         Text(
@@ -260,7 +261,14 @@ fun SettingsScreenForRegisteredApp(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    ResetAppButton(applicationContext, mainViewModelRef, navController)
+                    ResetAppButton() {
+                        viewModel.resetApplication()
+                        stopLocationGatheringServiceIfRunning(applicationContext, viewModel.serviceRunningLiveData.value ?: false)
+                        viewModel.showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
+
+                        navigateToScreenHandler(ScreenName.REGISTRATION_SCREEN, true)
+
+                    }
                 }
             }
         }

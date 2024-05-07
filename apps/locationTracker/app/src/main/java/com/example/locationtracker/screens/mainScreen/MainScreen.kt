@@ -43,13 +43,12 @@ import java.lang.ref.WeakReference
 
 @Composable
 fun MainScreen(
-    navController: NavController,
     viewModelRef: WeakReference<MainViewModel>,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
     applicationContext: Context,
     openAppSettings: () -> Unit,
     arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
-    navigateToScreenHandler: (ScreenName: String?, popBackStackOnly: Boolean) -> Unit
+    navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit
 ) {
 
     val viewModel = viewModelRef.get()
@@ -131,7 +130,7 @@ fun MainScreen(
                                         text = stringResource(id = R.string.network_for_synchronisation),
                                         fontSize = 16.sp
                                     )
-                                    IconButton(onClick = { navController.navigate(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP) }) {
+                                    IconButton(onClick = { navigateToScreenHandler(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP, true) }) {
                                         Icon(
                                             imageVector = Icons.Outlined.Settings,
                                             contentDescription = stringResource(id = R.string.settings),
@@ -146,10 +145,10 @@ fun MainScreen(
                 }
             }
         }
+
         BottomActionBar(
             viewModelRef,
-            navController,
-            applicationContext,
+            navigateToScreenHandler,
             appSettings,
             dataStorageDetails
         )

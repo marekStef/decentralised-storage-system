@@ -51,8 +51,8 @@ import java.lang.ref.WeakReference
 
 @Composable
 fun RegistrationScreen(
-    navController: NavController,
     dataStorageRegistrationViewModelRef: WeakReference<DataStorageRegistrationViewModel>,
+    navigateToScreenHandler: (ScreenName: String, canUserNavigateBack: Boolean) -> Unit
 ) {
     val dataStorageRegistrationViewModel = dataStorageRegistrationViewModelRef.get() ?: return
 
@@ -310,7 +310,7 @@ fun RegistrationScreen(
                             backgroundColor = colorResource(id = R.color.green3),
                             textColor = Color.White
                         ) {
-                            navController.navigate("profilesAndPermissions")
+                            navigateToScreenHandler("profilesAndPermissions", true)
                         }
                     } else {
                         Text(text = stringResource(id = R.string.you_need_to_pass_previous_conditions_first))
@@ -322,7 +322,7 @@ fun RegistrationScreen(
                         backgroundColor = colorResource(id = R.color.green3),
                         textColor = Color.White
                     ) {
-                        navController.navigate("profilesAndPermissions")
+                        navigateToScreenHandler("profilesAndPermissions", true)
                     }
                 }
             }

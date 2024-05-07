@@ -21,8 +21,7 @@ import com.example.locationtracker.viewModel.MainViewModel
 import java.lang.ref.WeakReference
 
 @Composable
-fun ResetAppButton(applicationContext: Context, viewModelRef: WeakReference<MainViewModel>, navController: NavController) {
-    val viewModel = viewModelRef.get() ?: return
+fun ResetAppButton(onReset: () -> Unit) {
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -39,9 +38,7 @@ fun ResetAppButton(applicationContext: Context, viewModelRef: WeakReference<Main
                     textColor = Color.White
                 ) {
                     showDialog = false
-                    viewModel.resetApplication(applicationContext, navController);
-                    stopLocationGatheringServiceIfRunning(applicationContext, viewModel.serviceRunningLiveData.value ?: false)
-                    viewModel.showAlertDialogWithOkButton("App Reset", "Your app has been successfully reset")
+                    onReset()
                 }
             },
             dismissButton = { CustomDefaultButton(text = "No", onClick = { showDialog = false }) }

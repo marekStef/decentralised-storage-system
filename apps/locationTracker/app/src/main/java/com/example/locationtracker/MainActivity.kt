@@ -239,7 +239,8 @@ class MainActivity : ComponentActivity() {
                 applicationContext,
                 openAppSettings,
                 arePermissionsRequestsPermanentlyDeclined,
-                ::navigateToNewScreen
+                ::navigateToNewScreen,
+                ::popBackScreenFromStack
             )
         }
     }
@@ -304,15 +305,18 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun navigateToNewScreen(navController: NavController, screenName: String?, popBackStackOnly: Boolean = false) {
-        if (popBackStackOnly) {
-            navController.popBackStack();
-            return
+    private fun navigateToNewScreen(navController: NavController, screenName: String, canUserNavigateBack: Boolean) {
+        navController.navigate(screenName) {
+            if (!canUserNavigateBack) { // so that the user cannot get back
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+            }
         }
+    }
 
-        if (screenName == null) return
-
-        navController.navigate(screenName) {}
+    private fun popBackScreenFromStack(navController: NavController) {
+        navController.popBackStack();
     }
 }
 
@@ -323,7 +327,8 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
           applicationContext: Context,
           openAppSettings: () -> Unit,
           arePermissionsRequestsPermanentlyDeclined: (String) -> Boolean,
-          navigateToNewScreen: (NavController, String?, Boolean) -> Unit
+          navigateToNewScreen: (NavController, String, canUserNavigateBack: Boolean) -> Unit,
+          popBackScreen: (NavController) -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
     val statusBarColor = colorResource(id = R.color.header_background)
@@ -345,12 +350,12 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
 
     val startDestination = if (preferencesManager.isAppProperlyRegistered()) ScreenName.MAIN_SCREEN else ScreenName.REGISTRATION_SCREEN
 
-    val navigateToScreenHandler = { screenName: String?, popBackStackOnly: Boolean -> navigateToNewScreen(navController, screenName, popBackStackOnly) }
+    val navigateToScreenHandler = { screenName: String, canUserNavigateBack: Boolean -> navigateToNewScreen(navController, screenName, canUserNavigateBack) }
+    val popBackScreenHandler = { -> popBackScreen(navController) }
 
     NavHost(navController = navController, startDestination, modifier = Modifier.fillMaxSize()) {
         composable(ScreenName.MAIN_SCREEN) {
             MainScreen(
-                navController,
                 mainViewModelRef,
                 dataStorageRegistrationViewModelRef,
                 applicationContext,
@@ -360,9 +365,9 @@ fun MyApp(mainViewModelRef: WeakReference<MainViewModel>,
             )
         }
 
-        composable(ScreenName.LOG_SCREEN) { LogScreen(logsScreenViewModelRef, navigateToScreenHandler) }
-        composable(ScreenName.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(navController, dataStorageRegistrationViewModelRef) }
-        composable(ScreenName.REGISTRATION_SCREEN) { RegistrationScreen(navController, dataStorageRegistrationViewModelRef) }
-        composable(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, navController, mainViewModelRef, dataStorageRegistrationViewModelRef) }
+        composable(ScreenName.LOG_SCREEN) { LogScreen(logsScreenViewModelRef, popBackScreenHandler) }
+        composable(ScreenName.PROFILES_AND_PERMISSIONS_SCREEN) { ProfilesAndPermissionsScreen(dataStorageRegistrationViewModelRef, navigateToScreenHandler) }
+        composable(ScreenName.REGISTRATION_SCREEN) { RegistrationScreen(dataStorageRegistrationViewModelRef, navigateToScreenHandler) }
+        composable(ScreenName.SETTINGS_SCREEN_FOR_REGISTERED_APP) { SettingsScreenForRegisteredApp(applicationContext, mainViewModelRef, dataStorageRegistrationViewModelRef, navigateToScreenHandler) }
     }
 }
