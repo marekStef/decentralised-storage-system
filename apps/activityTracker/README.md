@@ -1,8 +1,10 @@
-## Setting Up And Building the Project
+# Activity Tracker
 
 To read about this application, please consult [this](https://marekstef.github.io/storageSystemDocs/docs/example-apps/activity-tracker/walkthrough) documentation featuring this **Windows Apps Tracker** as well as the other apps in our whole project.
 
 If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repo.
+
+## Setting Up And Building the Project
 
 ### Preqrequisites
 
@@ -103,3 +105,4 @@ Web browsers, on the other hand, often manage tabs internally within a single pr
 Web browsers are designed with strong security and privacy considerations, especially given their role in accessing and managing sensitive user data across the internet. Allowing external applications to enumerate and access information about open tabs could pose significant privacy risks and potentially expose users to malicious activities. As a result, browsers are designed to sandbox such information, restricting access to it from outside the browser process.
 
 Also discusses [here](https://stackoverflow.com/questions/40608529/enumwindow-to-catch-tab-process-google-chrome-c)
+
