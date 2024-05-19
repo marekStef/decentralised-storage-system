@@ -1,9 +1,11 @@
 #include "ExistingSetupPage.hpp"
 #include "dataStorageSetupNetworkHelpers.hpp"
+#include "CustomPage.hpp"
 
 const wxColour disabledGreenColour(0, 255, 0);
 
-ExistingSetupPage::ExistingSetupPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
+ExistingSetupPage::ExistingSetupPage(wxNotebook* parent, ConfigManager& configManager)
+    : CustomPage(parent), configManager(configManager) {
     setupUI();
     LoadConfig();
 }
@@ -91,4 +93,8 @@ void ExistingSetupPage::LoadConfig() {
     serverPortInputField->SetValue(configManager.GetServerPort());
     jwtTokenForProfilesAndPermissionsRequestsInputField->SetValue(configManager.GetDataStorageTokenForProfilesAndPermissionsRequests());
     accessTokenForActivityTrackingEventsInputField->SetValue(configManager.GetActivityTrackerEventAccessToken());
+}
+
+void ExistingSetupPage::OnTabChanged() {
+    LoadConfig();
 }

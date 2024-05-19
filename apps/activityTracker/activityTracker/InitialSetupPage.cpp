@@ -9,7 +9,7 @@
 const wxColour PageMainBackgroundColour = wxColour(255, 255, 255);
 const wxColour disabledGreenColour(0, 255, 0);
 
-InitialSetupPage::InitialSetupPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
+InitialSetupPage::InitialSetupPage(wxNotebook* parent, ConfigManager& configManager) : CustomPage(parent), configManager(configManager) {
     if (configManager.IsAppProperlySetUp())
         setupAlreadySetupUI();
     else {
@@ -213,4 +213,8 @@ void InitialSetupPage::DisableServerLocationInputs() {
 void InitialSetupPage::DisableAssociationTokenInput() {
     dataStorageJwtAssociationTokenInputField->SetEditable(false);
     dataStorageJwtAssociationTokenInputField->SetBackgroundColour(disabledGreenColour);
+}
+
+void InitialSetupPage::OnTabChanged() {
+    LoadConfig();
 }

@@ -159,6 +159,7 @@
     <ClInclude Include="automaticStartupHelpers.hpp" />
     <ClInclude Include="ConfigManager.hpp" />
     <ClInclude Include="constants.hpp" />
+    <ClInclude Include="CustomPage.hpp" />
     <ClInclude Include="dataStorageSetupNetworkHelpers.hpp" />
     <ClInclude Include="ExistingSetupPage.hpp" />
     <ClInclude Include="generalHelpers.hpp" />

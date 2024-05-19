@@ -3,7 +3,7 @@
 
 #include <wx/spinctrl.h>
 
-SettingsPage::SettingsPage(wxNotebook* parent, ConfigManager& configManager) : wxScrolledWindow(parent), configManager(configManager) {
+SettingsPage::SettingsPage(wxNotebook* parent, ConfigManager& configManager) : CustomPage(parent), configManager(configManager) {
     setupUI();
     loadConfig();
 }
@@ -113,4 +113,7 @@ void SettingsPage::loadConfig() {
     directoryDisplay->SetLabel(configManager.GetDirectory());
     screenshotsPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForScreenshots() / 1000); // to display it in seconds
     appsInfoFetchingPeriodicitySpinCtrl->SetValue(configManager.GetPeriodicityForFetchingAppsInfo() / 1000); // to display it in seconds
+}
+
+void SettingsPage::OnTabChanged() {
 }

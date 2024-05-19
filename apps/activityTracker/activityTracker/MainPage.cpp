@@ -14,7 +14,7 @@
 #include "NetworkManager.hpp"
 
 MainPage::MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction) 
-    : wxScrolledWindow(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
+    : CustomPage(parent), configManager(configManager), timer(new wxTimer(this)), forceCloseApp(closeAppFunction) {
     setupUI();
     loadData();
 
@@ -154,3 +154,5 @@ void MainPage::StartGatheringKeyPressesButtonClick(wxCommandEvent& event) {
         gatheringKeypressesButton->SetLabel("Stop Gathering Key Presses");
     }
 }
+
+void MainPage::OnTabChanged() {}

@@ -5,10 +5,12 @@
 #include "wx/notebook.h"
 
 #include "ConfigManager.hpp"
+#include "CustomPage.hpp"
 
-class ExistingSetupPage : public wxScrolledWindow {
+class ExistingSetupPage : public CustomPage {
 public:
     ExistingSetupPage(wxNotebook* parent, ConfigManager& configManager);
+    void OnTabChanged() override;
 private:
     ConfigManager& configManager;
 

@@ -12,10 +12,13 @@
 #include "WindowsAppsInfoThread.hpp"
 #include "NetworkManager.hpp"
 
-class MainPage : public wxScrolledWindow {
+#include "CustomPage.hpp"
+
+class MainPage : public CustomPage {
 public:
     MainPage(wxNotebook* parent, ConfigManager& configManager, std::function<void()> closeAppFunction);
     ~MainPage();
+    void OnTabChanged() override;
 private:
     ConfigManager& configManager;
     std::function<void()> forceCloseApp;

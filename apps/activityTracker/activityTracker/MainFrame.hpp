@@ -9,6 +9,13 @@
 #include <wx/filedlg.h>
 #include <wx/fileconf.h>
 #include <wx/taskbar.h>
+#include <memory>
+
+#include "ExistingSetupPage.hpp"
+#include "InitialSetupPage.hpp"
+#include "SettingsPage.hpp"
+#include "MainPage.hpp"
+
 #include "wx/notebook.h"
 
 class MainFrame : public wxFrame {
@@ -25,6 +32,13 @@ private:
 
     wxTaskBarIcon* taskBarIcon; // Taskbar icon for minimizing to tray
     wxNotebook* notebook;
+
+    std::unique_ptr<InitialSetupPage> initialSetupPage;
+    std::unique_ptr<ExistingSetupPage> existingSetupPage;
+    std::unique_ptr<SettingsPage> settingsPage;
+    std::unique_ptr<MainPage> mainPage;
+
+    void OnTabChanged(wxBookCtrlEvent& event);
 
     void OnClose(wxCloseEvent& event);
     void OnIconize(wxIconizeEvent& event);

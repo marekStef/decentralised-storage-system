@@ -22,6 +22,7 @@ BEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_ICONIZE(MainFrame::OnIconize) // Handles the iconize event (when the window is minimized )
     EVT_MENU(ID_Restore, MainFrame::OnRestore) // Handles the menu event for restoring the window from the tray - not working at this moment
     EVT_MENU(ID_Exit, MainFrame::OnExit) // Handles the menu event for exiting the application.
+    EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, MainFrame::OnTabChanged) // Handles the tab change event.
 END_EVENT_TABLE()
 
 
@@ -41,24 +42,32 @@ void MainFrame::setupUI() {
 
     notebook = new wxNotebook(this, wxID_ANY);
 
-    auto initialSetupPage = new InitialSetupPage(notebook, configManager);
-    auto existingSetupPage = new ExistingSetupPage(notebook, configManager);
+    initialSetupPage = std::make_unique<InitialSetupPage>(notebook, configManager);
+    existingSetupPage = std::make_unique<ExistingSetupPage>(notebook, configManager);
 
     auto closeAppFunc = std::bind(&MainFrame::ForceClose, this); // Bind the ForceClose method of this MainFrame instance to a callable function object
-    auto mainPage = new MainPage(notebook, configManager, closeAppFunc);
-    auto settingsPage = new SettingsPage(notebook, configManager);
+    mainPage = std::make_unique<MainPage>(notebook, configManager, closeAppFunc);
+    settingsPage = std::make_unique<SettingsPage>(notebook, configManager);
 
     bool isAppAlreadySetup = configManager.IsAppProperlySetUp();
 
-    notebook->AddPage(initialSetupPage, "Initial DataStorage Setup", !isAppAlreadySetup); // true to make it the selected tab
-    notebook->AddPage(existingSetupPage, "Existing DataStorage Setup");
-    notebook->AddPage(settingsPage, "Settings");
-    notebook->AddPage(mainPage, "Home", isAppAlreadySetup);
+    notebook->AddPage(initialSetupPage.get(), "Initial DataStorage Setup", !isAppAlreadySetup); // true to make it the selected tab
+    notebook->AddPage(existingSetupPage.get(), "Existing DataStorage Setup");
+    notebook->AddPage(settingsPage.get(), "Settings");
+    notebook->AddPage(mainPage.get(), "Home", isAppAlreadySetup);
 
     mainSizer->Add(notebook, 1, wxEXPAND, 0);
 
     this->SetSizer(mainSizer);
     Layout();
+}
+
+void MainFrame::OnTabChanged(wxBookCtrlEvent& event) {
+    wxWindow* currentPage = notebook->GetPage(event.GetSelection());
+    CustomPage* customPage = dynamic_cast<CustomPage*>(currentPage);
+    if (customPage) {
+        customPage->OnTabChanged();
+    }
 }
 
 void MainFrame::OnClose(wxCloseEvent& event) {
