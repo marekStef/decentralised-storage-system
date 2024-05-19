@@ -14,7 +14,7 @@ constexpr char ONLY_ONE_INSTANCE_ERROR_MESSAGE[] = "Only one instance allowed";
 void createFolderIfNotExists(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path)) {
         // Create the folder
-        if (std::filesystem::create_directory(path)) {
+        if (std::filesystem::create_directories(path)) {
             std::cout << "Folder '" << path.string() << "' created successfully" << std::endl;
         }
         else {

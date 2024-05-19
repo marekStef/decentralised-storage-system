@@ -51,7 +51,7 @@ std::string generateUniqueImageName(size_t index) {
 void createFolderIfNotAlreadyExists(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path)) {
         // Create the folder
-        if (std::filesystem::create_directory(path)) {
+        if (std::filesystem::create_directories(path)) {
             std::cout << "Folder '" << path.string() << "' created successfully" << std::endl;
         }
         else {
