@@ -675,7 +675,7 @@ const registerNewViewInstanceAccess = async (req, res) => {
     catch (err) {
         logger.error(err);
         return res.status(httpStatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong during saving of new view instance in auth service. Instance was created in view manager though.' });
-        // TODO - DELETE IT FROM VIEW MANAGER NOW!!!! 
+        // suggestion: it could be deleted from a view manager but it's not necessarily a necessity 
     }
 }
 
