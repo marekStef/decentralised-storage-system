@@ -11,11 +11,42 @@ const eventsRelated = require('../constants/forApiResponses/eventsRelated');
 
 const logger = require('../logger/winston');
 
+/**
+ * Checks if a given date value is in a valid ISO format.
+ *
+ * @param {string} dateVal - The date value to be checked.
+ * @returns {boolean} - Returns `true` if the date value is in a valid ISO format, otherwise `false`.
+ *
+ */
 const isDateInISOFormat = dateVal => {
     const date = new Date(dateVal);
     return !isNaN(date.getTime());
 }
 
+/**
+ * Checks required data in an event and validates correct metadata fields.
+ * 
+ * This function performs the following checks:
+ * 1. If `createdDate` is present in the event's metadata, it verifies that `createdDate` is in ISO 8601 format.
+ * 2. Ensures that the event's metadata contains both `profile` and `source` fields.
+ * 
+ * @param {Object} event - The event object to be validated.
+ * @param {Object} event.metadata - The metadata object of the event.
+ * @param {string} [event.metadata.createdDate] - The creation date of the event in ISO 8601 format.
+ * @param {string} [event.metadata.profile] - The profile information in the event's metadata.
+ * @param {string} [event.metadata.source] - The source information in the event's metadata.
+ * 
+ * @throws {Object} Throws an error if the `createdDate` is not in ISO format with the following structure:
+ * {
+ *   statusCode: number,
+ *   message: string
+ * }
+ * @throws {Object} Throws an error if the `profile` or `source` fields are missing in the event's metadata with the following structure:
+ * {
+ *   statusCode: number,
+ *   message: string
+ * }
+ */
 const checkRequiredDataInEventAndCheckCorrectMetadataFields = event => {
     // if createdDate is present, check that it's in ISO 8601 format
     if (event.metadata.createdDate && !isDateInISOFormat(event.metadata.createdDate)) {
@@ -33,9 +64,25 @@ const checkRequiredDataInEventAndCheckCorrectMetadataFields = event => {
     }
 }
 
-// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
-// validates the event agains profile schema
-// saves the event into db
+/**
+ * Saves a new event into the database.
+ * 
+ * This function performs the following actions:
+ * 1. Checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter.
+ * 2. Validates the event against the profile schema.
+ * 3. Saves the event into the database using a session for transaction.
+ * 
+ * @param {Object} session - The session object for database transaction.
+ * @param {Object} event - The event object to be saved.
+ * 
+ * @returns {Promise<Object>} The newly saved event object.
+ * 
+ * @throws {Object} Throws an error if there is a validation or database error with the following structure:
+ * {
+ *   statusCode: number,
+ *   message: string
+ * }
+ */
 const saveNewEvent = async (session, event) => {
     checkRequiredDataInEventAndCheckCorrectMetadataFields(event);
 
@@ -60,7 +107,13 @@ const saveNewEvent = async (session, event) => {
     }
 };
 
-// this is transaction version
+/**
+ * Uploads new events using a MongoDB transaction mechanism.
+ * @param {Object} req - The request object ( must contain `req.body.events` - The array of event objects to be saved).
+ * @param {Object} res - The response object.
+ * 
+ * @returns Sends a JSON response with the status and message.
+ */
 const uploadNewEvents_TransactionsVersion = async (req, res) => {
     const { events } = req.body;
 
@@ -103,6 +156,12 @@ const uploadNewEvents_TransactionsVersion = async (req, res) => {
     }
 };
 
+/**
+ * Uploads new events without using MongoDB transaction mechanism.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns Sends a JSON response with the status and message.
+ */
 const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
     const { events } = req.body;
 
@@ -128,6 +187,20 @@ const uploadNewEvents_VersionWithoutTransactions = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves filtered events based on the specified criteria.
+ * 
+ * This function performs the following actions:
+ * 1. Extracts the `payloadMustContain` and `metadataMustContain` filters from the request body.
+ * 2. Constructs a query object to match events that meet the specified criteria.
+ * 3. Retrieves the events from the database that match the query.
+ * 4. Sends a response with the filtered events or an error message.
+ * 
+ * @param {Object} req - The request object containing req.body.payloadMustContain and req.body.metadataMustContain
+ * @param {Object} res - The response object.
+ * 
+ * @returns Sends a JSON response with the status, success flag, count, and data or an error message.
+ */
 const getFilteredEvents = async (req, res) => {
 	try {
 		const {
@@ -165,6 +238,15 @@ const getFilteredEvents = async (req, res) => {
 	}
 };
 
+/**
+ * @function modifyGivenEvent
+ * @description Modifies an existing event based on the provided event ID and modified event data.
+ * 
+ * @param {Object} req - The request object (containing `req.params.eventId` and `req.body.modifiedEvent` - modified event data).
+ * @param {Object} res - The response object.
+ * 
+ * @returns Sends an appropriate HTTP response based on the outcome of the event modification.
+ */
 const modifyGivenEvent = async (req, res) => {
     const { eventId } = req.params;
     const { modifiedEvent } = req.body;
@@ -196,6 +278,15 @@ const modifyGivenEvent = async (req, res) => {
     }
 }
 
+/**
+ * @function deleteGivenEvent
+ * @description Deletes an existing event based on the provided event ID.
+ * 
+ * @param {Object} req - The request object ( must contain req.params.eventId - the ID of the event to delete).
+ * @param {Object} res - The response object.
+ * 
+ * @returns Sends an appropriate HTTP response based on the outcome of the event deletion.
+ */
 const deleteGivenEvent = async (req, res) => {
     const { eventId } = req.params;
     

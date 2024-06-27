@@ -1,3 +1,8 @@
+/**
+ * This script connects to a MongoDB database, drops the database and disconnects.
+ * It uses environment variable MONGO_DB_URI.
+*/
+
 require('dotenv').config();
 const mongoose = require('mongoose');
 
