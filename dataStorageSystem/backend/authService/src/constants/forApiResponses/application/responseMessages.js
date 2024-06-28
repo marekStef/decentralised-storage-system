@@ -34,6 +34,7 @@ module.exports = {
 
         EVENT_NOT_CONTAINING_CORRECT_METADATA: 'Event does not contain correct metadata',
         EVENT_NOT_CONTAINING_PAYLOAD: 'Event does not contain payload',
+        ONE_OF_THE_EVENTS_OF_THE_SAME_TYPE_HAS_DIFFERENT_PROFILE: 'One of the events has different profile set in metadata',
 
         INTERNAL_SERVER_ERROR_AT_DATA_STORAGE_COMPONENT: 'Internal server error at the data storage service.',
         INTERNAL_SERVER_ERROR_WHILE_SENDING_EVENTS: 'Internal server error while sending events.',

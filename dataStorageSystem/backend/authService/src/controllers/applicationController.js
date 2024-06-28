@@ -299,45 +299,45 @@ const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
     })
 }
 
+class ValidationError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+    }
+}
+
+const getSchemaFromDataStorageComponentBasedOnSchemaName = async schemaName => {
+    try {
+        const {code, body} = await DataStorage.getProfileFromDataStorage(schemaName);
+        if (body.count == 1) {
+            return body.data[0].payload.json_schema;
+        } else {
+            throw new ValidationError(applicationResponseMessages.error.PROFILE_NOT_FOUND);
+        }
+    } catch (err) {
+        throw new ValidationError(applicationResponseMessages.error.PROFILE_NOT_FOUND);
+    }
+}
+
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
-// validates the event agains profile schema
-    const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName) => {
+// validates the event against profile schema
+    const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst) => {
         // Validate event against Profile schema
         if (!event.metadata || !event.metadata.profile) {
-            throw {
-                statusCode: httpStatusCodes.BAD_REQUEST,
-                message: applicationResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA
-            }
+            throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA);
         }
 
         if (!event.payload) {
-            throw {
-                statusCode: httpStatusCodes.BAD_REQUEST,
-                message: applicationResponseMessages.error.EVENT_NOT_CONTAINING_PAYLOAD
-            }
+            throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_PAYLOAD);
         }
-
 
         if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
-            throw{
-                statusCode: httpStatusCodes.NOT_FOUND,
-                message: 'One of the events has different profile set in metadata'
-            }
+            throw new ValidationError(applicationResponseMessages.error.ONE_OF_THE_EVENTS_OF_THE_SAME_TYPE_HAS_DIFFERENT_PROFILE);
         }
 
-        // todo - repair checking profile - currently new events are not checked against it
-
-        // const foundProfileData = await EventProfileSchema.findOne({ name: event.metadata.profile });
-
-        // if (!foundProfileData) {
-        //     throw Error(res.status(httpStatusCodes.NOT_FOUND).json({ message: applicationResponseMessages.error.PROFILE_NOT_FOUND }));
-        // }
-
-        // if (!validateJsonSchema(JSON.parse(foundProfileData.schema), event.payload)) {
-        //     console.log("<<<<<<");
-        //     console.log("why it is here first");
-        //     throw Error(res.status(httpStatusCodes.BAD_REQUEST).json({ message: applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA }));
-        // }
+        if (!validateJsonSchema(profileSchemaToValidateEventPayloadAgainst, event.payload)) {
+            throw new ValidationError(applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA);
+        }
 
         return {
             ...event,
@@ -350,8 +350,9 @@ const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema
-const transformEvents = (profileNeededToBePresentInAllEvents, events, sourceAppName) => {
-    return events.map(event => transformEvent(profileNeededToBePresentInAllEvents, event, sourceAppName))
+const transformEvents = async (profileNeededToBePresentInAllEvents, events, sourceAppName) => {
+    const profileSchemaToValidateEventPayloadAgainst = await getSchemaFromDataStorageComponentBasedOnSchemaName(profileNeededToBePresentInAllEvents);
+    return events.map(event => transformEvent(profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst));
 }
 
 // sends events to dataStorage component
@@ -433,11 +434,17 @@ const uploadNewEvents = async (req, res) => {
 
     let updatedEvents;
     try {
-        updatedEvents = transformEvents(profileCommonForAllEventsBeingUploaded, events, sourceAppName)
+        updatedEvents = await transformEvents(profileCommonForAllEventsBeingUploaded, events, sourceAppName)
     }
     catch (errResponse) {
-        logger.error('uploading new events: ' + errResponse)
-        return res.status(errResponse.statusCode).json({ message: errResponse.message })
+        if (errResponse instanceof ValidationError) {
+            console.error("Validation error:", errResponse.message);
+            return res.status(httpStatusCodes.BAD_REQUEST).json({ message: errResponse.message });
+        }
+        else {
+            logger.error('uploading new events: ' + errResponse)
+            return res.status(errResponse.statusCode).json({ message: errResponse.message })
+        }
     }
 
     try {

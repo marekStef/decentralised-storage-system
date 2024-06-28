@@ -9,9 +9,9 @@ addFormats(ajv);
 ajv.addMetaSchema(draft7MetaSchema);
 
 const validateJsonSchema = (schema, json) => {
-    console.log("----------------------------");
+    console.log("schema: [json validation] ----------------------------");
     console.log(schema);
-    console.log("----------------------------");
+    console.log("json: [json validation] ----------------------------");
     console.log(json);
     try {
         const validate = ajv.compile(schema);
