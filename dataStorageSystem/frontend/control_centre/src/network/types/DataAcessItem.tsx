@@ -15,7 +15,7 @@ export interface DataAccess {
     createdDate: string;
     expirationDate: string | null;
     isActive: boolean;
-    optionalMessage: string;
+    requestMessage: string;
     permission: Permission;
     revokedDate: string | null;
     _id: string;

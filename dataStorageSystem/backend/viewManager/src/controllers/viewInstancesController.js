@@ -64,7 +64,7 @@ const createNewViewInstance = async (req, res) => {
                 modify: profileItem.modify,
                 delete: profileItem.delete,
             },
-            optionalMessage: `This is request is part of new view instance creation for '${viewTemplate.templateName}' View Template`
+            requestMessage: `This is request is part of new view instance creation for '${viewTemplate.templateName}' View Template`
         };
 
         console.log(permissionsRequest);

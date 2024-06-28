@@ -17,7 +17,7 @@ const DataAccessPermissionSchema = new mongoose.Schema({
 		type: Date,
 		default: null
 	},
-	optionalMessage: {
+	requestMessage: {
 		type: String,
 		default: "-",
 	},

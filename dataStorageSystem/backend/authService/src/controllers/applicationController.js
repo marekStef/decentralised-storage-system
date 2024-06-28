@@ -245,11 +245,11 @@ const registerNewProfile = async (req, res) => {
  * @param {boolean} [req.body.permissionsRequest.create] - Create permission.
  * @param {boolean} [req.body.permissionsRequest.modify] - Modify permission.
  * @param {boolean} [req.body.permissionsRequest.delete] - Delete permission.
- * @param {string} [req.body.optionalMessage] - Optional message for the permission request.
+ * @param {string} [req.body.requestMessage] - Optional message for the permission request.
  * @param {Object} res - Express response object.
  */
 const requestNewPermission = async (req, res) => {
-    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest, optionalMessage } = req.body;
+    const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest, requestMessage } = req.body;
 
     if (!jwtTokenForPermissionRequestsAndProfiles)
         return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.JWT_TOKEN_REQUIRED);
@@ -282,7 +282,7 @@ const requestNewPermission = async (req, res) => {
                 delete: permissionsRequest.delete || false
             },
             createdDate: new Date(),
-            optionalMessage: optionalMessage || "-"
+            requestMessage: requestMessage || "-"
         });
 
         await newDataAccesToken.save();
