@@ -34,6 +34,17 @@ const getEndpointForViewManagerViewInstanceRunning = () => `${process.env.VIEW_M
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
+/**
+ * Associates an application with a storage app holder using an association token.
+ * 
+ * It validates the input, checks the existence and validity
+ * of the association token, ensures the app holder has not already been associated,
+ * and generates a JWT token for permission requests and profiles.
+ * @async
+ * @function associateAppWithStorageAppHolder
+ * @param {Object} req - Express request object containing `req.body.associationTokenId` - The ID of the association token and `req.body.nameDefinedByApp` - The name defined by the app.
+ * @param {Object} res - Express response object.
+ */
 const associateAppWithStorageAppHolder = async (req, res) => {
     const {associationTokenId, nameDefinedByApp} = req.body;
 
@@ -56,7 +67,6 @@ const associateAppWithStorageAppHolder = async (req, res) => {
     //     jwtTokenForPermissionRequestsAndProfiles: generatedJwtToken
     // });
     // return;
-
     // // END OF DELETE - ONLY FOR DEBUGGING!
 
     try {
@@ -116,6 +126,21 @@ const associateAppWithStorageAppHolder = async (req, res) => {
     }
 };
 
+/**
+ * Registers a new profile using provided metadata and payload.
+ * 
+ * @async
+ * @function registerNewProfile
+ * @param {Object} req - Express request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.jwtTokenForPermissionRequestsAndProfiles - JWT token for permissions requests and profiles.
+ * @param {Object} req.body.metadata - Metadata for the new profile.
+ * @param {Object} req.body.payload - Payload for the new profile.
+ * @param {string} req.body.payload.profile_name - Name of the profile.
+ * @param {Object} req.body.payload.json_schema - JSON schema for the profile.
+ * @param {Object} res - Express response object.
+ * 
+ */
 const registerNewProfile = async (req, res) => {
     let {jwtTokenForPermissionRequestsAndProfiles, metadata, payload} = req.body;
     if (!jwtTokenForPermissionRequestsAndProfiles|| !metadata || !payload || payload.profile_name == undefined || payload.json_schema == undefined)
@@ -125,7 +150,7 @@ const registerNewProfile = async (req, res) => {
     try {
         decodedToken = decodeJwtToken(jwtTokenForPermissionRequestsAndProfiles);
     } catch (error) {
-        return res.status(401).json({message: applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN});
+        return res.status(httpStatusCodes.UNAUTHORIZED).json({message: applicationResponseMessages.error.INVALID_OR_EXPIRED_JWT_TOKEN});
     }
 
     const {nameDefinedByApp} = decodedToken;
@@ -178,11 +203,6 @@ const registerNewProfile = async (req, res) => {
         return generateBadResponse(res, httpStatusCodes.INTERNAL_SERVER_ERROR, generalResponseMessages.INTERNAL_SERVER_ERROR)
     } 
 
-    // // check whether schema is a correct json at least
-    // if (!isValidJSON(payload.json_schema)) {
-    //     return generateBadResponse(res, httpStatusCodes.BAD_REQUEST, applicationResponseMessages.error.SCHEMA_IS_INVALID_JSON);
-    // }
-
     const newProfileEvent = {
         metadata,
         payload
@@ -211,6 +231,23 @@ const registerNewProfile = async (req, res) => {
     });
 };
 
+/**
+ * Requests new permission for an application using a JWT token.
+ * 
+ * @async
+ * @function requestNewPermission
+ * @param {Object} req - Express request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.jwtTokenForPermissionRequestsAndProfiles - JWT token for permission request.
+ * @param {Object} req.body.permissionsRequest - Requested permission.
+ * @param {string} req.body.permissionsRequest.profile - Profile for which the permission is requested.
+ * @param {boolean} [req.body.permissionsRequest.read] - Read permission.
+ * @param {boolean} [req.body.permissionsRequest.create] - Create permission.
+ * @param {boolean} [req.body.permissionsRequest.modify] - Modify permission.
+ * @param {boolean} [req.body.permissionsRequest.delete] - Delete permission.
+ * @param {string} [req.body.optionalMessage] - Optional message for the permission request.
+ * @param {Object} res - Express response object.
+ */
 const requestNewPermission = async (req, res) => {
     const { jwtTokenForPermissionRequestsAndProfiles, permissionsRequest, optionalMessage } = req.body;
 
@@ -274,6 +311,18 @@ const requestNewPermission = async (req, res) => {
     }
 };
 
+/**
+ * Checks if an access token for a given permission request is active.
+ * 
+ * @async
+ * @function isAccessTokenForGivenPermissionRequestActive
+ * @param {Object} req - Express request object.
+ * @param {Object} req.query - The request query parameters.
+ * @param {string} req.query.accessToken - The access token to be checked.
+ * @param {Object} res - Express response object.
+ * 
+ * @returns Returns a JSON response with the status of the access token.
+ */
 const isAccessTokenForGivenPermissionRequestActive = async (req, res) => {
     const { accessToken } = req.query;
 
@@ -321,32 +370,32 @@ const getSchemaFromDataStorageComponentBasedOnSchemaName = async schemaName => {
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event against profile schema
-    const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst) => {
-        // Validate event against Profile schema
-        if (!event.metadata || !event.metadata.profile) {
-            throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA);
-        }
-
-        if (!event.payload) {
-            throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_PAYLOAD);
-        }
-
-        if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
-            throw new ValidationError(applicationResponseMessages.error.ONE_OF_THE_EVENTS_OF_THE_SAME_TYPE_HAS_DIFFERENT_PROFILE);
-        }
-
-        if (!validateJsonSchema(profileSchemaToValidateEventPayloadAgainst, event.payload)) {
-            throw new ValidationError(applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA);
-        }
-
-        return {
-            ...event,
-            metadata: {
-                ...event.metadata,
-                source: sourceAppName
-            }
-        };
+const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst) => {
+    // Validate event against Profile schema
+    if (!event.metadata || !event.metadata.profile) {
+        throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_CORRECT_METADATA);
     }
+
+    if (!event.payload) {
+        throw new ValidationError(applicationResponseMessages.error.EVENT_NOT_CONTAINING_PAYLOAD);
+    }
+
+    if (event.metadata.profile != profileNeededToBePresentInAllEvents) {
+        throw new ValidationError(applicationResponseMessages.error.ONE_OF_THE_EVENTS_OF_THE_SAME_TYPE_HAS_DIFFERENT_PROFILE);
+    }
+
+    if (!validateJsonSchema(profileSchemaToValidateEventPayloadAgainst, event.payload)) {
+        throw new ValidationError(applicationResponseMessages.error.EVENT_PAYLOAD_DOES_NOT_MATCH_PROFILE_SCHEMA);
+    }
+
+    return {
+        ...event,
+        metadata: {
+            ...event.metadata,
+            source: sourceAppName
+        }
+    };
+}
 
 // checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
 // validates the event agains profile schema

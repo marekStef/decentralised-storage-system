@@ -1,16 +1,18 @@
 const axios = require("axios")
-const {v4: uuidv4} = require("uuid");
 require('dotenv').config();
-// const mongoose = require('mongoose');
 
 const appCoreProfileSchema_v1 = require('./data/app_core_profile_schema_v1.json');
 
 const DataStorage = require('../../src/externalComponents/DataStorage')
 
-// mongoose.connect(process.env.MONGO_DB_URI, {})
-//     .then(() => console.log('MongoDB successfully connected'))
-//     .catch(err => console.error('Could not connect to database (mongodb):', err));
-
+/**
+ * Sends an array of events to the DataStorage.
+ * 
+ * @async
+ * @param {Array} events - The events to be sent to the DataStorage.
+ * @returns {Promise<void>} - A promise that resolves when the events are sent.
+ * @throws Will throw an error if the response status is not 201 or if there is any other error.
+ */
 const sendEventsToDataStorage = async (events) => {
     DataStorage.sendEventsToDataStorage(events)
         .then(({code, message}) => {
@@ -28,7 +30,13 @@ const sendEventsToDataStorage = async (events) => {
         })
 }
 
-// Define the JSON schema for the profile
+/**
+ * Creates the core profile for defining other profiles in the DataStorage.
+ * 
+ * @async
+ * @returns A promise that resolves when the core profile is created.
+ * @throws Will throw an error if there is any error in fetching or creating the profile.
+ */
 const create_app_core_profile_for_definining_other_profiles = async () => {
     try {
         const {code, body} = await DataStorage.getProfileFromDataStorage(process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME)
@@ -46,7 +54,7 @@ const create_app_core_profile_for_definining_other_profiles = async () => {
             createdDate: new Date(),
             source: process.env.AUTH_SERVICE_DOMAIN,
             acceptedDate: new Date(),
-            profile: "" // this is the root of all profiles
+            profile: "" // this is the root of all profiles so it does not have any parent profile
         },
         payload: {
             profile_name: process.env.DEFAULT_CORE_PROFILE_SCHEMA_NAME,
@@ -59,17 +67,6 @@ const create_app_core_profile_for_definining_other_profiles = async () => {
     } catch (err) {
         console.log(err);
     }
-
-    // ProfileSchema.create(profileData)
-    //     .then(() => {
-    //         console.log('Profile "app:core" has been created with the JSON schema.');
-    //         mongoose.disconnect();
-    //     })
-    //     .catch(err => {
-    //         console.error('Error creating the profile:', err);
-    //         mongoose.disconnect();
-    //     });
 }
 
 create_app_core_profile_for_definining_other_profiles();
-
