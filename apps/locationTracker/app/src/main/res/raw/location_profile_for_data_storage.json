@@ -39,6 +39,6 @@
       "speedAccuracyMetersPerSecond",
       "time"
     ],
-    "additionalProperties": false
+    "additionalProperties": true
   }
 }

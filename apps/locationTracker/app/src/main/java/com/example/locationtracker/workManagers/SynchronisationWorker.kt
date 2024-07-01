@@ -14,7 +14,6 @@ import com.example.locationtracker.eventSynchronisation.isDataStorageServerReach
 import com.example.locationtracker.eventSynchronisation.sendLocationsToServer
 import com.example.locationtracker.model.DataStorageDetails
 import com.example.locationtracker.utils.getCurrentTimeInMillis
-import java.util.Date
 
 class SynchronisationWorker(
     private val context: Context,
@@ -31,7 +30,8 @@ class SynchronisationWorker(
 
         val isReachable = isDataStorageServerReachable(dataStorageDetails.ipAddress, dataStorageDetails.port)
         if (!isReachable) {
-            return Result.failure();
+            updateProgress(0, 0, 0, EventsSyncingStatus.SYNCHRONISATION_FAILED, "Server not reachable", getCurrentTimeInMillis())
+            return Result.success();
         }
         if (dataStorageDetails.accessTokenForLocationEvents == null)
             return Result.failure();
@@ -39,7 +39,8 @@ class SynchronisationWorker(
         val isTokenActive = checkAccessTokenStatus(dataStorageDetails.ipAddress, dataStorageDetails.port, dataStorageDetails.accessTokenForLocationEvents)
         Log.d("ACTIIIIIIIIVE", "$isTokenActive")
         if (!isTokenActive) {
-            return Result.failure();
+            updateProgress(0, 0, 0, EventsSyncingStatus.SYNCHRONISATION_FAILED, "Acces Token not granted in the storage system", getCurrentTimeInMillis())
+            return Result.success();
         }
 
         val database = DatabaseClient.getDatabase(context)
@@ -53,12 +54,17 @@ class SynchronisationWorker(
 
         while (offset < totalCount) {
             val locations = dao.getLocationsFromOldestFirstWithLimitOffset(batchSize, 0)
-            if (sendLocationsToServer(dataStorageDetails.ipAddress, dataStorageDetails.port, dataStorageDetails.accessTokenForLocationEvents, locations)) {
+            val wasSendingSuccessful = sendLocationsToServer(dataStorageDetails.ipAddress, dataStorageDetails.port, dataStorageDetails.accessTokenForLocationEvents, locations)
+
+            if (wasSendingSuccessful) {
                 val locationIds = locations.map { it.id }
                 dao.deleteLocationsByIds(locationIds)
+                offset += locations.size
+                updateProgress(locations.size, offset, totalCount, EventsSyncingStatus.SYNCING, "Syncing")
+            } else {
+                updateProgress(0, offset, totalCount, EventsSyncingStatus.SYNCHRONISATION_FAILED, "Could not be synced", getCurrentTimeInMillis())
+                return Result.success()
             }
-            offset += locations.size
-            updateProgress(locations.size, offset, totalCount, EventsSyncingStatus.SYNCING, "Syncing")
         }
 
         updateProgress(0, offset, totalCount, EventsSyncingStatus.SYNCED_SUCCESSFULLY, "Successfully synced", getCurrentTimeInMillis())

@@ -6,7 +6,7 @@ object App {
 
 object SharedPreferences {
     const val SYNCHRONISATION_INFO_SHARED_PREFERENCES =
-        "com.example.locationtracker.data.database.syncinfo_preferences_v9999999999"
+        "com.example.locationtracker.data.database.syncinfo_preferences_v999999999999"
     const val SYNCHRONISATION_INFO_LAST_SYNC = "last_sync"
     const val SYNCHRONISATION_INFO_SYNC_MESSAGE = "sync_message"
     const val SYNCHRONISATION_INFO_SYNC_STATUS = "sync_status"
