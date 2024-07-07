@@ -4,6 +4,7 @@ const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
 const {v4: uuidv4} = require("uuid");
+const cors = require('cors'); 
 
 const registerCodeRegistrationRoutes = require('./src/routes/codeRegistrationRoutes');
 const registerCodeExecutionRoutes = require('./src/routes/codeExecutionRoutes');
@@ -31,6 +32,8 @@ const uploadMulterMiddleware = multer({
     fileSize: MAXIMUM_UPLOAD_LIMIT_PER_FILE,
     files: MAXIMUM_NUMBER_OF_UPLOADED_FILES_PER_REQUEST
 });
+
+app.use(cors()); // CORS enabled for all origins
 
 app.use(express.json());
 
