@@ -1,17 +1,19 @@
 # Data Storage System
 
-System pozostava z backendu a frontendu.
+The system consists of a backend and a frontend.
 
-Rozbehnuti backendu se nachazi [zde](./backend/README.md) a rozbehnuti frontendu [zde](./frontend/README.md).
+It is important to note that while every component in this repository has its own README, we highly recommend the online [documentation]() for reading instead of these READMEs. Online documentation is far more clear with illustrations attached and you can see the bigger picture of this project there. If the link to a hosted documentation does not work, documentation project is included in the root of this project.
 
-Vsechny requesty, ktere momentalne umi backend jsou v tomhle adresari. Je to export API requestov z postmanu na dany system. Jednotlive requesty maji sva jmena zakoncene cislami. Tyhle cisla indikuji poradi, ve kterych by se meli vykonavat. Tento json export je exportnuty z program `PostMan`, ktery by bylo vhodne mit nainstalovany. Pak je mozne jednoduse importovat tento export do postmanu a pripadne v sekci `Environment` zmenit `URL` `authService` serveru, pokud se `authService` spusti na jinem portu nez 3000. [Export je zde.](./dataStorageSystemApi.postman_collection.json)
+---
 
-Je dulezite poznamenat, ze vsechny zatim implementovane requesty jsou k dispozicii na ukazku prave v danem exportu, teda je vhodnejsi backend radejsi zkouset z postmana jako z frontendu.
+Instructions for setting up and starting the backend can be found [here](./backend) and instructions for starting the frontend [here](./frontend).
 
-### Spusteni jednotlivych casti backendu
+All the requests that the backend currently supports are in this directory. It is an export of API requests from Postman for the given system. Each request has a name ending with a number. These numbers indicate the order in which they should be executed. This JSON export is created using the `PostMan` program, which is recommended to be installed. Then, it is possible to easily import this export into Postman and, if necessary, change the `URL` of the `authService` server in the `Environment` section if `authService` is running on a different port than 3000. [The export is here.](./dataStorageSystemApi.postman_collection.json)
 
-Instrukce pro spusteni jednotlivych casti systemu jsou [zde.](./backend/README.md)
+### Setup of the individual components of the backend
 
-### Spusteni frontendu
+Instructions for starting the individual parts of the system are [here.](./backend)
 
-Po spusteni backendu je mozne prejit na spusteni frontend casti [zde.](./frontend/README.md)
+### Setup of the frontend
+
+After starting the backend, you can proceed to start the frontend part [here.](./frontend)

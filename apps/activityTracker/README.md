@@ -1,6 +1,6 @@
 # Activity Tracker
 
-To read about this application, please consult [this](https://marekstef.github.io/storageSystemDocs/docs/example-apps/activity-tracker/walkthrough) documentation featuring this **Windows Apps Tracker** as well as the other apps in our whole project.
+To read about this application, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/example-apps/activity-tracker/walkthrough) documentation featuring this **Windows Apps Tracker** as well as the other apps in our whole project.
 
 If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repo.
 

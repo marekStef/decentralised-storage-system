@@ -1,5 +1,9 @@
 # Calendar App
 
+To read about this application, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/example-apps/calendar-pro/walkthrough) documentation. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
+
+## Introduction
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
