@@ -8,6 +8,16 @@ const ajv = new Ajv({
 addFormats(ajv);
 ajv.addMetaSchema(draft7MetaSchema);
 
+/**
+ * Validates a JSON object against a given JSON schema.
+ *
+ * This function uses AJV (Another JSON Schema Validator) to compile and validate the JSON object
+ * against the provided schema.
+ *
+ * @param {Object} schema - The JSON schema to validate against.
+ * @param {Object} json - The JSON object to be validated.
+ * @returns {boolean} `true` if the JSON object is valid against the schema, `false` otherwise.
+ */
 const validateJsonSchema = (schema, json) => {
     console.log("schema: [json validation] ----------------------------");
     console.log(schema);

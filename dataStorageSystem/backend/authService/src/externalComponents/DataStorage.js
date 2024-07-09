@@ -6,6 +6,12 @@ const DATA_STORAGE_ENDPOINT_FOR_UPLOADING_NEW_EVENTS = 'app/api/uploadNewEvents'
 const DATA_STORAGE_ENDPOINT_FOR_GETTING_FILTERED_EVENTS = 'app/api/getFilteredEvents';
 
 class DataStorage {
+    /**
+     * This function sends events to the data storage.
+     * 
+     * @param {Array<Object>} events - The events to be sent to the data storage component.
+     * @returns A promise that resolves with the response code and message.
+     */
     sendEventsToDataStorage(events) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -34,6 +40,12 @@ class DataStorage {
         });
     }
 
+    /**
+     * Get a profile from the data storage by profile name.
+     * 
+     * @param {string} profile_name - The name of the profile to retrieve from data storage component.
+     * @returns A promise that resolves with the response code and body containing the actual profile.
+     */
     getProfileFromDataStorage(profile_name) {
         return new Promise(async (resolve, reject) => {
             try {

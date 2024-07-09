@@ -6,5 +6,4 @@ module.exports = function(app) {
     app.use('/admin/api', adminRoutes);
     app.use('/app/api', applicationRoutes);
     app.use('/status_info', statusInfoRoutes)
-
 };

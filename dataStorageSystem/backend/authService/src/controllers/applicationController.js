@@ -34,6 +34,8 @@ const getEndpointForViewManagerViewInstanceRunning = () => `${process.env.VIEW_M
 
 const is_given_app_holder_already_associated_with_real_app = appHolder => appHolder.dateOfAssociationByApp !== null;
 
+// note about the js documentation of the following methods - for describing nested parameters i followed this rule: https://stackoverflow.com/a/6460748
+
 /**
  * Associates an application with a storage app holder using an association token.
  * 
@@ -355,6 +357,12 @@ class ValidationError extends Error {
     }
 }
 
+/**
+ * Retrieves the JSON schema associated with a given schema name from the data storage component.
+ * @param {string} schemaName - The name of the schema to retrieve.
+ * @returns A promise that resolves to the JSON schema.
+ * @throws {ValidationError} - Throws if the profile is not found.
+ */
 const getSchemaFromDataStorageComponentBasedOnSchemaName = async schemaName => {
     try {
         const {code, body} = await DataStorage.getProfileFromDataStorage(schemaName);
@@ -368,8 +376,23 @@ const getSchemaFromDataStorageComponentBasedOnSchemaName = async schemaName => {
     }
 }
 
-// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
-// validates the event against profile schema
+/**
+ * Transforms and validates an event against a profile schema.
+ *
+ * This function checks whether the event contains the profile name specified by the
+ * `profileNeededToBePresentInAllEvents` parameter and validates the event against the
+ * provided profile schema. It also ensures the event has the correct metadata and payload.
+ *
+ * @param {string} profileNeededToBePresentInAllEvents - The profile name that should be present in all events.
+ * @param {Object} event - The event object to be validated and transformed.
+ * @param {Object} event.metadata - The metadata of the event.
+ * @param {string} event.metadata.profile - The profile name in the event metadata.
+ * @param {Object} event.payload - The payload of the event.
+ * @param {string} sourceAppName - The name of the source application to be added to the event metadata.
+ * @param {Object} profileSchemaToValidateEventPayloadAgainst - The JSON schema to validate the event payload against.
+ * @throws {ValidationError} If the event does not contain the correct metadata - profile, or payload, or if the payload does not match the profile schema.
+ * @returns {Object} The transformed event with updated metadata including the source application name.
+ */
 const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst) => {
     // Validate event against Profile schema
     if (!event.metadata || !event.metadata.profile) {
@@ -397,8 +420,17 @@ const transformEvent = (profileNeededToBePresentInAllEvents, event, sourceAppNam
     };
 }
 
-// checks whether the event contains profile name passed by profileNeededToBePresentInAllEvents parameter
-// validates the event agains profile schema
+/**
+ * Transforms an array of events by checking whether each event contains the profile name 
+ * specified by the profileNeededToBePresentInAllEvents parameter and validating the event 
+ * against a profile schema.
+ * 
+ * @async
+ * @param {string} profileNeededToBePresentInAllEvents - The profile name that must be present in all events.
+ * @param events - The array of events to be transformed.
+ * @param {string} sourceAppName - The name of the source application.
+ * @returns The transformed array of events.
+ */
 const transformEvents = async (profileNeededToBePresentInAllEvents, events, sourceAppName) => {
     const profileSchemaToValidateEventPayloadAgainst = await getSchemaFromDataStorageComponentBasedOnSchemaName(profileNeededToBePresentInAllEvents);
     return events.map(event => transformEvent(profileNeededToBePresentInAllEvents, event, sourceAppName, profileSchemaToValidateEventPayloadAgainst));
@@ -431,6 +463,15 @@ const sendEventsToDataStorage = async (res, events) => {
     }
 }
 
+/**
+ * Decodes an access token and handles errors.
+ *
+ * This function attempts to decode the provided access token using the decodeJwtToken function.
+ * If the token cannot be decoded, it returns null.
+ *
+ * @param {string} accessToken - The access token to be decoded.
+ * @returns {Object|null} The decoded token payload or null if decoding fails.
+ */
 const decodeAccessToken = accessToken => {
     try {
         return decodeJwtToken(accessToken);
@@ -439,6 +480,14 @@ const decodeAccessToken = accessToken => {
     }
 }
 
+/**
+ * Retrieves a data access permission by `dataAccessPermissionId` and populates the app field.
+ *
+ * It also checks if the permission is active.
+ *
+ * @param {string} dataAccessPermissionId - The ID of the data access permission to retrieve.
+ * @returns {Object|null} The data access permission object if found and active, or null otherwise.
+ */
 const getDataAcessPermission = async dataAccessPermissionId => {
     const dataAccessPermission = await DataAccessPermissionSchema.findById(dataAccessPermissionId).populate('app');
     if (!dataAccessPermission || !dataAccessPermission.isActive) {
@@ -448,6 +497,15 @@ const getDataAcessPermission = async dataAccessPermissionId => {
     return dataAccessPermission;
 }
 
+/**
+ * Handles the upload of new events.
+ *
+ * This function processes a request to upload new events by validating the provided access token,
+ * checking data access permissions, and transforming and sending the events to data storage.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 const uploadNewEvents = async (req, res) => {
     const { accessToken, profileCommonForAllEventsBeingUploaded, events } = req.body;
 
@@ -504,6 +562,18 @@ const uploadNewEvents = async (req, res) => {
     }
 };
 
+/**
+ * Modifies an existing event.
+ *
+ * This function processes a request to modify an existing event by validating the provided access token,
+ * checking data access permissions, and updating the event in the data storage.
+ *
+ * @param {Object} req - The request object.
+ * @param {string} req.body.eventId - The ID of the event to be modified.
+ * @param {Object} req.body.modifiedEvent - The modified event object.
+ * @param {string} req.body.accessToken - The access token to be decoded and validated.
+ * @param {Object} res - The response object.
+ */
 const modifyEvent = async (req, res) => {
     const { eventId, modifiedEvent, accessToken } = req.body;
 
@@ -554,6 +624,17 @@ const modifyEvent = async (req, res) => {
     }
 }
 
+/**
+ * Deletes an existing event.
+ *
+ * This function processes a request to delete an existing event by validating the provided access token,
+ * checking data access permissions, and removing the event from the data storage.
+ *
+ * @param {Object} req - The request object.
+ * @param {string} req.body.eventId - The ID of the event to be deleted.
+ * @param {string} req.body.accessToken - The access token to be decoded and validated.
+ * @param {Object} res - The response object.
+ */
 const deleteEvent = async (req, res) => {
     const { eventId, accessToken } = req.body;
 
@@ -599,6 +680,16 @@ const deleteEvent = async (req, res) => {
     }
 }
 
+/**
+ * Retrieves all events of a given profile based on the access token.
+ *
+ * This function processes a request to fetch all events associated with a specific profile.
+ * It validates the provided access token, checks data access permissions, and fetches the events from the data storage.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - The query parameters of the request.
+ * @param {string} req.query.accessToken - The access token to be decoded and validated.
+ */
 const getAllEventsOfGivenProfile = async (req, res) => {
     const { accessToken } = req.query;
 
@@ -656,6 +747,14 @@ const getAllEventsOfGivenProfile = async (req, res) => {
     }
 }
 
+/**
+ * Checks whether an application with the given ID exists.
+ *
+ * This function fetches an application from the database using its ID and returns a boolean indicating its existence.
+ *
+ * @param {string} appId - The ID of the application to check.
+ * @returns A promise that resolves to `true` if the application exists, `false` otherwise.
+ */
 const checkWhetherAppWithGivenIdExists = async (appId) => {
     try {
         const app = await ApplicationSchema.findById(appId);
@@ -666,6 +765,18 @@ const checkWhetherAppWithGivenIdExists = async (appId) => {
     }
 }
 
+/**
+ * Registers a new view instance access.
+ *
+ * This function handles the creation of a new view instance based on the provided parameters.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The body of the request.
+ * @param {string} req.body.viewAccessName - The name of the view access.
+ * @param {string} req.body.viewTemplateId - The ID of the view template.
+ * @param {string} req.body.jwtTokenForPermissionRequestsAndProfiles - The JWT token for permission requests and profiles.
+ * @param {Object} req.body.configuration - The configuration object for the view.
+ */
 const registerNewViewInstanceAccess = async (req, res) => {
     const { viewAccessName, viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
@@ -735,6 +846,15 @@ const registerNewViewInstanceAccess = async (req, res) => {
     }
 }
 
+/**
+ * Checks whether an access instance with the given ID exists and matches the view instance.
+ *
+ * This function fetches a view access from the database using its ID and checks if it matches the provided view instance ID.
+ *
+ * @param {string} viewAccessId - The ID of the view access to check.
+ * @param {string} viewInstanceId - The ID of the view instance to match.
+ * @returns A promise that resolves to `true` if the access instance exists and matches, `false` otherwise.
+ */
 const checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInViewManager = async (viewAccessId, viewInstanceId) => {
     try {
         const viewAccess = await ViewAccessSchema.findById(viewAccessId);
@@ -747,6 +867,17 @@ const checkWhetherAccessInstanceWithGivenIdExistsAndMatchesWithViewInstanceInVie
     }
 }
 
+/**
+ * Runs a view instance.
+ *
+ * This function handles the execution of a view instance based on the provided access token and custom client data.
+ * It validates the provided access token, checks if the access instance matches the view instance in the view manager, and interacts with the view manager to run the instance.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The body of the request.
+ * @param {string} req.body.viewAccessToken - The access token for the view instance.
+ * @param {Object} req.body.clientCustomData - Custom data provided by the client.
+ */
 const runViewInstace = async (req, res) => {
     const { viewAccessToken, clientCustomData } = req.body;
     if (!viewAccessToken || !clientCustomData) {

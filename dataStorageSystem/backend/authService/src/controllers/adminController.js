@@ -18,6 +18,15 @@ const { DEFAULT_NUMBER_OF_ITEMS_PER_PAGE, DEFAULT_PAGE_NUMBER_ZERO_INDEXED } = r
 
 const { generateTokenForViewAccess, decodeTokenForViewAccess } = require('./helpers/viewAccessHelpers');
 
+/**
+ * Get all applications with pagination.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - The query parameters.
+ * @param {string} req.query.page - The page number (zero-indexed).
+ * @param {string} req.query.limit - The number of items per page.
+ * @param {Object} res - The response object.
+ */
 const getAllApps = async (req, res) => {
     const BASE = 10;
 
@@ -46,6 +55,14 @@ const getAllApps = async (req, res) => {
     }
 }
 
+/**
+ * Get App Holder by ID.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The route parameters.
+ * @param {string} req.params.appHolderId - The ID of the application holder.
+ * @param {Object} res - The response object.
+ */
 const getAppHolderById = async (req, res) => {
     const { appHolderId } = req.params;
 
@@ -69,6 +86,14 @@ const getAppHolderById = async (req, res) => {
     }
 }
 
+/**
+ * Create a new application connection. This is basically where a new app holder is created for a new application. User needs to name this new app holder.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.nameDefinedByUser - The name defined by the user.
+ * @param {Object} res - The response object.
+ */
 const createNewAppConnection = async (req, res) => {
     const { nameDefinedByUser } = req.body;
 
@@ -95,14 +120,24 @@ const createNewAppConnection = async (req, res) => {
     }
 }
 
-// returns bool whether the app holder created by user has been already associated with the real software application
+/**
+ * Check if the application holder is already associated with a real software application.
+ * 
+ * @param app
+ * @returns {boolean} True if the application is already associated, otherwise false.
+ */
 const isAppAlreadyAssociated = app => {
     return app.dateOfAssociationByApp !== null
 }
 
-// function for generating one-time association token 
-// which the real software app will use to associate itself with its app holder in storage system
-
+/**
+ * Generate a one-time association token which the real software app will use to associate itself with its app holder in storage system
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.appHolderId - The ID of the app holder.
+ * @param {Object} res - The response object.
+ */
 const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, res) => {
     const { appHolderId } = req.body; // assuming the app's ID is passed as 'appHolderId'
 
@@ -148,6 +183,15 @@ const generateOneTimeTokenForAssociatingRealAppWithAppConnection = async (req, r
     }
 };
 
+/**
+ * Get all unapproved permissions requests with pagination.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.query - The query parameters.
+ * @param {string} req.query.pageIndex - The page number (zero-indexed).
+ * @param {string} req.query.limit - The number of items per page.
+ * @param {Object} res - The response object.
+ */
 const getUnapprovedPermissionsRequests = async (req, res) => {
     const BASE = 10;
 
@@ -179,6 +223,13 @@ const getUnapprovedPermissionsRequests = async (req, res) => {
     }
 };
 
+/**
+ * Get all permissions for a given application.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.params.appHolderId - The ID of the app holder.
+ * @param {Object} res - The response object.
+ */
 const getAllPermissionsForGivenApp = async (req, res) => {
     const { appHolderId } = req.params;
 
@@ -196,6 +247,13 @@ const getAllPermissionsForGivenApp = async (req, res) => {
     }
 };
 
+/**
+ * Approve a permission request which was requested by some third party application.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.body.permissionId - The ID of the permission to approve.
+ * @param {Object} res - The response object.
+ */
 const approvePermissionRequest = async (req, res) => {
     const { permissionId } = req.body; // Extracting the permission ID from the request body
 
@@ -236,6 +294,13 @@ const approvePermissionRequest = async (req, res) => {
     }
 };
 
+/**
+ * Revoke an already approved permission.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.body.permissionId - The ID of the permission to revoke.
+ * @param {Object} res - The response object.
+ */
 const revokeApprovedPermission = async (req, res) => {
     const { permissionId } = req.body;
 
@@ -274,6 +339,12 @@ const revokeApprovedPermission = async (req, res) => {
     }
 };
 
+/**
+ * Get all view accesses.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 const getAllViewsAccesses = async (req, res) => {
     try {
         const viewAccesses = await ViewAccessSchema.find({});
@@ -283,6 +354,13 @@ const getAllViewsAccesses = async (req, res) => {
     }
 };
 
+/**
+ * Get all view accesses for a given application.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.params.appHolderId - The ID of the application holder.
+ * @param {Object} res - The response object.
+ */
 const getAllViewsAccessesForGivenApp = async (req, res) => {
     const { appHolderId } = req.params;
 
