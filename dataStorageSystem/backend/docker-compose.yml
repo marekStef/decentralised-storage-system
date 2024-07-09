@@ -3,7 +3,6 @@ version: "3.8"
 services:
   mongo1:
     image: mongo:7.0
-    # command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     command: ["--port", "27018"]
     ports:
       - 27018:27018
@@ -22,34 +21,40 @@ services:
   data_storage:
     build: 
       context: ./dataStorage
-      # args:
-      #   - DELETE_AND_INITIALISE=true
-    # ports:
+    # ports: # data storage should not be accessible from outsdie
       # - "3001:3001"
     depends_on:
       - mongo1
   auth_service:
     build: 
       context: ./authService
-      args:
-        - DELETE_AND_INITIALISE=true
     ports:
       - "3000:3000"
     depends_on:
       - mongo1
       - data_storage
-      - viewmanager-service
-  javascript_execution_service:
+      - view_manager
+  javascript_execution_service: # js execution service should not be accessible from outside
     build: 
       context: ./javascriptExecutionService
-  viewmanager-service:
+  python_execution_service: # python execution service should not be accessible from outside
+    build: 
+      context: ./pythonExecutionService
+    ports:
+      - "3004:3004"
+  view_manager:
     build:
       context: ./viewManager
-  # control_centre_frontend:
-  #   build:
-  #     context: ../frontend/control_centre
-  #   ports:
-  #     - "4000:80"
+    ports:
+      - "3002:3002"
+    depends_on:
+      - javascript_execution_service
+      - python_execution_service
+  control_centre_frontend:
+    build:
+      context: ../frontend/control_centre
+    ports:
+      - "4000:80"
 
 volumes:
   mongo1_data:
