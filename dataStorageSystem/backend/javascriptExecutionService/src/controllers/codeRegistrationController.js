@@ -7,6 +7,12 @@ const {getDirectoryForSourceCodes} = require('./helpers/directory');
 
 const sourceCodeSpecificConstants = require('../constants/sourceCodeSpecific');
 
+/**
+ * Checks if exactly one file is named 'main.js'.
+ * 
+ * @param {Array} files - List of uploaded files.
+ * @returns {boolean} - Returns true if exactly one file is named 'main.js', otherwise false.
+ */
 const isOneFileNamedMain = (files) => {
     const filteredFiles = files.filter(file =>
         file.originalname === sourceCodeSpecificConstants.SOURCE_CODE_MAIN_ENTRY_FILE_NAME
@@ -15,6 +21,14 @@ const isOneFileNamedMain = (files) => {
     return filteredFiles.length === 1;
 }
 
+/**
+ * Uploads new source code files and returnss `sourceCodeId` and `message` in the HTTP respone.
+ * 
+ * @param {Object} req - The request object.
+ * @param {Object} req.files - The files uploaded in the request.
+ * @param {Object} res - The response object.
+ * @returns {void}
+ */
 const uploadNewSourceCode = (req, res) => {
     const files = req.files;
     if (!files || files.length === 0) {
@@ -56,6 +70,13 @@ const uploadNewSourceCode = (req, res) => {
     }
 }
 
+/**
+ * Retrieves the source code files for a given source code ID.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.params.sourceCodeId - The ID of the source code to retrieve.
+ * @param {Object} res - The response object.
+ */
 const getSourceCode = (req, res) => {
     const { sourceCodeId } = req.params;
     const sourceCodeDirectory = path.join(getDirectoryForSourceCodes(), sourceCodeId);
@@ -83,6 +104,13 @@ const getSourceCode = (req, res) => {
     }
 };
 
+/**
+ * Deletes the source code files for a given source code ID.
+ * 
+ * @param {Object} req - The request object.
+ * @param {string} req.params.sourceCodeId - The ID of the source code to delete.
+ * @param {Object} res - The response object.
+ */
 const deleteSourceCode = (req, res) => {
     const { sourceCodeId } = req.params;
     

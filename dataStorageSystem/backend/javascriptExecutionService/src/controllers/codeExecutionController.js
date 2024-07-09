@@ -6,6 +6,17 @@ const {getPathToGivenSourceCodeId} = require("./helpers/directory");
 
 const sourceCodeSpecificConstants = require('../constants/sourceCodeSpecific');
 
+/**
+ * Executes source code based on the provided source code ID and parameters for the main entry function.
+ * 
+ * @async
+ * @function executeSourceCode
+ * @param {Object} req - The request object.
+ * @param {string} req.params.sourceCodeId - The ID of the source code to execute.
+ * @param {Object} req.body.parametersForMainEntry - Parameters to pass to the main entry function of the source code. This must be an object.
+ * @param {Object} res - The response object.
+ * result is then sent inside the response object.
+ */
 const executeSourceCode = async (req, res) => {
     const { sourceCodeId } = req.params;
     const { parametersForMainEntry } = req.body;
