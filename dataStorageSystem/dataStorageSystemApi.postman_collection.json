@@ -327,7 +327,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"661eb26b50c2b2f3f826638b\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"667e91fd783c2b4fccd8fb52\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -355,7 +355,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2MDQyZTkwYzMwMjBmODc3YzFhYjEzOSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoidGVzdGluZyIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhcHBsaWNhdGlvbi5jb20iLCJpYXQiOjE3MTE1NTAxMDMsImV4cCI6MTExNzg4MzAxMDN9.qW2kUn0DvXMaGxnAvMVAZS8crAWh8f9OT1wXsis38aU\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"application.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2N2U5MWZjNzgzYzJiNGZjY2Q4ZmI0ZSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiVGVzdDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzE5NTcwOTg1LCJleHAiOjExMTg2ODUwOTg1fQ.8RjZbdBziUDLAAAJZBWl_iwhx4zVq-OOGO8v0xgP5z0\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"application.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -383,7 +383,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2MDQyZTkwYzMwMjBmODc3YzFhYjEzOSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoidGVzdGluZyIsIm5hbWVEZWZpbmVkQnlBcHAiOiJhcHBsaWNhdGlvbi5jb20iLCJpYXQiOjE3MTE1NTAxMDMsImV4cCI6MTExNzg4MzAxMDN9.qW2kUn0DvXMaGxnAvMVAZS8crAWh8f9OT1wXsis38aU\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"application.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    },\r\n    \"optionalMessage\": \"This is optional message for the permission from the app\"\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2N2U5MWZjNzgzYzJiNGZjY2Q4ZmI0ZSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiVGVzdDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzE5NTcwOTg1LCJleHAiOjExMTg2ODUwOTg1fQ.8RjZbdBziUDLAAAJZBWl_iwhx4zVq-OOGO8v0xgP5z0\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"application.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    },\r\n    \"requestMessage\": \"This is optional message for the permission from the app\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -411,7 +411,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"application.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY3ZTkyNjY3ODNjMmI0ZmNjZDhmYjVkIiwiYXBwSWQiOiI2NjdlOTFmYzc4M2MyYjRmY2NkOGZiNGUiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDYtMjhUMTA6Mzc6MjYuNzM5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxOTU3MTA0NiwiZXhwIjoxMTE4Njg1MTA0Nn0.eCJf37hb24LgNLCMKPo2lkV-ZX7R_PjVssC4g88936E\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"application.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        },\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
