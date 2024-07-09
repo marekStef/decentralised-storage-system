@@ -33,7 +33,7 @@ const executeSourceCode = async (req, res) => {
     try {
         dynamicModule = require(mainEntryModulePath);
         if (!dynamicModule) {
-            return res.status(400).send('Source code not available - it exists but some error happened while loading it');
+            return res.status(httpStatusCodes.BAD_REQUEST).send('Source code not available - it exists but some error happened while loading it');
         }
     }
     catch (err) {
