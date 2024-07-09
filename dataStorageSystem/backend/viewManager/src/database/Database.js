@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 
+/**
+ * Custom error class for handling database connection errors.
+ */
 class DatabaseConnectionError extends Error {
     constructor(message) {
         super(message);
@@ -8,7 +11,14 @@ class DatabaseConnectionError extends Error {
     }
 }
 
+/**
+ * Class for managing database connections using Mongoose.
+ */
 class Database {
+    /**
+     * Connects to the MongoDB database using the URI from environment variables.
+     * @throws {DatabaseConnectionError} - If the connection fails.
+     */
     async connect() {
         try {
             await mongoose.connect(process.env.MONGO_DB_URI);
@@ -19,6 +29,9 @@ class Database {
         }
     }
 
+    /**
+     * Disconnects from the MongoDB database.
+     */
     async disconnect() {
         try {
             await mongoose.disconnect();

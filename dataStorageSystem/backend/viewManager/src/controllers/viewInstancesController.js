@@ -7,10 +7,20 @@ const ViewInstance = require("../database/models/ViewInstanceSchema");
 
 const { getExecutionServiceUrlBasedOnSelectedRuntime } = require("../constants/viewsRelated");
 
+/**
+ * Constructs the endpoint URL for requesting new permissions from the Auth service.
+ * @returns {string} - The complete endpoint URL for requesting new permissions.
+ */
 const getAuthServiceEndpointForRequestingPermissions = () => {
     return `${process.env.AUTH_SERVICE_URI}/app/api/requestNewPermission`;
 }
 
+/**
+ * Constructs the endpoint URL for executing source code in the execution service.
+ * @param {string} runtime - The runtime environment for the source code based on which the execution service is be chosen.
+ * @param {string} sourceCodeId - The unique identifier for the source code.
+ * @returns {string|null} - The complete endpoint URL for executing the source code, or null if the runtime is unknown.
+ */
 const getExecutionServiceEndpointForExecutingSourceCode = (runtime, sourceCodeId) => {
     let executionServiceUrl = getExecutionServiceUrlBasedOnSelectedRuntime(runtime);
     if (executionServiceUrl == null) return null;
@@ -18,6 +28,11 @@ const getExecutionServiceEndpointForExecutingSourceCode = (runtime, sourceCodeId
     return `${executionServiceUrl}/executeSourceCode/${sourceCodeId}`;
 }
 
+/**
+ * Creates a new View Instance by requesting necessary permissions, saving instance details, and returning the instance.
+ * @param {object} req - The request object containing `viewTemplateId`, `jwtTokenForPermissionRequestsAndProfiles`, and `configuration`.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ */
 const createNewViewInstance = async (req, res) => {
     const { viewTemplateId, jwtTokenForPermissionRequestsAndProfiles, configuration } = req.body;
 
@@ -105,10 +120,25 @@ const createNewViewInstance = async (req, res) => {
     }
 };
 
+/**
+ * Prepares data for running a View Instance in the execution service by bundling access tokens, configuration, client custom data, and the auth service endpoint.
+ * @param {object} accessTokensToProfiles - Access tokens associated with the profiles.
+ * @param {object} configuration - Configuration settings for the view instance.
+ * @param {object} clientCustomData - Custom data from the client.
+ * @param {string} authServiceEndpoint - The endpoint for the Auth service.
+ * @returns {object} - The data prepared for the execution service.
+ */
 const prepareDataForExecutionService = (accessTokensToProfiles, configuration, clientCustomData, authServiceEndpoint) => {
     return { accessTokensToProfiles, configuration, clientCustomData, dataEndpoint: authServiceEndpoint }
 }
 
+/**
+ * Executes the source code for a given View Instance based on the selected runtime environment and provided parameters.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ * @param {string} runtime - The runtime environment for the source code.
+ * @param {string} sourceCodeId - The unique identifier for the source code.
+ * @param {object} parametersForMainEntry - Parameters required for the main entry function of the source code.
+ */
 const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceCodeId, parametersForMainEntry) => {
     let executionEndpoint = getExecutionServiceEndpointForExecutingSourceCode(runtime, sourceCodeId);
     
@@ -144,6 +174,11 @@ const executeViewInstanceSourceCodeBasedOnRuntime = async (res, runtime, sourceC
     }
 }
 
+/**
+ * Runs a view instance by executing its source code and returning the result.
+ * @param {object} req - The request object containing view instance ID and client custom data.
+ * @param {object} res - The response object used to send back the appropriate HTTP response including the result of running the code.
+ */
 const runViewInstance = async (req, res) => {
     const { viewInstanceId, clientCustomData } = req.body;
 
@@ -186,6 +221,11 @@ const runViewInstance = async (req, res) => {
     }
 }
 
+/**
+ * Retrieves the details of a specific View Instance by its ID and sends the information in the response.
+ * @param {object} req - The request object containing the `viewInstanceId` inside params.
+ * @param {object} res - The response object used to send back the appropriate HTTP response containing `viewInstance` in case of success and `message` in case of failure.
+ */
 const getViewInstanceDetails = async (req, res) => {
     const { viewInstanceId } = req.params;
 

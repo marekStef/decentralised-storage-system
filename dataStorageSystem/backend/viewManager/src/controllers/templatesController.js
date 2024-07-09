@@ -10,24 +10,51 @@ const ViewInstance = require('../database/models/ViewInstanceSchema');
 const {isAllowedRuntime} = require('../constants/viewsRelated');
 const {allowedRuntimes, getExecutionServiceUrlBasedOnSelectedRuntime} = require('../constants/viewsRelated');
 
+/**
+ * Deletes files from the file system.
+ * @param {Array} files - Array of file objects to be deleted.
+ */
 const cleanFiles = files => {
     files.forEach(file => {
         fs.unlinkSync(file.path);
     });
 }
 
+/**
+ * Constructs the endpoint URL for uploading new source code to the execution service.
+ * @param {string} runtime - The runtime environment for which the source code is uploaded.
+ * @returns {string} - The complete endpoint URL for uploading new source code.
+ */
 const getExecutionServiceEndpointForUploadingNewSourceCode = runtime => {
     return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/uploadNewSourceCode`;
 }
 
+/**
+ * Constructs the endpoint URL for retrieving specific source code from the execution service.
+ * @param {string} runtime - The runtime environment for the source code.
+ * @param {string} sourceCodeId - The unique identifier for the source code.
+ * @returns {string} - The complete endpoint URL for retrieving the source code.
+ */
 const getExecutionServiceEndpointForGettingGivenSourceCode = (runtime, sourceCodeId) => {
     return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/sourceCodes/${sourceCodeId}`;
 }
 
+/**
+ * Constructs the endpoint URL for deleting specific source code from the execution service.
+ * @param {string} runtime - The runtime environment for the source code.
+ * @param {string} sourceCodeId - The unique identifier for the source code.
+ * @returns {string} - The complete endpoint URL for deleting the source code.
+ */
 const getExecutionServiceEndpointForDeletingGivenSourceCode = (runtime, sourceCodeId) => {
     return `${getExecutionServiceUrlBasedOnSelectedRuntime(runtime)}/sourceCodes/${sourceCodeId}`;
 }
 
+
+/**
+ * Creates a new view template by uploading the source code and saving template details in the database.
+ * @param {object} req - The request object containing files and body data which includes `profiles`, `runtime` and `templateName`.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ */
 // this is a multipart data request (due to those files being uploaded) - so the things in the body are only texts! They need to be parsed individually
 const createNewViewTemplate = async (req, res) => {
     const files = req.files;
@@ -102,6 +129,11 @@ const createNewViewTemplate = async (req, res) => {
     }
 }
 
+/**
+ * Retrieves all view templates from the database and sends them in the response.
+ * @param {object} req - The request object.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ */
 const getAllTemplates = async (req, res) => {
     try {
         const viewTemplates = await ViewTemplate.find({}).sort({createdDate: -1}); //sort in descending order
@@ -112,6 +144,11 @@ const getAllTemplates = async (req, res) => {
     }
 };
 
+/**
+ * Retrieves detailed information for a specific View Template.
+ * @param {string} templateId - The unique identifier for the template.
+ * @returns A promise that resolves with the template details, including source code and view instances.
+ */
 const getDetailedTemplateInformation = templateId => {
     return new Promise(async (res, rej) => {
         try {
@@ -154,6 +191,11 @@ const getDetailedTemplateInformation = templateId => {
     });
 }
 
+/**
+ * Retrieves a specific View Template by ID and sends the detailed template details in the response.
+ * @param {object} req - The request object containing the templateId parameter.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ */
 const getTemplate = async (req, res) => {
     const {templateId} = req.params;
     if (!templateId) {
@@ -169,6 +211,11 @@ const getTemplate = async (req, res) => {
         })
 };
 
+/**
+ * Deletes a specific View Template and its associated source code in the given execution service based on the template's selected runtime.
+ * @param {string} templateId - The unique identifier for the template to be deleted.
+ * @returns {Promise<object>} - A promise that resolves with the result of the deletion operation.
+ */
 const deleteTemplateViewBasedOnId = templateId => {
     return new Promise(async (res, rej) => {
 
@@ -205,6 +252,11 @@ const deleteTemplateViewBasedOnId = templateId => {
     })
 }
 
+/**
+ * Handles the deletion of a view template by ID after ensuring it is not in use.
+ * @param {object} req - The request object containing the `templateId` parameter in `req.params`.
+ * @param {object} res - The response object used to send back the appropriate HTTP response.
+ */
 const deleteViewTemplate = (req, res) => {
     const {templateId} = req.params;
     if (!templateId) {
