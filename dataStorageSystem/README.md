@@ -4,17 +4,31 @@ The system consists of a backend and a frontend.
 
 It is important to note that while every component in this repository has its own README, we highly recommend the online [documentation](https://marekstef.github.io/storage-system-documentation/docs/category/introduction) for reading instead of these READMEs. Online documentation is far more clear with illustrations attached and you can see the bigger picture of this project there. If the link to a hosted documentation does not work, documentation project is included in the root of this project.
 
----
+## Setup With Docker
+
+To read about a setup with Docker in individual components, please read their own READMEs. Each component in this project has its own `Setup With Docker` section.
+
+To start all backend components of the main storage system as well as the frontend component `Control Centre`, all you need to do is to set the path in your terminal:
+
+```bash
+cd [path to this project]/managementsystem/dataStorageSystem 
+```
+
+Now you need to run the follwing:
+
+```bash
+docker-compose up --build
+```
+
+At this point everything should be started successfully.
+
+`AuthService` component should be accessible at `localhost:3000` and `View Manager` component at `localhost:3002`.
+
+## Setup Without Docker
 
 Instructions for setting up and starting the backend can be found [here](./backend) and instructions for starting the frontend [here](./frontend).
 
-### Setup of the individual components of the backend
-
-Instructions for starting the individual parts of the system are [here.](./backend)
-
-### Setup of the frontend
-
-After starting the backend, you can proceed to start the frontend part [here.](./frontend)
+---
 
 ### Exported PostMan HTTP requests to test APIs
 
