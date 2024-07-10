@@ -20,14 +20,14 @@ services:
       - "mongo1_config:/data/configdb"
   data_storage:
     build: 
-      context: ./dataStorage
+      context: ./backend/dataStorage
     # ports: # data storage should not be accessible from outsdie
       # - "3001:3001"
     depends_on:
       - mongo1
   auth_service:
     build: 
-      context: ./authService
+      context: ./backend/authService
     ports:
       - "3000:3000"
     depends_on:
@@ -36,15 +36,15 @@ services:
       - view_manager
   javascript_execution_service: # js execution service should not be accessible from outside
     build: 
-      context: ./javascriptExecutionService
+      context: ./backend/javascriptExecutionService
   python_execution_service: # python execution service should not be accessible from outside
     build: 
-      context: ./pythonExecutionService
+      context: ./backend/pythonExecutionService
     ports:
       - "3004:3004"
   view_manager:
     build:
-      context: ./viewManager
+      context: ./backend/viewManager
     ports:
       - "3002:3002"
     depends_on:
@@ -52,7 +52,7 @@ services:
       - python_execution_service
   control_centre_frontend:
     build:
-      context: ../frontend/control_centre
+      context: ./frontend/control_centre
     ports:
       - "4000:80"
 
