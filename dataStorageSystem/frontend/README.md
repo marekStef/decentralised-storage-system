@@ -1,4 +1,3 @@
-# Frontend část `dataStorage` systemu
+# Frontend of the main data storage system
 
-Frontend momentalne pozostava z 1 aplikace pro spravu pristupovych tokenov.
-Vice informacii o teto appce je [zde](./control_centre/README.md)
+Frontend of the amin data storage system currently consists of one major [application](./control_centre/). Read about it [here](./control_centre/).

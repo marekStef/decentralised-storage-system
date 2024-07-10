@@ -1,5 +1,7 @@
 # View Manager
 
+This component is responsible for managing `View Templates`. To read more about this component, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/main-system/view-manager/introduction) documentation which contains significantly more information about it. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
+
 ## Installation
 
 Install the dependencies:
@@ -17,3 +19,4 @@ Start the server:
 ```bash
 npm start
 ```
+

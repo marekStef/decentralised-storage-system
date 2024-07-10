@@ -18,7 +18,7 @@ DATA_STORAGE_URL=http://data_storage:3001 # for docker
 VIEW_MANAGER_URL=http://view_manager:3002 # for docker
 ```
 
-All you need to do now is to start the main `docker-compose.yml` for the whole main data storage system located [here](../).
+All you need to do now is to start the main `docker-compose.yml` for the whole main data storage system located [here](../../).
 
 `authService` initially calls an initialization script. This script is automatically invoked by Docker.
 

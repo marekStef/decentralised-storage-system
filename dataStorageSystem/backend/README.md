@@ -1,30 +1,22 @@
 # Backend
 
-Backend je momentalne rozdelen na 5 casti:
+The backend is divided into 5 parts:
 - `dataStorage`
 - `authService`
-- `viewManager` (pracuje se na nom)
-- `javascriptExecutionService` (plne funkcni)
-- `pythonExecutionService` (pracuje se na nom)
+- `viewManager`
+- `javascriptExecutionService`
+- `pythonExecutionService`
 
-Important! Toto readme je momentalne outdated a nepocita s tym, ze authStorage jiz teda pro spravne fungovani potrebuje aby taky bezela `ViewManager` komponenta
+## Starting the backend components with Docker
 
-## Spusteni jednotlivych casti backendu s Dockerem
+Before proceeding, you need to read about Docker in READMEs of all aforementioend components .
 
-Pred pokracovanim je potrebne si precist o dockeru [zde pri dataStorage](./dataStorage/README.md) a takisto [zde pri authService](./authService/README.md)
+Then, simply run `docker compose up --build` in the main data storage directory where the main `docker-compose.yml` file is located.
 
-Pak staci spustit v tehle directory `docker compose up --build`.
+## Starting the backend components without Docker
 
-## Spusteni jednotlivych casti backendu bez Dockeru
+`DataStorage` and other components like `ViewManager` requires a `MongoDb` database. Before proceeding, you need to have it set up locally on your PC. It is sufficient to install it from [here](https://www.mongodb.com/docs/manual/installation/).
 
-#### DataStorage
+After successfully starting the database via Docker, you need to obtain the access `url` from it.
 
-`DataStorage` vyzaduje pro fungovani `MongoDb` databazi. Pred pokracovanim je tedy nutno ji mat pripravenou lokalne na PC. Neni mozne ji jenom nainstalovat [odsud](https://www.mongodb.com/docs/manual/installation/). Duvodem je to, ze potrebujeme mit mongo db databazi nastavenou jako `MongoDB replica` - to nam dovoli pouzivat nektere dodatecne `MongoDB` features - jako jsou transakce ( ty budou pouzite pri ukladani viacerych eventov).
-
-Po uspesnem nastartovani databazi pres docker je potrebne od ni obdrzet pristupovou `url`.
-
-Ted je mozne pristoupit k samotnimu setupu DataStorage [zde](./dataStorage/README.md)
-
-#### AuthService
-
-Setup `AuthService` nevyzaduji pristup k `MongoDb` databazi a je pomerne primocarej [zde](./authService/README.md)
+Now you can proceed to the actual setup of all mentioned components. Please, read their READMEs. Each README has a section for a setup without a Docker.
