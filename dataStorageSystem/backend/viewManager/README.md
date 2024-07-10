@@ -2,7 +2,34 @@
 
 This component is responsible for managing `View Templates`. To read more about this component, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/main-system/view-manager/introduction) documentation which contains significantly more information about it. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
 
-## Installation
+## Setup With Docker
+
+All you need to do is to run the main `docker-compose.yml` file - instructions are [here](../../).
+
+Please check `.env` file in this component to verify you have the correct addresses and ports set. In case you need to change the port on which this component is running, you need to reflect these changes in `Dockerfile`, `docker-compose.yml` and also in other componets such as `authService` but also the frontend component `Control Centre`.
+
+When using docker, part of `.env` file needs to have these items correctly commented out and others uncommented:
+
+```
+# AUTH_SERVICE_URI=http://localhost:3000 # for manual starting
+AUTH_SERVICE_URI=http://auth_service:3000 # for docker
+
+# MONGO_DB_URI=mongodb://localhost:27017/dataStorage # for manual starting
+MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
+```
+
+## Setup Without Docker
+
+We assume the user already has the URL of the `MongoDb` database. This URL needs to be placed in the `.env` file as the value for the key `MONGO_DB_URI`.
+
+We need to uncomment and comment the following in the `.env` file:
+
+```env
+MONGO_DB_URI=mongodb://localhost:27017/dataStorage # for manual starting
+# MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
+```
+
+### Installation
 
 Install the dependencies:
 
@@ -10,7 +37,7 @@ Install the dependencies:
 npm install
 ```
 
-## Usage
+### Usage
 
 In the `.env` file, execution services like `JAVASCRIPT_EXECUTION_SERVICE_URI` and `PYTHON_EXECUTION_SERVICE_URI` need to be correctly set for a View Manager to be fully functional. `MONGO_DB_URI` needs to be set as well.
 
