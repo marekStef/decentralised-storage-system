@@ -16,8 +16,15 @@ python3 -m venv env
 ```
 
 Activate the virtual environment:
+
+- This is how it's done on Linux:
 ```bash
 source env/bin/activate
+```
+
+- And this is how it's done on Windows for Command Prompt:
+```bash
+env\Scripts\activate.bat
 ```
 
 Install the project dependencies:

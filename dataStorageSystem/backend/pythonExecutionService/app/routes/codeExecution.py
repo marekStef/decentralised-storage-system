@@ -20,7 +20,7 @@ def execute_source_code(sourceCodeId):
     if not isinstance(jsonParametersForMainEntry, dict):
         return jsonify({'message': 'jsonParametersForMainEntry must be of type object'}), HTTP_BAD_REQUEST
 
-    source_code_directory = os.path.join(current_app.config['UPLOAD_FOLDER'], sourceCodeId)
+    source_code_directory = os.path.join(current_app.config['SOURCE_CODES_DIRECTORY'], sourceCodeId)
     main_entry_path = os.path.join(source_code_directory, current_app.config['MAIN_FILE_NAME'])
 
     if not os.path.exists(main_entry_path):

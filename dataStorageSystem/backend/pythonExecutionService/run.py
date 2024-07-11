@@ -1,9 +1,10 @@
-from app import app
 from dotenv import load_dotenv
+load_dotenv() # this needs to be before the line 'from app import app'! ( otherwise environment varaibles won't be visible in __init__.py)
 import os
 import sys
 
-load_dotenv()
+from app import app
+
 
 # @app.route('/')
 # def home():

@@ -29,7 +29,7 @@ def upload_source_code():
     print(len(files))
 
     source_code_id = str(uuid.uuid4())
-    unique_dir_name = os.path.join(current_app.config['UPLOAD_FOLDER'], source_code_id)
+    unique_dir_name = os.path.join(current_app.config['SOURCE_CODES_DIRECTORY'], source_code_id)
 
     os.makedirs(unique_dir_name, exist_ok=True)
 
@@ -49,7 +49,7 @@ def upload_source_code():
 
 @code_registration_bp.route('/sourceCodes/<sourceCodeId>', methods=['GET'])
 def get_source_code(sourceCodeId):
-    source_code_directory = os.path.join(current_app.config['UPLOAD_FOLDER'], sourceCodeId)
+    source_code_directory = os.path.join(current_app.config['SOURCE_CODES_DIRECTORY'], sourceCodeId)
 
     if not os.path.exists(source_code_directory):
         return jsonify({'message': 'Source code not found.'}), HTTP_NOT_FOUND
@@ -74,7 +74,7 @@ def get_source_code(sourceCodeId):
 
 @code_registration_bp.route('/sourceCodes/<sourceCodeId>', methods=['DELETE'])
 def delete_source_code(sourceCodeId):
-    source_code_directory = os.path.join(current_app.config['UPLOAD_FOLDER'], sourceCodeId)
+    source_code_directory = os.path.join(current_app.config['SOURCE_CODES_DIRECTORY'], sourceCodeId)
 
     if not os.path.exists(source_code_directory):
         return jsonify({'message': 'Source code not found.'}), HTTP_NOT_FOUND
