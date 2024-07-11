@@ -42,14 +42,23 @@ services:
       context: ./backend/pythonExecutionService
     ports:
       - "3004:3004"
-  view_manager:
+  view_manager: # view manager should have only a subset of its endpoints accessible via gateway
     build:
       context: ./backend/viewManager
-    ports:
-      - "3002:3002"
+    # ports:
+      # - "3002:3002"
     depends_on:
       - javascript_execution_service
       - python_execution_service
+  gateway:
+    build:
+      context: ./
+      dockerfile: ./gateway/Dockerfile
+    depends_on:
+      - view_manager
+      - auth_service
+    ports:
+      - "8020:80"
   control_centre_frontend:
     build:
       context: ./frontend/control_centre
