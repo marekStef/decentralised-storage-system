@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const getDirectoryForSourceCodes = () => path.join(process.cwd(), 'source_codes');
+const getDirectoryForSourceCodes = () => path.join(process.env.PROJECT_ROOT, process.env.SOURCE_CODES_DIRECTORY);
 
 /**
  * Retrieves the directory path for a specified source code ID.
