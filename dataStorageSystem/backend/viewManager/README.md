@@ -11,11 +11,17 @@ Please check `.env` file in this component to verify you have the correct addres
 When using docker, part of `.env` file needs to have these items correctly commented out and others uncommented:
 
 ```
+# JAVASCRIPT_EXECUTION_SERVICE_URI=http://localhost:3003 # for manual starting without docker
+JAVASCRIPT_EXECUTION_SERVICE_URI=http://javascript_execution_service:3003 # for docker
+
+# PYTHON_EXECUTION_SERVICE_URI=http://127.0.0.1:3004 # for manual starting
+PYTHON_EXECUTION_SERVICE_URI=http://python_execution_service:3004 # for docker
+
 # AUTH_SERVICE_URI=http://localhost:3000 # for manual starting
 AUTH_SERVICE_URI=http://auth_service:3000 # for docker
 
-# MONGO_DB_URI=mongodb://localhost:27017/dataStorage # for manual starting
-MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
+# MONGO_DB_URI=mongodb://localhost:27017/viewManager # for manual starting
+MONGO_DB_URI=mongodb://mongo1:27018/viewManager # for docker
 ```
 
 ## Setup Without Docker

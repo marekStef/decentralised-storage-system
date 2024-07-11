@@ -4,6 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const {v4: uuidv4} = require("uuid");
+const path = require('path');
 
 const { startJavascriptExecutionService } = require('./src/servicesUtils/jsExecutionServiceUtil');
 const { gracefulShutdown } = require('./src/shutdown/shutdownUtils');
@@ -16,15 +17,16 @@ app.use(express.json());
 
 app.use(cors({})); // to allow cross origin requests
 
-
-const port = 10000;
-
 const db = require('./src/database/Database')
 db.connect();
 
-// startJavascriptExecutionService();
+// Exit if PROJECT_ROOT environment variable is not set - we cannot continue
+if (!process.env.PROJECT_ROOT || !process.env.UPLOADS_TEMPORARY_DIRECTORY) {
+    console.error("Error: PROJECT_ROOT or UPLOADS_TEMPORARY_DIRECTORY environment variable is not set.");
+    process.exit(1);
+}
 
-const UPLOADS_TEMPORARY_DIRECTORY = './temp_uploads';
+const UPLOADS_TEMPORARY_DIRECTORY = path.join(process.env.PROJECT_ROOT, process.env.UPLOADS_TEMPORARY_DIRECTORY);
 const MAXIMUM_UPLOAD_LIMIT_PER_FILE = 1024 * 1024 * 5; // 5 MB
 const MAXIMUM_NUMBER_OF_UPLOADED_FILES_PER_REQUEST = 10;
 
@@ -46,6 +48,7 @@ const uploadMulterMiddleware = multer({
     files: MAXIMUM_NUMBER_OF_UPLOADED_FILES_PER_REQUEST
 });
 
+// startJavascriptExecutionService();
 
 app.use('/viewTemplates', registerTemplatesRoutes(uploadMulterMiddleware))
 app.use('/viewInstances', registerViewInstancesRoutes());
