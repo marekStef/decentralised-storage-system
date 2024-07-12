@@ -123,6 +123,7 @@ const WeekPage = () => {
                 if (result.code != 200) {
                     return showError(result.message);
                 }
+                console.log(result);
                 setWindowsAppsCategoriesByDaysAndHoursPercentages(result.eventsByDayAndHour);
                 // console.log(result);
             })

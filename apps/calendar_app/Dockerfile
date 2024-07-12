@@ -11,7 +11,7 @@ RUN npm install
 
 COPY . .
 
-
+RUN chown -R node:node /usr/src/app/.next
 
 ENV PORT 5000
 EXPOSE 5000

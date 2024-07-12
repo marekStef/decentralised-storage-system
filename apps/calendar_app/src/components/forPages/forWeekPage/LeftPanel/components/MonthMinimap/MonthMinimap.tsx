@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { format, startOfMonth, endOfMonth, addDays, subDays, eachDayOfInterval, isSameMonth, isSameWeek, isWithinInterval, isToday, endOfWeek, startOfWeek, isSameDay, addMonths } from 'date-fns';
+import { cs } from "date-fns/locale";
 import { colors } from '@mui/material';
 import SelectedWeek from '@/data/SelectedWeek';
 import { SelectedMonth } from '@/data/SelectedMonth';
@@ -20,7 +21,7 @@ const MonthMinimap: React.FC<MonthMinimapParams> = params => {
     const [selectedDayInMinimap, setSelectedDayInMinimap] = useState<Date | null>();
 
     // to include 7 days before and after the selected month
-    const extendedStartDate = startOfWeek(startDate, { weekStartsOn: 1 });
+    const extendedStartDate = startOfWeek(startDate, { weekStartsOn: 1, locale: cs });
     const extendedEndDate = addDays(endDate, 7);
 
     const daysToDisplay = eachDayOfInterval({
@@ -31,7 +32,7 @@ const MonthMinimap: React.FC<MonthMinimapParams> = params => {
     const setNewWeekHandler = (day: Date): void => {
         setSelectedDayInMinimap(day);
 
-        const newWeek = new SelectedWeek(startOfWeek(day, { weekStartsOn: 1 }), endOfWeek(day, { weekStartsOn: 1 }));
+        const newWeek = new SelectedWeek(startOfWeek(day, { weekStartsOn: 1, locale: cs }), endOfWeek(day, { weekStartsOn: 1, locale: cs }));
         params.setSelectedWeek(newWeek)
     }
 

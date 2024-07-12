@@ -1,4 +1,5 @@
 import { addDays, format, isWithinInterval, startOfWeek } from "date-fns";
+import { cs } from "date-fns/locale";
 import Calendar from "./Calendar";
 
 export interface DayOfWeek {
@@ -48,23 +49,22 @@ class SelectedWeek {
     }
 
     getWeekDaysWithDates(): Array<DayOfWeek> {
-      const startOfTheWeek = startOfWeek(this.startOfWeek, { weekStartsOn: 1 }); // Start week on Monday
+      const startOfTheWeek = this.startOfWeek;
       const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     
       const result = daysOfWeek.map((day, index) => {
         const dayDate = addDays(startOfTheWeek, index);
-        dayDate.setUTCHours(12, 0, 0, 0);
 
         return {
           dayName: Calendar.getDayName(dayDate),
           dayInUTC: dayDate.toISOString(),
           date: dayDate,
-          dayNumberInMonth: format(dayDate, 'dd')
+          dayNumberInMonth: format(dayDate, 'dd', { locale: cs })
         };
       });
 
-      // console.log('hmmm')
-      // console.log(result)
+      console.log('hmmm', this.startOfWeek)
+      console.log(result)
       return result;
     };
 

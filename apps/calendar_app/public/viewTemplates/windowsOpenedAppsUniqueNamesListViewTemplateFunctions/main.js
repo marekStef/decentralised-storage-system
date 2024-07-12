@@ -158,7 +158,9 @@ function getWindowsAppsEventsForSpecificInterval(dataEndpoint, tokenForWindowsAc
         getAllWindowsActivityTrackerEvents(dataEndpoint, tokenForWindowsActivityTrackerEvents)
             .then(response => {
                 response.events.forEach(event => {
-                    const eventDate = new Date(event.metadata.createdDate);
+                    const eventDateUTC  = new Date(event.metadata.createdDate);
+                    const eventDate = new Date(eventDateUTC.toLocaleString('en-US', { timeZone: 'Europe/Prague' }));
+
                     if (eventDate >= intervalStartTime && eventDate <= intervalEndTime) {
                         const dayOffset = Math.floor((eventDate - intervalStartTime) / (1000 * 60 * 60 * 24));
                         const hour = eventDate.getHours();
