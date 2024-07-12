@@ -4,6 +4,10 @@ To read about this application, please consult [this](https://marekstef.github.i
 
 If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repo.
 
+## Obtaining compiled binaries
+
+If you don't want to set up the whole project but want to start the application, look at the Release page in this Github repository where you should find compiled binaries.
+
 ## Setting Up And Building the Project
 
 ### Preqrequisites
@@ -17,7 +21,7 @@ You need to have a vcpkg installed on your computer in a directory such as `C:\d
 git clone https://github.com/Microsoft/vcpkg.git
 ```
 
-then run :
+then run:
 
 ```bash
 C:\dev\vcpkg>.\bootstrap-vcpkg.bat
@@ -87,6 +91,8 @@ In `Project > Properties > Linker > Input > Addition Dependencies`, check that t
 Lastly, we need `Wlanapi.lib`. This is also provided by Windows SDK so if u followed the previous step, you are free to go! Note: `Wlanapi.lib` is also included among `Additional Dependencies` in the Linker settings of Visual Studio solution.
 
 Now we are able to use run the project by building it in the menu.
+
+You need to build the project using Visual Studio as there is post build event defined in `.vcxproj` file which copies needed images to output directory.
 
 --- 
 
