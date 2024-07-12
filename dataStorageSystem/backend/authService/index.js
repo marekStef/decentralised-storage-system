@@ -17,9 +17,13 @@ db.connect();
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-    // origin: 'http://localhost:3001' // for development
-}));
+
+// IMPORTANT! UNCOMMENT THIS IF YOU ARE NOT USING DOCKER. IF YOU ARE USING DOCKER, NGINX HANDLES CORS, OTHERWISE, YOU NEED TO ALLOW IT HERE ( OTHERWISE CERTAIN APPLICATIONS LIKE CALENDAR WONT WORK - CORS POLICY)
+//            HOWEVER, IF YOU ARE USING DOCKER, THEN THIS NEEDS TO BE COMMENTED! OTHERWISE, Access-Control-Allow-Origin WILL BE SET TWICE AND BROWSER WILL BLOCK IT !
+// app.use(cors({
+//     origin: '*',
+//     optionsSuccessStatus: 200
+// }));
 
 registerRoutes(app);
 

@@ -11,6 +11,10 @@ When using Docker, ensure the correct lines are uncommented in the `.env` file:
 MONGO_DB_URI=mongodb://mongo1:27017/dataStorage # for docker
 ```
 
+Also, if you have previously tried setting this without docker and uncommented certain code according to the instructions there, you need to undo these changes for docker to work. This does not apply to you if you just cloned this repo or have always started this project using docker.
+
+You will find notes above it explaining the reason.
+
 All you need to do now is to start the main `docker-compose.yml` for the whole main data storage system located [here](../../). Important information about using Docker is provided [here in the README for the entire data storage system](../../) and also [here in the README focusing on the backend part of the data storage system](../).
 
 ---
@@ -65,6 +69,17 @@ In the `.env` file, the key `DATA_STORAGE_SERVER_PORT=3001` is also important. I
 If it needs to be changed, an additional change is required - to change this value in the `.env` file of the `authService` component, which directly communicates with this component.
 
 In the `authService` component, the key `DATA_STORAGE_URL` needs to be changed (read about `authService` component [here](../authService/)).
+
+Also, you need to open the main [index.js](./index.js) file and uncomment the following there:
+
+```js
+// app.use(cors({
+//     origin: '*',
+//     optionsSuccessStatus: 200
+// }));
+```
+
+You will find notes above it explaining the reason.
 
 ##### Installation
 To install all dependencies, run:
