@@ -64,12 +64,37 @@ const AndroidLocationsSettingsPage = () => {
                         Everything is properly set up
                     </Typography>
                     <Typography
-                        variant="body1"
+                        variant="h6"
+                        gutterBottom
+                        paddingBottom={3}
+                        margin={0}
+                    >
+                        If you haven't done so yet, please go to Control Centre and approve permission request made by this new View Instance.
+                    </Typography>
+                    <Typography
+                        variant="h6"
+                        gutterBottom
+                        paddingBottom={3}
+                        margin={0}
+                    >
+                        You need to open calendar application there and in application's detail you will see unapproved permission reuqest. Only then will this feature be usable.
+                    </Typography>
+                    {/* <Typography
+                        variant="body3"
                         gutterBottom
                         sx={{ wordBreak: 'break-word' }}
                     >
                         {viewInstanceAccessTokenForLocationTrackerEvents}
-                    </Typography>
+                    </Typography> */}
+
+                    <Button
+                            variant="contained"
+                            color="primary"
+                            href="/"
+                        >
+                            Go To Week's View
+                    </Button>
+
                     <Button
                         variant="contained"
                         color="secondary"

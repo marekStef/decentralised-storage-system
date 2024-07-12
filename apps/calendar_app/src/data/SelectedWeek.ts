@@ -53,6 +53,8 @@ class SelectedWeek {
     
       const result = daysOfWeek.map((day, index) => {
         const dayDate = addDays(startOfTheWeek, index);
+        dayDate.setUTCHours(12, 0, 0, 0);
+
         return {
           dayName: Calendar.getDayName(dayDate),
           dayInUTC: dayDate.toISOString(),
