@@ -33,10 +33,6 @@
     "required": [
       "latitude",
       "longitude",
-      "accuracy",
-      "altitude",
-      "speed",
-      "speedAccuracyMetersPerSecond",
       "time"
     ],
     "additionalProperties": true
