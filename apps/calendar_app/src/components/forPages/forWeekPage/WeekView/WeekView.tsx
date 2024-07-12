@@ -75,7 +75,7 @@ const WeekView: React.FC<WeekViewParams> = (params) => {
 
     const calendarHeightWithoutHeader = calendarHeight - params.calendarHeaderHeightInPixels;
 
-    const currentHourOffsetInPixels = (calendarHeightWithoutHeader / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
+    const currentHourOffsetInPixels = (calendarHeight / timeConstants.NUMBER_OF_SECONDS_IN_DAY) * currentHourInSeconds
 
     const [weekDaysWithDatesForSelectedWeek, setWeekDaysWithDatesForSelectedWeek] = useState<Array<DayOfWeek> | null>(null);
 
