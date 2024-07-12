@@ -209,7 +209,7 @@ const mainFunction = (parametersObject) => {
         if (!isAccessTokenActivated) {
             return res({
                 code: 400,
-                message: 'Access Token is not active!'
+                message: 'Access Token is not active! - Windows Opened Apps View (you need to approve permission for this View Instance inside Control Centre)'
             })
         }
 

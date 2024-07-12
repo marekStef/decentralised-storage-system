@@ -106,6 +106,26 @@ const WindowsAppsSettingsPage = () => {
                 >
                     Windows Apps Categories
                 </Typography>
+
+                <Button
+                        variant="contained"
+                        color="primary"
+                        href="/"
+                    >
+                        Go To Week's View
+                </Button>
+
+                <Typography
+                    variant="h6"
+                    gutterBottom
+                    paddingBottom={3}
+                    paddingTop={3}
+                    margin={0}
+                >
+                    You can create your own categories here and assign them to certain applications below. These categories will be then visible in the main Week's View.
+                </Typography>
+
+                
                 
                 <AppsCategoriesHandler categories={categories} setCategories={setCategories} />
 

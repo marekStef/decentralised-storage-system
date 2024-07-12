@@ -50,6 +50,23 @@ const WindowsAppsSettingsSetup = () => {
                     >
                         Windows Apps Are Set Up Correctly
                     </Typography>
+                    <Typography
+                        variant="h6"
+                        gutterBottom
+                        paddingBottom={3}
+                        margin={0}
+                    >
+                        If you haven't done so yet, please go to Control Centre and approve permission request made by this new View Instance.
+                    </Typography>
+                    <Typography
+                        variant="h6"
+                        gutterBottom
+                        paddingBottom={3}
+                        margin={0}
+                    >
+                        You need to open calendar application there and in application's detail you will see unapproved permission reuqest. Only then will this feature be usable.
+                    </Typography>
+
                     <Button
                         variant="contained"
                         color="primary"
@@ -127,7 +144,7 @@ const WindowsAppsSettingsSetup = () => {
                                 </>
                             )}
                             filesToDownload={
-                                [{ path: '/windowsOpenedAppsUniqueNamesListViewTemplateFunctions/main.js', name: 'Main.js' }]
+                                [{ path: '/viewTemplates/windowsOpenedAppsUniqueNamesListViewTemplateFunctions/main.js', name: 'Main.js' }]
                             }
                             newViewInstanceMessageForDataStorageSystem={appConstants.viewInstanceAccessNameForWindowsAppsData}
                             showProceedButton={false}
