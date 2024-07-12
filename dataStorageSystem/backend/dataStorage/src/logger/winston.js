@@ -1,5 +1,8 @@
+const path = require('path');
 const { createLogger, format, transports } = require('winston');
 require('dotenv').config();
+
+const projectRoot = process.env.PROJECT_ROOT;
 
 // the logger captures log entries that have a severity level of info or more severe (info, warn, and error)
 const logger = createLogger({
@@ -18,8 +21,8 @@ const logger = createLogger({
         // - Write to all logs with level `info|warning|error` and below to `combined.log`.
         // - Write all logs with level `error` to `error.log`.
         //
-        new transports.File({ filename: 'logs/error.log', level: 'error' }),
-        new transports.File({ filename: 'logs/combined.log' })
+        new transports.File({ filename: path.join(projectRoot, 'logs', 'error.log'), level: 'error' }),
+        new transports.File({ filename: path.join(projectRoot, 'logs', 'combined.log') })
     ]
 });
 

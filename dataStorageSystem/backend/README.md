@@ -7,7 +7,7 @@ The backend is divided into 5 parts:
 - `javascriptExecutionService`
 - `pythonExecutionService`
 
-## Starting the backend components with Docker
+## Starting the backend components with Docker (recommended)
 
 Before proceeding, you need to read about Docker in READMEs of all aforementioend components .
 

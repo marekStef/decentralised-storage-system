@@ -15,6 +15,8 @@ COPY . .
 
 # Create the temp_uploads directory and set permissions so that temporary files can be stored here
 RUN mkdir -p ./temp_uploads && chown -R node:node ./temp_uploads
+# Create the logs directory and set permissions so that files can be stored here by a logger
+RUN mkdir -p ./logs && chown -R node:node ./logs
 
 # environment variable for project root - it is used by the code to locate the created directories above !
 ENV PROJECT_ROOT=/usr/src/app

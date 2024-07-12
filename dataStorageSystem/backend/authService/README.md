@@ -3,7 +3,7 @@
 
 This is the component responsible for making incoming data trusted before they continue on their way to `DataStorage` component. To read more about this component, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/main-system/auth-service/introduction) documentation. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
 
-### Setup a Spusteni s Dockerem
+### Setup with Docker (recommended)
 
 When using Docker, ensure that the correct settings in the `.env` file are uncommented:
 
@@ -54,7 +54,15 @@ Event uploaded successfully: Events were created successfully
 
 #### .env Modifications
 
-We need to uncomment and comment the following in the `.env` file:
+We need to add PROJECT_ROOT in `.env` file. This environment variable is set automatically by Docker but in manual mode it's up to you to set this variable based on the file path of this project.
+
+```env
+# Important if you don't use Docker but want to start this component manually:
+# environment variable for project root - it is used by the code to locate some directories it uses inside!
+# PROJECT_ROOT=[path to this application (such as /usr/src/app)
+```
+
+We also need to uncomment and comment the following in the `.env` file:
 
 ```env
 MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting

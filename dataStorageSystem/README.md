@@ -4,7 +4,7 @@ The system consists of a backend and a frontend.
 
 It is important to note that while every component in this repository has its own README, we highly recommend the online [documentation](https://marekstef.github.io/storage-system-documentation/docs/category/introduction) for reading instead of these READMEs. Online documentation is far more clear with illustrations attached and you can see the bigger picture of this project there. If the link to a hosted documentation does not work, documentation project is included in the root of this project.
 
-## Setup With Docker
+## Setup With Docker (recommended)
 
 To read about a setup with Docker in individual components, please read their own READMEs. Each component in this project has its own `Setup With Docker` section.
 
@@ -17,7 +17,7 @@ cd [path to this project]/managementsystem/dataStorageSystem
 Now you need to run the follwing:
 
 ```bash
-docker-compose up --build
+docker-compose up --build -d
 ```
 
 At this point everything should be started successfully.

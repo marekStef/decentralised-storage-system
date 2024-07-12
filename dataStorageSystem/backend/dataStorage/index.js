@@ -1,4 +1,11 @@
 require('dotenv').config();
+
+// Exit if PROJECT_ROOT or DATA_STORAGE_SERVER_PORT environment variable is not set - we cannot continue
+if (!process.env.PROJECT_ROOT || !process.env.DATA_STORAGE_SERVER_PORT) {
+    console.error("Error: PROJECT_ROOT or DATA_STORAGE_SERVER_PORT environment variable is not set.");
+    process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const registerRoutes = require('./src/routeRegistrar');

@@ -1,4 +1,11 @@
 require('dotenv').config();
+
+// Exit if PROJECT_ROOT or UPLOADS_TEMPORARY_DIRECTORY environment variable is not set - we cannot continue
+if (!process.env.PROJECT_ROOT || !process.env.UPLOADS_TEMPORARY_DIRECTORY || !process.env.VIEW_MANAGER_PORT) {
+    console.error("Error: PROJECT_ROOT or UPLOADS_TEMPORARY_DIRECTORY or VIEW_MANAGER_PORT environment variable is not set.");
+    process.exit(1);
+}
+
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -19,12 +26,6 @@ app.use(cors({})); // to allow cross origin requests
 
 const db = require('./src/database/Database')
 db.connect();
-
-// Exit if PROJECT_ROOT environment variable is not set - we cannot continue
-if (!process.env.PROJECT_ROOT || !process.env.UPLOADS_TEMPORARY_DIRECTORY) {
-    console.error("Error: PROJECT_ROOT or UPLOADS_TEMPORARY_DIRECTORY environment variable is not set.");
-    process.exit(1);
-}
 
 const UPLOADS_TEMPORARY_DIRECTORY = path.join(process.env.PROJECT_ROOT, process.env.UPLOADS_TEMPORARY_DIRECTORY);
 const MAXIMUM_UPLOAD_LIMIT_PER_FILE = 1024 * 1024 * 5; // 5 MB

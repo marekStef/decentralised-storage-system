@@ -2,7 +2,7 @@
 
 Component for aggregating `events`. To read more about this component, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/main-system/data-storage/introduction) documentation. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
 
-### Setup with Docker
+### Setup with Docker (recommended)
 
 When using Docker, ensure the correct lines are uncommented in the `.env` file:
 
@@ -45,7 +45,15 @@ Database dropped: true
 
 We assume the user already has the URL of the `MongoDb` database. This URL needs to be placed in the `.env` file as the value for the key `MONGO_DB_URI`.
 
-We need to uncomment and comment the following in the `.env` file:
+We need to add PROJECT_ROOT in `.env` file. This environment variable is set automatically by Docker but in manual mode it's up to you to set this variable based on the file path of this project.
+
+```env
+# Important if you don't use Docker but want to start this component manually:
+# environment variable for project root - it is used by the code to locate some directories it uses inside!
+# PROJECT_ROOT=[path to this application (such as /usr/src/app)
+```
+
+We also need to uncomment and comment the following in the `.env` file:
 
 ```env
 MONGO_DB_URI=mongodb://localhost:27017/dataStorage # for manual starting
