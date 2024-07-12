@@ -194,6 +194,10 @@ void InitialSetupPage::SaveSetupAndProceedButtonClick(wxCommandEvent& event) {
 }
 
 void InitialSetupPage::LoadConfig() {
+    if (configManager.IsAppProperlySetUp()) {
+        setupAlreadySetupUI();
+        return;
+    }
     serverAddressInputField->SetValue(configManager.GetServerAddress());
     serverPortInputField->SetValue(configManager.GetServerPort());
     dataStorageJwtAssociationTokenInputField->SetValue(configManager.GetDataStorageJwtAssociationToken());

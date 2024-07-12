@@ -28,7 +28,7 @@ END_EVENT_TABLE()
 
 
 MainFrame::MainFrame(const wxString& title, ConfigManager& configManager)
-    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 400)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
+    : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 600)), configManager(configManager), taskBarIcon(new wxTaskBarIcon()) {
 
     SetIcon(wxIcon("./Icon.ico", wxBITMAP_TYPE_ICO));
     taskBarIcon->Bind(wxEVT_TASKBAR_LEFT_UP, &MainFrame::OnTaskBarIconClick, this);
