@@ -23,6 +23,7 @@ const ViewTemplate = props => {
             })
             .catch(err => {
                 console.log(err);
+                showError("Could not fetch this View Template's details - check whether a storage system server is running", false);
             })
             .finally(() => {
                 setLoading(false);

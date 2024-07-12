@@ -111,8 +111,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                                 case "settings":
                                     return (
                                         <>
-                                            <h1 className='text-lg text-center text-gray-400'>Settings (todo)</h1>
+                                            <h1 className='text-lg text-center text-gray-400'>Settings</h1>
                                             <hr className="h-px mt-1 mb-6 bg-gray-200 border-0 dark:bg-gray-600" />
+                                            <p>Nothing here so far</p>
                                         </>
                                     )
                                 default:

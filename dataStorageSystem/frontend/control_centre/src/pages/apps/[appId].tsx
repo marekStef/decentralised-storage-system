@@ -30,6 +30,7 @@ function AppPage() {
             })
             .catch(err => {
                 console.log(err);
+                showError("Failed to fetch the application info - check whether the storage system is running", false);
             })
             .finally(() => {
                 setIsLoadingAppInfo(false);
@@ -42,6 +43,7 @@ function AppPage() {
             })
             .catch(err => {
                 console.log(err);
+                showError("Failed to fetch permissions for a given application - check whether the storage system is running", false);
             })
             .finally(() => {
                 setIsLoadingAppPermissions(false);

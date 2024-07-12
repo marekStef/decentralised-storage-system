@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 import { loadAppHolders } from '../network/networkHelpers';
 import LeftMainPanel from "@/components/LeftMainPanel/LeftMainPanel";
+import { showError } from "@/helpers/alerts";
 
 const AppsPage = () => {
     const [apps, setApps] = useState([]);
@@ -25,6 +26,7 @@ const AppsPage = () => {
             })
             .catch((error) => {
                 console.error("Failed to fetch apps:", error);
+                showError("Failed to fetch applications - check whether the storage system is running", false);
                 setLoading(false);
             });
     }, [currentPage, hasMore]);

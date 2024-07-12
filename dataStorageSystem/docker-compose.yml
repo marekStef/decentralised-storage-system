@@ -25,11 +25,11 @@ services:
       # - "3001:3001"
     depends_on:
       - mongo1
-  auth_service:
+  auth_service: # auth service is accessible via gateway
     build: 
       context: ./backend/authService
-    ports:
-      - "3000:3000"
+    # ports:
+    #   - "3000:3000"
     depends_on:
       - mongo1
       - data_storage
@@ -40,16 +40,20 @@ services:
   python_execution_service: # python execution service should not be accessible from outside
     build: 
       context: ./backend/pythonExecutionService
-    ports:
-      - "3004:3004"
   view_manager: # view manager should have only a subset of its endpoints accessible via gateway
     build:
       context: ./backend/viewManager
-    # ports:
-      # - "3002:3002"
     depends_on:
       - javascript_execution_service
       - python_execution_service
+  control_centre_frontend: # control centre is accesssible through gateway
+    build:
+      context: ./frontend/control_centre
+      args: # Important! We are expecting this storage system to be running on localhost! Otherwise you need to change the following environemnt variables for this component
+        - NEXT_PUBLIC_BACKEND_SERVER_URI=http://localhost:8020
+        - NEXT_PUBLIC_VIEW_MANAGER_ADDRESS=http://localhost:8020/view-manager
+    # ports:
+    #   - "4000:4000"
   gateway:
     build:
       context: ./
@@ -57,13 +61,10 @@ services:
     depends_on:
       - view_manager
       - auth_service
+      - control_centre_frontend
     ports:
       - "8020:80"
-  control_centre_frontend:
-    build:
-      context: ./frontend/control_centre
-    ports:
-      - "4000:80"
+
 
 volumes:
   mongo1_data:

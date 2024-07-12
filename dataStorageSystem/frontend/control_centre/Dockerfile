@@ -25,6 +25,15 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+# IMPORTANT - THESE ENVIRONMENT VARIABLES HERE ARE CRUCIAL FOR THE CORRECT FUNCTIONING OF THE APPLICATION AS THEY ARE USED BY NETWORK FUNCTIONS INSIDE THE APPLICATION
+# Here we have them as arguments - that's because these environemnt variables are set in docker-compose.yml
+ARG  NEXT_PUBLIC_BACKEND_SERVER_URI
+ARG  NEXT_PUBLIC_VIEW_MANAGER_ADDRESS
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -61,9 +70,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 
-EXPOSE 80
+EXPOSE 4000
 
-ENV PORT 80
+ENV PORT 4000
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output

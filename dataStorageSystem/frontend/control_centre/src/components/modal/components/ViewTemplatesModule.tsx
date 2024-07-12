@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { getAllViewTemplates } from "../../../network/networkHelpers";
 import Link from 'next/link';
+import { showError } from '@/helpers/alerts';
 
 type TemplateProfile = {
     profile: string;
@@ -35,6 +36,7 @@ const ViewTemplatesModule = () => {
             })
             .catch(err => {
                 console.log(err);
+                showError("Could not fetch View Templates - check whether a system storage is running");
             })
             .finally(() => {
                 setLoading(false);

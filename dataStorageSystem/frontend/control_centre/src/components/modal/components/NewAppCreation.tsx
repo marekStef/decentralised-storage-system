@@ -8,6 +8,7 @@ import SuccessImageIcon from '../../../../public/images/success.png'
 
 
 import { createNewAppHolder, generateAssociationTokenForAppHolder, fetchAssociationStatus } from "../../../network/networkHelpers";
+import { showError } from "@/helpers/alerts";
 
 let appHolderId: string | null = null;
 
@@ -26,6 +27,9 @@ const NewAppCreation = () => {
             .then(isAssociated => {
                 setIsAppAlreadyAssociatedSuccessfully(isAssociated);
                 console.log("----", isAssociated);
+            })
+            .catch(err => {
+                showError("Failed to create association token - check whether the system storage is running", false);
             })
     }
 
@@ -71,7 +75,7 @@ const NewAppCreation = () => {
                 );
                 Swal.fire({
                     icon: "error",
-                    title: "Oops...",
+                    title: "Oops...Something went wrong",
                     text: error.code == "ERR_NETWORK" ? "Network error" : error.response.data.message,
                 });
                 // setLoading(false);
