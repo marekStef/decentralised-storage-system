@@ -47,18 +47,21 @@ const getAllLocations = (dataEndpoint, tokenForLocationTrackerEvents, clientCust
 }
 
 function filterEventsByDate(events, isoDateString) {
-    const inputDate = new Date(isoDateString);
+    const inputDateUTC = new Date(isoDateString);
+    const inputDate = new Date(inputDateUTC.toLocaleString('en-US', { timeZone: 'Europe/Prague' }));
     const year = inputDate.getFullYear();
     const month = inputDate.getMonth();
     const day = inputDate.getDate();
   
     const filteredEvents = events.filter(event => {
-      const eventDate = new Date(event.payload.time);
-      return (
-        eventDate.getFullYear() === year &&
-        eventDate.getMonth() === month &&
-        eventDate.getDate() === day
-      );
+        const eventDateUTC = new Date(event.payload.time);
+        const eventDate = new Date(eventDateUTC.toLocaleString('en-US', { timeZone: 'Europe/Prague' }));
+        
+        return (
+            eventDate.getFullYear() === year &&
+            eventDate.getMonth() === month &&
+            eventDate.getDate() === day
+        );
     });
   
     return filteredEvents;
