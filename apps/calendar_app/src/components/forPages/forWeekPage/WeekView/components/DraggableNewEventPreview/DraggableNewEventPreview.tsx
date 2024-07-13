@@ -89,7 +89,7 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
 
     useEffect(() => {
         selectedWeekRef.current = params.selectedWeek;
-        console.log('change in week', params.selectedWeek.convertSelectedWeekToSimpleISODatesObject());
+        // console.log('change in week', params.selectedWeek.convertSelectedWeekToSimpleISODatesObject());
     }, [params.selectedWeek]);
 
     const [durationTime, setDurationTime] = useState(0);
@@ -120,9 +120,9 @@ const DraggableNewEventPreview: React.FC<DraggableNewEventPreviewParams> = (para
             const currentSelectedWeek = selectedWeekRef.current;
 
             const selectedDayDate: Date = currentSelectedWeek.getDayInThisWeekAccordingToIndexStartingFromMonday(selectedStartTimeRef.current.dayIndex);
-            console.log('alsdfjalkfdjaskdf', currentSelectedWeek.convertSelectedWeekToSimpleISODatesObject());
+            // console.log('aaa', currentSelectedWeek.convertSelectedWeekToSimpleISODatesObject());
             const startTime: Date = setTime(selectedDayDate, selectedStartTimeRef.current.hour, selectedStartTimeRef.current.minute)
-            console.log(Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)))
+            // console.log(Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)))
             params.openNewEventDialogHandler(
                 Event.getNewEventWithDefaultDuration(startTime, addDurationToTime(startTime, duration)),
                 NewEventDialogOpenMode.NEW_EVENT

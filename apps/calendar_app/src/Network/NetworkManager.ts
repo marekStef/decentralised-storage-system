@@ -75,7 +75,7 @@ class NetworkManager {
     public async checkServerPresence(): Promise<boolean> {
         try {
             const response: { status: number } = await this.get(networkRoutes.SERVER_REACHABILITY_ROUTE);
-            console.log(response);
+            // console.log(response);
             return response.status == networkStatusCodes.OK;
         } catch (error) {
             console.error('Error checking server presence:', error);
@@ -92,8 +92,8 @@ class NetworkManager {
 
             this.post(networkRoutes.ASSOCIATE_WITH_DATA_STORAGE_ROUTE, data)
                 .then((body: any) => {
-                    console.log(body.status)
-                    console.log(body)
+                    // console.log(body.status)
+                    // console.log(body)
                     res(body.jwtTokenForPermissionRequestsAndProfiles);
                 })
                 .catch(error => {
@@ -111,7 +111,7 @@ class NetworkManager {
 
     public async createNewCalendarEventProfileInDataStorage(): Promise<any> {
         const jwtTokenForPermissionRequestsAndProfiles = persistenceManager.getJwtTokenForPermissionsAndProfiles();
-        console.log('---', jwtTokenForPermissionRequestsAndProfiles)
+        // console.log('---', jwtTokenForPermissionRequestsAndProfiles)
         
         const rootProfile = appConstants.DATA_STORAGE_ROOT_PROFILE;
         let schema: string = '';
@@ -143,7 +143,7 @@ class NetworkManager {
             this.post(networkRoutes.REGISTER_NEW_PROFILE_ROUTE, data)
                 .then(response => {
                     if (response.status === networkStatusCodes.CREATED) {
-                        console.log('Success:', response.message);
+                        // console.log('Success:', response.message);
                         res(response.message);
                     } else {
                         
@@ -196,7 +196,7 @@ class NetworkManager {
                 const response: { isActive: boolean } = await this.get(networkRoutes.CHECK_ACCESS_TOKEN_FOR_REQUESTED_PERMISSION, {
                     accessToken
                 });
-                console.log(response);
+                // console.log(response);
                 res(response.isActive)
             } catch (error) {
                 console.error('Error checking server presence:', error);
@@ -222,7 +222,7 @@ class NetworkManager {
             this.post(networkRoutes.CREATE_NEW_VIEW_INSTANCE, data)
                 .then(response => {
                     if (response.status === networkStatusCodes.CREATED) {
-                        console.log('Success:', response);
+                        // console.log('Success:', response);
                         // res({viewInstanceToken: response.viewInstanceToken, message: response.message });
                         res(response)
                     } else {
@@ -264,7 +264,7 @@ class NetworkManager {
     }
 
     public async createNewEvent(event: Event): Promise<any> {
-        console.log('creating new event');
+        // console.log('creating new event');
         return new Promise(async (res, rej) => {
             const accessToken = persistenceManager.getAccessTokenForEvents();
 
@@ -287,7 +287,7 @@ class NetworkManager {
 
             this.post(networkRoutes.UPLOAD_NEW_EVENTS_ROUTE, data)
                 .then(response => {
-                    console.log('Events uploaded successfully', response);
+                    // console.log('Events uploaded successfully', response);
                     res({
                         message: 'Event was created',
                         newEvent: Event.convertEventReceivedFromServerToThisEvent(response.events[0])

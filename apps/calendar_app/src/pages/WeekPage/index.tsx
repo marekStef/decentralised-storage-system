@@ -74,7 +74,7 @@ const WeekPage = () => {
     }
 
     const getAllEventsUsingStandardAccessToken = (selectedWeek: SelectedWeek) => {
-        console.log('fetching using access token to profile');
+        // console.log('fetching using access token to profile');
         eventsManager.getEventsForSelectedWeek(selectedWeek)
             .then((eventsData: Events) => {
                 setEvents(displayEvents(eventsData.events));
@@ -123,7 +123,6 @@ const WeekPage = () => {
                 if (result.code != 200) {
                     return showError(result.message);
                 }
-                console.log(result);
                 setWindowsAppsCategoriesByDaysAndHoursPercentages(result.eventsByDayAndHour);
                 // console.log(result);
             })
@@ -153,7 +152,7 @@ const WeekPage = () => {
 
             networkManager.createNewEvent(newEvent)
                 .then((response => {
-                    console.log(response);
+                    // console.log(response);
                     // if the user is currently looking at the week in which they create new newEvent - display that newEvent
                     if (selectedWeek.isGivenDateInThisWeek(newEvent.payload.startTime)) {
                         setEvents((events: Events) => {
@@ -202,7 +201,7 @@ const WeekPage = () => {
     }
 
     useEffect(() => {
-        console.log("Loading for: ", selectedWeek.startOfWeek)
+        // console.log("Loading for: ", selectedWeek.startOfWeek)
 
         setEvents(new Events())
         setIsLoadingEvents(true);

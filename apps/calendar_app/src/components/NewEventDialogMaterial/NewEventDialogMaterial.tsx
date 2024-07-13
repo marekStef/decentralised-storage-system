@@ -70,7 +70,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     const createNewEventHandler = () => {
         if (!startTime) return;
 
-        console.log({ title, description, startTime, endTime, color });
+        // console.log({ title, description, startTime, endTime, color });
         if (endTime == null) return;
         const newEvent: Event = new Event(null, new EventPayload(startTime, endTime, title, description, color), new EventMetadata());
         params.createNewEventHandler(newEvent)
@@ -85,8 +85,8 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     const editExistingEventHandler = () => {
         if (!startTime || !endTime || params.newEventDialogData?.metadata == null) return;
         const editedEvent: Event = new Event(params.newEventDialogData.id, new EventPayload(startTime, endTime, title, description, color), params.newEventDialogData.metadata);
-        console.log(params.newEventDialogData);
-        console.log(editedEvent);
+        // console.log(params.newEventDialogData);
+        // console.log(editedEvent);
         params.modifyEventHandler(editedEvent)
     }
 
@@ -101,7 +101,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     };
 
     return (
-        <Dialog open={params.mode != NewEventDialogOpenMode.CLOSED} onClose={params.handleClose}>
+        <Dialog open={params.mode != NewEventDialogOpenMode.CLOSED} onClose={params.handleClose} style={{ zIndex: 99999999 }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <DialogTitle>{params.mode == NewEventDialogOpenMode.EDIT_EXISTING_EVENT ? "Edit" : "Add"} New Event</DialogTitle>
                 <SyncLoader

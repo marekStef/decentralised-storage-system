@@ -78,11 +78,10 @@ const LocationModal: React.FC<LocationModalParams> = ({ open, handleClose, selec
 
         networkManager.executeViewInstance(viewInstanceAccessTokenForAndroidLocationsData, { selectedDateInISO: selectedDay?.dayInUTC } )
             .then(result => {
-                console.log(result);
                 if (result.code != 200) {
                     return showError(result.message);
                 }
-                console.log(result);
+                // console.log(result);
                 setLocations(result.locations);
                 setIsLoadingLocations(false);
             })

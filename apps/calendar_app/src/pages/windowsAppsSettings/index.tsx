@@ -58,7 +58,7 @@ const WindowsAppsSettingsPage = () => {
                 if (result.code != 200) {
                     return showError(result.message);
                 }
-                console.log(result);
+                // console.log(result);
                 setUniqueExeNames(result.uniqueExeNames);
                 setIsLoading(false);
             })

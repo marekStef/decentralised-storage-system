@@ -63,8 +63,8 @@ class SelectedWeek {
         };
       });
 
-      console.log('hmmm', this.startOfWeek)
-      console.log(result)
+      // console.log('hmmm', this.startOfWeek)
+      // console.log(result)
       return result;
     };
 

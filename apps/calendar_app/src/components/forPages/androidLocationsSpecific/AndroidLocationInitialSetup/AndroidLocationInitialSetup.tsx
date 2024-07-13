@@ -44,7 +44,7 @@ const AndroidLocationInitialSetup: React.FC<AndroidLocationInitialSetupParams> =
             onProceed={() => {}}
             onViewInstanceCreated={(token) => {
                 params.setViewInstanceTokenForLocationTracker(token);
-                console.log(token);
+                // console.log(token);
             }}
         />
     )

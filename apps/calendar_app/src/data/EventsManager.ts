@@ -142,8 +142,6 @@ class EventsManager {
         return new Promise<Events>((res, rej) => {
             networkManager.getAllCalendarEvents()
                 .then((eventsData) => {
-                    console.log('******', eventsData);
-                    
                     res(eventsData);
                 })
                 .catch(err => {
