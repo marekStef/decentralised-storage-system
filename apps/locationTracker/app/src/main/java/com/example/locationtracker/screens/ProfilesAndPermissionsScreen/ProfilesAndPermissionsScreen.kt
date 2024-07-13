@@ -331,19 +331,19 @@ fun ProfilesAndPermissionsScreen(
                         }
                     }
 
-                    CustomDefaultButton(
-                        "Proceed to the app[DEBUG]",
-                        backgroundColor = colorResource(id = R.color.green3),
-                        textColor = Color.White
-                    ) {
-                        dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
-                        navigateToScreenHandler(ScreenName.MAIN_SCREEN, false)
-                        showAlertDialogWithOkButton(
-                            context,
-                            "Welcome",
-                            "Your app has been successfully set!"
-                        )
-                    }
+//                    CustomDefaultButton(
+//                        "Proceed to the app[DEBUG]",
+//                        backgroundColor = colorResource(id = R.color.green3),
+//                        textColor = Color.White
+//                    ) {
+//                        dataStorageRegistrationViewModel.setIsAppProperlyRegistered(true);
+//                        navigateToScreenHandler(ScreenName.MAIN_SCREEN, false)
+//                        showAlertDialogWithOkButton(
+//                            context,
+//                            "Welcome",
+//                            "Your app has been successfully set!"
+//                        )
+//                    }
                 }
             }
         }

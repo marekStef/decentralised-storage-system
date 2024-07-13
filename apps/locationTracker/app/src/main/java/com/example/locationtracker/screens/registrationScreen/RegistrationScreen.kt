@@ -316,13 +316,13 @@ fun RegistrationScreen(
                         Text(text = stringResource(id = R.string.only_then_you_will_be_able_to_proceed))
                     }
 
-                    CustomDefaultButton(
-                        "Proceed to requesting permissions and profiles [debug]",
-                        backgroundColor = colorResource(id = R.color.green3),
-                        textColor = Color.White
-                    ) {
-                        navigateToScreenHandler("profilesAndPermissions", true)
-                    }
+//                    CustomDefaultButton(
+//                        "Proceed to requesting permissions and profiles [debug]",
+//                        backgroundColor = colorResource(id = R.color.green3),
+//                        textColor = Color.White
+//                    ) {
+//                        navigateToScreenHandler("profilesAndPermissions", true)
+//                    }
                 }
             }
         }
