@@ -232,7 +232,7 @@ class NetworkManager {
                 })
                 .catch(error => {
                     console.error('error:', error);
-                    rej({messae: error.message || 'Network error during new profile creation'});
+                    rej({message: error.message || 'Network error during new profile creation'});
                 });
         })
     }
@@ -258,7 +258,7 @@ class NetworkManager {
                 })
                 .catch(error => {
                     console.error('error:', error);
-                    rej({messae: error.message || 'Network error during view instance execution'});
+                    rej({message: error.message || 'Network error during view instance execution'});
                 });
         })
     }

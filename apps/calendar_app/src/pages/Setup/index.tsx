@@ -43,8 +43,8 @@ const SetupPage = () => {
     const [protocol, setProtocol] = useState<HttpProtocolType>(
         HttpProtocolType.http
     );
-    const [ipAddress, setIpAddress] = useState("127.0.0.1");
-    const [port, setPort] = useState("3000");
+    const [ipAddress, setIpAddress] = useState("localhost");
+    const [port, setPort] = useState("8020");
     const [reachable, setReachable] = useState(null);
 
     const [checkingServerReachability, setCheckingServerReachability] =

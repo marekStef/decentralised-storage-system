@@ -198,11 +198,17 @@ class PersistenceManager {
         this.accessTokenForEvents = null;
 
         localStorage.removeItem(localStorageConstants.TOKEN_FOR_EVENTS_MANIPULATION);
+        localStorage.removeItem(localStorageConstants.VIEW_INSTANCE_TOKEN);
         localStorage.removeItem(localStorageConstants.JWT_TOKEN_FOR_PERMISSION_REQUESTS_AND_PROFILES);
         localStorage.removeItem(localStorageConstants.DATA_STORAGE_REQUEST_METHOD_TYPE);
         localStorage.removeItem(localStorageConstants.DATA_STORAGE_PORT);
         localStorage.removeItem(localStorageConstants.DATA_STORAGE_IP_ADDRESS);
         localStorage.removeItem(localStorageConstants.IS_VIEW_INSTANCE_USED_FOR_EVENTS_FETCHING);
+        localStorage.removeItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOKEN_FOR_WINDOWS_OPENED_APPS_DATA);
+        localStorage.removeItem(localStorageConstants.VIEW_INSTANCE_ACCESS_TOEKN_FOR_ANDROID_LOCATIONS);
+        localStorage.removeItem(localStorageConstants.WINDOWS_APPS_WITH_ASSIGNED_CATEGORIES);
+        localStorage.removeItem(localStorageConstants.ARE_ANDROID_LOCATIONS_SHOWN);
+        localStorage.removeItem(localStorageConstants.ARE_WINDOWS_OPENED_APPS_SHOWN);
 
     }
 }
