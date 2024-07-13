@@ -202,6 +202,7 @@ const getUnapprovedPermissionsRequests = async (req, res) => {
 
     try {
         const permissions = await DataAccessPermissionSchema.find({ approvedDate: null })
+            .sort({ createdDate: -1 }) // descending order
             .skip(skip)
             .limit(limit)
             .populate('app');

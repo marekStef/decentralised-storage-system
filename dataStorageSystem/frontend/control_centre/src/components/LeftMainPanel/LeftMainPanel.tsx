@@ -12,6 +12,7 @@ const PermissionItem = params => {
             <div className="border border-slate-700 hover:border-slate-600 rounded p-4 mb-4">
                 <h3 className="text-slate-200 font-bold">{permission.app.nameDefinedByUser}</h3>
                 <p className="text-slate-600 text-sm">{permission._id}</p>
+                <p className="text-slate-600 text-sm">{new Date(permission.createdDate).toLocaleString('cs-CZ')}</p>
                 <p className="text-slate-400">App: {permission.app.nameDefinedByApp}</p>
                 <p className="text-slate-400 break-words">Profile: {permission.permission.profile}</p>
                 <div className="text-slate-400 break-words">
