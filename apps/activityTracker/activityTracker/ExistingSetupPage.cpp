@@ -17,11 +17,11 @@ void ExistingSetupPage::setupUI() {
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticBoxSizer* serverSettingSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Server setting");
-    serverSettingSizer->Add(new wxStaticText(this, wxID_ANY, "Enter Server Address:"), 0, wxALL, 5);
+    serverSettingSizer->Add(new wxStaticText(this, wxID_ANY, "Enter Server Address: (such as http://localhost)"), 0, wxALL, 5);
     serverAddressInputField = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
     serverSettingSizer->Add(serverAddressInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
-    serverSettingSizer->Add(new wxStaticText(this, wxID_ANY, "Enter Server Port:"), 0, wxALL, 5);
+    serverSettingSizer->Add(new wxStaticText(this, wxID_ANY, "Enter Server Port: (such as 8020)"), 0, wxALL, 5);
     serverPortInputField = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(200, -1));
     serverSettingSizer->Add(serverPortInputField, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
 

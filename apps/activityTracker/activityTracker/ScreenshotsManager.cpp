@@ -371,7 +371,7 @@ std::vector<std::string> parseResponseJsonFromServerAfterUploadingImages(const s
 }
 
 /// <summary>
-/// Uploads all provided screenshots to server
+/// Uploads all provided screenshots to server - NOTE: This is not currently used
 /// </summary>
 /// <param name="image_paths"></param>
 /// <returns></returns>

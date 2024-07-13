@@ -1,7 +1,7 @@
 #ifndef _SCREENSHOTS_MANAGER_CONSTANTS_
 #define _SCREENSHOTS_MANAGER_CONSTANTS_
 
-constexpr char SERVER_UPLOADS_ENDPOINT[] = "http://localhost:3000/uploads";
+constexpr char SERVER_UPLOADS_ENDPOINT[] = "http://localhost:3000/uploads"; // -NOTE: This is not currently used
 
 
 constexpr char INVALID_OUTPUT_DIR_MESSAGE[] = "Output directory path cannot be null.";

@@ -27,7 +27,7 @@ bool CheckAuthServicePresenceCurl(const std::string& serverAddress, const std::s
     CURL* curl;
     CURLcode res;
     std::string readBuffer;
-    std::string url = "http://" + serverAddress + ":" + serverPort + "/status_info/checks/check_auth_service_presence";
+    std::string url = serverAddress + ":" + serverPort + "/status_info/checks/check_auth_service_presence";
 
     curl = curl_easy_init();
     if (curl) {
@@ -65,7 +65,7 @@ std::string AssociateWithStorageAppHolder(const std::string& serverAddress, cons
     CURLcode res;
     std::string readBuffer;
 
-    std::string url = "http://" + serverAddress + ":" + serverPort + "/app/api/associateWithStorageAppHolder";
+    std::string url = serverAddress + ":" + serverPort + "/app/api/associateWithStorageAppHolder";
     std::string jwtToken;
 
     nlohmann::json jsonPayload = {
@@ -124,7 +124,7 @@ bool RegisterNewProfile(
     CURL* curl;
     CURLcode res;
     std::string readBuffer;
-    std::string url = "http://" + serverAddress + ":" + serverPort + "/app/api/registerNewProfile";
+    std::string url = serverAddress + ":" + serverPort + "/app/api/registerNewProfile";
 
     nlohmann::json requestBody = {
         {"jwtTokenForPermissionRequestsAndProfiles", jwtTokenForPermissionRequestsAndProfiles},
@@ -199,7 +199,7 @@ bool RequestNewPermission(
     CURL* curl;
     CURLcode res;
     std::string readBuffer;
-    std::string url = "http://" + serverAddress + ":" + serverPort + "/app/api/requestNewPermission";
+    std::string url = serverAddress + ":" + serverPort + "/app/api/requestNewPermission";
 
     // Prepare the JSON payload
     nlohmann::json requestBody = {
@@ -295,7 +295,7 @@ bool PostDataToServer(
     CURL* curl;
     CURLcode res;
     std::string readBuffer;
-    std::string url = "http://" + serverAddress + ":" + serverPort + apiEndpoint;
+    std::string url = serverAddress + ":" + serverPort + apiEndpoint;
 
     std::string postDataStr = postData.dump();
 
