@@ -45,7 +45,7 @@ const LeftMainPanel = props => {
 
     return (
         <>
-            <SettingsModal isOpen={isModalOpen} onClose={toggleModal} />
+            <SettingsModal isOpen={isModalOpen} onClose={toggleModal} refreshDataHandler={props.refreshDataHandler} />
             <div className="flex-none w-3/12 bg-gray-900 overflow-hidden h-full flex flex-col">
                 <div className="flex-grow overflow-auto custom-scrollbar">
                     {isLoadingPermissions ? (

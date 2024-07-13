@@ -12,7 +12,7 @@ import { showError } from "@/helpers/alerts";
 
 let appHolderId: string | null = null;
 
-const NewAppCreation = () => {
+const NewAppCreation = props => {
     const [name, setName] = useState("");
     const [isCreatingNewAppHolder, setIsCreatingNewAppHolder] = useState(false);
 
@@ -65,6 +65,7 @@ const NewAppCreation = () => {
                     title: "Great!",
                     text: res.data.message,
                 });
+                props.refreshDataHandler();
                 return loadAndShowAssociationToken(appHolderId);
             })
             .catch((error) => {

@@ -12,10 +12,7 @@ const AppsPage = () => {
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
 
-    useEffect(() => {
-        if (!hasMore) return;
-
-        setLoading(true);
+    const loadDataAboutApplications = () => {
         loadAppHolders(currentPage)
             .then((res) => {
                 const newApps = res.data.data;
@@ -29,6 +26,18 @@ const AppsPage = () => {
                 showError("Failed to fetch applications - check whether the storage system is running", false);
                 setLoading(false);
             });
+    }
+
+    const resetCurrentPage = () => {
+        setCurrentPage(0);
+        setApps([]);
+    }
+
+    useEffect(() => {
+        if (!hasMore) return;
+        setLoading(true);
+
+        loadDataAboutApplications();
     }, [currentPage, hasMore]);
 
     const loadMore = () => {
@@ -37,10 +46,15 @@ const AppsPage = () => {
 
     return (
         <div className="flex h-screen overflow-hidden">
-            <LeftMainPanel />
+            <LeftMainPanel 
+                refreshDataHandler={() => {
+                    resetCurrentPage();
+                    loadDataAboutApplications();
+                }} 
+            />
             <div className="flex-grow overflow-auto p-4">
                 <div className="items-start flex">
-                    <h1 className="text-slate-700 text-2xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Panel</h1>
+                    <h1 className="text-slate-700 text-2xl p-3 mb-8 bg-slate-50 m-bl rounded-md outline outline-slate-100 cursor-default">Control Centre</h1>
                 </div>
                 {apps.length == 0 && (
                     <h3 className="w-full text-center text-gray-400">No apps in the system</h3>

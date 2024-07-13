@@ -14,10 +14,11 @@ import MultipartForm from "./components/NewViewTemplateModule";
 type SettingsModalProps = {
     isOpen: boolean;
     onClose: () => void;
+    refreshDataHandler: () => void;
 };
 
-const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
-    const [selected, setSelected] = useState<string>("newTemplate");
+const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, refreshDataHandler }) => {
+    const [selected, setSelected] = useState<string>("new_app");
 
 
     const buttonClass = (buttonId: string) =>
@@ -103,7 +104,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                         {(() => {
                             switch (selected) {
                                 case "new_app":
-                                    return <NewAppCreation />;
+                                    return <NewAppCreation refreshDataHandler={refreshDataHandler} />;
                                 case "newTemplate":
                                     return <MultipartForm />
                                 case "viewTemplates":
