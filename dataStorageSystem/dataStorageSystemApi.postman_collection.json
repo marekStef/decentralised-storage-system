@@ -64,7 +64,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/661eb26350c2b2f3f8266387",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/apps/669255e77a8811e936b037c7",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -72,7 +72,7 @@
 										"admin",
 										"api",
 										"apps",
-										"661eb26350c2b2f3f8266387"
+										"669255e77a8811e936b037c7"
 									]
 								}
 							},
@@ -104,7 +104,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nameDefinedByUser\": \"My New Application\"\r\n}",
+									"raw": "{\r\n    \"nameDefinedByUser\": \"My New Application 1\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -132,7 +132,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"appHolderId\": \"661eb26350c2b2f3f8266387\"\r\n}",
+									"raw": "{\r\n    \"appHolderId\": \"669255e77a8811e936b037c7\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -179,7 +179,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getPermissionsRequestsForGivenApp/66210df2e884b7f9c7ec20a5",
+									"raw": "{{AUTH_SERVER_URL}}/admin/api/permissions/getPermissionsRequestsForGivenApp/669255e77a8811e936b037c7",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -188,7 +188,7 @@
 										"api",
 										"permissions",
 										"getPermissionsRequestsForGivenApp",
-										"66210df2e884b7f9c7ec20a5"
+										"669255e77a8811e936b037c7"
 									]
 								}
 							},
@@ -201,7 +201,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"permissionId\": \"65fafb3e1b27b41614594277\"\r\n}",
+									"raw": "{\r\n    \"permissionId\": \"669256767a8811e936b037d7\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -327,7 +327,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"associationTokenId\": \"667e91fd783c2b4fccd8fb52\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
+									"raw": "{\r\n    \"associationTokenId\": \"669255ef7a8811e936b037cb\",\r\n    \"nameDefinedByApp\": \"application.com\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -355,7 +355,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2N2U5MWZjNzgzYzJiNGZjY2Q4ZmI0ZSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiVGVzdDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzE5NTcwOTg1LCJleHAiOjExMTg2ODUwOTg1fQ.8RjZbdBziUDLAAAJZBWl_iwhx4zVq-OOGO8v0xgP5z0\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"application.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2OTI1NWU3N2E4ODExZTkzNmIwMzdjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzIwODY2MzUyLCJleHAiOjExMTg4MTQ2MzUyfQ.OVi4Ro9eWE1GyD1Kt6TpKnxiBNhl-IShai0dCsBVAcg\",\r\n    \"metadata\": {\r\n        \"createdDate\": \"2024-02-08T21:56:18.277Z\",\r\n        \"profile\": \"core:profile-registration_v1\"\r\n    },\r\n    \"payload\": {\r\n        \"profile_name\": \"application.com/first_profile\",\r\n        \"json_schema\": {\r\n            \"type\": \"object\",\r\n            \"properties\": {\r\n                \"latitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -90,\r\n                    \"maximum\": 90\r\n                },\r\n                \"longitude\": {\r\n                    \"type\": \"number\",\r\n                    \"minimum\": -180,\r\n                    \"maximum\": 180\r\n                }\r\n            },\r\n            \"required\": [\r\n                \"latitude\",\r\n                \"longitude\"\r\n            ],\r\n            \"additionalProperties\": false\r\n        }\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -383,7 +383,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2N2U5MWZjNzgzYzJiNGZjY2Q4ZmI0ZSIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiVGVzdDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzE5NTcwOTg1LCJleHAiOjExMTg2ODUwOTg1fQ.8RjZbdBziUDLAAAJZBWl_iwhx4zVq-OOGO8v0xgP5z0\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"application.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    },\r\n    \"requestMessage\": \"This is optional message for the permission from the app\"\r\n}",
+									"raw": "{\r\n    \"jwtTokenForPermissionRequestsAndProfiles\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjY2OTI1NWU3N2E4ODExZTkzNmIwMzdjNyIsIm5hbWVEZWZpbmVkQnlVc2VyIjoiTXkgTmV3IEFwcGxpY2F0aW9uIDEiLCJuYW1lRGVmaW5lZEJ5QXBwIjoiYXBwbGljYXRpb24uY29tIiwiaWF0IjoxNzIwODY2MzUyLCJleHAiOjExMTg4MTQ2MzUyfQ.OVi4Ro9eWE1GyD1Kt6TpKnxiBNhl-IShai0dCsBVAcg\",\r\n    \"permissionsRequest\": {\r\n        \"profile\": \"application.com/first_profile\",\r\n        \"read\": true,\r\n        \"create\": true,\r\n        \"modify\": true,\r\n        \"delete\": true\r\n    },\r\n    \"requestMessage\": \"This is optional message for the permission from the app\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -411,7 +411,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY3ZTkyNjY3ODNjMmI0ZmNjZDhmYjVkIiwiYXBwSWQiOiI2NjdlOTFmYzc4M2MyYjRmY2NkOGZiNGUiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDYtMjhUMTA6Mzc6MjYuNzM5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxOTU3MTA0NiwiZXhwIjoxMTE4Njg1MTA0Nn0.eCJf37hb24LgNLCMKPo2lkV-ZX7R_PjVssC4g88936E\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"application.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        },\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg\",\r\n    \"profileCommonForAllEventsBeingUploaded\": \"application.com/first_profile\",\r\n    \"events\": [\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        },\r\n        {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.08804,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n    ]\r\n    \r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -439,7 +439,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc\",\r\n    \"eventId\": \"660c81dccba57a70e98c1120\",\r\n    \"modifiedEvent\": {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.0880433333,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg\",\r\n    \"eventId\": \"669256c9af7b54b2810335f9\",\r\n    \"modifiedEvent\": {\r\n            \"metadata\": {\r\n                \"profile\": \"application.com/first_profile\"\r\n            },\r\n            \"payload\": {\r\n                \"latitude\": 50.0880433333,\r\n                \"longitude\": 14.42076\r\n            }\r\n            \r\n        }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -467,7 +467,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc\",\r\n    \"eventId\": \"660c81dccba57a70e98c1120\"\r\n}",
+									"raw": "{\r\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg\",\r\n    \"eventId\": \"669256c9af7b54b2810335f9\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -506,7 +506,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwOGEzNTc0YjQ5MzQ5NjllZWIyNzM0IiwiYXBwSWQiOiI2NjA4YTM0NDRiNDkzNDk2OWVlYjI3MmEiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJsb2NhdGlvblRyYWNrZXIuY29tL3Byb2ZpbGVzL2xvY2F0aW9uX3Byb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTMwVDIzOjQyOjE1Ljk4OFoiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MTE4NDIxMzUsImV4cCI6MTExNzkxMjIxMzV9.35M_dQTXAeMCj-ltXTPhmuwx9XAuckL0jNvgFTHrVhE",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/checkAccessTokenStatus?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -523,7 +523,7 @@
 										},
 										{
 											"key": "accessToken",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwOGEzNTc0YjQ5MzQ5NjllZWIyNzM0IiwiYXBwSWQiOiI2NjA4YTM0NDRiNDkzNDk2OWVlYjI3MmEiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJsb2NhdGlvblRyYWNrZXIuY29tL3Byb2ZpbGVzL2xvY2F0aW9uX3Byb2ZpbGUiLCJyZWFkIjp0cnVlLCJjcmVhdGUiOnRydWUsIm1vZGlmeSI6dHJ1ZSwiZGVsZXRlIjp0cnVlfSwiY3JlYXRlZERhdGUiOiIyMDI0LTAzLTMwVDIzOjQyOjE1Ljk4OFoiLCJhcHByb3ZlZERhdGUiOm51bGwsImV4cGlyYXRpb25EYXRlIjpudWxsLCJpYXQiOjE3MTE4NDIxMzUsImV4cCI6MTExNzkxMjIxMzV9.35M_dQTXAeMCj-ltXTPhmuwx9XAuckL0jNvgFTHrVhE"
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg"
 										}
 									]
 								}
@@ -536,7 +536,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{AUTH_SERVER_URL}}/app/api/getAllEventsForGivenAccessToken?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc",
+									"raw": "{{AUTH_SERVER_URL}}/app/api/getAllEventsForGivenAccessToken?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg",
 									"host": [
 										"{{AUTH_SERVER_URL}}"
 									],
@@ -548,7 +548,7 @@
 									"query": [
 										{
 											"key": "accessToken",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc"
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjY5MjU2NzY3YTg4MTFlOTM2YjAzN2Q3IiwiYXBwSWQiOiI2NjkyNTVlNzdhODgxMWU5MzZiMDM3YzciLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDctMTNUMTA6Mjc6MDIuMzk0WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcyMDg2NjQyMiwiZXhwIjoxMTE4ODE0NjQyMn0.GiGGRdN2ct25DxZOHHGjzSTuS6F2Q_lIK0Ibhy-vJEg"
 										}
 									]
 								}
@@ -733,7 +733,7 @@
 										},
 										{
 											"key": "templateName",
-											"value": "First Demo Templatesaaaasss",
+											"value": "First Demo Templatesa",
 											"type": "text"
 										}
 									]
@@ -757,14 +757,14 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/661cfe2267b9a47d972e38ba",
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/6690105f753fb8d5d809d7c4",
 									"host": [
 										"{{VIEW_MANAGER_URL}}"
 									],
 									"path": [
 										"viewTemplates",
 										"deleteViewTemplate",
-										"661cfe2267b9a47d972e38ba"
+										"6690105f753fb8d5d809d7c4"
 									]
 								}
 							},
@@ -794,14 +794,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates/661cfe2267b9a47d972e38ba",
+									"raw": "{{VIEW_MANAGER_URL}}/viewTemplates/templates/6690046f753fb8d5d809d793",
 									"host": [
 										"{{VIEW_MANAGER_URL}}"
 									],
 									"path": [
 										"viewTemplates",
 										"templates",
-										"661cfe2267b9a47d972e38ba"
+										"6690046f753fb8d5d809d793"
 									]
 								}
 							},
@@ -1017,9 +1017,8 @@
 											"key": "files",
 											"type": "file",
 											"src": [
-												"postman-cloud:///1eedfaef-dd9f-4f90-b035-c58504a7cf0d",
-												"/Users/marekstefanec/Documents/bakalarka/managementsystem/dataStorageSystem/backend/pythonExecutionService/exampleSourceCode/examplePython.py",
-												"/Users/marekstefanec/Documents/bakalarka/managementsystem/dataStorageSystem/backend/pythonExecutionService/exampleSourceCode/main.py"
+												"postman-cloud:///1eefaa9a-b0eb-4970-bcbf-5b44f2570147",
+												"postman-cloud:///1eefaa87-6876-4ae0-bbd0-dd885bf22f4e"
 											]
 										}
 									]
@@ -1042,13 +1041,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/db5ea9a8-41a7-4bd9-bb70-b755114061c3",
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/9f33265e-8f36-4d21-abc8-42704b62e8c8",
 									"host": [
 										"{{PYTHON_EXECUTION_SERVICE_URL}}"
 									],
 									"path": [
 										"sourceCodes",
-										"db5ea9a8-41a7-4bd9-bb70-b755114061c3"
+										"9f33265e-8f36-4d21-abc8-42704b62e8c8"
 									]
 								}
 							},
@@ -1060,13 +1059,13 @@
 								"method": "DELETE",
 								"header": [],
 								"url": {
-									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/83eb8a96-32ab-4e8d-9e7c-90db9d07bfcb",
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/sourceCodes/9f33265e-8f36-4d21-abc8-42704b62e8c8",
 									"host": [
 										"{{PYTHON_EXECUTION_SERVICE_URL}}"
 									],
 									"path": [
 										"sourceCodes",
-										"83eb8a96-32ab-4e8d-9e7c-90db9d07bfcb"
+										"9f33265e-8f36-4d21-abc8-42704b62e8c8"
 									]
 								}
 							},
@@ -1092,13 +1091,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/executeSourceCode/89297a89-b92e-4ebe-b7af-9e8ffe52858d",
+									"raw": "{{PYTHON_EXECUTION_SERVICE_URL}}/executeSourceCode/9f33265e-8f36-4d21-abc8-42704b62e8c8",
 									"host": [
 										"{{PYTHON_EXECUTION_SERVICE_URL}}"
 									],
 									"path": [
 										"executeSourceCode",
-										"89297a89-b92e-4ebe-b7af-9e8ffe52858d"
+										"9f33265e-8f36-4d21-abc8-42704b62e8c8"
 									]
 								}
 							},
