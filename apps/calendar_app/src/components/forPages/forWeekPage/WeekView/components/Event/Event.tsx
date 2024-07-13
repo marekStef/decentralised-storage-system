@@ -80,7 +80,10 @@ const EventPopover: React.FC<EventPopoverParams> = ({
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px', alignSelf: 'flex-start' }}>
                 <Button
                     startIcon={<EditIcon />}
-                    onClick={handleEdit}
+                    onClick={() => {
+                        handleEdit();
+                        close();
+                    }}
                     variant="outlined"
                 >
                     Edit

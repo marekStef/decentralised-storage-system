@@ -101,7 +101,7 @@ const NewEventDialogMaterial: React.FC<NewEventDialogMaterialParams> = (params) 
     };
 
     return (
-        <Dialog open={params.mode != NewEventDialogOpenMode.CLOSED} onClose={params.handleClose} style={{ zIndex: 99999999 }}>
+        <Dialog open={params.mode != NewEventDialogOpenMode.CLOSED} onClose={params.handleClose} style={{ zIndex: 999 }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <DialogTitle>{params.mode == NewEventDialogOpenMode.EDIT_EXISTING_EVENT ? "Edit" : "Add"} New Event</DialogTitle>
                 <SyncLoader
