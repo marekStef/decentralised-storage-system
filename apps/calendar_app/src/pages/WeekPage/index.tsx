@@ -129,6 +129,7 @@ const WeekPage = () => {
             })
             .catch(err => {
                 console.log(err);
+                showError(JSON.stringify(err));
             })
     }
 
@@ -183,7 +184,7 @@ const WeekPage = () => {
                 getAllEventsForSelectedWeek(selectedWeek);
             })
             .catch(err => {
-                showSuccess('Unable to update event');
+                showError('Unable to update event');
                 console.log(err);
             })
     }
@@ -195,7 +196,7 @@ const WeekPage = () => {
                 getAllEventsForSelectedWeek(selectedWeek);
             })
             .catch(err => {
-                showSuccess('Unable to delete event');
+                showError('Unable to delete event');
                 console.log(err);
             })
     }
