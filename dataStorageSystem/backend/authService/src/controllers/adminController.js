@@ -36,6 +36,7 @@ const getAllApps = async (req, res) => {
 
     try {
         const apps = await ApplicationSchema.find()
+            .sort({ dateOfRegistration: -1 }) // descending order
             .skip(skip)
             .limit(limit);
 
