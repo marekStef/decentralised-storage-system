@@ -156,8 +156,11 @@ const WeekPage = () => {
                     // if the user is currently looking at the week in which they create new newEvent - display that newEvent
                     if (selectedWeek.isGivenDateInThisWeek(newEvent.payload.startTime)) {
                         setEvents((events: Events) => {
+                            let oldEvents = events.events[newEvent.getDayOfThisEvent().toISOString()];
+                            if (!oldEvents) oldEvents = [];
                             events.events[newEvent.getDayOfThisEvent().toISOString()] = [
-                                ...events.events[newEvent.getDayOfThisEvent().toISOString()],
+                                // ...events.events[newEvent.getDayOfThisEvent().toISOString()],
+                                ...oldEvents,
                                 response.newEvent
                             ]
                             return events;
