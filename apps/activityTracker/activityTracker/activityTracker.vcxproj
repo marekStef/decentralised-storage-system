@@ -103,7 +103,7 @@
       <AdditionalDependencies>gdiplus.lib;Wlanapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)Icon.ico" "$(TargetDir)Icon.ico"</Command>
+      <Command>if not exist "$(TargetDir)resources" mkdir "$(TargetDir)resources" &amp;&amp; copy "$(ProjectDir)Icon.ico" "$(TargetDir)Icon.ico" &amp;&amp; copy "$(ProjectDir)resources\activityTrackingEventProfileSchema.json" "$(TargetDir)resources\activityTrackingEventProfileSchema.json"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,7 +139,7 @@
       <AdditionalDependencies>gdiplus.lib;Wlanapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)Icon.ico" "$(TargetDir)Icon.ico"</Command>
+      <Command>if not exist "$(TargetDir)resources" mkdir "$(TargetDir)resources" &amp;&amp; copy "$(ProjectDir)Icon.ico" "$(TargetDir)Icon.ico" &amp;&amp; copy "$(ProjectDir)resources\activityTrackingEventProfileSchema.json" "$(TargetDir)resources\activityTrackingEventProfileSchema.json"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
