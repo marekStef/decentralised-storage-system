@@ -8,13 +8,13 @@ services:
       - 27018:27018
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # healthcheck:
-    #   test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
-    #   interval: 5s
-    #   timeout: 30s
-    #   start_period: 0s
-    #   start_interval: 1s
-    #   retries: 30
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27018'}]}) }" | mongosh --port 27018 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 2s
+      start_interval: 1s
+      retries: 30
     volumes:
       - "mongo1_data:/data/db"
       - "mongo1_config:/data/configdb"
@@ -22,18 +22,28 @@ services:
     build: 
       context: ./backend/dataStorage
     # ports: # data storage should not be accessible from outsdie
-      # - "3001:3001"
+    #   - "3001:3001"
     depends_on:
-      - mongo1
+      mongo1:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/status_info/checks/check_data_storage_presence"]
+      interval: 2s
+      timeout: 10s
+      retries: 15
+      start_period: 5s
   auth_service: # auth service is accessible via gateway
     build: 
       context: ./backend/authService
     # ports:
     #   - "3000:3000"
     depends_on:
-      - mongo1
-      - data_storage
-      - view_manager
+      mongo1:
+        condition: service_healthy
+      data_storage:
+        condition: service_healthy
+      view_manager:
+        condition: service_started
   javascript_execution_service: # js execution service should not be accessible from outside
     build: 
       context: ./backend/javascriptExecutionService
@@ -44,8 +54,10 @@ services:
     build:
       context: ./backend/viewManager
     depends_on:
-      - javascript_execution_service
-      - python_execution_service
+      javascript_execution_service:
+        condition: service_started
+      python_execution_service:
+        condition: service_started
   control_centre_frontend: # control centre is accesssible through gateway
     build:
       context: ./frontend/control_centre
@@ -59,9 +71,12 @@ services:
       context: ./
       dockerfile: ./gateway/Dockerfile
     depends_on:
-      - view_manager
-      - auth_service
-      - control_centre_frontend
+      view_manager:
+        condition: service_started
+      auth_service:
+        condition: service_started
+      control_centre_frontend:
+        condition: service_started
     ports:
       - "8020:80"
 
