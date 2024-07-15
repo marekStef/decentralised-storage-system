@@ -17,7 +17,7 @@ cd [path to this project]/managementsystem/dataStorageSystem
 Now you need to run the follwing:
 
 ```bash
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 At this point everything should be started successfully.

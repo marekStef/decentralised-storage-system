@@ -2,13 +2,9 @@
 
 To read about this application, please consult [this](https://marekstef.github.io/storage-system-documentation/docs/example-apps/calendar-pro/walkthrough) documentation. If the link to the documentation does not work for some reason, the whole documentation project resides at the root of this main repository.
 
-## Introduction
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started With Docker
 
-Navigate to this directory in your terminal and run `docker-compose up --build`. Calendar application shoud be accessible at `http://localhost:5000`. You can change the port in mapping inside `docker-compose.yml`.
+Navigate to this directory in your terminal and run `docker compose up --build -d`. Calendar application shoud be accessible at `http://localhost:5000`. You can change the port in mapping inside `docker-compose.yml` for this project.
 
 ## Getting Started Without Docker
 
