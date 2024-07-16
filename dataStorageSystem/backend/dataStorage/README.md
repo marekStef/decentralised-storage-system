@@ -45,7 +45,7 @@ MongoDB connected. Now, dropping the database.
 Database dropped: true
 ```
 
-### Setup Without Docker
+### Setup Without Docker (not recommended but doable)
 
 We assume the user already has the URL of the `MongoDb` database. This URL needs to be placed in the `.env` file as the value for the key `MONGO_DB_URI`.
 

@@ -10,6 +10,8 @@ If you need to change the port on which this execution service is running, pleas
 
 ## Setup Without Docker
 
+As the project is prepared for the use of Docker for deployment, you need to make a few adjustments in the View Manager component to make it work with this component - see [View Manager's README](../viewManager).
+
 ## Installation
 
 Install the dependencies:

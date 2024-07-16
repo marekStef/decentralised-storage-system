@@ -8,7 +8,9 @@ All you need to do is to start the main `docker-compose.yml` file for the whole 
 
 If you need to change the port on which this execution service is running, please change `FLASK_RUN_PORT` in `.env` in this project. This change however, needs to be reflected in `Dockerfile` located in this component and also in the `View Manager` component which relies on this component.
 
-## Setup Without Dockeer
+## Setup Without Docker
+
+As the project is prepared for the use of Docker for deployment, you need to make a few adjustments in the View Manager component to make it work with this component - see [View Manager's README](../viewManager).
 
 Create a virtual environment in the project directory:
 ```bash

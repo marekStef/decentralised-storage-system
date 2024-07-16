@@ -2,7 +2,7 @@
 
 The system consists of a backend and a frontend.
 
-It is important to note that while every component in this repository has its own README, we highly recommend the online [documentation](https://marekstef.github.io/storage-system-documentation/docs/category/introduction) for reading instead of these READMEs. Online documentation is far more clear with illustrations attached and you can see the bigger picture of this project there. If the link to a hosted documentation does not work, documentation project is included in the root of this project.
+It is important to note that while every component in this repository has its own README, we highly recommend the online [documentation](https://marekstef.github.io/storage-system-documentation/docs/category/introduction) for reading. The online documentation is far more clear with illustrations attached so that you can see the bigger picture of this project there. If the link to a hosted documentation does not work, documentation project is included in the root of this project and you can start it locally on your computer.
 
 ## Setup With Docker (recommended)
 
@@ -20,9 +20,7 @@ Now you need to run the follwing:
 docker compose up --build -d
 ```
 
-At this point everything should be started successfully.
-
-`AuthService` component should be accessible at `localhost:3000` and `View Manager` component at `localhost:3002`.
+At this point, everything should be started successfully - you can check it in Docker. Please wait a few seconds after the components have been started. There are healthchecks being performed and some components are waiting to be started until other components are marked as healthy. You can have a look at `docker-compose.yml` file [here](./docker-compose.yml). The system should be accessible at `localhost:8020` now.
 
 ## Setup Without Docker
 
