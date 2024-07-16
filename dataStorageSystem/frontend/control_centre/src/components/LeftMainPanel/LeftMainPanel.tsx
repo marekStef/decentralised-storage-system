@@ -32,7 +32,8 @@ const LeftMainPanel = props => {
         setIsModalOpen(!isModalOpen);
     };
 
-    useEffect(() => {
+    const loadUnapprovedPermissions = () => {
+        setIsLoadingPermissions(true);
         getAllUnapprovedPermissions()
             .then(unapprovedPermissionsResult => {
                 setUnapprovedPermissions(unapprovedPermissionsResult);
@@ -42,6 +43,10 @@ const LeftMainPanel = props => {
                 console.error(err);
                 setIsLoadingPermissions(false);
             });
+    }
+
+    useEffect(() => {
+        loadUnapprovedPermissions();
     }, []);
 
     return (
@@ -57,6 +62,12 @@ const LeftMainPanel = props => {
                         <div className="flex flex-col items-center">
                             <div className="min-h-32 w-full p-4">
                                 <h1 className="text-slate-300 text-lg mb-4">Unapproved Permissions</h1>
+                                <button
+                                    className="px-4 py-2 bg-white text-slate-950 rounded hover:bg-slate-50 transition-colors w-full my-4"
+                                    onClick={loadUnapprovedPermissions}
+                                >
+                                    Reload Unapproved Permissions
+                                </button>
                                 {unapprovedPermissions.length > 0 ? (
                                     unapprovedPermissions.map((permission, index) => (
                                         <PermissionItem key={index} permission={permission} />

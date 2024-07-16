@@ -162,7 +162,7 @@ const NewAppCreation = props => {
                             Check association
                         </button>
                     </div>
-                    Network Ip address of the server: {process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}
+                    Address of this server: {process.env.NEXT_PUBLIC_BACKEND_SERVER_URI}
 
                 </div>
             )}
