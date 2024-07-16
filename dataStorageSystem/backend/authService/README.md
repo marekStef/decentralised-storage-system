@@ -22,7 +22,7 @@ All you need to do now is to start the main `docker-compose.yml` for the whole m
 
 `authService` initially calls an initialization script. This script is automatically invoked by Docker.
 
-In case this script does not run successfully, here is the manual process:
+<!-- In case this script does not run successfully, here is the manual process:
 
 After running `docker compose up --build`, it is still necessary to initialize the `authService`. Although this `authService` is automatically started by the main `docker-compose.yml`, it still needs to be manually set up (adding root profile to the database) during the first run. Here is what you need to do:
 
@@ -35,7 +35,7 @@ It will probably be called something like `backend-auth_service-1`.
 Then we can run the script:
 
 ```docker
-docker exec backend-data_storage-1 npm run delete_database
+docker exec backend-auth_service-1 npm run initialise_service
 ```
 
 The result should be:
@@ -48,7 +48,7 @@ C:\Users\stefanec>docker exec backend-auth_service-1 npm run initialise_service
 
 Event uploaded successfully: Events were created successfully
 Event uploaded successfully: Events were created successfully
-```
+``` -->
 
 ### Setup and Running without Docker
 
@@ -66,7 +66,7 @@ We also need to uncomment and comment the following in the `.env` file:
 
 ```env
 MONGO_DB_URI=mongodb://localhost:27017/accessDb # for manual starting
-# MONGO_DB_URI=mongodb://mongo1:27017/accessDb # for docker
+MONGO_DB_URI=mongodb://mongo1:27018/accessDb # for docker
 
 DATA_STORAGE_URL=http://localhost:3001 # for manual starting
 # DATA_STORAGE_URL=http://data_storage:3001 # for docker
