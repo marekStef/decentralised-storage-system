@@ -83,7 +83,7 @@ This is the response for the above request:
 
 Template names must be unique, so the second request with the same `templateName` ends up like this:
 
-```js title="400 - template name uniqueness"
+```js title="400 - Template name uniqueness"
 {
     "message": "Template name must be unique"
 }
@@ -91,7 +91,7 @@ Template names must be unique, so the second request with the same `templateName
 
 If the source code being uploaded does not follow guidelines of the given execution service where it's stored, response message from that execution service is returned.
 
-```js title="400 - source code not conforming to requirements"
+```js title="400 - Source code not conforming to requirements"
 {
     "message": "Exactly one file must be named main.js"
 }
@@ -105,7 +105,7 @@ This is a simple endpoint for fetching templates primarily used by `Control Cent
 
 This is the response:
 
-```js title="200 - fetched templates"
+```js title="200 - Fetched templates"
 {
     "viewTemplates": [
         {
@@ -254,7 +254,7 @@ This is example request: `{{VIEW_MANAGER_URL}}/viewTemplates/deleteViewTemplate/
 
 and this is response:
 
-```js title="200 - response - deleted"
+```js title="200 - Response - Deleted"
 {
     "message": "View Template was deleted successfully"
 }
@@ -262,7 +262,7 @@ and this is response:
 
 Or if something goes wrong, 400 along with message is returned.
 
-```js title="400 - template id not found"
+```js title="400 - Template id not found"
 {
     "message": "View Template could not be deleted: Template not found"
 }

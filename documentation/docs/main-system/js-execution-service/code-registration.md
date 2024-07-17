@@ -18,7 +18,7 @@ There are multiple kinds of responses:
 
 - source code registered successfully
 
-```js title="201 - created"
+```js title="201 Created"
 {
     "message": "Files were uploaded",
     "sourceCodeId": "3cd89158-9968-44cc-94c6-629c68f551dd"
@@ -31,7 +31,7 @@ Now any other component using `Javascript Execution Service` only remembers `sou
 
 - no files in the request
 
-```js title="400 - bad request"
+```js title="400 Bad Request"
 {
     "message": "No files were uploaded."
 }
@@ -43,7 +43,7 @@ For fetching an existing source code based on `sourceCodeId`, there is **/source
 
 For instance for this example request `{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/3cd89158-9968-44cc-94c6-629c68f551dd` with empty body it retuns the following:
 
-```js title="response for source code fethching"
+```js title="Response for source code fethching"
 {
     "sourceCode": [
         {
@@ -62,7 +62,7 @@ For instance for this example request `{{JS_EXECUTION_SERVICE_URL}}/sourceCodes/
 
 Last simple endpoint is for source code deletion. Endpoint is basically the same (**/sourceCodes/:sourceCodeId** *(DELETE)*) except for the http method type.
 
-```js title="response - 200 ok"
+```js title="200 OK Response"
 {
     "message": "Source code deleted"
 }

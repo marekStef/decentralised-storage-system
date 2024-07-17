@@ -36,7 +36,7 @@ To upload a new set of events, you need to hit this endpoint of auth service: **
 
 When the app hasn't been approved the permission request, `403 - Forbidden` response is returned.
 
-```js title="403 - Forbidden response"
+```js title="403 Forbidden response"
 {
     "message": "Access permission is not active or has been revoked"
 }
@@ -50,7 +50,7 @@ To get more information about what happend, the third party app can query more i
 
 When the token is active, this is the response body:
 
-```js title="201 - Created response"
+```js title="201 Created response"
 {
     "message": "Events were created successfully",
     "events": [
@@ -100,7 +100,7 @@ The request body needs to contain `accessToken`.
 
 That's because when the app wants to modify the event, but uses access token which does not allow modifying a given event, this is returned:
 
-```js title="403 - Forbidden response"
+```js title="403 Forbidden response"
 {
     "message": "No modify permission for this event"
 }
@@ -108,7 +108,7 @@ That's because when the app wants to modify the event, but uses access token whi
 
 Otherwise `200 - OK` response is returned.
 
-```js title="200 - OK respose"
+```js title="200 OK respose"
 {
     "message": "Event updated successfully.",
     "event": {
@@ -143,7 +143,7 @@ This is the request body:
 
 Again, `accessToken` is checked to see, whether it has necessary permission to delete such event.
 
-```js title="200 - Ok response"
+```js title="200 Ok response"
 {
     "message": "Event deleted successfully."
 }
@@ -151,7 +151,7 @@ Again, `accessToken` is checked to see, whether it has necessary permission to d
 
 Or the token hasn't been activated ( permission approved ):
 
-```js title="403 - Forbidden response"
+```js title="403 Forbidden response"
 {
     "message": "Access permission is not active or has been revoked"
 }
@@ -159,7 +159,7 @@ Or the token hasn't been activated ( permission approved ):
 
 Or the event is not found:
 
-```js title="404 - Event Not Found"
+```js title="404 Event Not Found"
 {
     "message": "Event not found."
 }
@@ -169,11 +169,11 @@ Or the event is not found:
 
 To fetch all events for a given access token, you can use the following auth service endpoint: **/app/api/getAllEventsForGivenAccessToken?accessToken=[token]** *(GET)*.
 
-For this example request `{{AUTH_SERVER_URL}}/app/api/getAllEventsForGivenAccessToken?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc`
+For this example request `{{AUTH_SERVER_URL}}/app/api/getAllEventsForGivenAccessToken?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhQWNjZXNzUGVybWlzc2lvbklkIjoiNjYwNDc5YTBjMzAyMGY4NzdjMWFiMWQxIiwiYXBwSWQiOiI2NjA0MmU5MGMzMDIwZjg3N2MxYWIxMzkiLCJwZXJtaXNzaW9uIjp7InByb2ZpbGUiOiJhcHBsaWNhdGlvbi5jb20vZmlyc3RfcHJvZmlsZSIsInJlYWQiOnRydWUsImNyZWF0ZSI6dHJ1ZSwibW9kaWZ5Ijp0cnVlLCJkZWxldGUiOnRydWV9LCJjcmVhdGVkRGF0ZSI6IjIwMjQtMDMtMjdUMTk6NTU6MTIuMjA5WiIsImFwcHJvdmVkRGF0ZSI6bnVsbCwiZXhwaXJhdGlvbkRhdGUiOm51bGwsImlhdCI6MTcxMTU2OTMxMiwiZXhwIjoxMTE3ODg0OTMxMn0.QohWLv3Ez2yK4SYsKtFmCSx2bny7y9jhXiZOGfmsEZc`,
 
 we get this response:
 
-```js title="200 - OK - Fetching events response"
+```js title="200 OK - Fetching events response"
 {
     "events": [
         {

@@ -14,7 +14,7 @@ However, it is crucial to recognize that while these general requirements provid
 
 To look at the requirements for javascript code, go to `Javascript Execution Service` requirements for source code.
 
-As for the entry point function arguments in case of javascript, it needs to have exactly one.
+As for the entry point function arguments in case of javascript, it needs to have exactly one object.
 
 This argument is an object looking like this:
 

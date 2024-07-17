@@ -56,6 +56,14 @@ const getExecutionServiceUrlBasedOnSelectedRuntime = runtime => {
 
 To integrate a new service, simply extend the `allowedRuntimes` array and the `runtimeUrlMapping` mapping object with the new runtime's identifier and its corresponding service URI.
 
+### Control Centre
+
+This frontend component is used by the user to control the whole backend system without using exposed endpoints directly.
+
+### Gateway
+
+The Gateway serves as the primary entry point to the system, controlling access to all runtime components of the system while ensuring that only necessary endpoints are exposed to the public. Auth Service is the only component fully accessible as well as a subset of endpoints related to the management of View Template in View Manager component. Gateway is configured to pass only specific endpoints to the View Manager component. Lastly, the Control Centre component is accessible at */control-centre*. To make it easier for user, the root endpoint */* is redirected to the Control Centre component.
+
 ---
 
 At this point, you should possess a comprehensive understanding of the backend architecture, enabling you to begin delving into specific components of the system individually. Looking forward to our next interaction discussing this project!

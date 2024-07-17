@@ -1,5 +1,5 @@
 ---
-sidebar_position: 0
+sidebar_position: 1
 ---
 
 # Parts of the project
@@ -16,8 +16,10 @@ Main system consists of multiple individual runtime components:
 - View Manager
 - Javascript Execution Service
 - Python Execution Service
+- Control Centre
+- Gateway
 
-These components communicate on their own private network created by a docker and only `Auth Service` and part of `View Manager` is open for outside world requests.
+These components communicate on their own private network created by a docker and only `Auth Service`, `Control Centre` and a part of `View Manager` is accessible from outside through gateway.
 
 ## Fully-fledged Example Apps
 

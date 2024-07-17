@@ -8,6 +8,12 @@ This project is far from being fully completed. There are multiple areas which c
 
 We are including this list so that the reader, you, can either help this project or simply get idea of where some things could be moving.
 
+## Different Data Types
+
+As of now, this system supports storing only textual data. While it's definitely doable to store binary data with the current version by encoding them to text, it's not very efficient.
+
+Having a native support for binary data would bring this project on a higher level.
+
 ## Cloud Sharing
 
 As you already know, Data Storage's data are stored locally, on the admin's computer. Therefore, due to the architecture of current networks (which do not allow direct communication between computers), it's not possible to share data with other peer Data Storages. This presents a large drawback as there are multiple scenarios where this could be beneficial.

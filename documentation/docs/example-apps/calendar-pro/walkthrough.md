@@ -10,8 +10,8 @@ The app is highly responsive and allows multiple events to be overlayed.
 
 Not only does the app allow the user a comfortable management of their time but it also processes data generated from other apps, namely the location tracker ( android app ) and Windows Apps Tracker.
 
-![Architecture](/img/example-apps/calendar/week-view.png)
-![Architecture](/img/example-apps/calendar/event-details.png)
+![Week View](/img/example-apps/calendar/week-view.png)
+![Event Details](/img/example-apps/calendar/event-details.png)
 
 ## Profiles
 
@@ -63,11 +63,11 @@ This is the profile the calendar needs to register at the initialisation process
 
 When the user wants to start using this calendar, they need to first locate **Storage System**. Once it's located, the setup process allows the user to type in `Association Token` which the user gets after creating new **App Holder** (either in the **Control Centre** or by using raw api endpoints).
 
-![Architecture](/img/example-apps/calendar/calendar-initial-setup.png)
+![Calendar Initial Setup](/img/example-apps/calendar/calendar-initial-setup_new.png)
 
 If the app has been already set up in the system, user can just copy needed tokens from the storage system. All necessary information is in the **Control Centre** app.
 
-![Architecture](/img/example-apps/calendar/calendar-existing-setup.png)
+![Calendar Existing Setup](/img/example-apps/calendar/calendar-existing-setup_new.png)
 
 ## Calendar Settings
 
@@ -79,7 +79,7 @@ Secondly, there is a switch for showing windows apps. As you may know, one of ou
 
 Thirdly, there is a switch for showing location gathered from the Location Tracker Android app. More on that [here](#processing-of-user-location-from-location-tracker).
 
-![Architecture](/img/example-apps/calendar/calendar-settings.png)
+![Calendar Settings](/img/example-apps/calendar/calendar-settings.png)
 
 ## Procesing of Windows Opened Apps
 
@@ -89,11 +89,11 @@ Calendar allows the user to setup displaying of Windows Opened apps by first all
 
 This button takes the user to a new screen used for setting it all up and then creating categories for various apps.
 
-![Architecture](/img/example-apps/calendar/windows-apps-setup.png)
+![Windows Apps Setup](/img/example-apps/calendar/windows-apps-setup.png)
 
 Setup requires the user to create new **View Template** in the system. It instructs the user to download the necessary code. After the user verifies the code does not do any harm ( of course it does not do any harm ) and creates the template, they need to copy the template's id and paste it here.
 
-![Architecture](/img/example-apps/calendar/windows-apps-categories-settings.png)
+![Windows Apps Categories Settings](/img/example-apps/calendar/windows-apps-categories-settings.png)
 
 User can now create new categories, assign unlimited amount of colours to them and then assign individual apps to the categories.
 
@@ -101,7 +101,7 @@ Now, when the user navigates to the main week's view, they can see how productiv
 
 By hovering over the left vertical colourful bar ( shown on the picture below - look where the pointer is ), the category name appear with a nice smooth animation.
 
-![Architecture](/img/example-apps/calendar/week-view-windows-apps-hower.png)
+![Week View Windows Apps Hower](/img/example-apps/calendar/week-view-windows-apps-hower.png)
 
 Calendar also displays data about location tracking.
 
@@ -111,10 +111,10 @@ Setup is similar to the setup of Windows Apps. "Your Locations" button appears b
 
 When the setup is successfull and the user navigates back to the main Week's view, new hidden buttons appear. The user needs to hover over the day's name for the little location button to appear (look at the photo below).
 
-![Architecture](/img/example-apps/calendar/week-view-location-button-hower.png)
+![Week View Location Button Hower](/img/example-apps/calendar/week-view-location-button-hower.png)
 
 When the user clicks on the button, new location modal appears showing a map of all locations data from that given day.
 
-![Architecture](/img/example-apps/calendar/location-modal.png)
+![Location Modal](/img/example-apps/calendar/location-modal.png)
 
 That's all from Calendar app for now!

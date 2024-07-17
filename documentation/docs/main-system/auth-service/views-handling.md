@@ -104,7 +104,7 @@ As mentioned above, `View Access` is just an access to the `View Instance`. `Vie
 
 For a request like this `{{AUTH_SERVER_URL}}/admin/api/apps/66045321c3020f877c1ab176/views` we get this response:
 
-```js title="200 - OK Response"
+```js title="200 OK Response"
 {
     "viewAccesses": [
         {

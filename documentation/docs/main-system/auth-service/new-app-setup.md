@@ -125,3 +125,7 @@ Or there is a bad response:
 ```
 
 Congratulations! Your app is now ready! 🎉🎉🎉
+
+You can also see the whole flow of the new application from creating app holder to uploading new events in the following diagram. Although, we haven't described it beyond the initial setup, you can have a look on this diagram to get a bigger picture.
+
+![Architecture](/img/backend-architecture/from_app_holder_to_event_manipulation_sequence_diagram.png)

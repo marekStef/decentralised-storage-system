@@ -29,7 +29,7 @@ There are multiple kinds of responses:
 
 - source code successfully executed
 
-```js title="response - 200"
+```js title="200 OK Response"
 {
     "message": 'Code execution result', 
     "result": // anything your entry function returns
@@ -38,7 +38,7 @@ There are multiple kinds of responses:
 
 - syntax error in the source code
 
-```js title="400 - bad request"
+```js title="400 Bad Request"
 { 
     "message": 'There is a syntax error. Code could not be loaded'
 }
@@ -46,7 +46,7 @@ There are multiple kinds of responses:
 
 - source code does not exist
 
-```js title="400 - bad request"
+```js title="400 Bad Request"
 { 
     message: 'Given source code does not exist' 
 }

@@ -154,7 +154,7 @@ and this object is returned:
 
 In case the `View Instance` is not found, `400` is returned along with a message.
 
-```js title="404 - not found"
+```js title="404 Not Found"
 {
     "message": 'View Instance not found'
 }

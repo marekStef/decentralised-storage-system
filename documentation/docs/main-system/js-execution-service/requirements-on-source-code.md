@@ -12,7 +12,8 @@ All files uploaded need to be valid javascript files with `.js` ending.
 
 ### Importing of Other Files
 
-You can upload up to 10 javascript files which can import one another. However, a javascript file can import another using `require` keyword only, like the following:
+You can upload up to 10 javascript files which can import one another. Importing from another file needs to be only local - meaning the imported
+file must be one of the other files in the request. However, a javascript file can import another using `require` keyword only, like the following:
 
 ```js title="Source Code Require Example"
 const { getResponseMessage } = require('./second');
@@ -45,3 +46,5 @@ module.exports = helloWorld;
 ### Main Export Function from Main file parameter requirement
 
 Exported function from the `main.js` file needs to have exactly one parameter of type `object`. This object is bound to be passed and it's ensured the parameter won't be `null`.
+
+Exact contents of that object as well as how the result from your entry function is returned is specified [here](../view-manager/view-instances.md#running-view-instance).

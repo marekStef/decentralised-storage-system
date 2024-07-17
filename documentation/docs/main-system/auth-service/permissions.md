@@ -71,7 +71,7 @@ So for the result above, the request looks like this:
 
 And the response is following:
 
-```js title="response - 200"
+```js title="Response 200"
 {
     "isActive": true,
     "isRevoked": false
@@ -86,7 +86,7 @@ For getting a full list of unapproved permissions, admin can hit this endpoint (
 
 The response is the following:
 
-```js title="response - 200"
+```js title="Response 200"
 {
     "status": "success",
     "data": {
@@ -169,7 +169,7 @@ For getting a full list of unapproved permissions for a given app, admin can hit
 
 For this request `/admin/api/permissions/getUnapprovedPermissionsRequests/65f85d8f72d3cb5a148a96f6` the following is the response:
 
-```js title="response - 200"
+```js title="Response 200"
 {
     "status": "success",
     "permissions": [
@@ -253,7 +253,7 @@ And there are multiple responses types:
 
 - permission was approved
 
-```js title="response - 200"
+```js title="Response 200"
 {
     "message": "Permission request approved successfully",
     "data": {
@@ -280,7 +280,7 @@ And there are multiple responses types:
 ```
 
 - `permissionId` not found
-```js title="404 - not found"
+```js title="404 Not Found"
 {
     "message": "Permission request not found"
 }
