@@ -54,6 +54,8 @@ services:
     build:
       context: ./backend/viewManager
     depends_on:
+      mongo1:
+        condition: service_healthy
       javascript_execution_service:
         condition: service_started
       python_execution_service:
